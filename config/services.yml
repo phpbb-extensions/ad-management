@@ -1,0 +1,5 @@
+services:
+    phpbb.admanagement.listener:
+        class: phpbb\admanagement\event\main_listener
+        tags:
+            - { name: event.listener }

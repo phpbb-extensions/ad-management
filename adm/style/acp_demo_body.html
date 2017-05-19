@@ -1,0 +1,24 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_ACP_DEMO_TITLE}</h1>
+
+<form id="acp_board" method="post" action="{U_ACTION}">
+
+	<fieldset>
+		<legend>{L_SETTINGS}</legend>
+		<dl>
+			<dt><label for="acme_demo_goodbye">{L_ACP_DEMO_GOODBYE}{L_COLON}</label></dt>
+			<dd><label><input type="radio" class="radio" name="acme_demo_goodbye" value="1" <!-- IF ACME_DEMO_GOODBYE -->checked="checked"<!-- ENDIF -->/> {L_YES}</label>
+				<label><input type="radio" class="radio" name="acme_demo_goodbye" value="0" <!-- IF not ACME_DEMO_GOODBYE -->checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="submit" name="preview" value="{L_PREVIEW}" />
+		{S_FORM_TOKEN}
+	</fieldset>
+
+</form>
+
+<!-- INCLUDE overall_footer.html -->
