@@ -30,11 +30,11 @@ class install_acp_module extends \phpbb\db\migration\migration
 			array('module.add', array(
 				'acp',
 				'ACP_CAT_DOT_MODS',
-				'ACP_DEMO_TITLE'
+				'ACP_ADMANAGEMENT_TITLE'
 			)),
 			array('module.add', array(
 				'acp',
-				'ACP_DEMO_TITLE',
+				'ACP_ADMANAGEMENT_TITLE',
 				array(
 					'module_basename'	=> '\phpbb\admanagement\acp\main_module',
 					'modes'				=> array('settings'),

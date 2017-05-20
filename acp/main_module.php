@@ -25,7 +25,7 @@ class main_module
 
 		$user->add_lang_ext('phpbb/admanagement', 'common');
 		$this->tpl_name = 'acp_demo_body';
-		$this->page_title = $user->lang('ACP_DEMO_TITLE');
+		$this->page_title = $user->lang('ACP_ADMANAGEMENT_TITLE');
 		add_form_key('acme/demo');
 
 		if ($request->is_set_post('submit'))

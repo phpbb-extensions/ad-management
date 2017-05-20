@@ -19,12 +19,12 @@ class main_info
 	{
 		return array(
 			'filename'	=> '\phpbb\admanagement\acp\main_module',
-			'title'		=> 'ACP_DEMO_TITLE',
+			'title'		=> 'ACP_ADMANAGEMENT_TITLE',
 			'modes'		=> array(
 				'settings'	=> array(
-					'title'	=> 'ACP_DEMO',
+					'title'	=> 'ACP_ADMANAGEMENT_TITLE',
 					'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
-					'cat'	=> array('ACP_DEMO_TITLE')
+					'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
 				),
 			),
 		);
