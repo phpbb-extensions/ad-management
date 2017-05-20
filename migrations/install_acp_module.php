@@ -15,9 +15,9 @@ class install_acp_module extends \phpbb\db\migration\migration
 	public function effectively_installed()
 	{
 		$sql = 'SELECT module_id
-				FROM ' . $this->table_prefix . "modules
-				WHERE module_class = 'acp'
-					AND module_langname = 'ACP_ADMANAGEMENT_TITLE'";
+			FROM ' . $this->table_prefix . "modules
+			WHERE module_class = 'acp'
+				AND module_langname = 'ACP_ADMANAGEMENT_TITLE'";
 		$result = $this->db->sql_query($sql);
 		$module_id = (int) $this->db->sql_fetchfield('module_id');
 		$this->db->sql_freeresult($result);
