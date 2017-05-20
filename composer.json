@@ -1,7 +1,7 @@
 {
     "name": "phpbb/admanagement",
     "type": "phpbb-extension",
-    "description": "An extension for phpBB that allows administrators to add HTML/JS advertisement code to number of locations in the template.",
+    "description": "An extension for phpBB that allows administrators to manage and display advertisements on their forums.",
     "homepage": "https://www.phpbb.com",
     "version": "1.0.0-dev",
     "keywords": ["phpbb", "extension", "advertisement"],
