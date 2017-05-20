@@ -26,11 +26,11 @@ class main_module
 		$user->add_lang_ext('phpbb/admanagement', 'common');
 		$this->tpl_name = 'acp_admanagement';
 		$this->page_title = $user->lang('ACP_ADMANAGEMENT_TITLE');
-		add_form_key('acme/demo');
+		add_form_key('phpbb/admanagement');
 
 		if ($request->is_set_post('submit'))
 		{
-			if (!check_form_key('acme/demo'))
+			if (!check_form_key('phpbb/admanagement'))
 			{
 				trigger_error('FORM_INVALID', E_USER_WARNING);
 			}
