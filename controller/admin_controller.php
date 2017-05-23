@@ -65,6 +65,17 @@ class admin_controller
 	}
 
 	/**
+	* Load module-specific language
+	*
+	* @return void
+	* @access public
+	*/
+	public function load_lang()
+	{
+		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
+	}
+
+	/**
 	* Get geric ACP page title for Ads module
 	*
 	* @return string	Language string for Ads ACP module

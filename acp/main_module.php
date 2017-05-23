@@ -32,6 +32,9 @@ class main_module
 		// Load a template from adm/style for our ACP page
 		$this->tpl_name = 'manage_ads';
 
+		// Load module-specific language
+		$admin_controller->load_lang();
+
 		// Set the page title for our ACP page
 		$this->page_title = $admin_controller->get_page_title();
 

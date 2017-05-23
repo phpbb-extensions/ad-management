@@ -19,5 +19,10 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACP_ADMANAGEMENT_TITLE'	=> 'Advertisement Management',
+	'AD_NAME'			=> 'Name',
+	'AD_ENABLED'		=> 'Enabled',
+	'CLICK_TO_DISABLE'	=> 'Click to disable',
+	'CLICK_TO_ENABLE'	=> 'Click to enable',
+	'ACP_ADS_EMPTY'		=> 'No advertisement, yet. Add one with the button below.',
+	'ACP_ADS_ADD'		=> 'Add new advertisement',
 ));
