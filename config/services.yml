@@ -1,4 +1,16 @@
+imports:
+    - { resource: tables.yml }
+
 services:
+    phpbb.admanagement.admin.controller:
+        class: phpbb\admanagement\controller\admin_controller
+        arguments:
+            - '@dbal.conn'
+            - '@template'
+            - '@user'
+            - '@request'
+            - '%phpbb.admanagement.tables.ads%'
+
     phpbb.admanagement.listener:
         class: phpbb\admanagement\event\main_listener
         tags:

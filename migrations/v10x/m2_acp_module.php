@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\migrations;
+namespace phpbb\admanagement\migrations\v10x;
 
 class m2_acp_module extends \phpbb\db\migration\migration
 {
@@ -33,7 +33,7 @@ class m2_acp_module extends \phpbb\db\migration\migration
 	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\admanagement\migrations\m1_initial_schema');
+		return array('\phpbb\admanagement\migrations\v10x\m1_initial_schema');
 	}
 
 	/**

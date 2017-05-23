@@ -21,28 +21,24 @@ class main_module
 
 	public function main($id, $mode)
 	{
-		global $config, $request, $template, $user;
+		global $phpbb_container;
 
-		$user->add_lang_ext('phpbb/admanagement', 'common');
-		$this->tpl_name = 'acp_admanagement';
-		$this->page_title = $user->lang('ACP_ADMANAGEMENT_TITLE');
-		add_form_key('phpbb/admanagement');
+		/** @var \phpbb\admanagement\controller\admin_controller $admin_controller */
+		$admin_controller = $phpbb_container->get('phpbb.admanagement.admin.controller');
 
-		if ($request->is_set_post('submit'))
+		// Make the $u_action url available in the admin controller
+		$admin_controller->set_page_url($this->u_action);
+
+		// Load a template from adm/style for our ACP page
+		$this->tpl_name = 'manage_ads';
+
+		// Set the page title for our ACP page
+		$this->page_title = $admin_controller->get_page_title();
+
+		switch ($admin_controller->get_action())
 		{
-			if (!check_form_key('phpbb/admanagement'))
-			{
-				trigger_error('FORM_INVALID', E_USER_WARNING);
-			}
-
-			$config->set('acme_demo_goodbye', $request->variable('acme_demo_goodbye', 0));
-
-			trigger_error($user->lang('ACP_DEMO_SETTING_SAVED') . adm_back_link($this->u_action));
 		}
 
-		$template->assign_vars(array(
-			'U_ACTION'				=> $this->u_action,
-			'ACME_DEMO_GOODBYE'		=> $config['acme_demo_goodbye'],
-		));
+		$admin_controller->list_ads();
 	}
 }
