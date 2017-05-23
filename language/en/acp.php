@@ -20,7 +20,6 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'AD_NAME'			=> 'Name',
-	'AD_ENABLED'		=> 'Enabled',
 	'AD_ENABLE_TITLE' => array( // Plural rule doesn't apply here! Just translate the values.
 		0 => 'Click to enable',
 		1 => 'Click to disable',
