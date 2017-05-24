@@ -150,6 +150,29 @@ class admin_controller
 		));
 	}
 
+
+	/**
+	* Process 'delete' action
+	*
+	* @return void
+	*/
+	public function action_delete()
+	{
+		$sql = 'DELETE FROM ' . $this->ads_table . '
+			WHERE ad_id = ' . (int) $this->request->variable('id', 0);
+		$this->db->sql_query($sql);
+
+		if ($this->db->sql_affectedrows())
+		{
+			trigger_error($this->user->lang('ACP_AD_DELETE_SUCCESS') . adm_back_link($this->u_action));
+		}
+		else
+		{
+			trigger_error($this->user->lang('ACP_AD_DELETE_ERRORED') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+	}
+
+
 	/**
 	* Display the ads
 	*

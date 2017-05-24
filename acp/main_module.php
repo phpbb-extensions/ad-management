@@ -45,6 +45,12 @@ class main_module
 				$admin_controller->action_add();
 
 			break;
+
+			case 'delete':
+
+				$admin_controller->action_delete();
+
+			break;
 		}
 
 		$admin_controller->list_ads();
