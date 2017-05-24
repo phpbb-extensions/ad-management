@@ -93,7 +93,7 @@ class admin_controller
 	}
 
 	/**
-	* Process 'add' action
+	* Add an advertisement
 	*
 	* @return void
 	*/
@@ -156,7 +156,7 @@ class admin_controller
 	}
 
 	/**
-	* Process 'edit' action
+	* Edit an advertisement
 	*
 	* @return void
 	*/
@@ -232,11 +232,12 @@ class admin_controller
 		));
 	}
 
-	/**
-	* Enable/disable ad
-	*
-	* @return void
-	*/
+    /**
+     * Enable/disable an advertisement
+     *
+     * @param	bool	$enable	Enable or disable the advertisement?
+     * @return void
+     */
 	public function ad_enable($enable)
 	{
 		$sql = 'UPDATE ' . $this->ads_table . '
@@ -267,7 +268,7 @@ class admin_controller
 	}
 
 	/**
-	* Process 'delete' action
+	* Delete an advertisement
 	*
 	* @return void
 	*/
