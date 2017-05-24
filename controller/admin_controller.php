@@ -139,6 +139,11 @@ class admin_controller
 				$this->template->assign_vars(array(
 					'S_ERROR'			=> (bool) count($errors),
 					'ERROR_MSG'			=> count($errors) ? implode('<br />', $errors) : '',
+
+					'AD_NAME'		=> $data['ad_name'],
+					'AD_NOTE'		=> $data['ad_note'],
+					'AD_CODE'		=> $data['ad_code'],
+					'AD_ENABLED'	=> $data['ad_enabled'],
 				));
 			}
 		}
