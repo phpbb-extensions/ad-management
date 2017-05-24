@@ -215,8 +215,14 @@ class admin_controller
 				WHERE ad_id = ' . (int) $ad_id;
 			$result = $this->db->sql_query($sql);
 			$rowset = $this->db->sql_fetchrowset($result);
-			$data = $rowset[0];
 			$this->db->sql_freeresult($result);
+
+			if (!sizeof($rowset))
+			{
+				trigger_error($this->user->lang('ACP_AD_DOES_NOT_EXIST') . adm_back_link($this->u_action), E_USER_WARNING);
+			}
+
+			$data = $rowset[0];
 		}
 
 		// Set output vars for display in the template

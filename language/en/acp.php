@@ -37,6 +37,7 @@ $lang = array_merge($lang, array(
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to 255 characters.',
 	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully!',
+	'ACP_AD_DOES_NOT_EXIST'		=> 'Advertisement does not exist!',
 	'ACP_AD_EDIT_SUCCESS'		=> 'Advertisement edited successfully!',
 	'ACP_AD_DELETE_SUCCESS'		=> 'Advertisement deleted successfully!',
 	'ACP_AD_DELETE_ERRORED'		=> 'There was an error deleting advertisement!',
