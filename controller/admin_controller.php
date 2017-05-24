@@ -257,7 +257,7 @@ class admin_controller
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'text'	=> $enable ? $this->user->lang('ENABLED') : $this->user->lang('DISABLED'),
+				'text'	=> $this->user->lang($enable ? 'ENABLED' : 'DISABLED'),
 				'title'	=> $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
 			));
 		}
