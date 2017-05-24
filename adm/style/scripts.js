@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * This callback replaces enable links with disable links and vice versa.
  * It does this by replacing the text, and replacing all instances of "enable"
