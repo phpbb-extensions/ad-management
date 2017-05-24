@@ -34,9 +34,13 @@ $lang = array_merge($lang, array(
 	'ACP_ADS_EMPTY'		=> 'No advertisement, yet. Add one with the button below.',
 	'ACP_ADS_ADD'		=> 'Add new advertisement',
 
-	'AD_NAME_REQUIRED'		=> 'Name is required.',
-	'AD_NAME_TOO_LONG'		=> 'Name length is limited to 255 characters.',
-	'ACP_AD_ADD_SUCCESS'	=> 'Advertisement added successfully!',
-	'ACP_AD_DELETE_SUCCESS'	=> 'Advertisement deleted successfully!',
-	'ACP_AD_DELETE_ERRORED'	=> 'There was an error deleting advertisement!',
+	'AD_NAME_REQUIRED'			=> 'Name is required.',
+	'AD_NAME_TOO_LONG'			=> 'Name length is limited to 255 characters.',
+	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully!',
+	'ACP_AD_DELETE_SUCCESS'		=> 'Advertisement deleted successfully!',
+	'ACP_AD_DELETE_ERRORED'		=> 'There was an error deleting advertisement!',
+	'ACP_AD_ENABLE_SUCCESS'		=> 'Advertisement enabled successfully!',
+	'ACP_AD_DISABLE_SUCCESS'	=> 'Advertisement disabled successfully!',
+	'ACP_AD_ENABLE_ERRORED'		=> 'There was an error enabling advertisement!',
+	'ACP_AD_DISABLE_ERRORED'	=> 'There was an error disabling advertisement!',
 ));

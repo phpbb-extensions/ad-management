@@ -152,6 +152,40 @@ class admin_controller
 
 
 	/**
+	* Enable/disable ad
+	*
+	* @return void
+	*/
+	public function ad_enable($enable)
+	{
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_enabled = ' . (int) $enable . '
+			WHERE ad_id = ' . (int) $this->request->variable('id', 0);
+		$this->db->sql_query($sql);
+		$success = (bool) $this->db->sql_affectedrows();
+
+		// If AJAX was used, show user a result message
+		if ($this->request->is_ajax())
+		{
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'text'	=> $enable ? $this->user->lang('ENABLED') : $this->user->lang('DISABLED'),
+				'title'	=> $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
+			));
+		}
+
+		// Otherwise, show traditional infobox
+		if ($success)
+		{
+			trigger_error($this->user->lang($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS') . adm_back_link($this->u_action));
+		}
+		else
+		{
+			trigger_error($this->user->lang($enable ? 'ACP_AD_ENABLE_ERRORED' : 'ACP_AD_DISABLE_ERRORED') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+	}
+
+	/**
 	* Process 'delete' action
 	*
 	* @return void
@@ -190,6 +224,7 @@ class admin_controller
 			$this->template->assign_block_vars('ads', array( // TODO: convert back to original notation (3.1 does not support this)
 				'NAME'		=> $row['ad_name'],
 				'S_ENABLED'	=> $ad_enabled,
+				'ENABLED'	=> (int) $ad_enabled,
 				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'], // TODO: ACP method
 				'U_PREVIEW'	=> '', // TODO: frontend logic
 				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'], // TODO: ACP method

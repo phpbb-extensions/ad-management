@@ -46,6 +46,18 @@ class main_module
 
 			break;
 
+			case 'enable':
+
+				$admin_controller->ad_enable(true);
+
+			break;
+
+			case 'disable':
+
+				$admin_controller->ad_enable(false);
+
+			break;
+
 			case 'delete':
 
 				$admin_controller->action_delete();
