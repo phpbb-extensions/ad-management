@@ -280,17 +280,38 @@ class admin_controller
 	*/
 	public function action_delete()
 	{
-		$sql = 'DELETE FROM ' . $this->ads_table . '
-			WHERE ad_id = ' . (int) $this->request->variable('id', 0);
-		$this->db->sql_query($sql);
+		$ad_id = $this->request->variable('id', 0);
 
-		if ($this->db->sql_affectedrows())
+		$sql = 'SELECT ad_id
+			FROM ' . $this->ads_table . '
+			WHERE ad_id = ' . (int) $ad_id;
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		if ($row)
 		{
-			trigger_error($this->user->lang('ACP_AD_DELETE_SUCCESS') . adm_back_link($this->u_action));
-		}
-		else
-		{
-			trigger_error($this->user->lang('ACP_AD_DELETE_ERRORED') . adm_back_link($this->u_action), E_USER_WARNING);
+			if (confirm_box(true))
+			{
+				$sql = 'DELETE FROM ' . $this->ads_table . '
+					WHERE ad_id = ' . (int) $ad_id;
+				$this->db->sql_query($sql);
+
+				// Only notify user on error
+				if (!$this->db->sql_affectedrows())
+				{
+					trigger_error($this->user->lang('ACP_AD_DELETE_ERRORED') . adm_back_link($this->u_action), E_USER_WARNING);
+				}
+			}
+			else
+			{
+				confirm_box(false, $this->user->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
+					'id'		=> $ad_id,
+					'i'			=> $this->request->variable('i', ''),
+					'mode'		=> $this->request->variable('mode', ''),
+					'action'	=> 'delete'))
+				);
+			}
 		}
 	}
 
