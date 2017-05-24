@@ -66,7 +66,7 @@
 			{% for ad in loops.ads %}
 				<tr>
 					<td><strong>{{ ad.NAME }}</strong></td>
-					<td><a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.ENABLED) }}" data-ajax="toggle_enable">{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}</a></td>
+					<td><a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}</a></td>
 					<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
 				</tr>
 			{% else %}
