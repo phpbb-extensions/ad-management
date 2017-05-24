@@ -46,6 +46,12 @@ class main_module
 
 			break;
 
+			case 'edit':
+
+				$admin_controller->action_edit();
+
+			break;
+
 			case 'enable':
 
 				$admin_controller->ad_enable(true);

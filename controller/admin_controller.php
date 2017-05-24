@@ -155,6 +155,82 @@ class admin_controller
 		));
 	}
 
+	/**
+	* Process 'edit' action
+	*
+	* @return void
+	*/
+	public function action_edit()
+	{
+		$ad_id = $this->request->variable('id', 0);
+		$data = $errors = array();
+
+		add_form_key('phpbb/admanagement/edit');
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('phpbb/admanagement/edit'))
+			{
+				$errors[] = $this->user->lang('FORM_INVALID');
+			}
+
+			$data = array(
+				'ad_name'		=> $this->request->variable('ad_name', '', true),
+				'ad_note'		=> $this->request->variable('ad_note', '', true),
+				'ad_code'		=> $this->request->variable('ad_code', '', true),
+				'ad_enabled'	=> $this->request->variable('ad_enabled', false),
+			);
+
+			// Validate data
+			if ($data['ad_name'] === '')
+			{
+				$errors[] = $this->user->lang('AD_NAME_REQUIRED');
+			}
+			if (truncate_string($data['ad_name'], 255) !== $data['ad_name'])
+			{
+				$errors[] = $this->user->lang('AD_NAME_TOO_LONG');
+			}
+
+			if (empty($errors))
+			{
+				// Insert the ad data to the database
+				$sql = 'UPDATE ' . $this->ads_table . '
+					SET ' . $this->db->sql_build_array('UPDATE', $data) . '
+					WHERE ad_id = ' . (int) $ad_id;
+				$this->db->sql_query($sql);
+
+				trigger_error($this->user->lang('ACP_AD_EDIT_SUCCESS') . adm_back_link($this->u_action));
+			}
+			else
+			{
+				$this->template->assign_vars(array(
+					'S_ERROR'			=> (bool) count($errors),
+					'ERROR_MSG'			=> count($errors) ? implode('<br />', $errors) : '',
+				));
+			}
+		}
+		else
+		{
+			$sql = 'SELECT *
+				FROM ' . $this->ads_table . '
+				WHERE ad_id = ' . (int) $ad_id;
+			$result = $this->db->sql_query($sql);
+			$rowset = $this->db->sql_fetchrowset($result);
+			$data = $rowset[0];
+			$this->db->sql_freeresult($result);
+		}
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_EDIT_AD'	=> true,
+			'EDIT_ID'	=> $ad_id,
+			'U_BACK'	=> $this->u_action,
+
+			'AD_NAME'		=> $data['ad_name'],
+			'AD_NOTE'		=> $data['ad_note'],
+			'AD_CODE'		=> $data['ad_code'],
+			'AD_ENABLED'	=> $data['ad_enabled'],
+		));
+	}
 
 	/**
 	* Enable/disable ad

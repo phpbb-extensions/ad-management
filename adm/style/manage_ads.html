@@ -2,7 +2,7 @@
 
 <a id="maincontent"></a>
 
-{% if S_ADD_AD %}
+{% if S_ADD_AD or S_EDIT_AD %}
 
 	<a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
 
@@ -38,7 +38,12 @@
 		<fieldset class="submit-buttons">
 			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
 			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
-			<input type="hidden" name="action" value="add" />
+			{% if S_EDIT_AD %}
+				<input type="hidden" name="id" value="{{ EDIT_ID }}" />
+				<input type="hidden" name="action" value="edit" />
+			{% else %}
+				<input type="hidden" name="action" value="add" />
+			{% endif %}
 			{{ S_FORM_TOKEN }}
 		</fieldset>
 	</form>
