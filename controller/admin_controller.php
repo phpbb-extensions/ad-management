@@ -163,7 +163,7 @@ class admin_controller
 	public function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
-		$data = $errors = array();
+		$errors = array();
 
 		add_form_key('phpbb/admanagement/edit');
 		if ($this->request->is_set_post('submit'))
