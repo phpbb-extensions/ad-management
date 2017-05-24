@@ -26,7 +26,7 @@ $lang = array_merge($lang, array(
 	'AD_CODE'				=> 'Code',
 	'AD_CODE_EXPLAIN'		=> 'The advertisement code goes here. All code should be put in a raw HTML form, BBcodes are not supported.',
 	'AD_ENABLED'			=> 'Enabled',
-	'AD_ENABLED_EXPLAIN'	=> 'If disabled, this advertisement will not be displayed to this board users.',
+	'AD_ENABLED_EXPLAIN'	=> 'If disabled, this advertisement will not be displayed.',
 	'AD_ENABLE_TITLE'		=> array( // Plural rule doesn't apply here! Just translate the values.
 		0 => 'Click to enable',
 		1 => 'Click to disable',
@@ -36,13 +36,13 @@ $lang = array_merge($lang, array(
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to 255 characters.',
+	'ACP_AD_DOES_NOT_EXIST'		=> 'The advertisement does not exist!',
 	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully!',
-	'ACP_AD_DOES_NOT_EXIST'		=> 'Advertisement does not exist!',
 	'ACP_AD_EDIT_SUCCESS'		=> 'Advertisement edited successfully!',
 	'ACP_AD_DELETE_SUCCESS'		=> 'Advertisement deleted successfully!',
-	'ACP_AD_DELETE_ERRORED'		=> 'There was an error deleting advertisement!',
+	'ACP_AD_DELETE_ERRORED'		=> 'There was an error deleting the advertisement!',
 	'ACP_AD_ENABLE_SUCCESS'		=> 'Advertisement enabled successfully!',
+	'ACP_AD_ENABLE_ERRORED'		=> 'There was an error enabling the advertisement!',
 	'ACP_AD_DISABLE_SUCCESS'	=> 'Advertisement disabled successfully!',
-	'ACP_AD_ENABLE_ERRORED'		=> 'There was an error enabling advertisement!',
-	'ACP_AD_DISABLE_ERRORED'	=> 'There was an error disabling advertisement!',
+	'ACP_AD_DISABLE_ERRORED'	=> 'There was an error disabling the advertisement!',
 ));
