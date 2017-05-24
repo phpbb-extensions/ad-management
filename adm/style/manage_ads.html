@@ -25,10 +25,9 @@
 	</tbody>
 </table>
 
-<form id="acp_admanagement" method="post" action="{{ U_ACTION }}">
+<form id="acp_admanagement_quick_add" method="post" action="{{ U_ADD_AD }}">
 	<fieldset class="quick">
-		<input class="button2" type="submit" name="addpage" value="{{ lang('ACP_ADS_ADD') }}" />
-		<input type="hidden" name="action" value="add" />
+		<input class="button2" type="submit" value="{{ lang('ACP_ADS_ADD') }}" />
 		{{ S_FORM_TOKEN }}
 	</fieldset>
 </form>
