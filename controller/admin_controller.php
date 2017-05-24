@@ -41,7 +41,6 @@ class admin_controller
 	* @param \phpbb\user						$user		User object
 	* @param \phpbb\request\request				$request	Request object
 	* @param string								$ads_table	Ads table
-	* @access public
 	*/
 	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, $ads_table)
 	{
@@ -57,7 +56,6 @@ class admin_controller
 	*
 	* @param string $u_action Custom form action
 	* @return void
-	* @access public
 	*/
 	public function set_page_url($u_action)
 	{
@@ -68,7 +66,6 @@ class admin_controller
 	* Load module-specific language
 	*
 	* @return void
-	* @access public
 	*/
 	public function load_lang()
 	{
@@ -76,10 +73,9 @@ class admin_controller
 	}
 
 	/**
-	* Get geric ACP page title for Ads module
+	* Get ACP page title for Ads module
 	*
 	* @return string	Language string for Ads ACP module
-	* @access public
 	*/
 	public function get_page_title()
 	{
@@ -89,8 +85,7 @@ class admin_controller
 	/**
 	* Get action
 	*
-	* @return string	Language string for Ads ACP module
-	* @access public
+	* @return string	Ads module action
 	*/
 	public function get_action()
 	{
@@ -101,7 +96,6 @@ class admin_controller
 	* Display the ads
 	*
 	* @return void
-	* @access public
 	*/
 	public function list_ads()
 	{
