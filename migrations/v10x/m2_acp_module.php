@@ -54,7 +54,7 @@ class m2_acp_module extends \phpbb\db\migration\migration
 				'ACP_ADMANAGEMENT_TITLE',
 				array(
 					'module_basename'	=> '\phpbb\admanagement\acp\main_module',
-					'modes'				=> array('settings'),
+					'modes'				=> array('manage'),
 				),
 			)),
 		);
