@@ -164,14 +164,14 @@ class admin_controller
 		{
 			$ad_enabled = (bool) $row['ad_enabled'];
 
-			$this->template->assign_block_vars('ads', [ // TODO: convert back to original notation (3.1 does not support this)
+			$this->template->assign_block_vars('ads', array( // TODO: convert back to original notation (3.1 does not support this)
 				'NAME'		=> $row['ad_name'],
 				'S_ENABLED'	=> $ad_enabled,
 				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'], // TODO: ACP method
 				'U_PREVIEW'	=> '', // TODO: frontend logic
 				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'], // TODO: ACP method
 				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'], // TODO: ACP method
-			]);
+			));
 		}
 		$this->db->sql_freeresult($result);
 
