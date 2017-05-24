@@ -19,11 +19,20 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'AD_NAME'			=> 'Name',
-	'AD_ENABLE_TITLE' => array( // Plural rule doesn't apply here! Just translate the values.
+	'AD_NAME'				=> 'Name',
+	'AD_NAME_EXPLAIN'		=> 'This is only used for your recognition of this advertisement.',
+	'AD_NOTE'				=> 'Notes',
+	'AD_NOTE_EXPLAIN'		=> 'Enter any notes for this advertisement. These notes are not shown anywhere except in the ACP.',
+	'AD_CODE'				=> 'Code',
+	'AD_CODE_EXPLAIN'		=> 'The advertisement code goes here. All code should be put in a raw HTML form, BBcodes are not supported.',
+	'AD_ENABLED'			=> 'Enabled',
+	'AD_ENABLED_EXPLAIN'	=> 'If disabled, this advertisement will not be displayed to this board users.',
+	'AD_ENABLE_TITLE'		=> array( // Plural rule doesn't apply here! Just translate the values.
 		0 => 'Click to enable',
 		1 => 'Click to disable',
 	),
 	'ACP_ADS_EMPTY'		=> 'No advertisement, yet. Add one with the button below.',
 	'ACP_ADS_ADD'		=> 'Add new advertisement',
+
+	'ACP_AD_ADD_SUCCESS'	=> 'Advertisement added successfully!',
 ));

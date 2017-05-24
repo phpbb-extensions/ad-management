@@ -1,35 +1,82 @@
 {% include 'overall_header.html' %}
 
-<h1>{{ lang('ACP_ADMANAGEMENT_TITLE') }}</h1>
+{# TODO: add <a id="maincontent"></a> here #}
 
-<table class="table1 zebra-table fixed-width-table">
-	<thead>
-		<tr>
-			<th style="width: 80%;">{{ lang('AD_NAME') }}</th>
-			<th style="width: 10%;">{{ lang('ENABLED') }}</th>
-			<th style="width: 10%;">{{ lang('ACTION') }}</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for ad in loops.ads %}
-			<tr>
-				<td><strong>{{ ad.NAME }}</strong></td>
-				<td><a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}">{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}</a></td>
-				<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
-			</tr>
-		{% else %}
-			<tr>
-				<td colspan="3" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
-			</tr>
-		{% endfor %}
-	</tbody>
-</table>
+{% if S_ADD_AD %}
 
-<form id="acp_admanagement_quick_add" method="post" action="{{ U_ACTION_ADD }}">
-	<fieldset class="quick">
-		<input class="button2" type="submit" value="{{ lang('ACP_ADS_ADD') }}" />
-		{{ S_FORM_TOKEN }}
-	</fieldset>
-</form>
+	<a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
+
+	<h1>{{ lang('ACP_ADS_ADD') }}</h1>
+
+	{% if S_ERROR %}
+		<div class="errorbox">
+			<h3>{{ lang('WARNING') }}</h3>
+			<p>{{ ERROR_MSG }}</p>
+		</div>
+	{% endif %}
+
+	<form id="acp_addmanagement_add" method="post" action="{{ U_ACTION }}">
+		<fieldset>
+			<dl>
+				<dt><label for="ad_name">{{ lang('AD_NAME') }}{{ lang('COLON') }}</label><br /><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" type="text" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_note">{{ lang('AD_NOTE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
+				<dd><textarea name="ad_note" rows="10" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_code">{{ lang('AD_CODE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
+				<dd><textarea name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') }}{{ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
+					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
+			</dl>
+		</fieldset>
+		<fieldset class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+			<input type="hidden" name="action" value="add" />
+			{{ S_FORM_TOKEN }}
+		</fieldset>
+	</form>
+
+{% else %}
+
+	<h1>{{ lang('ACP_ADMANAGEMENT_TITLE') }}</h1>
+
+	<table class="table1 zebra-table fixed-width-table">
+		<thead>
+			<tr>
+				<th style="width: 80%;">{{ lang('AD_NAME') }}</th>
+				<th style="width: 10%;">{{ lang('ENABLED') }}</th>
+				<th style="width: 10%;">{{ lang('ACTION') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ad in loops.ads %}
+				<tr>
+					<td><strong>{{ ad.NAME }}</strong></td>
+					<td><a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}">{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}</a></td>
+					<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="3" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<form id="acp_admanagement_quick_add" method="post" action="{{ U_ACTION_ADD }}">
+		<fieldset class="quick">
+			<input class="button2" type="submit" value="{{ lang('ACP_ADS_ADD') }}" />
+			{{ S_FORM_TOKEN }}
+		</fieldset>
+	</form>
+
+{% endif %}
 
 {% include 'overall_footer.html' %}

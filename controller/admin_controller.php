@@ -93,6 +93,64 @@ class admin_controller
 	}
 
 	/**
+	* Process 'add' action
+	*
+	* @return void
+	*/
+	public function action_add()
+	{
+		$errors = array();
+
+		add_form_key('phpbb/admanagement/add');
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('phpbb/admanagement/add'))
+			{
+				$errors[] = $this->user->lang('FORM_INVALID');
+			}
+
+			$data = array(
+				'ad_name'		=> $this->request->variable('ad_name', '', true),
+				'ad_note'		=> $this->request->variable('ad_note', '', true),
+				'ad_code'		=> $this->request->variable('ad_code', '', true),
+				'ad_enabled'	=> $this->request->variable('ad_code', false),
+			);
+
+			// Validate data
+			if ($data['ad_name'] === '')
+			{
+				$errors[] = $this->user->lang('AD_NAME_REQUIRED');
+			}
+			if (truncate_string($data['ad_name'], 255) !== $data['ad_name'])
+			{
+				$errors[] = $this->user->lang('AD_NAME_TOO_LONG');
+			}
+
+			if (empty($errors))
+			{
+				// Insert the ad data to the database
+				$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
+				$this->db->sql_query($sql);
+
+				trigger_error($this->user->lang('ACP_AD_ADD_SUCCESS') . adm_back_link($this->u_action));
+			}
+			else
+			{
+				$this->template->assign_vars(array(
+					'S_ERROR'			=> (bool) count($errors),
+					'ERROR_MSG'			=> count($errors) ? implode('<br />', $errors) : '',
+				));
+			}
+		}
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_ADD_AD'	=> true,
+			'U_BACK'	=> $this->u_action,
+		));
+	}
+
+	/**
 	* Display the ads
 	*
 	* @return void
@@ -106,7 +164,7 @@ class admin_controller
 		{
 			$ad_enabled = (bool) $row['ad_enabled'];
 
-			$this->template->assign_block_vars('ads', [
+			$this->template->assign_block_vars('ads', [ // TODO: convert back to original notation (3.1 does not support this)
 				'NAME'		=> $row['ad_name'],
 				'S_ENABLED'	=> $ad_enabled,
 				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'], // TODO: ACP method

@@ -40,6 +40,11 @@ class main_module
 
 		switch ($admin_controller->get_action())
 		{
+			case 'add':
+
+				$admin_controller->action_add();
+
+			break;
 		}
 
 		$admin_controller->list_ads();
