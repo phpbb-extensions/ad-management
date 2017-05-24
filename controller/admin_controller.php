@@ -113,7 +113,7 @@ class admin_controller
 				'ad_name'		=> $this->request->variable('ad_name', '', true),
 				'ad_note'		=> $this->request->variable('ad_note', '', true),
 				'ad_code'		=> $this->request->variable('ad_code', '', true),
-				'ad_enabled'	=> $this->request->variable('ad_code', false),
+				'ad_enabled'	=> $this->request->variable('ad_enabled', false),
 			);
 
 			// Validate data
