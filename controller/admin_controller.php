@@ -281,15 +281,7 @@ class admin_controller
 	public function action_delete()
 	{
 		$ad_id = $this->request->variable('id', 0);
-
-		$sql = 'SELECT ad_id
-			FROM ' . $this->ads_table . '
-			WHERE ad_id = ' . (int) $ad_id;
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		if ($row)
+		if ($ad_id)
 		{
 			if (confirm_box(true))
 			{
