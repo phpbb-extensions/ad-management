@@ -15,6 +15,8 @@ namespace phpbb\admanagement\controller;
 */
 class admin_controller
 {
+	const MAX_NAME_LENGTH = 255;
+
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
@@ -121,9 +123,9 @@ class admin_controller
 			{
 				$errors[] = $this->user->lang('AD_NAME_REQUIRED');
 			}
-			if (truncate_string($data['ad_name'], 255) !== $data['ad_name'])
+			if (truncate_string($data['ad_name'], self::MAX_NAME_LENGTH) !== $data['ad_name'])
 			{
-				$errors[] = $this->user->lang('AD_NAME_TOO_LONG');
+				$errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 			}
 
 			if (empty($errors))
@@ -185,9 +187,9 @@ class admin_controller
 			{
 				$errors[] = $this->user->lang('AD_NAME_REQUIRED');
 			}
-			if (truncate_string($data['ad_name'], 255) !== $data['ad_name'])
+			if (truncate_string($data['ad_name'], self::MAX_NAME_LENGTH) !== $data['ad_name'])
 			{
-				$errors[] = $this->user->lang('AD_NAME_TOO_LONG');
+				$errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 			}
 
 			if (empty($errors))
