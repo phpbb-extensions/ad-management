@@ -238,12 +238,12 @@ class admin_controller
 		));
 	}
 
-    /**
-     * Enable/disable an advertisement
-     *
-     * @param	bool	$enable	Enable or disable the advertisement?
-     * @return void
-     */
+	/**
+	* Enable/disable an advertisement
+	*
+	* @param	bool	$enable	Enable or disable the advertisement?
+	* @return void
+	*/
 	public function ad_enable($enable)
 	{
 		$sql = 'UPDATE ' . $this->ads_table . '
