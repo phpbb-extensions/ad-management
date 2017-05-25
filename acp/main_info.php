@@ -22,7 +22,7 @@ class main_info
 			'title'		=> 'ACP_ADMANAGEMENT_TITLE',
 			'modes'		=> array(
 				'manage'	=> array(
-					'title'	=> 'ACP_ADMANAGEMENT_TITLE',
+					'title'	=> 'ACP_MANAGE_ADS_TITLE',
 					'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
 					'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
 				),
