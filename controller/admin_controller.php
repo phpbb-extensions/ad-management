@@ -144,7 +144,7 @@ class admin_controller
 				$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
 				$this->db->sql_query($sql);
 
-				trigger_error($this->user->lang('ACP_AD_ADD_SUCCESS') . adm_back_link($this->u_action));
+				$this->success('ACP_AD_ADD_SUCCESS');
 			}
 			else
 			{
@@ -210,7 +210,7 @@ class admin_controller
 					WHERE ad_id = ' . (int) $ad_id;
 				$this->db->sql_query($sql);
 
-				trigger_error($this->user->lang('ACP_AD_EDIT_SUCCESS') . adm_back_link($this->u_action));
+				$this->success('ACP_AD_EDIT_SUCCESS');
 			}
 			else
 			{
@@ -231,7 +231,7 @@ class admin_controller
 
 			if (empty($data))
 			{
-				trigger_error($this->user->lang('ACP_AD_DOES_NOT_EXIST') . adm_back_link($this->u_action), E_USER_WARNING);
+				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
 		}
 
@@ -275,11 +275,11 @@ class admin_controller
 		// Otherwise, show traditional infobox
 		if ($success)
 		{
-			trigger_error($this->user->lang($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS') . adm_back_link($this->u_action));
+			$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS');
 		}
 		else
 		{
-			trigger_error($this->user->lang($enable ? 'ACP_AD_ENABLE_ERRORED' : 'ACP_AD_DISABLE_ERRORED') . adm_back_link($this->u_action), E_USER_WARNING);
+			$this->error($enable ? 'ACP_AD_ENABLE_ERRORED' : 'ACP_AD_DISABLE_ERRORED');
 		}
 	}
 
@@ -302,7 +302,7 @@ class admin_controller
 				// Only notify user on error
 				if (!$this->db->sql_affectedrows())
 				{
-					trigger_error($this->user->lang('ACP_AD_DELETE_ERRORED') . adm_back_link($this->u_action), E_USER_WARNING);
+					$this->error('ACP_AD_DELETE_ERRORED');
 				}
 			}
 			else
@@ -348,5 +348,21 @@ class admin_controller
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
 			'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($this->phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 		));
+	}
+
+	/**
+	* @param	mixed	...$lang	Input to $user->lang()
+	*/
+	protected function success()
+	{
+		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action));
+	}
+
+	/**
+	* @param	mixed	...$lang	Input to $user->lang()
+	*/
+	protected function error()
+	{
+		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
 	}
 }
