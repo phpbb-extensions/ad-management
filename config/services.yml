@@ -10,8 +10,14 @@ services:
             - '@user'
             - '@request'
             - '%phpbb.admanagement.tables.ads%'
+            - '%core.php_ext%'
 
     phpbb.admanagement.listener:
         class: phpbb\admanagement\event\main_listener
+        arguments:
+            - '@request'
+            - '@dbal.conn'
+            - '@template'
+            - '%phpbb.admanagement.tables.ads%'
         tags:
             - { name: event.listener }

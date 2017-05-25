@@ -34,6 +34,7 @@ $lang = array_merge($lang, array(
 	'ACP_ADS_EMPTY'		=> 'No advertisement, yet. Add one with the button below.',
 	'ACP_ADS_ADD'		=> 'Add new advertisement',
 	'ACP_ADS_EDIT'		=> 'Edit advertisement',
+	'AD_PREVIEW'		=> 'Preview this advertisement',
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',

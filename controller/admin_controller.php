@@ -32,6 +32,9 @@ class admin_controller
 	/** @var string ads_table */
 	protected $ads_table;
 
+	/** @var string php_ext */
+	protected $php_ext;
+
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -43,14 +46,16 @@ class admin_controller
 	* @param \phpbb\user						$user		User object
 	* @param \phpbb\request\request				$request	Request object
 	* @param string								$ads_table	Ads table
+	* @param string								$php_ext	PHP extension
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, $ads_table)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, $ads_table, $php_ext)
 	{
 		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;
 		$this->ads_table = $ads_table;
+		$this->php_ext = $php_ext;
 	}
 
 	/**
@@ -322,13 +327,13 @@ class admin_controller
 		{
 			$ad_enabled = (bool) $row['ad_enabled'];
 
-			$this->template->assign_block_vars('ads', array( // TODO: convert back to original notation (3.1 does not support this)
+			$this->template->assign_block_vars('ads', array(
 				'NAME'		=> $row['ad_name'],
 				'S_ENABLED'	=> (int) $ad_enabled,
-				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'], // TODO: ACP method
-				'U_PREVIEW'	=> '', // TODO: frontend logic
-				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'], // TODO: ACP method
-				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'], // TODO: ACP method
+				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_PREVIEW'	=> append_sid(generate_board_url() . '/index.' . $this->php_ext, 'ad_preview=' . $row['ad_id']),
+				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
+				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
 		}
 		$this->db->sql_freeresult($result);
@@ -336,6 +341,7 @@ class admin_controller
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
+			'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 		));
 	}
 }
