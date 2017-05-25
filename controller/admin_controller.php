@@ -219,7 +219,7 @@ class admin_controller
 			$data = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 
-			if (!$data)
+			if (empty($data))
 			{
 				trigger_error($this->user->lang('ACP_AD_DOES_NOT_EXIST') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
