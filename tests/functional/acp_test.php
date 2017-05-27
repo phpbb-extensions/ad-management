@@ -89,7 +89,7 @@ class acp_test extends \phpbb_functional_test_case
 		$form_data = array(
 			'ad_name'		=> 'Functional test name',
 			'ad_note'		=> 'Functional test note',
-			'ad_code'		=> '<img src="https://www.phpbb.com/assets/images/images/logo_phpbb.png" />',
+			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> true,
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
@@ -141,7 +141,7 @@ class acp_test extends \phpbb_functional_test_case
 		$form_data = array(
 			'ad_name'		=> 'Functional test name edited',
 			'ad_note'		=> 'Functional test note',
-			'ad_code'		=> '<img src="https://www.phpbb.com/assets/images/images/logo_phpbb.png" />',
+			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> false,
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
