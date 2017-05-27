@@ -159,72 +159,72 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller->action_add();
 	}
 
-	// /**
-	// * Test data for the test_action_add_submit() function
-	// *
-	// * @return array Array of test data
-	// */
-	// public function action_add_data()
-	// {
-	// 	return array(
-	// 		array('', true, 'Name is required.'),
-	// 		array('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', true, 'Name length is limited to 255 characters.'),
-	// 		array('Unit test advertisement', false, ''),
-	// 	);
-	// }
+	/**
+	* Test data for the test_action_add_submit() function
+	*
+	* @return array Array of test data
+	*/
+	public function action_add_data()
+	{
+		return array(
+			array('', true, 'Name is required.'),
+			array('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', true, 'Name length is limited to 255 characters.'),
+			array('Unit test advertisement', false, ''),
+		);
+	}
 
-	// /**
-	// * Test action_add() method with submitted data
-	// *
-	// * @dataProvider action_add_data
-	// */
-	// public function test_action_add_submit($ad_name, $s_error, $error_msg)
-	// {
-	// 	$controller = $this->get_controller();
+	/**
+	* Test action_add() method with submitted data
+	*
+	* @dataProvider action_add_data
+	*/
+	public function test_action_add_submit($ad_name, $s_error, $error_msg)
+	{
+		$controller = $this->get_controller();
 
-	// 	// TODO: fails because of check_form_key()
+		// TODO: fails because of check_form_key()
 
-	// 	$this->request->expects($this->once())
-	// 		->method('is_set_post')
-	// 		->with('submit')
-	// 		->willReturn(true);
+		$this->request->expects($this->once())
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(true);
 
-	// 	$this->request->method('variable')->will($this->onConsecutiveCalls($ad_name, '', '', false));
+		$this->request->method('variable')->will($this->onConsecutiveCalls($ad_name, '', '', false));
 
-	// 	if ($s_error)
-	// 	{
-	// 		$this->template->expects($this->at(0))
-	// 			->method('assign_vars')
-	// 			->with(array(
-	// 				'S_ERROR'	=> $s_error,
-	// 				'ERROR_MSG'	=> $error_msg,
-	// 			));
+		if ($s_error)
+		{
+			$this->template->expects($this->at(0))
+				->method('assign_vars')
+				->with(array(
+					'S_ERROR'	=> $s_error,
+					'ERROR_MSG'	=> $error_msg,
+				));
 
-	// 		$this->template->expects($this->at(1))
-	// 			->method('assign_vars')
-	// 			->with(array(
-	// 				'AD_NAME'		=> $ad_name,
-	// 				'AD_NOTE'		=> '',
-	// 				'AD_CODE'		=> '',
-	// 				'AD_ENABLED'	=> false,
-	// 			));
-	// 	}
-	// 	else
-	// 	{
-	// 		$sql = 'SELECT * FROM ' . $this->ads_table . '
-	// 			WHERE ad_name = "' . $ad_name . '"';
-	// 		$result = $this->db->sql_query($sql);
-	// 		$row = $this->db->sql_fetchrow($result);
+			$this->template->expects($this->at(1))
+				->method('assign_vars')
+				->with(array(
+					'AD_NAME'		=> $ad_name,
+					'AD_NOTE'		=> '',
+					'AD_CODE'		=> '',
+					'AD_ENABLED'	=> false,
+				));
+		}
+		else
+		{
+			$sql = 'SELECT * FROM ' . $this->ads_table . '
+				WHERE ad_name = "' . $ad_name . '"';
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
 
-	// 		$this->assertEquals('', $row['ad_note']);
-	// 		$this->assertEquals('', $row['ad_code']);
-	// 		$this->assertEquals(0, $row['ad_enabled']);
-	// 	}
+			$this->assertEquals('', $row['ad_note']);
+			$this->assertEquals('', $row['ad_code']);
+			$this->assertEquals(0, $row['ad_enabled']);
+		}
 
-	// 	// TODO: fails because trigger_error is called
+		// TODO: fails because trigger_error is called
 
-	// 	$controller->action_add();
-	// }
+		$controller->action_add();
+	}
 
 	/**
 	* Test data for the test_ad_enable() function
