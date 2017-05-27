@@ -228,7 +228,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
-			$this->assertEquals(0, $row['ad_enabled']);
+			$this->assertEquals('0', $row['ad_enabled']);
 		}
 	}
 
