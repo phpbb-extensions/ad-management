@@ -256,10 +256,14 @@ class admin_controller
 					WHERE ad_id = ' . (int) $ad_id;
 				$this->db->sql_query($sql);
 
-				// Only notify user on error
+				// Only notify user on error or if not ajax
 				if (!$this->db->sql_affectedrows())
 				{
 					$this->error('ACP_AD_DELETE_ERRORED');
+				}
+				else if (!$this->request->is_ajax())
+				{
+					$this->success('ACP_AD_DELETE_SUCCESS');
 				}
 			}
 			else
