@@ -185,8 +185,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		// TODO: fails because of check_form_key()
-
 		$this->request->expects($this->once())
 			->method('is_set_post')
 			->with('submit')
@@ -278,7 +276,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals(!$enable, $ad_enabled);
 		}
 
-		// TODO: should check for trigger_error lang here
+		//  should check for trigger_error lang here
 	}
 
 	/**
@@ -289,8 +287,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller = $this->get_controller();
 
 		$this->request->method('variable')->willReturn(1);
-
-		// TODO: how to set `confirm_box(true) == true`?
 
 		$this->setExpectedTriggerError(E_USER_NOTICE);
 
