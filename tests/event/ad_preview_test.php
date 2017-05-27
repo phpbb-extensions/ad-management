@@ -35,7 +35,7 @@ class ad_preview_test extends main_listener_base
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
-				'AD_PREVIEW'	=> true,
+				'S_AD_PREVIEW'	=> true,
 				'AD_CODE'		=> 'admanagementcode',
 			));
 

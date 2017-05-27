@@ -75,7 +75,7 @@ class main_listener implements EventSubscriberInterface
 		if (!empty($ad_code))
 		{
 			$this->template->assign_vars(array(
-				'AD_PREVIEW'	=> true,
+				'S_AD_PREVIEW'	=> true,
 				'AD_CODE'		=> htmlspecialchars_decode($ad_code),
 			));
 		}
