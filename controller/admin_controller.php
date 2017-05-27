@@ -66,11 +66,16 @@ class admin_controller
 		$this->phpbb_admin_path = $phpbb_admin_path;
 	}
 
+	/**
+	* Process user request
+	*
+	* @return void
+	*/
 	public function main()
 	{
-		$this->load_lang();
+		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
 
-		switch ($this->get_action())
+		switch ($this->request->variable('action', ''))
 		{
 			case 'add':
 
@@ -118,16 +123,6 @@ class admin_controller
 	}
 
 	/**
-	* Load module-specific language
-	*
-	* @return void
-	*/
-	public function load_lang()
-	{
-		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
-	}
-
-	/**
 	* Get ACP page title for Ads module
 	*
 	* @return string	Language string for Ads ACP module
@@ -135,16 +130,6 @@ class admin_controller
 	public function get_page_title()
 	{
 		return $this->user->lang('ACP_ADMANAGEMENT_TITLE');
-	}
-
-	/**
-	* Get action
-	*
-	* @return string	Ads module action
-	*/
-	public function get_action()
-	{
-		return $this->request->variable('action', '');
 	}
 
 	/**

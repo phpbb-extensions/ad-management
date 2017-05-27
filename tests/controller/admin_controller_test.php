@@ -125,22 +125,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	* Test get_action() method
-	*/
-	public function test_get_action()
-	{
-		$controller = $this->get_controller();
-
-		$this->request->expects($this->once())
-			->method('variable')
-			->with('action', '')
-			->willReturn('default');
-
-		$action = $controller->get_action();
-		$this->assertEquals($action, 'default');
-	}
-
-	/**
 	* Test action_add() method without submitted data
 	*/
 	public function test_action_add_no_submit()
