@@ -351,7 +351,9 @@ class admin_controller
 	}
 
 	/**
-	* @param	mixed	...$lang	Input to $user->lang()
+	* Print success message.
+	*
+	* It takes arguments in the form of a language key, followed by language substitution values.
 	*/
 	protected function success()
 	{
@@ -359,7 +361,9 @@ class admin_controller
 	}
 
 	/**
-	* @param	mixed	...$lang	Input to $user->lang()
+	* Print error message.
+	*
+	* It takes arguments in the form of a language key, followed by language substitution values.
 	*/
 	protected function error()
 	{
