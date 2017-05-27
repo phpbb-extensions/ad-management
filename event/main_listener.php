@@ -69,14 +69,14 @@ class main_listener implements EventSubscriberInterface
 			FROM ' . $this->ads_table . '
 			WHERE ad_id = ' . (int) $ad_preview;
 		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
+		$ad_code = $this->db->sql_fetchfield('ad_code', $result);
 		$this->db->sql_freeresult($result);
 
-		if (!empty($row))
+		if (!empty($ad_code))
 		{
 			$this->template->assign_vars(array(
 				'AD_PREVIEW'	=> true,
-				'AD_CODE'		=> htmlspecialchars_decode($row['ad_code']),
+				'AD_CODE'		=> htmlspecialchars_decode($ad_code),
 			));
 		}
 	}
