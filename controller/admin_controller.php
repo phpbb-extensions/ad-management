@@ -66,6 +66,46 @@ class admin_controller
 		$this->phpbb_admin_path = $phpbb_admin_path;
 	}
 
+	public function main()
+	{
+		$this->load_lang();
+
+		switch ($this->get_action())
+		{
+			case 'add':
+
+				$this->action_add();
+
+			break;
+
+			case 'edit':
+
+				$this->action_edit();
+
+			break;
+
+			case 'enable':
+
+				$this->ad_enable(true);
+
+			break;
+
+			case 'disable':
+
+				$this->ad_enable(false);
+
+			break;
+
+			case 'delete':
+
+				$this->action_delete();
+
+			break;
+		}
+
+		$this->list_ads();
+	}
+
 	/**
 	* Set page url
 	*

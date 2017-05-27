@@ -32,45 +32,9 @@ class main_module
 		// Load a template from adm/style for our ACP page
 		$this->tpl_name = 'manage_ads';
 
-		// Load module-specific language
-		$admin_controller->load_lang();
-
 		// Set the page title for our ACP page
 		$this->page_title = $admin_controller->get_page_title();
 
-		switch ($admin_controller->get_action())
-		{
-			case 'add':
-
-				$admin_controller->action_add();
-
-			break;
-
-			case 'edit':
-
-				$admin_controller->action_edit();
-
-			break;
-
-			case 'enable':
-
-				$admin_controller->ad_enable(true);
-
-			break;
-
-			case 'disable':
-
-				$admin_controller->ad_enable(false);
-
-			break;
-
-			case 'delete':
-
-				$admin_controller->action_delete();
-
-			break;
-		}
-
-		$admin_controller->list_ads();
+		$admin_controller->main();
 	}
 }
