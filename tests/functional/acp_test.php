@@ -78,7 +78,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Confirm error when submitting too long ad name
 		$form_data = array(
-			'ad_name'		=> 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.',
+			'ad_name'		=> str_repeat('a', 256),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
@@ -130,7 +130,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Confirm error when submitting too long ad name
 		$form_data = array(
-			'ad_name'		=> 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.',
+			'ad_name'		=> str_repeat('a', 256),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);

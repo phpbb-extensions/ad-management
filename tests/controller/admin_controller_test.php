@@ -168,7 +168,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		return array(
 			array('', true, 'Name is required.'),
-			array('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', true, 'Name length is limited to 255 characters.'),
+			array(str_repeat('a', 256), true, 'Name length is limited to 255 characters.'),
 			array('Unit test advertisement', false, ''),
 		);
 	}
