@@ -288,11 +288,11 @@ class admin_controller
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$ad_enabled = (bool) $row['ad_enabled'];
+			$ad_enabled = (int) $row['ad_enabled'];
 
 			$this->template->assign_block_vars('ads', array(
 				'NAME'		=> $row['ad_name'],
-				'S_ENABLED'	=> (int) $ad_enabled,
+				'S_ENABLED'	=> $ad_enabled,
 				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
 				'U_PREVIEW'	=> append_sid(generate_board_url() . '/index.' . $this->php_ext, 'ad_preview=' . $row['ad_id']),
 				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
