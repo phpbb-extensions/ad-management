@@ -66,10 +66,13 @@ class admin_controller_test extends \phpbb_database_test_case
 		global $phpbb_root_path, $phpEx;
 		global $phpbb_extension_manager, $phpbb_dispatcher, $template, $request, $config, $user;
 
+		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		$lang = new \phpbb\language\language($lang_loader);
+
 		// Load/Mock classes required by the controller class
 		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
-		$this->user = new \phpbb\user('\phpbb\datetime');
+		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
 		$this->php_ext = $phpEx;
@@ -84,7 +87,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$request = new \phpbb_mock_request();
 		$config = new \phpbb\config\config(array());
 		set_config(null, null, null, $config);
-		$user = new \phpbb\user('\phpbb\datetime');
+		$user = new \phpbb\user($lang, '\phpbb\datetime');
 	}
 
 	/**
