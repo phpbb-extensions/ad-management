@@ -114,7 +114,7 @@ class admin_controller
 	*/
 	public function action_add()
 	{
-		$errors = array();
+		$errors = array(); // TODO: remove
 
 		add_form_key('phpbb/admanagement/add');
 		if ($this->request->is_set_post('submit'))
@@ -155,7 +155,7 @@ class admin_controller
 	public function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
-		$errors = array();
+		$errors = array(); // TODO: remove
 
 		add_form_key('phpbb/admanagement/edit');
 		if ($this->request->is_set_post('submit'))
