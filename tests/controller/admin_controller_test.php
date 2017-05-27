@@ -298,4 +298,22 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->assertEqual(true, empty($row));
 	}
+
+	/**
+	* Test list_ads() method
+	*/
+	public function test_list_ads()
+	{
+		$controller = $this->get_controller();
+
+		$this->template->expects($this->atLeastOnce())->method('assign_block_vars');
+		$this->template->expects($this->once())
+			->method('assign_vars')
+			->with(array(
+				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
+				'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($this->phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
+			));
+
+		$controller->list_ads();
+	}
 }
