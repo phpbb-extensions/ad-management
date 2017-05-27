@@ -10,9 +10,7 @@
 
 namespace phpbb\admanagement\controller;
 
-require_once dirname(__FILE__) . '/../../../../../includes/functions.php';
-require_once dirname(__FILE__) . '/../../../../../includes/functions_content.php';
-require_once dirname(__FILE__) . '/../../../../../includes/functions_acp.php';
+require_once __DIR__ . '/../../../../../includes/functions_acp.php';
 
 class admin_controller_test extends \phpbb_database_test_case
 {
