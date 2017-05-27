@@ -110,9 +110,53 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->phpbb_admin_path
 		);
 		$controller->set_page_url($this->u_action);
-		$controller->load_lang();
 
 		return $controller;
+	}
+
+	/**
+	* Data for test_main
+	*
+	* @return array Array of test data
+	*/
+	public function data_main()
+	{
+		return array(
+			array('add', 'action_add'),
+			array('edit', 'action_edit'),
+			array('enable', 'ad_enable'),
+			array('disable', 'ad_enable'),
+			array('delete', 'action_delete'),
+		);
+	}
+	/**
+	* Test main()
+	*
+	* @dataProvider data_main
+	*/
+	public function test_main($action, $expected)
+	{
+		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
+			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete'))
+			->setConstructorArgs(array(
+				$this->db,
+				$this->template,
+				$this->user,
+				$this->request,
+				$this->ads_table,
+				$this->php_ext,
+				$this->phpbb_admin_path,
+			))
+			->getMock();
+
+		$this->request->expects($this->once())
+			->method('variable')
+			->willReturn($action);
+
+		$controller->expects($this->once())
+			->method($expected);
+
+		$controller->main();
 	}
 
 	/**
