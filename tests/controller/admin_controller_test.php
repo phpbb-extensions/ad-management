@@ -213,7 +213,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 		else
 		{
-			$this->setExpectedTriggerError(E_USER_NOTICE);
+			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_ADD_SUCCESS');
 		}
 
 		$controller->action_add();
@@ -240,10 +240,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function ad_enable_data()
 	{
 		return array(
-			array(0, true),
-			array(0, false),
-			array(1, false),
-			array(1, true),
+			array(0, true, 'ACP_AD_ENABLE_ERRORED'),
+			array(0, false, 'ACP_AD_DISABLE_ERRORED'),
+			array(1, false, 'ACP_AD_DISABLE_SUCCESS'),
+			array(1, true, 'ACP_AD_ENABLE_SUCCESS'),
 		);
 	}
 
@@ -252,7 +252,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider ad_enable_data
 	*/
-	public function test_ad_enable($ad_id, $enable)
+	public function test_ad_enable($ad_id, $enable, $err_msg)
 	{
 		$controller = $this->get_controller();
 
@@ -261,7 +261,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('id', 0)
 			->willReturn($ad_id);
 		
-		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING);
+		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 
 		$controller->ad_enable($enable);
 
@@ -276,8 +276,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			$this->assertEquals(!$enable, $ad_enabled);
 		}
-
-		//  should check for trigger_error lang here
 	}
 
 	/**
@@ -289,7 +287,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->method('variable')->willReturn(1);
 
-		$this->setExpectedTriggerError(E_USER_NOTICE);
+		$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 
 		$controller->action_delete();
 
