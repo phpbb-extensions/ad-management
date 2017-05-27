@@ -190,7 +190,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('submit')
 			->willReturn(true);
 
-		$this->request->method('variable')->will($this->onConsecutiveCalls($ad_name, '', '', false));
+		$this->request->method('variable')
+			->will($this->onConsecutiveCalls($ad_name, '', '', false));
 
 		if ($s_error)
 		{
