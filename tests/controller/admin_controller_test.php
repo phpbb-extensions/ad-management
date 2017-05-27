@@ -170,8 +170,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array('', true, 'Name is required.'),
-			array(str_repeat('a', 256), true, 'Name length is limited to 255 characters.'),
+			array('', true, 'AD_NAME_REQUIRED'),
+			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG'),
 			array('Unit test advertisement', false, ''),
 		);
 	}
