@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\controller;
+namespace phpbb\admanagement\controller;
 
 require_once dirname(__FILE__) . '/../../../../../includes/functions.php';
 require_once dirname(__FILE__) . '/../../../../../includes/functions_content.php';
@@ -16,6 +16,11 @@ require_once dirname(__FILE__) . '/../../../../../includes/functions_acp.php';
 
 class admin_controller_test extends \phpbb_database_test_case
 {
+	/** @var bool A return value for confirm_box() */
+	public static $confirm = true;
+	/** @var bool A return value for check_form_key() */
+	public static $valid_form = true;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\db\driver\driver_interface */
 	protected $db;
 
@@ -211,6 +216,14 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 		else
 		{
+			$this->setExpectedTriggerError(E_USER_NOTICE);
+		}
+
+		$controller->action_add();
+
+		// Check ad is in the DB
+		if (!$s_error)
+		{
 			$sql = 'SELECT * FROM ' . $this->ads_table . '
 				WHERE ad_name = "' . $ad_name . '"';
 			$result = $this->db->sql_query($sql);
@@ -220,10 +233,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals(0, $row['ad_enabled']);
 		}
-
-		// TODO: fails because trigger_error is called
-
-		$controller->action_add();
 	}
 
 	/**
@@ -254,10 +263,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('variable')
 			->with('id', 0)
 			->willReturn($ad_id);
+		
+		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING);
 
 		$controller->ad_enable($enable);
-
-		// TODO: fails here because trigger_error is called
 
 		if ($ad_id)
 		{
@@ -285,9 +294,9 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		// TODO: how to set `confirm_box(true) == true`?
 
-		$controller->action_delete();
+		$this->setExpectedTriggerError(E_USER_NOTICE);
 
-		// TODO: fails here because trigger_error is called
+		$controller->action_delete();
 
 		$sql = 'SELECT ad_id
 			FROM ' . $this->ads_table . '
@@ -316,4 +325,32 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller->list_ads();
 	}
+}
+
+/**
+ * Mock confirm_box()
+ * Note: use the same namespace as the admin_controller
+ *
+ * @return bool
+ */
+function confirm_box()
+{
+	return \phpbb\admanagement\controller\admin_controller_test::$confirm;
+}
+/**
+ * Mock add_form_key()
+ * Note: use the same namespace as the admin_controller
+ */
+function add_form_key()
+{
+}
+/**
+ * Mock check_form_key()
+ * Note: use the same namespace as the admin_controller
+ *
+ * @return bool
+ */
+function check_form_key()
+{
+	return \phpbb\admanagement\controller\admin_controller_test::$valid_form;
 }
