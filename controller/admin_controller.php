@@ -311,8 +311,8 @@ class admin_controller
 					'id'		=> $ad_id,
 					'i'			=> $this->request->variable('i', ''),
 					'mode'		=> $this->request->variable('mode', ''),
-					'action'	=> 'delete'))
-				);
+					'action'	=> 'delete'
+				)));
 			}
 		}
 	}
