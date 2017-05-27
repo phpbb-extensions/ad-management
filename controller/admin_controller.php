@@ -325,7 +325,7 @@ class admin_controller
 	/**
 	* Get admin form data.
 	*
-	* @return void
+	* @return	array	Form data
 	*/
 	protected function get_form_data()
 	{
