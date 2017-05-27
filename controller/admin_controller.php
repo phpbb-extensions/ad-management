@@ -41,6 +41,9 @@ class admin_controller
 	/** @var string Custom form action */
 	protected $u_action;
 
+	/** @var array Form validation errors */
+	protected $errors = array();
+
 	/**
 	* Constructor
 	*
@@ -116,29 +119,13 @@ class admin_controller
 		add_form_key('phpbb/admanagement/add');
 		if ($this->request->is_set_post('submit'))
 		{
-			if (!check_form_key('phpbb/admanagement/add'))
-			{
-				$errors[] = $this->user->lang('FORM_INVALID');
-			}
+			$this->check_form_key('phpbb/admanagement/add');
 
-			$data = array(
-				'ad_name'		=> $this->request->variable('ad_name', '', true),
-				'ad_note'		=> $this->request->variable('ad_note', '', true),
-				'ad_code'		=> $this->request->variable('ad_code', '', true),
-				'ad_enabled'	=> $this->request->variable('ad_enabled', false),
-			);
+			$data = $this->get_form_data();
 
-			// Validate data
-			if ($data['ad_name'] === '')
-			{
-				$errors[] = $this->user->lang('AD_NAME_REQUIRED');
-			}
-			if (truncate_string($data['ad_name'], self::MAX_NAME_LENGTH) !== $data['ad_name'])
-			{
-				$errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
-			}
+			$this->validate($data);
 
-			if (empty($errors))
+			if (empty($this->errors))
 			{
 				// Insert the ad data to the database
 				$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
@@ -148,15 +135,8 @@ class admin_controller
 			}
 			else
 			{
-				$this->template->assign_vars(array(
-					'S_ERROR'			=> (bool) count($errors),
-					'ERROR_MSG'			=> count($errors) ? implode('<br />', $errors) : '',
-
-					'AD_NAME'		=> $data['ad_name'],
-					'AD_NOTE'		=> $data['ad_note'],
-					'AD_CODE'		=> $data['ad_code'],
-					'AD_ENABLED'	=> $data['ad_enabled'],
-				));
+				$this->assign_errors();
+				$this->assign_form_data($data);
 			}
 		}
 
@@ -180,29 +160,13 @@ class admin_controller
 		add_form_key('phpbb/admanagement/edit');
 		if ($this->request->is_set_post('submit'))
 		{
-			if (!check_form_key('phpbb/admanagement/edit'))
-			{
-				$errors[] = $this->user->lang('FORM_INVALID');
-			}
+			$this->check_form_key('phpbb/admanagement/edit');
 
-			$data = array(
-				'ad_name'		=> $this->request->variable('ad_name', '', true),
-				'ad_note'		=> $this->request->variable('ad_note', '', true),
-				'ad_code'		=> $this->request->variable('ad_code', '', true),
-				'ad_enabled'	=> $this->request->variable('ad_enabled', false),
-			);
+			$data = $this->get_form_data();
 
-			// Validate data
-			if ($data['ad_name'] === '')
-			{
-				$errors[] = $this->user->lang('AD_NAME_REQUIRED');
-			}
-			if (truncate_string($data['ad_name'], self::MAX_NAME_LENGTH) !== $data['ad_name'])
-			{
-				$errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
-			}
+			$this->validate($data);
 
-			if (empty($errors))
+			if (empty($this->errors))
 			{
 				// Insert the ad data to the database
 				$sql = 'UPDATE ' . $this->ads_table . '
@@ -214,10 +178,7 @@ class admin_controller
 			}
 			else
 			{
-				$this->template->assign_vars(array(
-					'S_ERROR'			=> (bool) count($errors),
-					'ERROR_MSG'			=> count($errors) ? implode('<br />', $errors) : '',
-				));
+				$this->assign_errors();
 			}
 		}
 		else
@@ -240,12 +201,8 @@ class admin_controller
 			'S_EDIT_AD'	=> true,
 			'EDIT_ID'	=> $ad_id,
 			'U_BACK'	=> $this->u_action,
-
-			'AD_NAME'		=> $data['ad_name'],
-			'AD_NOTE'		=> $data['ad_note'],
-			'AD_CODE'		=> $data['ad_code'],
-			'AD_ENABLED'	=> $data['ad_enabled'],
 		));
+		$this->assign_form_data($data);
 	}
 
 	/**
@@ -347,6 +304,82 @@ class admin_controller
 		$this->template->assign_vars(array(
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
 			'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($this->phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
+		));
+	}
+
+	/**
+	* Check the form key.
+	*
+	* @param	string	$form_name	The name of the form.
+	* @return void
+	*/
+	protected function check_form_key($form_name)
+	{
+		if (!check_form_key($form_name))
+		{
+			$this->errors[] = $this->user->lang('FORM_INVALID');
+		}
+	}
+
+	/**
+	* Get admin form data.
+	*
+	* @return void
+	*/
+	protected function get_form_data()
+	{
+		return array(
+			'ad_name'		=> $this->request->variable('ad_name', '', true),
+			'ad_note'		=> $this->request->variable('ad_note', '', true),
+			'ad_code'		=> $this->request->variable('ad_code', '', true),
+			'ad_enabled'	=> $this->request->variable('ad_enabled', false),
+		);
+	}
+
+	/**
+	* Validate form data.
+	*
+	* @param	array	$data	The form data.
+	* @return void
+	*/
+	protected function validate($data)
+	{
+		if ($data['ad_name'] === '')
+		{
+			$this->errors[] = $this->user->lang('AD_NAME_REQUIRED');
+		}
+		if (truncate_string($data['ad_name'], self::MAX_NAME_LENGTH) !== $data['ad_name'])
+		{
+			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
+		}
+	}
+
+	/**
+	* Assign errors to the template.
+	*
+	* @return void
+	*/
+	protected function assign_errors()
+	{
+		$this->template->assign_vars(array(
+			'S_ERROR'			=> (bool) count($this->errors),
+			'ERROR_MSG'			=> count($this->errors) ? implode('<br />', $this->errors) : '',
+		));
+	}
+
+	/**
+	* Assign form data to the template.
+	*
+	* @param	array	$data	The form data.
+	* @return void
+	*/
+	protected function assign_form_data($data)
+	{
+		$this->template->assign_vars(array(
+			'AD_NAME'		=> $data['ad_name'],
+			'AD_NOTE'		=> $data['ad_note'],
+			'AD_CODE'		=> $data['ad_code'],
+			'AD_ENABLED'	=> $data['ad_enabled'],
 		));
 	}
 
