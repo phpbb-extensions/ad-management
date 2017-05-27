@@ -277,7 +277,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$ad_enabled = (bool) $this->db->sql_fetchfield('ad_enabled', $result);
 			$this->db->sql_freeresult($result);
 
-			$this->assertEquals(!$enabled, $ad_enabled);
+			$this->assertEquals(!$enable, $ad_enabled);
 		}
 
 		// TODO: should check for trigger_error lang here
