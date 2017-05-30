@@ -388,7 +388,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		if (!$s_error)
 		{
 			$sql = 'SELECT * FROM ' . $this->ads_table . '
-				WHERE ad_id = "' . $ad_id . '"';
+				WHERE ad_id = "' . (int) $ad_id . '"';
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 
@@ -443,7 +443,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		{
 			$sql = 'SELECT ad_enabled
 				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . $ad_id;
+				WHERE ad_id = ' . (int) $ad_id;
 			$result = $this->db->sql_query($sql);
 			$ad_enabled = (bool) $this->db->sql_fetchfield('ad_enabled', $result);
 			$this->db->sql_freeresult($result);
@@ -510,7 +510,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		{
 			$sql = 'SELECT ad_id
 				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . $ad_id;
+				WHERE ad_id = ' . (int) $ad_id;
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
