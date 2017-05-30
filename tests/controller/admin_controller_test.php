@@ -199,9 +199,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array('', true, 'AD_NAME_REQUIRED'),
-			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG'),
-			array('Unit test advertisement', false, ''),
+			array('', true, 'AD_NAME_REQUIRED', true),
+			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
+			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
+			array('Unit test advertisement', false, '', true),
 		);
 	}
 
@@ -210,8 +211,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_add_data
 	*/
-	public function test_action_add_submit($ad_name, $s_error, $error_msg)
+	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form)
 	{
+		self::$valid_form = $valid_form;
+
 		$controller = $this->get_controller();
 
 		$this->request->expects($this->once())
@@ -326,10 +329,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_edit_data()
 	{
 		return array(
-			array(0, 'Unit test advertisement', true, ''),
-			array(1, '', true, 'AD_NAME_REQUIRED'),
-			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG'),
-			array(1, 'Unit test advertisement', false, ''),
+			array(0, 'Unit test advertisement', true, '', true),
+			array(1, '', true, 'AD_NAME_REQUIRED', true),
+			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
+			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
+			array(1, 'Unit test advertisement', false, '', true),
 		);
 	}
 
@@ -338,8 +342,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_edit_data
 	*/
-	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg)
+	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form)
 	{
+		self::$valid_form = $valid_form;
+
 		$controller = $this->get_controller();
 
 		$this->request->expects($this->any())
