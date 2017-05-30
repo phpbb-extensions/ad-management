@@ -297,9 +297,11 @@ class admin_controller
 	*/
 	protected function ad_enable($enable)
 	{
+		$ad_id = $this->request->variable('id', 0);
+
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ad_enabled = ' . (int) $enable . '
-			WHERE ad_id = ' . (int) $this->request->variable('id', 0);
+			WHERE ad_id = ' . (int) $ad_id;
 		$this->db->sql_query($sql);
 		$success = (bool) $this->db->sql_affectedrows();
 
