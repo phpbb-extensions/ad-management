@@ -158,7 +158,6 @@ class admin_controller
 			}
 			else
 			{
-				$this->assign_errors();
 				$this->assign_form_data($data);
 			}
 		}
@@ -197,10 +196,6 @@ class admin_controller
 				$this->db->sql_query($sql);
 
 				$this->success('ACP_AD_EDIT_SUCCESS');
-			}
-			else
-			{
-				$this->assign_errors();
 			}
 		}
 		else
@@ -381,19 +376,6 @@ class admin_controller
 	}
 
 	/**
-	* Assign errors to the template.
-	*
-	* @return void
-	*/
-	protected function assign_errors()
-	{
-		$this->template->assign_vars(array(
-			'S_ERROR'			=> (bool) count($this->errors),
-			'ERROR_MSG'			=> count($this->errors) ? implode('<br />', $this->errors) : '',
-		));
-	}
-
-	/**
 	* Assign form data to the template.
 	*
 	* @param	array	$data	The form data.
@@ -402,6 +384,9 @@ class admin_controller
 	protected function assign_form_data($data)
 	{
 		$this->template->assign_vars(array(
+			'S_ERROR'			=> (bool) count($this->errors),
+			'ERROR_MSG'			=> count($this->errors) ? implode('<br />', $this->errors) : '',
+
 			'AD_NAME'		=> $data['ad_name'],
 			'AD_NOTE'		=> $data['ad_note'],
 			'AD_CODE'		=> $data['ad_code'],

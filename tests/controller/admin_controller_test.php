@@ -227,13 +227,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->template->expects($this->at(0))
 				->method('assign_vars')
 				->with(array(
-					'S_ERROR'	=> $s_error,
-					'ERROR_MSG'	=> $error_msg,
-				));
-
-			$this->template->expects($this->at(1))
-				->method('assign_vars')
-				->with(array(
+					'S_ERROR'		=> $s_error,
+					'ERROR_MSG'		=> $error_msg,
 					'AD_NAME'		=> $ad_name,
 					'AD_NOTE'		=> '',
 					'AD_CODE'		=> '',
