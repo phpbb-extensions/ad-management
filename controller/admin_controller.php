@@ -382,8 +382,8 @@ class admin_controller
 	protected function assign_form_data($data)
 	{
 		$this->template->assign_vars(array(
-			'S_ERROR'			=> (bool) count($this->errors),
-			'ERROR_MSG'			=> count($this->errors) ? implode('<br />', $this->errors) : '',
+			'S_ERROR'		=> (bool) count($this->errors),
+			'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
 
 			'AD_NAME'		=> $data['ad_name'],
 			'AD_NOTE'		=> $data['ad_note'],
