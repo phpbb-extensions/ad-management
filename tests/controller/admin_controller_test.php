@@ -454,8 +454,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_delete_data()
 	{
 		return array(
-			array(999, true),
-			array(1, false),
+			array(999, true, true),
+			array(1, false, false),
+			array(1, false, true),
 		);
 	}
 	/**
@@ -463,33 +464,53 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_delete_data
 	*/
-	public function test_action_delete($ad_id, $error)
+	public function test_action_delete($ad_id, $error, $confirm)
 	{
+		self::$confirm = $confirm;
+
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(0))
 			->method('variable')
+			->with('id', 0)
 			->willReturn($ad_id);
 
-		if ($error)
+		if (!$confirm)
 		{
-			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
+			$this->request->expects($this->at(1))
+				->method('variable')
+				->with('i', '')
+				->willReturn('');
+			$this->request->expects($this->at(2))
+				->method('variable')
+				->with('mode', '')
+				->willReturn('');
 		}
 		else
 		{
-			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
+			if ($error)
+			{
+				$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
+			}
+			else
+			{
+				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
+			}
 		}
 
 		$controller->action_delete();
 
-		$sql = 'SELECT ad_id
-			FROM ' . $this->ads_table . '
-			WHERE ad_id = ' . $ad_id;
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
+		if ($confirm)
+		{
+			$sql = 'SELECT ad_id
+				FROM ' . $this->ads_table . '
+				WHERE ad_id = ' . $ad_id;
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
 
-		$this->assertTrue(empty($row));
+			$this->assertTrue(empty($row));
+		}
 	}
 
 	/**
