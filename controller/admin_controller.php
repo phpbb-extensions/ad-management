@@ -156,10 +156,8 @@ class admin_controller
 
 				$this->success('ACP_AD_ADD_SUCCESS');
 			}
-			else
-			{
-				$this->assign_form_data($data);
-			}
+
+			$this->assign_form_data($data);
 		}
 
 		// Set output vars for display in the template
