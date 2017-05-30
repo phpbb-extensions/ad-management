@@ -38,7 +38,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	protected $php_ext;
 
 	/** @var string */
-	protected $phpbb_admin_path;
+	protected $ext_path;
 
 	/** @var string */
 	protected $u_action;
@@ -79,9 +79,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
 		$this->php_ext = $phpEx;
-		$this->phpbb_admin_path = $phpbb_root_path . 'adm/';
+		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
 	
-		$this->u_action = $this->phpbb_admin_path . 'index.php?i=-phpbb-admanagement-acp-main_module&mode=manage';
+		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage';
 
 		// globals
 		$phpbb_extension_manager = new \phpbb_mock_extension_manager($phpbb_root_path);
@@ -107,7 +107,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->request,
 			$this->ads_table,
 			$this->php_ext,
-			$this->phpbb_admin_path
+			$this->ext_path
 		);
 		$controller->set_page_url($this->u_action);
 
@@ -145,7 +145,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->request,
 				$this->ads_table,
 				$this->php_ext,
-				$this->phpbb_admin_path,
+				$this->ext_path,
 			))
 			->getMock();
 
@@ -347,7 +347,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-				'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($this->phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
+				'ICON_PREVIEW'	=> '<img src="' . $this->ext_path . 'adm/images/icon_preview.png" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 			));
 
 		$controller->list_ads();

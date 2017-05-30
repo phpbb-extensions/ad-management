@@ -11,7 +11,7 @@ services:
             - '@request'
             - '%phpbb.admanagement.tables.ads%'
             - '%core.php_ext%'
-            - '%core.root_path%adm/'
+            - '%core.root_path%ext/phpbb/admanagement/'
 
     phpbb.admanagement.listener:
         class: phpbb\admanagement\event\main_listener

@@ -35,8 +35,8 @@ class admin_controller
 	/** @var string php_ext */
 	protected $php_ext;
 
-	/** @var string phpbb_admin_path */
-	protected $phpbb_admin_path;
+	/** @var string ext_path */
+	protected $ext_path;
 
 	/** @var string Custom form action */
 	protected $u_action;
@@ -53,9 +53,9 @@ class admin_controller
 	* @param \phpbb\request\request				$request			Request object
 	* @param string								$ads_table			Ads table
 	* @param string								$php_ext			PHP extension
-	* @param string								$phpbb_admin_path	Path to admin
+	* @param string								$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, $ads_table, $php_ext, $phpbb_admin_path)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, $ads_table, $php_ext, $ext_path)
 	{
 		$this->db = $db;
 		$this->template = $template;
@@ -63,7 +63,7 @@ class admin_controller
 		$this->request = $request;
 		$this->ads_table = $ads_table;
 		$this->php_ext = $php_ext;
-		$this->phpbb_admin_path = $phpbb_admin_path;
+		$this->ext_path = $ext_path;
 	}
 
 	/**
@@ -281,7 +281,7 @@ class admin_controller
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-			'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($this->phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
+			'ICON_PREVIEW'	=> '<img src="' . $this->ext_path . 'adm/images/icon_preview.png" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 		));
 	}
 
