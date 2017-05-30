@@ -47,4 +47,10 @@ $lang = array_merge($lang, array(
 	'ACP_AD_ENABLE_ERRORED'		=> 'There was an error enabling the advertisement!',
 	'ACP_AD_DISABLE_SUCCESS'	=> 'Advertisement disabled successfully!',
 	'ACP_AD_DISABLE_ERRORED'	=> 'There was an error disabling the advertisement!',
+
+	// Template locations
+	'AD_ABOVE_HEADER'		=> 'Above header',
+	'AD_ABOVE_HEADER_DESC'	=> 'Displays on every page before page header.',
+	'AD_BELOW_HEADER'		=> 'Below header',
+	'AD_BELOW_HEADER_DESC'	=> 'Displays on every page after page header.',
 ));

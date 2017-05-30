@@ -1,5 +1,6 @@
 imports:
     - { resource: tables.yml }
+    - { resource: location.yml }
 
 services:
     phpbb.admanagement.admin.controller:
@@ -9,7 +10,9 @@ services:
             - '@template'
             - '@user'
             - '@request'
+            - '@phpbb.admanagement.location.manager'
             - '%phpbb.admanagement.tables.ads%'
+            - '%phpbb.admanagement.tables.ad_locations%'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
 
@@ -19,6 +22,8 @@ services:
             - '@request'
             - '@dbal.conn'
             - '@template'
+            - '@phpbb.admanagement.location.manager'
             - '%phpbb.admanagement.tables.ads%'
+            - '%phpbb.admanagement.tables.ad_locations%'
         tags:
             - { name: event.listener }

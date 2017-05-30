@@ -29,8 +29,14 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/** @var \phpbb\admanagement\location\manager */
+	protected $location_manager;
+
 	/** @var string ads_table */
 	protected $ads_table;
+
+	/** @var string ad_locations_table */
+	protected $ad_locations_table;
 
 	/**
 	* {@inheritdoc}
@@ -38,30 +44,34 @@ class main_listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.page_header_after'	=> 'ad_preview',
+			'core.page_header_after'	=> 'setup_ads',
 		);
 	}
 
 	/**
 	* Constructor
 	*
-	* @param \phpbb\request\request				$request	Request object
-	* @param \phpbb\db\driver\driver_interface	$db			DB driver interface
-	* @param \phpbb\template\template			$template	Template object
-	* @param string								$ads_table	Ads table
+	* @param \phpbb\request\request					$request			Request object
+	* @param \phpbb\db\driver\driver_interface		$db					DB driver interface
+	* @param \phpbb\template\template				$template			Template object
+	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
+	* @param string									$ads_table			Ads table
+	* @param string									$ad_locations_table	Ad locations table
 	*/
-	public function __construct(\phpbb\request\request $request, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, $ads_table)
+	public function __construct(\phpbb\request\request $request, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\admanagement\location\manager $location_manager, $ads_table, $ad_locations_table)
 	{
 		$this->request = $request;
 		$this->db = $db;
 		$this->template = $template;
+		$this->location_manager = $location_manager;
 		$this->ads_table = $ads_table;
+		$this->ad_locations_table = $ad_locations_table;
 	}
 
 	/**
-	 * Displays advertisement preview if requested
+	 * Displays advertisements or preview one
 	 */
-	public function ad_preview()
+	public function setup_ads()
 	{
 		$ad_preview = $this->request->variable('ad_preview', 0);
 
@@ -79,6 +89,25 @@ class main_listener implements EventSubscriberInterface
 				$this->template->assign_vars(array(
 					'S_AD_PREVIEW'	=> true,
 					'AD_CODE'		=> htmlspecialchars_decode($ad_code),
+				));
+			}
+		}
+		else
+		{
+			$location_ids = $this->location_manager->get_all_location_ids();
+
+			$sql = 'SELECT al.location_id, a.ad_code
+				FROM ' . $this->ad_locations_table . ' al
+				LEFT JOIN ' . $this->ads_table . ' a
+					ON (al.ad_id = a.ad_id)
+				WHERE a.ad_enabled = 1
+					AND ' . $this->db->sql_in_set('al.location_id', $location_ids) . '
+				GROUP BY al.location_id';
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->template->assign_vars(array(
+					'AD_' . strtoupper($row['location_id'])	=> $row['ad_code'],
 				));
 			}
 		}

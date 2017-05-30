@@ -34,6 +34,15 @@
 				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
 					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
+				<dd><select id="ad_locations" name="ad_locations[]" multiple="multiple" size="8">
+					{% for location in loops.ad_locations %}
+						<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected="selected"{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
+					{% endfor %}
+					</select>
+				</dd>
+			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
 			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;

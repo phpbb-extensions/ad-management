@@ -29,8 +29,14 @@ class admin_controller
 	/** @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\admanagement\location\manager */
+	protected $location_manager;
+
 	/** @var string ads_table */
 	protected $ads_table;
+
+	/** @var string ad_locations_table */
+	protected $ad_locations_table;
 
 	/** @var string php_ext */
 	protected $php_ext;
@@ -47,21 +53,25 @@ class admin_controller
 	/**
 	* Constructor
 	*
-	* @param \phpbb\db\driver\driver_interface	$db					DB driver interface
-	* @param \phpbb\template\template			$template			Template object
-	* @param \phpbb\user						$user				User object
-	* @param \phpbb\request\request				$request			Request object
-	* @param string								$ads_table			Ads table
-	* @param string								$php_ext			PHP extension
-	* @param string								$ext_path			Path to this extension
+	* @param \phpbb\db\driver\driver_interface		$db					DB driver interface
+	* @param \phpbb\template\template				$template			Template object
+	* @param \phpbb\user							$user				User object
+	* @param \phpbb\request\request					$request			Request object
+	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
+	* @param string									$ads_table			Ads table
+	* @param string									$ad_locations_table	Ad locations table
+	* @param string									$php_ext			PHP extension
+	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, $ads_table, $php_ext, $ext_path)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\location\manager $location_manager, $ads_table, $ad_locations_table, $php_ext, $ext_path)
 	{
 		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;
+		$this->location_manager = $location_manager;
 		$this->ads_table = $ads_table;
+		$this->ad_locations_table = $ad_locations_table;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
@@ -125,13 +135,32 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
+				// Do not store ad locations directly into ads table
+				$ad_locations = $data['ad_locations'];
+				unset($data['ad_locations']);
+
 				// Insert the ad data to the database
 				$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
 				$this->db->sql_query($sql);
 
+				// Get new ad ID
+				$ad_id = $this->db->sql_nextid();
+
+				// Insert data to ad_locations table
+				$sql_ary = array();
+				foreach ($ad_locations as $ad_location)
+				{
+					$sql_ary[] = array(
+						'ad_id'			=> $ad_id,
+						'location_id'	=> $ad_location,
+					);
+				}
+				$this->db->sql_multi_insert($this->ad_locations_table, $sql_ary);
+
 				$this->success('ACP_AD_ADD_SUCCESS');
 			}
 
+			$this->assign_locations($data);
 			$this->assign_form_data($data);
 		}
 
@@ -140,6 +169,7 @@ class admin_controller
 			'S_ADD_AD'	=> true,
 			'U_BACK'	=> $this->u_action,
 		));
+		$this->assign_locations();
 	}
 
 	/**
@@ -162,6 +192,26 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
+				// Do not store ad locations directly into ads table
+				$ad_locations = $data['ad_locations'];
+				unset($data['ad_locations']);
+
+				// Delete and repopulate ad locations
+				$sql = 'DELETE FROM ' . $this->ad_locations_table . '
+					WHERE ad_id = ' . (int) $ad_id;
+				$this->db->sql_query($sql);
+
+				// Insert data to ad_locations table
+				$sql_ary = array();
+				foreach ($ad_locations as $ad_location)
+				{
+					$sql_ary[] = array(
+						'ad_id'			=> $ad_id,
+						'location_id'	=> $ad_location,
+					);
+				}
+				$this->db->sql_multi_insert($this->ad_locations_table, $sql_ary);
+
 				// Insert the ad data to the database
 				$sql = 'UPDATE ' . $this->ads_table . '
 					SET ' . $this->db->sql_build_array('UPDATE', $data) . '
@@ -177,6 +227,7 @@ class admin_controller
 		}
 		else
 		{
+			// Load ad data
 			$sql = 'SELECT *
 				FROM ' . $this->ads_table . '
 				WHERE ad_id = ' . (int) $ad_id;
@@ -188,6 +239,19 @@ class admin_controller
 			{
 				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
+
+			// Load ad template locations
+			$data['ad_locations'] = array();
+
+			$sql = 'SELECT location_id
+				FROM ' . $this->ad_locations_table . '
+				WHERE ad_id = ' . (int) $ad_id;
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$data['ad_locations'][] = $row['location_id'];
+			}
+			$this->db->sql_freeresult($result);
 		}
 
 		// Set output vars for display in the template
@@ -196,6 +260,7 @@ class admin_controller
 			'EDIT_ID'	=> $ad_id,
 			'U_BACK'	=> $this->u_action,
 		));
+		$this->assign_locations($data);
 		$this->assign_form_data($data);
 	}
 
@@ -231,6 +296,12 @@ class admin_controller
 		{
 			if (confirm_box(true))
 			{
+				// Delete all template locations
+				$sql = 'DELETE FROM ' . $this->ad_locations_table . '
+					WHERE ad_id = ' . (int) $ad_id;
+				$this->db->sql_query($sql);
+
+				// Delete advertisement
 				$sql = 'DELETE FROM ' . $this->ads_table . '
 					WHERE ad_id = ' . (int) $ad_id;
 				$this->db->sql_query($sql);
@@ -352,6 +423,7 @@ class admin_controller
 			'ad_note'		=> $this->request->variable('ad_note', '', true),
 			'ad_code'		=> $this->request->variable('ad_code', '', true),
 			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
+			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
 		);
 	}
 
@@ -390,6 +462,25 @@ class admin_controller
 			'AD_CODE'		=> $data['ad_code'],
 			'AD_ENABLED'	=> $data['ad_enabled'],
 		));
+	}
+
+	/**
+	* Assign template locations data to the template.
+	*
+	* @param	mixed	$data	The form data or nothing.
+	* @return	void
+	*/
+	protected function assign_locations($data = false)
+	{
+		foreach ($this->location_manager->get_all_locations() as $location_id => $location_data)
+		{
+			$this->template->assign_block_vars('ad_locations', array(
+				'LOCATION_ID'	=> $location_id,
+				'LOCATION_DESC'	=> $location_data['desc'],
+				'LOCATION_NAME'	=> $location_data['name'],
+				'S_SELECTED'	=> $data ? in_array($location_id, $data['ad_locations']) : false,
+			));
+		}
 	}
 
 	/**
