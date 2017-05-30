@@ -75,39 +75,14 @@ class admin_controller
 	{
 		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
 
-		switch ($this->request->variable('action', ''))
+		// Trigger specific action
+		$action = $this->request->variable('action', '');
+		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
 		{
-			case 'add':
-
-				$this->action_add();
-
-			break;
-
-			case 'edit':
-
-				$this->action_edit();
-
-			break;
-
-			case 'enable':
-
-				$this->ad_enable(true);
-
-			break;
-
-			case 'disable':
-
-				$this->ad_enable(false);
-
-			break;
-
-			case 'delete':
-
-				$this->action_delete();
-
-			break;
+			$this->{'action_' . $action}();
 		}
 
+		// Otherwise default to this
 		$this->list_ads();
 	}
 
@@ -221,38 +196,23 @@ class admin_controller
 	}
 
 	/**
-	* Enable/disable an advertisement
+	* Enable an advertisement
 	*
-	* @param	bool	$enable	Enable or disable the advertisement?
 	* @return void
 	*/
-	public function ad_enable($enable)
+	public function action_enable()
 	{
-		$sql = 'UPDATE ' . $this->ads_table . '
-			SET ad_enabled = ' . (int) $enable . '
-			WHERE ad_id = ' . (int) $this->request->variable('id', 0);
-		$this->db->sql_query($sql);
-		$success = (bool) $this->db->sql_affectedrows();
+		$this->ad_enable(true);
+	}
 
-		// If AJAX was used, show user a result message
-		if ($this->request->is_ajax())
-		{
-			$json_response = new \phpbb\json_response;
-			$json_response->send(array(
-				'text'	=> $this->user->lang($enable ? 'ENABLED' : 'DISABLED'),
-				'title'	=> $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
-			));
-		}
-
-		// Otherwise, show traditional infobox
-		if ($success)
-		{
-			$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS');
-		}
-		else
-		{
-			$this->error($enable ? 'ACP_AD_ENABLE_ERRORED' : 'ACP_AD_DISABLE_ERRORED');
-		}
+	/**
+	* Disable an advertisement
+	*
+	* @return void
+	*/
+	public function action_disable()
+	{
+		$this->ad_enable(false);
 	}
 
 	/**
@@ -293,7 +253,6 @@ class admin_controller
 		}
 	}
 
-
 	/**
 	* Display the ads
 	*
@@ -324,6 +283,41 @@ class admin_controller
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
 			'ICON_PREVIEW'	=> '<img src="' . htmlspecialchars($this->phpbb_admin_path) . 'images/file_up_to_date.gif" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 		));
+	}
+
+	/**
+	* Enable/disable an advertisement
+	*
+	* @param	bool	$enable	Enable or disable the advertisement?
+	* @return void
+	*/
+	protected function ad_enable($enable)
+	{
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_enabled = ' . (int) $enable . '
+			WHERE ad_id = ' . (int) $this->request->variable('id', 0);
+		$this->db->sql_query($sql);
+		$success = (bool) $this->db->sql_affectedrows();
+
+		// If AJAX was used, show user a result message
+		if ($this->request->is_ajax())
+		{
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'text'	=> $this->user->lang($enable ? 'ENABLED' : 'DISABLED'),
+				'title'	=> $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
+			));
+		}
+
+		// Otherwise, show traditional infobox
+		if ($success)
+		{
+			$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS');
+		}
+		else
+		{
+			$this->error($enable ? 'ACP_AD_ENABLE_ERRORED' : 'ACP_AD_DISABLE_ERRORED');
+		}
 	}
 
 	/**

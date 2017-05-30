@@ -287,7 +287,14 @@ class admin_controller_test extends \phpbb_database_test_case
 		
 		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 
-		$controller->ad_enable($enable);
+		if ($enable)
+		{
+			$controller->action_enable();
+		}
+		else
+		{
+			$controller->action_disable();
+		}
 
 		if ($ad_id)
 		{
