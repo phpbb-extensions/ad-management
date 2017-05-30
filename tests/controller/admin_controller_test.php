@@ -127,6 +127,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			array('enable', 'ad_enable'),
 			array('disable', 'ad_enable'),
 			array('delete', 'action_delete'),
+			array('', 'list_ads'),
 		);
 	}
 	/**
@@ -137,7 +138,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_main($action, $expected)
 	{
 		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
-			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete'))
+			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->db,
 				$this->template,
