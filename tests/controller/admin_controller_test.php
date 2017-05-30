@@ -218,7 +218,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('submit')
 			->willReturn(true);
 
-		$this->request->method('variable')
+		$this->request->expects($this->any())
+			->method('variable')
 			->will($this->onConsecutiveCalls($ad_name, '', '', false));
 
 		if ($s_error)
@@ -313,7 +314,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->method('variable')->willReturn(1);
+		$this->request->expects($this->once())
+			->method('variable')
+			->willReturn(1);
 
 		$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 
@@ -326,7 +329,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		$this->assertEquals(true, empty($row));
+		$this->assertTrue(empty($row));
 	}
 
 	/**
@@ -336,7 +339,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->template->expects($this->atLeastOnce())->method('assign_block_vars');
+		$this->template->expects($this->atLeastOnce())
+			->method('assign_block_vars');
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
@@ -358,6 +362,7 @@ function confirm_box()
 {
 	return \phpbb\admanagement\controller\admin_controller_test::$confirm;
 }
+
 /**
  * Mock add_form_key()
  * Note: use the same namespace as the admin_controller
@@ -365,6 +370,7 @@ function confirm_box()
 function add_form_key()
 {
 }
+
 /**
  * Mock check_form_key()
  * Note: use the same namespace as the admin_controller
