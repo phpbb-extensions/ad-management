@@ -168,7 +168,11 @@ class admin_controller
 					WHERE ad_id = ' . (int) $ad_id;
 				$this->db->sql_query($sql);
 
-				$this->success('ACP_AD_EDIT_SUCCESS');
+				if ($this->db->sql_affectedrows())
+				{
+					$this->success('ACP_AD_EDIT_SUCCESS');
+				}
+				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
 		}
 		else

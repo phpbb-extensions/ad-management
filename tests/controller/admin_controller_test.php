@@ -258,6 +258,142 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
+	* Test data for the test_action_edit_no_submit() function
+	*
+	* @return array Array of test data
+	*/
+	public function action_edit_no_submit_data()
+	{
+		return array(
+			array(0),
+			array(1),
+		);
+	}
+
+	/**
+	* Test action_edit() method without submitted data
+	*
+	* @dataProvider action_edit_no_submit_data
+	*/
+	public function test_action_edit_no_submit($ad_id)
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->once())
+			->method('variable')
+			->with('id', 0)
+			->willReturn($ad_id);
+
+		$this->request->expects($this->once())
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		if (!$ad_id)
+		{
+			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DOES_NOT_EXIST');
+		}
+		else
+		{
+			$this->template->expects($this->at(0))
+				->method('assign_vars')
+				->with(array(
+					'S_EDIT_AD'	=> true,
+					'EDIT_ID'	=> $ad_id,
+					'U_BACK'	=> $this->u_action,
+				));
+
+			$this->template->expects($this->at(1))
+				->method('assign_vars')
+				->with(array(
+					'S_ERROR'		=> false,
+					'ERROR_MSG'		=> '',
+					'AD_NAME'		=> 'One and only',
+					'AD_NOTE'		=> 'And it\'s desc',
+					'AD_CODE'		=> 'admanagementcode',
+					'AD_ENABLED'	=> '1',
+				));
+		}
+
+		$controller->action_edit();
+	}
+
+	/**
+	* Test data for the test_action_edit_submit() function
+	*
+	* @return array Array of test data
+	*/
+	public function action_edit_data()
+	{
+		return array(
+			array(0, 'Unit test advertisement', true, ''),
+			array(1, '', true, 'AD_NAME_REQUIRED'),
+			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG'),
+			array(1, 'Unit test advertisement', false, ''),
+		);
+	}
+
+	/**
+	* Test action_edit() method with submitted data
+	*
+	* @dataProvider action_edit_data
+	*/
+	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg)
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->any())
+			->method('variable')
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false));
+
+		$this->request->expects($this->once())
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(true);
+
+		if ($ad_id)
+		{
+			if (!$s_error)
+			{
+				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_EDIT_SUCCESS');
+			}
+			else
+			{
+				$this->template->expects($this->at(1))
+					->method('assign_vars')
+					->with(array(
+						'S_ERROR'		=> $s_error,
+						'ERROR_MSG'		=> $error_msg,
+						'AD_NAME'		=> $ad_name,
+						'AD_NOTE'		=> '',
+						'AD_CODE'		=> '',
+						'AD_ENABLED'	=> false,
+					));
+			}
+		}
+		else
+		{
+			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DOES_NOT_EXIST');
+		}
+
+		$controller->action_edit();
+
+		// Check ad is in the DB
+		if (!$s_error)
+		{
+			$sql = 'SELECT * FROM ' . $this->ads_table . '
+				WHERE ad_id = "' . $ad_id . '"';
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+
+			$this->assertEquals('Unit test advertisement', $row['ad_name']);
+			$this->assertEquals('', $row['ad_note']);
+			$this->assertEquals('', $row['ad_code']);
+			$this->assertEquals('0', $row['ad_enabled']);
+		}
+	}
+
+	/**
 	* Test data for the test_ad_enable() function
 	*
 	* @return array Array of test data
