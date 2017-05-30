@@ -37,7 +37,7 @@ class main_listener_base extends \phpbb_database_test_case
 	*/
 	public function getDataSet()
 	{
-		return $this->createXMLDataSet(__DIR__ . '/fixtures/ad.xml');
+		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
 
 	/**
