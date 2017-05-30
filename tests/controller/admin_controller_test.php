@@ -447,23 +447,44 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	* Test action_delete() method
+	* Test data for the test_action_delete() function
+	*
+	* @return array Array of test data
 	*/
-	public function test_action_delete()
+	public function action_delete_data()
+	{
+		return array(
+			array(999, true),
+			array(1, false),
+		);
+	}
+	/**
+	* Test action_delete() method
+	*
+	* @dataProvider action_delete_data
+	*/
+	public function test_action_delete($ad_id, $error)
 	{
 		$controller = $this->get_controller();
 
 		$this->request->expects($this->once())
 			->method('variable')
-			->willReturn(1);
+			->willReturn($ad_id);
 
-		$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
+		if ($error)
+		{
+			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
+		}
+		else
+		{
+			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
+		}
 
 		$controller->action_delete();
 
 		$sql = 'SELECT ad_id
 			FROM ' . $this->ads_table . '
-			WHERE ad_id = 1';
+			WHERE ad_id = ' . $ad_id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
