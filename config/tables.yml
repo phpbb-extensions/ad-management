@@ -1,0 +1,2 @@
+parameters:
+    phpbb.admanagement.tables.ads: '%core.table_prefix%ads'

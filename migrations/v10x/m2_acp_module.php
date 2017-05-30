@@ -8,10 +8,13 @@
  *
  */
 
-namespace phpbb\admanagement\migrations;
+namespace phpbb\admanagement\migrations\v10x;
 
-class install_acp_module extends \phpbb\db\migration\migration
+class m2_acp_module extends \phpbb\db\migration\migration
 {
+	/**
+	* {@inheritDoc}
+	*/
 	public function effectively_installed()
 	{
 		$sql = 'SELECT module_id
@@ -25,11 +28,19 @@ class install_acp_module extends \phpbb\db\migration\migration
 		return $module_id;
 	}
 
+	/**
+	* {@inheritDoc}
+	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v310\gold');
+		return array('\phpbb\admanagement\migrations\v10x\m1_initial_schema');
 	}
 
+	/**
+	* Add the ACP module
+	*
+	* @return array Array of data update instructions
+	*/
 	public function update_data()
 	{
 		return array(
@@ -43,7 +54,7 @@ class install_acp_module extends \phpbb\db\migration\migration
 				'ACP_ADMANAGEMENT_TITLE',
 				array(
 					'module_basename'	=> '\phpbb\admanagement\acp\main_module',
-					'modes'				=> array('settings'),
+					'modes'				=> array('manage'),
 				),
 			)),
 		);

@@ -20,4 +20,5 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_ADMANAGEMENT_TITLE'	=> 'Advertisement Management',
+	'ACP_MANAGE_ADS_TITLE'		=> 'Manage advertisements',
 ));
