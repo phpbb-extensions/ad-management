@@ -151,10 +151,10 @@ class admin_controller
 	{
 		$ad_id = $this->request->variable('id', 0);
 
-		add_form_key('phpbb/admanagement/edit');
+		add_form_key('phpbb/admanagement/edit/' . $ad_id);
 		if ($this->request->is_set_post('submit'))
 		{
-			$this->check_form_key('phpbb/admanagement/edit');
+			$this->check_form_key('phpbb/admanagement/edit/' . $ad_id);
 
 			$data = $this->get_form_data();
 
