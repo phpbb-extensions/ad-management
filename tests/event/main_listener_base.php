@@ -48,7 +48,7 @@ class main_listener_base extends \phpbb_database_test_case
 		parent::setUp();
 
 		// Load/Mock classes required by the listener class
-        $this->request = $this->getMock('\phpbb\request\request');
+		$this->request = $this->getMock('\phpbb\request\request');
 		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->ads_table = 'phpbb_ads';
