@@ -19,20 +19,4 @@ class above_header extends base
 	{
 		return 'above_header';
 	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function get_name()
-	{
-		return $this->user->lang('AD_ABOVE_HEADER');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function get_desc()
-	{
-		return $this->user->lang('AD_ABOVE_HEADER_DESC');
-	}
 }

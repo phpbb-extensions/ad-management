@@ -23,22 +23,6 @@ class before_posts extends base
 	/**
 	* {@inheritDoc}
 	*/
-	public function get_name()
-	{
-		return $this->user->lang('AD_BEFORE_POSTS');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function get_desc()
-	{
-		return $this->user->lang('AD_BEFORE_POSTS_DESC');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
 	public function will_display()
 	{
 		return strpos($this->user->page['page_name'], 'viewtopic') !== false;

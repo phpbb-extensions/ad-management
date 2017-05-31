@@ -23,22 +23,6 @@ class after_first_post extends base
 	/**
 	* {@inheritDoc}
 	*/
-	public function get_name()
-	{
-		return $this->user->lang('AD_AFTER_FIRST_POST');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function get_desc()
-	{
-		return $this->user->lang('AD_AFTER_FIRST_POST_DESC');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
 	public function will_display()
 	{
 		return strpos($this->user->page['page_name'], 'viewtopic') !== false;

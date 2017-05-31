@@ -34,6 +34,22 @@ abstract class base implements \phpbb\admanagement\location\type\type_interface
 	/**
 	* {@inheritDoc}
 	*/
+	public function get_name()
+	{
+		return $this->user->lang('AD_' . strtoupper($this->get_id()));
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function get_desc()
+	{
+		return $this->user->lang('AD_' . strtoupper($this->get_id()) . '_DESC');
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
 	public function will_display()
 	{
 		return true;

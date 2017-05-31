@@ -19,20 +19,4 @@ class above_footer extends base
 	{
 		return 'above_footer';
 	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function get_name()
-	{
-		return $this->user->lang('AD_ABOVE_FOOTER');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function get_desc()
-	{
-		return $this->user->lang('AD_ABOVE_FOOTER_DESC');
-	}
 }
