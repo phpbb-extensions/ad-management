@@ -53,7 +53,7 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
-		$this->manager = new \phpbb\admanagement\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		$this->manager = new \phpbb\admanagement\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
 		$this->location_manager = new \phpbb\admanagement\location\manager(array(
 			new \phpbb\admanagement\location\type\above_header($user),
 			new \phpbb\admanagement\location\type\below_header($user),
