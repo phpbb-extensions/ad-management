@@ -159,12 +159,12 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
-				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->update_ad($ad_id, $data);
 
 				if ($success)
 				{
 					// Only insert new ad locations to DB when ad exists
+					$this->manager->delete_ad_locations($ad_id);
 					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
 					$this->success('ACP_AD_EDIT_SUCCESS');
