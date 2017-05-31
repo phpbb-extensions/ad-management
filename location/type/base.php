@@ -16,6 +16,22 @@ namespace phpbb\admanagement\location\type;
 abstract class base implements \phpbb\admanagement\location\type\type_interface
 {
 	/**
+	* User object
+	* @var \phpbb\user
+	*/
+	protected $user;
+
+	/**
+	* Construct an after_profile template location object
+	*
+	* @param	\phpbb\user	$config	User object
+	*/
+	public function __construct(\phpbb\user $user)
+	{
+		$this->user = $user;
+	}
+
+	/**
 	* {@inheritDoc}
 	*/
 	public function will_display()

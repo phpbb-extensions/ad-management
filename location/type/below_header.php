@@ -13,22 +13,6 @@ namespace phpbb\admanagement\location\type;
 class below_header extends base
 {
 	/**
-	* User object
-	* @var \phpbb\user
-	*/
-	protected $user;
-
-	/**
-	* Construct an below_header template location object
-	*
-	* @param	\phpbb\user	$config	User object
-	*/
-	public function __construct(\phpbb\user $user)
-	{
-		$this->user = $user;
-	}
-
-	/**
 	* {@inheritDoc}
 	*/
 	public function get_id()
