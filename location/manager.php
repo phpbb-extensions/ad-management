@@ -35,7 +35,7 @@ class manager
 	* Returns an associated array where key is the location id
 	* and value is array of location name and location description.
 	*
-	* @return	array	Array containing a list of all avatar drivers
+	* @return	array	Array containing a list of all template locations
 	*/
 	public function get_all_locations()
 	{
