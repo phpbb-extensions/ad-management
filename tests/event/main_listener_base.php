@@ -47,11 +47,21 @@ class main_listener_base extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
+		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		$lang = new \phpbb\language\language($lang_loader);
+		$user = new \phpbb\user($lang, '\phpbb\datetime');
+
 		// Load/Mock classes required by the listener class
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->ads_table = 'phpbb_ads';
+		$this->ad_locations_table = 'phpbb_ad_locations';
+		$this->manager = new \phpbb\admanagement\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		$this->location_manager = new \phpbb\admanagement\location\manager(array(
+			new \phpbb\admanagement\location\type\above_header($user),
+			new \phpbb\admanagement\location\type\below_header($user),
+		));
 	}
 
 	/**
@@ -65,7 +75,8 @@ class main_listener_base extends \phpbb_database_test_case
 			$this->request,
 			$this->db,
 			$this->template,
-			$this->ads_table
+			$this->manager,
+			$this->location_manager
 		);
 	}
 }

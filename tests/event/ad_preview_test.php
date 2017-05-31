@@ -40,7 +40,7 @@ class ad_preview_test extends main_listener_base
 			));
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
-		$dispatcher->addListener('core.page_header_after', array($listener, 'ad_preview'));
+		$dispatcher->addListener('core.page_header_after', array($listener, 'setup_ads'));
 		$dispatcher->dispatch('core.page_header_after');
 	}
 }

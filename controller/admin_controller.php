@@ -29,14 +29,11 @@ class admin_controller
 	/** @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\admanagement\ad\manager */
+	protected $manager;
+
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
-
-	/** @var string ads_table */
-	protected $ads_table;
-
-	/** @var string ad_locations_table */
-	protected $ad_locations_table;
 
 	/** @var string php_ext */
 	protected $php_ext;
@@ -57,21 +54,19 @@ class admin_controller
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\user							$user				User object
 	* @param \phpbb\request\request					$request			Request object
+	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
-	* @param string									$ads_table			Ads table
-	* @param string									$ad_locations_table	Ad locations table
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\location\manager $location_manager, $ads_table, $ad_locations_table, $php_ext, $ext_path)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, $php_ext, $ext_path)
 	{
 		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;
+		$this->manager = $manager;
 		$this->location_manager = $location_manager;
-		$this->ads_table = $ads_table;
-		$this->ad_locations_table = $ad_locations_table;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
@@ -135,27 +130,8 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
-				// Do not store ad locations directly into ads table
-				$ad_locations = $data['ad_locations'];
-				unset($data['ad_locations']);
-
-				// Insert the ad data to the database
-				$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
-				$this->db->sql_query($sql);
-
-				// Get new ad ID
-				$ad_id = $this->db->sql_nextid();
-
-				// Insert data to ad_locations table
-				$sql_ary = array();
-				foreach ($ad_locations as $ad_location)
-				{
-					$sql_ary[] = array(
-						'ad_id'			=> $ad_id,
-						'location_id'	=> $ad_location,
-					);
-				}
-				$this->db->sql_multi_insert($this->ad_locations_table, $sql_ary);
+				$ad_id = $this->manager->insert_ad($data);
+				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
 				$this->success('ACP_AD_ADD_SUCCESS');
 			}
@@ -192,34 +168,14 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
-				// Do not store ad locations directly into ads table
-				$ad_locations = $data['ad_locations'];
-				unset($data['ad_locations']);
+				$this->manager->delete_ad_locations($ad_id);
+				$success = $this->manager->update_ad($ad_id, $data);
 
-				// Delete and repopulate ad locations
-				$sql = 'DELETE FROM ' . $this->ad_locations_table . '
-					WHERE ad_id = ' . (int) $ad_id;
-				$this->db->sql_query($sql);
-
-				// Insert data to ad_locations table
-				$sql_ary = array();
-				foreach ($ad_locations as $ad_location)
+				if ($success)
 				{
-					$sql_ary[] = array(
-						'ad_id'			=> $ad_id,
-						'location_id'	=> $ad_location,
-					);
-				}
-				$this->db->sql_multi_insert($this->ad_locations_table, $sql_ary);
+					// Only insert new ad locations to DB when ad exists
+					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
-				// Insert the ad data to the database
-				$sql = 'UPDATE ' . $this->ads_table . '
-					SET ' . $this->db->sql_build_array('UPDATE', $data) . '
-					WHERE ad_id = ' . (int) $ad_id;
-				$this->db->sql_query($sql);
-
-				if ($this->db->sql_affectedrows())
-				{
 					$this->success('ACP_AD_EDIT_SUCCESS');
 				}
 				$this->error('ACP_AD_DOES_NOT_EXIST');
@@ -228,30 +184,14 @@ class admin_controller
 		else
 		{
 			// Load ad data
-			$sql = 'SELECT *
-				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$data = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-
+			$data = $this->manager->get_ad($ad_id);
 			if (empty($data))
 			{
 				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
 
 			// Load ad template locations
-			$data['ad_locations'] = array();
-
-			$sql = 'SELECT location_id
-				FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			while ($row = $this->db->sql_fetchrow($result))
-			{
-				$data['ad_locations'][] = $row['location_id'];
-			}
-			$this->db->sql_freeresult($result);
+			$data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
 		}
 
 		// Set output vars for display in the template
@@ -296,18 +236,11 @@ class admin_controller
 		{
 			if (confirm_box(true))
 			{
-				// Delete all template locations
-				$sql = 'DELETE FROM ' . $this->ad_locations_table . '
-					WHERE ad_id = ' . (int) $ad_id;
-				$this->db->sql_query($sql);
-
-				// Delete advertisement
-				$sql = 'DELETE FROM ' . $this->ads_table . '
-					WHERE ad_id = ' . (int) $ad_id;
-				$this->db->sql_query($sql);
+				$this->manager->delete_ad_locations($ad_id);
+				$success = $this->manager->delete_ad($ad_id);
 
 				// Only notify user on error or if not ajax
-				if (!$this->db->sql_affectedrows())
+				if (!$success)
 				{
 					$this->error('ACP_AD_DELETE_ERRORED');
 				}
@@ -335,10 +268,7 @@ class admin_controller
 	*/
 	public function list_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled
-			FROM ' . $this->ads_table;
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
+		foreach ($this->manager->get_all_ads() as $row)
 		{
 			$ad_enabled = (int) $row['ad_enabled'];
 
@@ -351,7 +281,6 @@ class admin_controller
 				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
 		}
-		$this->db->sql_freeresult($result);
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
@@ -370,11 +299,9 @@ class admin_controller
 	{
 		$ad_id = $this->request->variable('id', 0);
 
-		$sql = 'UPDATE ' . $this->ads_table . '
-			SET ad_enabled = ' . (int) $enable . '
-			WHERE ad_id = ' . (int) $ad_id;
-		$this->db->sql_query($sql);
-		$success = (bool) $this->db->sql_affectedrows();
+		$success = $this->manager->update_ad($ad_id, array(
+			'ad_enabled'	=> (int) $enable,
+		));
 
 		// If AJAX was used, show user a result message
 		if ($this->request->is_ajax())

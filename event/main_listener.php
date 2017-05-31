@@ -29,14 +29,11 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/** @var \phpbb\admanagement\ad\manager */
+	protected $manager;
+
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
-
-	/** @var string ads_table */
-	protected $ads_table;
-
-	/** @var string ad_locations_table */
-	protected $ad_locations_table;
 
 	/**
 	* {@inheritdoc}
@@ -54,18 +51,16 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\request\request					$request			Request object
 	* @param \phpbb\db\driver\driver_interface		$db					DB driver interface
 	* @param \phpbb\template\template				$template			Template object
+	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
-	* @param string									$ads_table			Ads table
-	* @param string									$ad_locations_table	Ad locations table
 	*/
-	public function __construct(\phpbb\request\request $request, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\admanagement\location\manager $location_manager, $ads_table, $ad_locations_table)
+	public function __construct(\phpbb\request\request $request, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager)
 	{
 		$this->request = $request;
 		$this->db = $db;
 		$this->template = $template;
+		$this->manager = $manager;
 		$this->location_manager = $location_manager;
-		$this->ads_table = $ads_table;
-		$this->ad_locations_table = $ad_locations_table;
 	}
 
 	/**
@@ -77,18 +72,12 @@ class main_listener implements EventSubscriberInterface
 
 		if ($ad_preview)
 		{
-			$sql = 'SELECT ad_code
-				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . (int) $ad_preview;
-			$result = $this->db->sql_query($sql);
-			$ad_code = $this->db->sql_fetchfield('ad_code');
-			$this->db->sql_freeresult($result);
-
-			if (!empty($ad_code))
+			$ad = $this->manager->get_ad($ad_preview);
+			if (!empty($ad))
 			{
 				$this->template->assign_vars(array(
 					'S_AD_PREVIEW'	=> true,
-					'AD_CODE'		=> htmlspecialchars_decode($ad_code),
+					'AD_CODE'		=> htmlspecialchars_decode($ad['ad_code']),
 				));
 			}
 		}
@@ -96,15 +85,7 @@ class main_listener implements EventSubscriberInterface
 		{
 			$location_ids = $this->location_manager->get_all_location_ids();
 
-			$sql = 'SELECT al.location_id, a.ad_code
-				FROM ' . $this->ad_locations_table . ' al
-				LEFT JOIN ' . $this->ads_table . ' a
-					ON (al.ad_id = a.ad_id)
-				WHERE a.ad_enabled = 1
-					AND ' . $this->db->sql_in_set('al.location_id', $location_ids) . '
-				GROUP BY al.location_id';
-			$result = $this->db->sql_query($sql);
-			while ($row = $this->db->sql_fetchrow($result))
+			foreach ($this->manager->get_ads($location_ids) as $row)
 			{
 				$this->template->assign_vars(array(
 					'AD_' . strtoupper($row['location_id'])	=> $row['ad_code'],

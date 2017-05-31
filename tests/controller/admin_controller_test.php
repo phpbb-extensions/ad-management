@@ -35,6 +35,15 @@ class admin_controller_test extends \phpbb_database_test_case
 	protected $ads_table;
 
 	/** @var string */
+	protected $ad_locations_table;
+
+	/** @var \phpbb\admanagement\ad\manager */
+	protected $manager;
+
+	/** @var \phpbb\admanagement\location\manager */
+	protected $location_manager;
+
+	/** @var string */
 	protected $php_ext;
 
 	/** @var string */
@@ -78,9 +87,15 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
+		$this->ad_locations_table = 'phpbb_ad_locations';
+		$this->manager = new \phpbb\admanagement\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		$this->location_manager = new \phpbb\admanagement\location\manager(array(
+			new \phpbb\admanagement\location\type\above_header($this->user),
+			new \phpbb\admanagement\location\type\below_header($this->user),
+		));
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
-	
+
 		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage';
 
 		// globals
@@ -105,7 +120,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->template,
 			$this->user,
 			$this->request,
-			$this->ads_table,
+			$this->manager,
+			$this->location_manager,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -144,7 +160,8 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->template,
 				$this->user,
 				$this->request,
-				$this->ads_table,
+				$this->manager,
+				$this->location_manager,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -224,11 +241,11 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array()));
 
 		if ($s_error)
 		{
-			$this->template->expects($this->at(0))
+			$this->template->expects($this->at(2))
 				->method('assign_vars')
 				->with(array(
 					'S_ERROR'		=> $s_error,
@@ -306,7 +323,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_BACK'	=> $this->u_action,
 				));
 
-			$this->template->expects($this->at(1))
+			$this->template->expects($this->at(3))
 				->method('assign_vars')
 				->with(array(
 					'S_ERROR'		=> false,
@@ -350,7 +367,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array()));
 
 		$this->request->expects($this->once())
 			->method('is_set_post')
@@ -365,7 +382,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 			else
 			{
-				$this->template->expects($this->at(1))
+				$this->template->expects($this->at(3))
 					->method('assign_vars')
 					->with(array(
 						'S_ERROR'		=> $s_error,
