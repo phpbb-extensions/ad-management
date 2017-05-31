@@ -15,9 +15,6 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
 	protected $request;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\db\driver\driver_interface */
-	protected $db;
-
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
@@ -53,7 +50,6 @@ class main_listener_base extends \phpbb_database_test_case
 
 		// Load/Mock classes required by the listener class
 		$this->request = $this->getMock('\phpbb\request\request');
-		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
@@ -73,7 +69,6 @@ class main_listener_base extends \phpbb_database_test_case
 	{
 		return new \phpbb\admanagement\event\main_listener(
 			$this->request,
-			$this->db,
 			$this->template,
 			$this->manager,
 			$this->location_manager

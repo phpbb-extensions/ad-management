@@ -116,7 +116,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function get_controller()
 	{
 		$controller = new \phpbb\admanagement\controller\admin_controller(
-			$this->db,
 			$this->template,
 			$this->user,
 			$this->request,
@@ -156,7 +155,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
-				$this->db,
 				$this->template,
 				$this->user,
 				$this->request,
