@@ -122,11 +122,9 @@ class admin_controller
 		add_form_key('phpbb/admanagement/add');
 		if ($this->request->is_set_post('submit'))
 		{
-			$this->check_form_key('phpbb/admanagement/add');
-
 			$data = $this->get_form_data();
 
-			$this->validate($data);
+			$this->validate($data, 'phpbb/admanagement/add');
 
 			if (empty($this->errors))
 			{
@@ -160,11 +158,9 @@ class admin_controller
 		add_form_key('phpbb/admanagement/edit/' . $ad_id);
 		if ($this->request->is_set_post('submit'))
 		{
-			$this->check_form_key('phpbb/admanagement/edit/' . $ad_id);
-
 			$data = $this->get_form_data();
 
-			$this->validate($data);
+			$this->validate($data, 'phpbb/admanagement/edit/' . $ad_id);
 
 			if (empty($this->errors))
 			{
@@ -325,20 +321,6 @@ class admin_controller
 	}
 
 	/**
-	* Check the form key.
-	*
-	* @param	string	$form_name	The name of the form.
-	* @return void
-	*/
-	protected function check_form_key($form_name)
-	{
-		if (!check_form_key($form_name))
-		{
-			$this->errors[] = $this->user->lang('FORM_INVALID');
-		}
-	}
-
-	/**
 	* Get admin form data.
 	*
 	* @return	array	Form data
@@ -357,11 +339,17 @@ class admin_controller
 	/**
 	* Validate form data.
 	*
-	* @param	array	$data	The form data.
+	* @param	array	$data		The form data.
+	* @param	string	$form_name	The form name.
 	* @return void
 	*/
-	protected function validate($data)
+	protected function validate($data, $form_name)
 	{
+		if (!check_form_key($form_name))
+		{
+			$this->errors[] = $this->user->lang('FORM_INVALID');
+		}
+
 		if ($data['ad_name'] === '')
 		{
 			$this->errors[] = $this->user->lang('AD_NAME_REQUIRED');
