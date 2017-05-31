@@ -148,8 +148,8 @@ class manager
 	/**
 	* Get all locations for specified advertisement
 	*
-	* @param	int	$ad_id	Advertisement ID
-	* @return	int	List of template locations for specified ad
+	* @param	int		$ad_id	Advertisement ID
+	* @return	array	List of template locations for specified ad
 	*/
 	public function get_ad_locations($ad_id)
 	{
