@@ -88,7 +88,7 @@ class main_listener implements EventSubscriberInterface
 			foreach ($this->manager->get_ads($location_ids) as $row)
 			{
 				$this->template->assign_vars(array(
-					'AD_' . strtoupper($row['location_id'])	=> $row['ad_code'],
+					'AD_' . strtoupper($row['location_id'])	=> htmlspecialchars_decode($row['ad_code']),
 				));
 			}
 		}
