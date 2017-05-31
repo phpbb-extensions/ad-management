@@ -53,13 +53,23 @@ class manager
 	}
 
 	/**
-	* Get a list of all template location IDs
+	* Get a list of all template location IDs for display
 	*
 	* @return	array	Array containing a list of all template location IDs
 	*/
 	public function get_all_location_ids()
 	{
-		return array_keys($this->template_locations);
+		$template_locations = array();
+
+		foreach ($this->template_locations as $location_id => $location)
+		{
+			if ($location->will_display())
+			{
+				$template_locations[] = $location_id;
+			}
+		}
+
+		return $template_locations;
 	}
 
 	/**
@@ -73,10 +83,7 @@ class manager
 		{
 			foreach ($template_locations as $location)
 			{
-				if ($location->will_display())
-				{
-					$this->template_locations[$location->get_id()] = $location;
-				}
+				$this->template_locations[$location->get_id()] = $location;
 			}
 		}
 	}

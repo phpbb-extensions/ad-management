@@ -10,7 +10,7 @@
 
 namespace phpbb\admanagement\location\type;
 
-class below_header extends base
+class after_first_post extends base
 {
 	/**
 	* User object
@@ -19,7 +19,7 @@ class below_header extends base
 	protected $user;
 
 	/**
-	* Construct an below_header template location object
+	* Construct an after_first_post template location object
 	*
 	* @param	\phpbb\user	$config	User object
 	*/
@@ -33,7 +33,7 @@ class below_header extends base
 	*/
 	public function get_id()
 	{
-		return 'below_header';
+		return 'after_first_post';
 	}
 
 	/**
@@ -41,7 +41,7 @@ class below_header extends base
 	*/
 	public function get_name()
 	{
-		return $this->user->lang('AD_BELOW_HEADER');
+		return $this->user->lang('AD_AFTER_FIRST_POST');
 	}
 
 	/**
@@ -49,6 +49,14 @@ class below_header extends base
 	*/
 	public function get_desc()
 	{
-		return $this->user->lang('AD_BELOW_HEADER_DESC');
+		return $this->user->lang('AD_AFTER_FIRST_POST_DESC');
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function will_display()
+	{
+		return strpos($this->user->page['page_name'], 'viewtopic') !== false;
 	}
 }
