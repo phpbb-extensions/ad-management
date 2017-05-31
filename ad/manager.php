@@ -35,6 +35,12 @@ class manager
 		$this->ad_locations_table = $ad_locations_table;
 	}
 
+	/**
+	* Get specific ad
+	*
+	* @param	int		$ad_id	Advertisement ID
+	* @return	array	Advertisement data
+	*/
 	public function get_ad($ad_id)
 	{
 		$sql = 'SELECT *
@@ -47,15 +53,25 @@ class manager
 		return $data;
 	}
 
+	/**
+	* Get one ad per every location
+	*
+	* @param	array	$ad_locations	List of ad locations to fetch ads for
+	* @return	array	List of ad codes for each location
+	*/
 	public function get_ads($ad_locations)
 	{
-		$sql = 'SELECT al.location_id, a.ad_code
-			FROM ' . $this->ad_locations_table . ' al
-			LEFT JOIN ' . $this->ads_table . ' a
-				ON (al.ad_id = a.ad_id)
-			WHERE a.ad_enabled = 1
-				AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
-			GROUP BY al.location_id';
+		$sql = 'SELECT location_id, ad_code
+			FROM (
+				SELECT al.location_id, a.ad_code
+				FROM ' . $this->ad_locations_table . ' al
+				LEFT JOIN ' . $this->ads_table . ' a
+					ON (al.ad_id = a.ad_id)
+				WHERE a.ad_enabled = 1
+					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
+				ORDER BY ' . $this->sql_random() . '
+			) z
+			GROUP BY z.location_id';
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
@@ -63,6 +79,11 @@ class manager
 		return $data;
 	}
 
+	/**
+	* Get all advertisements
+	*
+	* @return	array	List of all ads
+	*/
 	public function get_all_ads()
 	{
 		$sql = 'SELECT ad_id, ad_name, ad_enabled
@@ -74,6 +95,12 @@ class manager
 		return $data;
 	}
 
+	/**
+	* Insert new advertisement to the database
+	*
+	* @param	array	$data	New ad data
+	* @return	int		New advertisement ID
+	*/
 	public function insert_ad($data)
 	{
 		$data = $this->intersect_ad_data($data);
@@ -84,6 +111,13 @@ class manager
 		return $this->db->sql_nextid();
 	}
 
+	/**
+	* Update advertisement
+	*
+	* @param	int		$ad_id	Advertisement ID
+	* @param	array	$data	List of data to update in the database
+	* @return	int		Number of affected rows. Can be used to determine if any ad has been udated.
+	*/
 	public function update_ad($ad_id, $data)
 	{
 		$data = $this->intersect_ad_data($data);
@@ -96,6 +130,12 @@ class manager
 		return $this->db->sql_affectedrows();
 	}
 
+	/**
+	* Delete advertisement
+	*
+	* @param	int		$ad_id	Advertisement ID
+	* @return	int		Number of affected rows. Can be used to determine if any ad has been deleted.
+	*/
 	public function delete_ad($ad_id)
 	{
 		$sql = 'DELETE FROM ' . $this->ads_table . '
@@ -105,6 +145,12 @@ class manager
 		return $this->db->sql_affectedrows();
 	}
 
+	/**
+	* Get all locations for specified advertisement
+	*
+	* @param	int	$ad_id	Advertisement ID
+	* @return	int	List of template locations for specified ad
+	*/
 	public function get_ad_locations($ad_id)
 	{
 		$ad_locations = array();
@@ -122,6 +168,13 @@ class manager
 		return $ad_locations;
 	}
 
+	/**
+	* Insert advertisement locations
+	*
+	* @param	int		$ad_id			Advertisement ID
+	* @param	array	$ad_locations	List of template locations for this ad
+	* @return	void
+	*/
 	public function insert_ad_locations($ad_id, $ad_locations)
 	{
 		$sql_ary = array();
@@ -135,6 +188,12 @@ class manager
 		$this->db->sql_multi_insert($this->ad_locations_table, $sql_ary);
 	}
 
+	/**
+	* Delete advertisement locations
+	*
+	* @param	int		$ad_id	Advertisement ID
+	* @return	void
+	*/
 	public function delete_ad_locations($ad_id)
 	{
 		$sql = 'DELETE FROM ' . $this->ad_locations_table . '
@@ -142,7 +201,12 @@ class manager
 		$this->db->sql_query($sql);
 	}
 
-	// Make sure only necessary data make their way to SQL query
+	/**
+	* Make sure only necessary data make their way to SQL query
+	*
+	* @param	array	$data	List of data to query the database
+	* @return	array	Cleaned data that contain only valid keys
+	*/
 	protected function intersect_ad_data($data)
 	{
 		return array_intersect_key($data, array(
@@ -151,5 +215,31 @@ class manager
 			'ad_code'		=> '',
 			'ad_enabled'	=> '',
 		));
+	}
+
+	/**
+	* Get the random statement for this database layer
+	*
+	* @return	string	Random statement for current database layer
+	*/
+	protected function sql_random()
+	{
+		switch ($this->db->get_sql_layer())
+		{
+			case 'oracle':
+			case 'postgres':
+			case 'sqlite':
+			case 'sqlite3':
+				return 'RANDOM()';
+
+			/* All other cases should use the default
+			case 'mssql':
+			case 'mssql_odbc':
+			case 'mssqlnative':
+			case 'mysql':
+			case 'mysqli':*/
+			default:
+				return 'RAND()';
+		}
 	}
 }
