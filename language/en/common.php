@@ -19,15 +19,5 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'DEMO_PAGE'			=> 'Demo',
-	'DEMO_HELLO'		=> 'Hello %s!',
-	'DEMO_GOODBYE'		=> 'Goodbye %s!',
-
-	'ACP_DEMO'					=> 'Settings',
-	'ACP_DEMO_GOODBYE'			=> 'Should say goodbye?',
-	'ACP_DEMO_SETTING_SAVED'	=> 'Settings have been saved successfully!',
-
-	'ACME_DEMO_NOTIFICATION'	=> 'Acme demo notification',
-
-	'VIEWING_ACME_DEMO'			=> 'Viewing Acme Demo',
+	'PREVIEWING_AD'	=> 'You are currently previewing the advertisement. You can browse the board and see how it looks on various locations. To stop previewing the ad, <a href="%s">click here</a>.',
 ));

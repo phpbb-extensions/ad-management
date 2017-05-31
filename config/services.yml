@@ -26,7 +26,11 @@ services:
         arguments:
             - '@request'
             - '@template'
+            - '@user'
+            - '@config'
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
         tags:
             - { name: event.listener }

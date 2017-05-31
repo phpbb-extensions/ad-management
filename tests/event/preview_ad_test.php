@@ -10,7 +10,7 @@
 
 namespace phpbb\admanagement\tests\event;
 
-class ad_preview_test extends main_listener_base
+class preview_ad_test extends main_listener_base
 {
 	/**
 	* {@intheritDoc}
@@ -21,9 +21,9 @@ class ad_preview_test extends main_listener_base
 	}
 
 	/**
-	* Test the ad_preview event
+	* Test the preview_ad event
 	*/
-	public function test_ad_preview()
+	public function test_preview_ad()
 	{
 		$listener = $this->get_listener();
 
@@ -35,12 +35,12 @@ class ad_preview_test extends main_listener_base
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
-				'S_AD_PREVIEW'	=> true,
-				'AD_CODE'		=> 'admanagementcode',
+				'S_PREVIEWING_AD'	=> true,
+				'L_PREVIEWING_AD'	=> 'PREVIEWING_AD',
 			));
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
-		$dispatcher->addListener('core.page_header_after', array($listener, 'setup_ads'));
+		$dispatcher->addListener('core.page_header_after', array($listener, 'preview_ad'));
 		$dispatcher->dispatch('core.page_header_after');
 	}
 }

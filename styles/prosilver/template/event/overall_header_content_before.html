@@ -1,3 +1,13 @@
-{% if S_AD_PREVIEW %}
-    <div style="text-align: center;">{{ AD_CODE }}</div>
+{% if S_PREVIEWING_AD %}
+	<div id="information" class="rules">
+		<div class="inner">
+			{{ L_PREVIEWING_AD }}
+		</div>
+	</div>
+{% endif %}
+
+{% if S_STOP_PREVIEWING_AD %}
+	<script>
+		window.close();
+	</script>
 {% endif %}
