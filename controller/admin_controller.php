@@ -17,9 +17,6 @@ class admin_controller
 {
 	const MAX_NAME_LENGTH = 255;
 
-	/** @var \phpbb\db\driver\driver_interface */
-	protected $db;
-
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -50,7 +47,6 @@ class admin_controller
 	/**
 	* Constructor
 	*
-	* @param \phpbb\db\driver\driver_interface		$db					DB driver interface
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\user							$user				User object
 	* @param \phpbb\request\request					$request			Request object
@@ -59,9 +55,8 @@ class admin_controller
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, $php_ext, $ext_path)
 	{
-		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;

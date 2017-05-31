@@ -13,7 +13,6 @@ services:
     phpbb.admanagement.admin.controller:
         class: phpbb\admanagement\controller\admin_controller
         arguments:
-            - '@dbal.conn'
             - '@template'
             - '@user'
             - '@request'
@@ -26,7 +25,6 @@ services:
         class: phpbb\admanagement\event\main_listener
         arguments:
             - '@request'
-            - '@dbal.conn'
             - '@template'
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'

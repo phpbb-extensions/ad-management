@@ -23,9 +23,6 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\request\request */
 	protected $request;
 
-	/** @var \phpbb\db\driver\driver_interface */
-	protected $db;
-
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -49,15 +46,13 @@ class main_listener implements EventSubscriberInterface
 	* Constructor
 	*
 	* @param \phpbb\request\request					$request			Request object
-	* @param \phpbb\db\driver\driver_interface		$db					DB driver interface
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
 	*/
-	public function __construct(\phpbb\request\request $request, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager)
+	public function __construct(\phpbb\request\request $request, \phpbb\template\template $template, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager)
 	{
 		$this->request = $request;
-		$this->db = $db;
 		$this->template = $template;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
