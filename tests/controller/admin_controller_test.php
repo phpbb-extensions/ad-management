@@ -191,11 +191,16 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
-		
+
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
@@ -232,7 +237,12 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
@@ -302,7 +312,12 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('id', 0)
 			->willReturn($ad_id);
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
@@ -367,7 +382,12 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('variable')
 			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array()));
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
@@ -547,7 +567,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-				'ICON_PREVIEW'	=> '<img src="' . $this->ext_path . 'adm/images/icon_preview.png" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 			));
 
 		$controller->list_ads();
