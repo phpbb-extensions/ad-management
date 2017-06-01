@@ -24,7 +24,7 @@ abstract class base implements \phpbb\admanagement\location\type\type_interface
 	/**
 	* Construct an after_profile template location object
 	*
-	* @param	\phpbb\user	$config	User object
+	* @param	\phpbb\user	$user	User object
 	*/
 	public function __construct(\phpbb\user $user)
 	{
