@@ -114,14 +114,20 @@ class admin_controller
 	*/
 	public function action_add()
 	{
+		$preview = $this->request->is_set_post('preview');
+
 		add_form_key('phpbb/admanagement/add');
-		if ($this->request->is_set_post('submit'))
+		if ($preview || $this->request->is_set_post('submit'))
 		{
 			$data = $this->get_form_data();
 
 			$this->validate($data, 'phpbb/admanagement/add');
 
-			if (empty($this->errors))
+			if ($preview)
+			{
+				$this->ad_preview($data['ad_code']);
+			}
+			else if (empty($this->errors))
 			{
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
@@ -149,15 +155,20 @@ class admin_controller
 	public function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
+		$preview = $this->request->is_set_post('preview');
 
 		add_form_key('phpbb/admanagement/edit/' . $ad_id);
-		if ($this->request->is_set_post('submit'))
+		if ($preview || $this->request->is_set_post('submit'))
 		{
 			$data = $this->get_form_data();
 
 			$this->validate($data, 'phpbb/admanagement/edit/' . $ad_id);
 
-			if (empty($this->errors))
+			if ($preview)
+			{
+				$this->ad_preview($data['ad_code']);
+			}
+			else if (empty($this->errors))
 			{
 				$success = $this->manager->update_ad($ad_id, $data);
 
@@ -267,7 +278,6 @@ class admin_controller
 				'NAME'		=> $row['ad_name'],
 				'S_ENABLED'	=> $ad_enabled,
 				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
-				'U_PREVIEW'	=> append_sid(generate_board_url() . '/index.' . $this->php_ext, 'ad_preview=' . $row['ad_id']),
 				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
 				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
@@ -276,7 +286,6 @@ class admin_controller
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-			'ICON_PREVIEW'	=> '<img src="' . $this->ext_path . 'adm/images/icon_preview.png" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 		));
 	}
 
@@ -391,6 +400,17 @@ class admin_controller
 				'S_SELECTED'	=> $data ? in_array($location_id, $data['ad_locations']) : false,
 			));
 		}
+	}
+
+	/**
+	* Prepare advertisement preview
+	*
+	* @param	string	$code	Ad code to preview
+	* @return	void
+	*/
+	protected function ad_preview($code)
+	{
+		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($code));
 	}
 
 	/**
