@@ -115,9 +115,10 @@ class admin_controller
 	public function action_add()
 	{
 		$preview = $this->request->is_set_post('preview');
+		$submit = $this->request->is_set_post('submit');
 
 		add_form_key('phpbb/admanagement/add');
-		if ($preview || $this->request->is_set_post('submit'))
+		if ($preview || $submit)
 		{
 			$data = $this->get_form_data();
 
@@ -156,9 +157,10 @@ class admin_controller
 	{
 		$ad_id = $this->request->variable('id', 0);
 		$preview = $this->request->is_set_post('preview');
+		$submit = $this->request->is_set_post('submit');
 
 		add_form_key('phpbb/admanagement/edit/' . $ad_id);
-		if ($preview || $this->request->is_set_post('submit'))
+		if ($preview || $submit)
 		{
 			$data = $this->get_form_data();
 
