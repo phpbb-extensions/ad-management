@@ -71,7 +71,7 @@ class manager
 					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY ' . $this->sql_random() . '
 			) z
-			GROUP BY z.location_id';
+			ORDER BY z.location_id';
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
