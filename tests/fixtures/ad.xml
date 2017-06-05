@@ -21,4 +21,24 @@
 			<value>0</value>
 		</row>
 	</table>
+	<table name="phpbb_ad_locations">
+		<column>ad_id</column>
+		<column>location_id</column>
+		<row>
+			<value>1</value>
+			<value>above_header</value>
+		</row>
+		<row>
+			<value>1</value>
+			<value>below_header</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>above_header</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>below_header</value>
+		</row>
+	</table>
 </dataset>
