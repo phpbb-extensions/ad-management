@@ -138,7 +138,7 @@ class admin_controller
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_ADD_LOG', time(), array($data['ad_name']));
+				$this->log('ADD', $data['ad_name']);
 
 				$this->success('ACP_AD_ADD_SUCCESS');
 			}
@@ -190,7 +190,7 @@ class admin_controller
 					$this->manager->delete_ad_locations($ad_id);
 					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_EDIT_LOG', time(), array($data['ad_name']));
+					$this->log('EDIT', $data['ad_name']);
 
 					$this->success('ACP_AD_EDIT_SUCCESS');
 				}
@@ -266,7 +266,7 @@ class admin_controller
 				}
 				else
 				{
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_DELETE_LOG', time(), array($ad_data['ad_name']));
+					$this->log('DELETE', $ad_data['ad_name']);
 
 					if (!$this->request->is_ajax())
 					{
@@ -454,5 +454,17 @@ class admin_controller
 	protected function error()
 	{
 		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
+	}
+
+	/**
+	* Log action
+	*
+	* @param	string	$action		Performed action in uppercase
+	* @param	string	$ad_name	Advertisement name
+	* @return	void
+	*/
+	protected function log($action, $ad_name)
+	{
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_' . $action . '_LOG', time(), array($ad_name));
 	}
 }
