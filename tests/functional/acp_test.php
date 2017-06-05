@@ -101,6 +101,10 @@ class acp_test extends \phpbb_functional_test_case
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContains('Functional test name', $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
+
+		// Confirm the log entry has been added correctly
+		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
+		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_ADD_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
 	/**
@@ -153,6 +157,10 @@ class acp_test extends \phpbb_functional_test_case
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContains('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
+
+		// Confirm the log entry has been added correctly
+		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
+		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_EDIT_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
 	/**
@@ -201,6 +209,10 @@ class acp_test extends \phpbb_functional_test_case
 		// Confirm ad list is empty
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContainsLang('ACP_ADS_EMPTY', $crawler->filter('#main')->text());
+
+		// Confirm the log entry has been added correctly
+		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
+		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
 	static public function click($link)
