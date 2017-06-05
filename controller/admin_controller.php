@@ -32,6 +32,9 @@ class admin_controller
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
 
+	/** @var \phpbb\log\log */
+	protected $log;
+
 	/** @var string php_ext */
 	protected $php_ext;
 
@@ -52,16 +55,18 @@ class admin_controller
 	* @param \phpbb\request\request					$request			Request object
 	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
+	* @param \phpbb\log\log							$log				The phpBB log system
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, \phpbb\log\log $log, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
+		$this->log = $log;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
@@ -133,6 +138,8 @@ class admin_controller
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_ADD_LOG', time(), array($data['ad_name']));
+
 				$this->success('ACP_AD_ADD_SUCCESS');
 			}
 
@@ -179,6 +186,8 @@ class admin_controller
 					// Only insert new ad locations to DB when ad exists
 					$this->manager->delete_ad_locations($ad_id);
 					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
+
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_EDIT_LOG', time(), array($data['ad_name']));
 
 					$this->success('ACP_AD_EDIT_SUCCESS');
 				}
@@ -240,6 +249,10 @@ class admin_controller
 		{
 			if (confirm_box(true))
 			{
+				// Get ad data so that we can log ad name
+				$ad_data = $this->manager->get_ad($ad_id);
+
+				// Delete ad and it's template locations
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
 
@@ -248,9 +261,14 @@ class admin_controller
 				{
 					$this->error('ACP_AD_DELETE_ERRORED');
 				}
-				else if (!$this->request->is_ajax())
+				else
 				{
-					$this->success('ACP_AD_DELETE_SUCCESS');
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_DELETE_LOG', time(), array($ad_data['ad_name']));
+
+					if (!$this->request->is_ajax())
+					{
+						$this->success('ACP_AD_DELETE_SUCCESS');
+					}
 				}
 			}
 			else

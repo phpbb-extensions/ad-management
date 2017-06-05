@@ -18,6 +18,7 @@ services:
             - '@request'
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
+            - '@log'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
 
