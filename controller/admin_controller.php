@@ -146,13 +146,16 @@ class admin_controller
 			$this->assign_locations($data);
 			$this->assign_form_data($data);
 		}
+		else
+		{
+			$this->assign_locations();
+		}
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_ADD_AD'	=> true,
 			'U_BACK'	=> $this->u_action,
 		));
-		$this->assign_locations();
 	}
 
 	/**
