@@ -93,6 +93,9 @@ class admin_controller_test extends \phpbb_database_test_case
 			new \phpbb\admanagement\location\type\above_header($this->user),
 			new \phpbb\admanagement\location\type\below_header($this->user),
 		));
+		$this->log = $this->getMockBuilder('\phpbb\log\log')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
 
@@ -121,6 +124,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->request,
 			$this->manager,
 			$this->location_manager,
+			$this->log,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -160,6 +164,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->request,
 				$this->manager,
 				$this->location_manager,
+				$this->log,
 				$this->php_ext,
 				$this->ext_path,
 			))
