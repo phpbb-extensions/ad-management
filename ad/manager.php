@@ -116,7 +116,7 @@ class manager
 	*
 	* @param	int		$ad_id	Advertisement ID
 	* @param	array	$data	List of data to update in the database
-	* @return	int		Number of affected rows. Can be used to determine if any ad has been udated.
+	* @return	int		Number of affected rows. Can be used to determine if any ad has been updated.
 	*/
 	public function update_ad($ad_id, $data)
 	{

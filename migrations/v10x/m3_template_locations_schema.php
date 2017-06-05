@@ -31,7 +31,6 @@ class m3_template_locations_schema extends \phpbb\db\migration\migration
 	/**
 	* Add the ad_locations table schema to the database:
 	*	ad_locations:
-	*		ad_location_id
 	*		ad_id
 	*		location_id
 	*
