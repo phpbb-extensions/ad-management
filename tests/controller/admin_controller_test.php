@@ -217,6 +217,34 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
+	* Test action_add() method's preview
+	*/
+	public function test_action_add_preview()
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(true);
+
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		$this->request->expects($this->any())
+			->method('variable')
+			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+
+		$this->template->expects($this->at(0))
+				->method('assign_var')
+				->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
+
+		$controller->action_add();
+	}
+
+	/**
 	* Test data for the test_action_add_submit() function
 	*
 	* @return array Array of test data
@@ -227,6 +255,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			array('', true, 'AD_NAME_REQUIRED', true),
 			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
 			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
+			array('Unit test advertisement', false, '', true),
 			array('Unit test advertisement', false, '', true),
 		);
 	}
@@ -352,6 +381,34 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_ENABLED'	=> '1',
 				));
 		}
+
+		$controller->action_edit();
+	}
+
+	/**
+	* Test action_edit() method's preview
+	*/
+	public function test_action_edit_preview()
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->any())
+			->method('variable')
+			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(true);
+
+		$this->request->expects($this->at(2))
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		$this->template->expects($this->at(0))
+				->method('assign_var')
+				->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
 
 		$controller->action_edit();
 	}
