@@ -206,6 +206,9 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('submit')
 			->willReturn(false);
 
+		$this->template->expects($this->any())
+			->method('assign_block_vars');
+		
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
@@ -256,7 +259,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
 			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
 			array('Unit test advertisement', false, '', true),
-			array('Unit test advertisement', false, '', true),
 		);
 	}
 
@@ -283,7 +285,10 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false, array()));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer')));
+
+		$this->template->expects($this->any())
+			->method('assign_block_vars');
 
 		if ($s_error)
 		{
@@ -305,7 +310,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller->action_add();
 
-		// Check ad is in the DB
+		// Check ad and it's locations are in the DB
 		if (!$s_error)
 		{
 			$sql = 'SELECT * FROM ' . $this->ads_table . '
@@ -316,6 +321,15 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals('0', $row['ad_enabled']);
+
+			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
+				WHERE ad_id = ' . (int) $row['ad_id'] . '
+				ORDER BY location_id ASC';
+			$result = $this->db->sql_query($sql);
+			$rows = $this->db->sql_fetchrowset($result);
+
+			$this->assertEquals('above_footer', $row[0]['location_id']);
+			$this->assertEquals('below_footer', $row[1]['location_id']);
 		}
 	}
 
@@ -355,6 +369,9 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
+
+		$this->template->expects($this->any())
+			->method('assign_block_vars');
 
 		if (!$ad_id)
 		{
@@ -442,7 +459,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array()));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts')));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -481,7 +498,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller->action_edit();
 
-		// Check ad is in the DB
+		// Check ad and ad locations are in the DB
 		if (!$s_error)
 		{
 			$sql = 'SELECT * FROM ' . $this->ads_table . '
@@ -493,6 +510,15 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals('0', $row['ad_enabled']);
+
+			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
+				WHERE ad_id = ' . (int) $row['ad_id'] . '
+				ORDER BY location_id ASC';
+			$result = $this->db->sql_query($sql);
+			$rows = $this->db->sql_fetchrowset($result);
+
+			$this->assertEquals('after_posts', $row[0]['location_id']);
+			$this->assertEquals('before_posts', $row[1]['location_id']);
 		}
 	}
 
@@ -607,6 +633,15 @@ class admin_controller_test extends \phpbb_database_test_case
 		{
 			$sql = 'SELECT ad_id
 				FROM ' . $this->ads_table . '
+				WHERE ad_id = ' . (int) $ad_id;
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+
+			$this->assertTrue(empty($row));
+
+			$sql = 'SELECT location_id
+				FROM ' . $this->ad_locations_table . '
 				WHERE ad_id = ' . (int) $ad_id;
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
