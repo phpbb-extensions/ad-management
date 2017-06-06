@@ -35,5 +35,10 @@
     },
     "require-dev": {
         "phing/phing": "2.4.*"
+    },
+    "version-check": {
+        "host": "version.phpbb.com",
+        "directory": "/phpbb-extensions",
+        "filename": "ad_management_versions.json"
     }
 }
