@@ -49,14 +49,30 @@ class main_listener_base extends \phpbb_database_test_case
 		$user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
+		// Location types
+		$locations = array(
+			'above_footer',
+			'above_header',
+			'after_first_post', 
+			'after_not_first_post',
+			'after_posts',
+			'after_profile',
+			'before_posts',
+			'before_profile',
+			'below_footer',
+			'below_header'
+		);
+		$location_types = array();
+		foreach ($locations as $type)
+		{
+			$class = "\\phpbb\\admanagement\\location\\type\\$type";
+			$location_types['phpbb.admanagement.location.type.' . $type] = new $class($user);
+		}
 
 		// Load/Mock classes required by the listener class
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->manager = new \phpbb\admanagement\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
-		$this->location_manager = new \phpbb\admanagement\location\manager(array(
-			new \phpbb\admanagement\location\type\above_header($user),
-			new \phpbb\admanagement\location\type\below_header($user),
-		));
+		$this->location_manager = new \phpbb\admanagement\location\manager($location_types);
 	}
 
 	/**
