@@ -28,17 +28,17 @@
 				<dd><input class="text medium" type="text" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
+					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_note" name="ad_note" rows="10" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
-					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
