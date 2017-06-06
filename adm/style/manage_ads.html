@@ -8,6 +8,12 @@
 
 	<h1>{% if S_ADD_AD %}{{ lang('ACP_ADS_ADD') }}{% else %}{{ lang('ACP_ADS_EDIT') }}{% endif %}</h1>
 
+	{% if PREVIEW %}
+		<div class="ad-center">
+			{{ PREVIEW }}
+		</div>
+	{% endif %}
+
 	{% if S_ERROR %}
 		<div class="errorbox">
 			<h3>{{ lang('WARNING') }}</h3>
@@ -34,8 +40,18 @@
 				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
 					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
+				<dd><select id="ad_locations" name="ad_locations[]" multiple="multiple" size="8">
+					{% for location in loops.ad_locations %}
+						<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected="selected"{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
+					{% endfor %}
+					</select>
+				</dd>
+			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
+			<input class="button1" type="submit" id="preview" name="preview" value="{{ lang('PREVIEW') }}" />&nbsp;
 			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
 			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
 			{% if S_EDIT_AD %}
@@ -67,7 +83,7 @@
 				<tr>
 					<td><strong>{{ ad.NAME }}</strong></td>
 					<td><a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}</a></td>
-					<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a> <a href="{{ ad.U_PREVIEW }}" target="_blank">{{ ICON_PREVIEW }}</a></td>
+					<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
 				</tr>
 			{% else %}
 				<tr>

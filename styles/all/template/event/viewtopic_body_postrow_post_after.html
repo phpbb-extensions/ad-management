@@ -1,0 +1,7 @@
+{% if AD_AFTER_FIRST_POST and postrow.S_FIRST_ROW %}
+	<div class="ad-center">{{ AD_AFTER_FIRST_POST }}</div>
+{% endif %}
+
+{% if AD_AFTER_NOT_FIRST_POST and not postrow.S_FIRST_ROW %}
+	<div class="ad-center">{{ AD_AFTER_NOT_FIRST_POST }}</div>
+{% endif %}

@@ -1,24 +1,32 @@
 imports:
     - { resource: tables.yml }
+    - { resource: location.yml }
 
 services:
+    phpbb.admanagement.ad.manager:
+        class: phpbb\admanagement\ad\manager
+        arguments:
+            - '@dbal.conn'
+            - '%phpbb.admanagement.tables.ads%'
+            - '%phpbb.admanagement.tables.ad_locations%'
+
     phpbb.admanagement.admin.controller:
         class: phpbb\admanagement\controller\admin_controller
         arguments:
-            - '@dbal.conn'
             - '@template'
             - '@user'
             - '@request'
-            - '%phpbb.admanagement.tables.ads%'
+            - '@phpbb.admanagement.ad.manager'
+            - '@phpbb.admanagement.location.manager'
+            - '@log'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
 
     phpbb.admanagement.listener:
         class: phpbb\admanagement\event\main_listener
         arguments:
-            - '@request'
-            - '@dbal.conn'
             - '@template'
-            - '%phpbb.admanagement.tables.ads%'
+            - '@phpbb.admanagement.ad.manager'
+            - '@phpbb.admanagement.location.manager'
         tags:
             - { name: event.listener }

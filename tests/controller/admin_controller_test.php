@@ -35,6 +35,15 @@ class admin_controller_test extends \phpbb_database_test_case
 	protected $ads_table;
 
 	/** @var string */
+	protected $ad_locations_table;
+
+	/** @var \phpbb\admanagement\ad\manager */
+	protected $manager;
+
+	/** @var \phpbb\admanagement\location\manager */
+	protected $location_manager;
+
+	/** @var string */
 	protected $php_ext;
 
 	/** @var string */
@@ -78,9 +87,18 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
+		$this->ad_locations_table = 'phpbb_ad_locations';
+		$this->manager = new \phpbb\admanagement\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		$this->location_manager = new \phpbb\admanagement\location\manager(array(
+			new \phpbb\admanagement\location\type\above_header($this->user),
+			new \phpbb\admanagement\location\type\below_header($this->user),
+		));
+		$this->log = $this->getMockBuilder('\phpbb\log\log')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
-	
+
 		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage';
 
 		// globals
@@ -101,11 +119,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function get_controller()
 	{
 		$controller = new \phpbb\admanagement\controller\admin_controller(
-			$this->db,
 			$this->template,
 			$this->user,
 			$this->request,
-			$this->ads_table,
+			$this->manager,
+			$this->location_manager,
+			$this->log,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -140,11 +159,12 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
-				$this->db,
 				$this->template,
 				$this->user,
 				$this->request,
-				$this->ads_table,
+				$this->manager,
+				$this->location_manager,
+				$this->log,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -176,10 +196,18 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
+
+		$this->template->expects($this->any())
+			->method('assign_block_vars');
 		
 		$this->template->expects($this->once())
 			->method('assign_vars')
@@ -188,6 +216,34 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_BACK'	=> $this->u_action,
 			));
 		
+		$controller->action_add();
+	}
+
+	/**
+	* Test action_add() method's preview
+	*/
+	public function test_action_add_preview()
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(true);
+
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		$this->request->expects($this->any())
+			->method('variable')
+			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+
+		$this->template->expects($this->at(0))
+				->method('assign_var')
+				->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
+
 		$controller->action_add();
 	}
 
@@ -217,18 +273,26 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer')));
+
+		$this->template->expects($this->any())
+			->method('assign_block_vars');
 
 		if ($s_error)
 		{
-			$this->template->expects($this->at(0))
+			$this->template->expects($this->at(2))
 				->method('assign_vars')
 				->with(array(
 					'S_ERROR'		=> $s_error,
@@ -246,7 +310,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller->action_add();
 
-		// Check ad is in the DB
+		// Check ad and it's locations are in the DB
 		if (!$s_error)
 		{
 			$sql = 'SELECT * FROM ' . $this->ads_table . '
@@ -257,6 +321,15 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals('0', $row['ad_enabled']);
+
+			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
+				WHERE ad_id = ' . (int) $row['ad_id'] . '
+				ORDER BY location_id ASC';
+			$result = $this->db->sql_query($sql);
+			$rows = $this->db->sql_fetchrowset($result);
+
+			$this->assertEquals('above_footer', $row[0]['location_id']);
+			$this->assertEquals('below_footer', $row[1]['location_id']);
 		}
 	}
 
@@ -287,10 +360,18 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('id', 0)
 			->willReturn($ad_id);
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
+
+		$this->template->expects($this->any())
+			->method('assign_block_vars');
 
 		if (!$ad_id)
 		{
@@ -306,7 +387,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_BACK'	=> $this->u_action,
 				));
 
-			$this->template->expects($this->at(1))
+			$this->template->expects($this->at(3))
 				->method('assign_vars')
 				->with(array(
 					'S_ERROR'		=> false,
@@ -317,6 +398,34 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_ENABLED'	=> '1',
 				));
 		}
+
+		$controller->action_edit();
+	}
+
+	/**
+	* Test action_edit() method's preview
+	*/
+	public function test_action_edit_preview()
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->any())
+			->method('variable')
+			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(true);
+
+		$this->request->expects($this->at(2))
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		$this->template->expects($this->at(0))
+				->method('assign_var')
+				->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
 
 		$controller->action_edit();
 	}
@@ -350,9 +459,14 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts')));
 
-		$this->request->expects($this->once())
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
@@ -365,7 +479,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 			else
 			{
-				$this->template->expects($this->at(1))
+				$this->template->expects($this->at(3))
 					->method('assign_vars')
 					->with(array(
 						'S_ERROR'		=> $s_error,
@@ -384,7 +498,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller->action_edit();
 
-		// Check ad is in the DB
+		// Check ad and ad locations are in the DB
 		if (!$s_error)
 		{
 			$sql = 'SELECT * FROM ' . $this->ads_table . '
@@ -396,6 +510,15 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals('0', $row['ad_enabled']);
+
+			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
+				WHERE ad_id = ' . (int) $row['ad_id'] . '
+				ORDER BY location_id ASC';
+			$result = $this->db->sql_query($sql);
+			$rows = $this->db->sql_fetchrowset($result);
+
+			$this->assertEquals('after_posts', $row[0]['location_id']);
+			$this->assertEquals('before_posts', $row[1]['location_id']);
 		}
 	}
 
@@ -516,6 +639,15 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->db->sql_freeresult($result);
 
 			$this->assertTrue(empty($row));
+
+			$sql = 'SELECT location_id
+				FROM ' . $this->ad_locations_table . '
+				WHERE ad_id = ' . (int) $ad_id;
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+
+			$this->assertTrue(empty($row));
 		}
 	}
 
@@ -532,7 +664,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-				'ICON_PREVIEW'	=> '<img src="' . $this->ext_path . 'adm/images/icon_preview.png" alt="' . $this->user->lang('AD_PREVIEW') . '" title="' . $this->user->lang('AD_PREVIEW') . '" />',
 			));
 
 		$controller->list_ads();
