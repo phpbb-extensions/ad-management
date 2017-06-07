@@ -16,6 +16,7 @@ namespace phpbb\admanagement\controller;
 class admin_controller
 {
 	const MAX_NAME_LENGTH = 255;
+	const DATE_FORMAT = 'Y-m-d H:i';
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -153,8 +154,9 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ADD_AD'	=> true,
-			'U_BACK'	=> $this->u_action,
+			'S_ADD_AD'				=> true,
+			'U_BACK'				=> $this->u_action,
+			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
 		));
 	}
 
@@ -212,9 +214,10 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_EDIT_AD'	=> true,
-			'EDIT_ID'	=> $ad_id,
-			'U_BACK'	=> $this->u_action,
+			'S_EDIT_AD'				=> true,
+			'EDIT_ID'				=> $ad_id,
+			'U_BACK'				=> $this->u_action,
+			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
 		));
 		$this->assign_locations($data);
 		$this->assign_form_data($data);
@@ -360,6 +363,7 @@ class admin_controller
 			'ad_code'		=> $this->request->variable('ad_code', '', true),
 			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
 			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
+			'ad_end_date'	=> (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $this->request->variable('ad_end_date', '')),
 		);
 	}
 
@@ -385,6 +389,10 @@ class admin_controller
 		{
 			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 		}
+		if ($data['ad_end_date'] != 0 && $data['ad_end_date'] < time())
+		{
+			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+		}
 	}
 
 	/**
@@ -403,6 +411,7 @@ class admin_controller
 			'AD_NOTE'		=> $data['ad_note'],
 			'AD_CODE'		=> $data['ad_code'],
 			'AD_ENABLED'	=> $data['ad_enabled'],
+			'AD_END_DATE'	=> $data['ad_end_date'] ? $this->user->format_date($data['ad_end_date'], self::DATE_FORMAT) : '',
 		));
 	}
 

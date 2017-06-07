@@ -1,3 +1,6 @@
+{% INCLUDEJS '@phpbb_admanagement/datetimepicker/jquery.datetimepicker.full.min.js' %}
+
+<script>
 /**
  * This callback replaces enable links with disable links and vice versa.
  * It does this by replacing the text, and replacing all instances of "enable"
@@ -20,3 +23,13 @@ phpbb.addAjaxCallback('toggle_enable', function(res) {
 
 	$this.attr('href', newHref);
 });
+
+jQuery(function($) {
+	$('#ad_end_date').datetimepicker({
+		format:'{{ PICKER_DATE_FORMAT|e('js') }}',
+		validateOnBlur: false,
+		minDate: 0
+	});
+	$.datetimepicker.setLocale('{S_USER_LANG}');
+});
+</script>

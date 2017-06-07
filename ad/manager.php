@@ -214,6 +214,7 @@ class manager
 			'ad_note'		=> '',
 			'ad_code'		=> '',
 			'ad_enabled'	=> '',
+			'ad_end_date'	=> '',
 		));
 	}
 

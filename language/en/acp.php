@@ -21,12 +21,14 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'AD_NAME'				=> 'Name',
 	'AD_NAME_EXPLAIN'		=> 'This is only used for your recognition of this advertisement.',
+	'AD_ENABLED'			=> 'Enabled',
+	'AD_ENABLED_EXPLAIN'	=> 'If disabled, this advertisement will not be displayed.',
+	'AD_END_DATE'			=> 'End Date',
+	'AD_END_DATE_EXPLAIN'	=> 'Set the date the advertisement will expire and become disabled. Leave this field blank if you do not want the advertisement to expire. Please, use <samp>YYYY-MM-DD HH:MM</samp> format.',
 	'AD_NOTE'				=> 'Notes',
 	'AD_NOTE_EXPLAIN'		=> 'Enter any notes for this advertisement. These notes are not shown anywhere except in the ACP.',
 	'AD_CODE'				=> 'Code',
 	'AD_CODE_EXPLAIN'		=> 'The advertisement code goes here. All code should be put in a raw HTML form, BBcodes are not supported.',
-	'AD_ENABLED'			=> 'Enabled',
-	'AD_ENABLED_EXPLAIN'	=> 'If disabled, this advertisement will not be displayed.',
 	'AD_LOCATIONS'			=> 'Locations',
 	'AD_LOCATIONS_EXPLAIN'	=> 'Select locations to display this advertisement in. In case multiple ads are assigned the same location, only a random one will be displayed at a time. Mouse over the location to see further description.',
 	'AD_ENABLE_TITLE'		=> array( // Plural rule doesn't apply here! Just translate the values.
@@ -40,6 +42,7 @@ $lang = array_merge($lang, array(
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',
+	'AD_END_DATE_INVALID'		=> 'The end date was invalid or has already expired.',
 	'ACP_AD_DOES_NOT_EXIST'		=> 'The advertisement does not exist!',
 	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully!',
 	'ACP_AD_EDIT_SUCCESS'		=> 'Advertisement edited successfully!',

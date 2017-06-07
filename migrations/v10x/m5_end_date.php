@@ -42,7 +42,7 @@ class m5_end_date extends \phpbb\db\migration\migration
 		return array(
 			'add_columns' => array(
 				$this->table_prefix . 'ads' => array(
-					'end_date' => array('TIMESTAMP', 0),
+					'ad_end_date' => array('TIMESTAMP', 0),
 				),
 			),
 		);
@@ -59,7 +59,7 @@ class m5_end_date extends \phpbb\db\migration\migration
 		return array(
 			'drop_columns' => array(
 				$this->table_prefix . 'ads' => array(
-					'end_date',
+					'ad_end_date',
 				),
 			),
 		);
