@@ -85,6 +85,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->user->timezone = new \DateTimeZone('UTC');
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
@@ -212,8 +213,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
-				'S_ADD_AD'	=> true,
-				'U_BACK'	=> $this->u_action,
+				'S_ADD_AD'				=> true,
+				'U_BACK'				=> $this->u_action,
+				'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 			));
 		
 		$controller->action_add();
@@ -301,6 +303,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> '',
 					'AD_CODE'		=> '',
 					'AD_ENABLED'	=> false,
+					'AD_END_DATE'	=> '',
 				));
 		}
 		else
@@ -382,9 +385,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->template->expects($this->at(0))
 				->method('assign_vars')
 				->with(array(
-					'S_EDIT_AD'	=> true,
-					'EDIT_ID'	=> $ad_id,
-					'U_BACK'	=> $this->u_action,
+					'S_EDIT_AD'				=> true,
+					'EDIT_ID'				=> $ad_id,
+					'U_BACK'				=> $this->u_action,
+					'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 				));
 
 			$this->template->expects($this->at(3))
@@ -396,6 +400,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> 'And it\'s desc',
 					'AD_CODE'		=> 'admanagementcode',
 					'AD_ENABLED'	=> '1',
+					'AD_END_DATE'	=> '',
 				));
 		}
 
@@ -488,6 +493,7 @@ class admin_controller_test extends \phpbb_database_test_case
 						'AD_NOTE'		=> '',
 						'AD_CODE'		=> '',
 						'AD_ENABLED'	=> false,
+						'AD_END_DATE'	=> '',
 					));
 			}
 		}
