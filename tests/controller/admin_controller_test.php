@@ -669,6 +669,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
+				'S_ADS'			=> true,
 				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
 			));
 
