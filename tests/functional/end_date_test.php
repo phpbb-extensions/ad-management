@@ -44,7 +44,7 @@ class end_date_test extends location_base
 
 	public function test_future_end_date_displays()
 	{
-		$ad_code = $this->create_ad('above_footer', '2100-01-01');
+		$ad_code = $this->create_ad('above_footer', '2035-01-01');
 
 		$crawler = self::request('GET', "index.php");
 

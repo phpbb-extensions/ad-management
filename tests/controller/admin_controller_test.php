@@ -261,7 +261,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
 			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
 			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
-			array('Unit test advertisement', false, '', true, '2100-01-01'),
+			array('Unit test advertisement', false, '', true, '2035-01-01'),
 		);
 	}
 
@@ -379,7 +379,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> 'And it\'s desc',
 					'AD_CODE'		=> 'admanagementcode',
 					'AD_ENABLED'	=> '1',
-					'AD_END_DATE'	=> '2100-01-02',
+					'AD_END_DATE'	=> '2035-01-02',
 				));
 		}
 
@@ -427,7 +427,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
 			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
 			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
-			array(1, 'Unit test advertisement', false, '', true, '2100-01-03'),
+			array(1, 'Unit test advertisement', false, '', true, '2035-01-03'),
 		);
 	}
 

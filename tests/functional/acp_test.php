@@ -100,7 +100,7 @@ class acp_test extends \phpbb_functional_test_case
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> true,
-			'ad_end_date'	=> '2100-01-01',
+			'ad_end_date'	=> '2035-01-01',
 		);
 
 		// Confirm preview
@@ -175,7 +175,7 @@ class acp_test extends \phpbb_functional_test_case
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE EDITED -->',
 			'ad_enabled'	=> false,
-			'ad_end_date'	=> '2100-01-02',
+			'ad_end_date'	=> '2035-01-02',
 		);
 
 		// Confirm preview
