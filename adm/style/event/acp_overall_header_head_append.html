@@ -1,2 +1,4 @@
-{% INCLUDECSS '@phpbb_admanagement/admanagement.css' %}
-{% INCLUDECSS '@phpbb_admanagement/datetimepicker/jquery.datetimepicker.min.css' %}
+{% if S_ADS or S_ADD_AD or S_EDIT_AD %}
+	{% INCLUDECSS '@phpbb_admanagement/admanagement.css' %}
+	{% INCLUDECSS '@phpbb_admanagement/datetimepicker/jquery.datetimepicker.min.css' %}
+{% endif %}
