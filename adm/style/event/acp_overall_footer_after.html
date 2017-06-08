@@ -33,7 +33,8 @@ jQuery(function($) {
 	$('#ad_end_date').datetimepicker({
 		format:'{{ PICKER_DATE_FORMAT|e('js') }}',
 		validateOnBlur: false,
-		minDate: 0
+		minDate: 0,
+		timepicker: false,
 	});
 	$.datetimepicker.setLocale('{{ S_USER_LANG }}');
 });
