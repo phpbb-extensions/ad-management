@@ -39,7 +39,7 @@ class location_base extends \phpbb_functional_test_case
 		$this->admin_login();
 	}
 
-	protected function create_ad($location)
+	protected function create_ad($location, $end_date = '')
 	{
 		// Load Advertisement management ACP page
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
@@ -55,6 +55,7 @@ class location_base extends \phpbb_functional_test_case
 			'ad_code'		=> '<!-- SAMPLE ADD CODE ' . $location . ' -->',
 			'ad_enabled'	=> true,
 			'ad_locations'	=> array($location),
+			'ad_end_date'	=> $end_date,
 		);
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();

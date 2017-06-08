@@ -85,12 +85,22 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
 		$this->assertContains($this->lang('AD_NAME_TOO_LONG', 255), $crawler->text());
 
+		// Confirm error when submitting old end date
+		$form_data = array(
+			'ad_end_date'	=> '2000-01-01',
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContainsLang('AD_END_DATE_INVALID', $crawler->text());
+
 		// Create ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name',
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> true,
+			'ad_end_date'	=> '2100-01-01',
 		);
 
 		// Confirm preview
@@ -134,6 +144,7 @@ class acp_test extends \phpbb_functional_test_case
 			'ad_note'		=> '',
 			'ad_code'		=> '',
 			'ad_enabled'	=> false,
+			'ad_end_date'	=> '',
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
@@ -149,12 +160,22 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
 		$this->assertContains($this->lang('AD_NAME_TOO_LONG', 255), $crawler->text());
 
-		// Create ad
+		// Confirm error when submitting old end date
+		$form_data = array(
+			'ad_end_date'	=> '2000-01-01',
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContainsLang('AD_END_DATE_INVALID', $crawler->text());
+
+		// Edit ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name edited',
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE EDITED -->',
 			'ad_enabled'	=> false,
+			'ad_end_date'	=> '2100-01-02',
 		);
 
 		// Confirm preview
