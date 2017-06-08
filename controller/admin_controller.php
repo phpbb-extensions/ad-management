@@ -311,6 +311,7 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
+			'S_ADS'			=> true,
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
 		));
 	}
