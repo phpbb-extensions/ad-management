@@ -313,29 +313,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$controller->action_add();
-
-		// Check ad and it's locations are in the DB
-		if (!$s_error)
-		{
-			$sql = 'SELECT * FROM ' . $this->ads_table . '
-				WHERE ad_name = "' . $ad_name . '"';
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-
-			$this->assertEquals('', $row['ad_note']);
-			$this->assertEquals('', $row['ad_code']);
-			$this->assertEquals('0', $row['ad_enabled']);
-			$this->assertEquals('4102444800', $row['ad_end_date']);
-
-			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $row['ad_id'] . '
-				ORDER BY location_id ASC';
-			$result = $this->db->sql_query($sql);
-			$rows = $this->db->sql_fetchrowset($result);
-
-			$this->assertEquals('above_footer', $row[0]['location_id']);
-			$this->assertEquals('below_footer', $row[1]['location_id']);
-		}
 	}
 
 	/**
@@ -506,30 +483,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$controller->action_edit();
-
-		// Check ad and ad locations are in the DB
-		if (!$s_error)
-		{
-			$sql = 'SELECT * FROM ' . $this->ads_table . '
-				WHERE ad_id = "' . (int) $ad_id . '"';
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-
-			$this->assertEquals('Unit test advertisement', $row['ad_name']);
-			$this->assertEquals('', $row['ad_note']);
-			$this->assertEquals('', $row['ad_code']);
-			$this->assertEquals('0', $row['ad_enabled']);
-			$this->assertEquals('4102617600', $row['ad_end_date']);
-
-			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $row['ad_id'] . '
-				ORDER BY location_id ASC';
-			$result = $this->db->sql_query($sql);
-			$rows = $this->db->sql_fetchrowset($result);
-
-			$this->assertEquals('after_posts', $row[0]['location_id']);
-			$this->assertEquals('before_posts', $row[1]['location_id']);
-		}
 	}
 
 	/**
@@ -570,18 +523,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		else
 		{
 			$controller->action_disable();
-		}
-
-		if ($ad_id)
-		{
-			$sql = 'SELECT ad_enabled
-				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$ad_enabled = (bool) $this->db->sql_fetchfield('ad_enabled', $result);
-			$this->db->sql_freeresult($result);
-
-			$this->assertEquals(!$enable, $ad_enabled);
 		}
 	}
 
@@ -638,27 +579,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$controller->action_delete();
-
-		if ($confirm)
-		{
-			$sql = 'SELECT ad_id
-				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-
-			$this->assertTrue(empty($row));
-
-			$sql = 'SELECT location_id
-				FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-
-			$this->assertTrue(empty($row));
-		}
 	}
 
 	/**
