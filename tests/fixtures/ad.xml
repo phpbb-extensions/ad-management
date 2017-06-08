@@ -6,18 +6,21 @@
 		<column>ad_note</column>
 		<column>ad_code</column>
 		<column>ad_enabled</column>
+		<column>ad_end_date</column>
 		<row>
 			<value>1</value>
 			<value>One and only</value>
 			<value>And it's desc</value>
 			<value>admanagementcode</value>
 			<value>1</value>
+			<value>4102531200</value>
 		</row>
 		<row>
 			<value>2</value>
 			<value>Second one</value>
 			<value>And it's desc</value>
 			<value>code here</value>
+			<value>0</value>
 			<value>0</value>
 		</row>
 	</table>

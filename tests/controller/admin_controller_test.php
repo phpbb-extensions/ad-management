@@ -240,7 +240,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
 
 		$this->template->expects($this->at(0))
 				->method('assign_var')
@@ -257,10 +257,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array('', true, 'AD_NAME_REQUIRED', true),
-			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
-			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
-			array('Unit test advertisement', false, '', true),
+			array('', true, 'AD_NAME_REQUIRED', true, ''),
+			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
+			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
+			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
+			array('Unit test advertisement', false, '', true, '2100-01-01'),
 		);
 	}
 
@@ -269,7 +270,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_add_data
 	*/
-	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form)
+	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form, $end_date)
 	{
 		self::$valid_form = $valid_form;
 
@@ -287,7 +288,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer')));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date));
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
@@ -303,7 +304,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> '',
 					'AD_CODE'		=> '',
 					'AD_ENABLED'	=> false,
-					'AD_END_DATE'	=> '',
+					'AD_END_DATE'	=> $end_date,
 				));
 		}
 		else
@@ -324,6 +325,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals('0', $row['ad_enabled']);
+			$this->assertEquals('4102444800', $row['ad_end_date']);
 
 			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
 				WHERE ad_id = ' . (int) $row['ad_id'] . '
@@ -400,7 +402,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> 'And it\'s desc',
 					'AD_CODE'		=> 'admanagementcode',
 					'AD_ENABLED'	=> '1',
-					'AD_END_DATE'	=> '',
+					'AD_END_DATE'	=> '2100-01-02',
 				));
 		}
 
@@ -416,7 +418,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -443,11 +445,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_edit_data()
 	{
 		return array(
-			array(0, 'Unit test advertisement', true, '', true),
-			array(1, '', true, 'AD_NAME_REQUIRED', true),
-			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
-			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
-			array(1, 'Unit test advertisement', false, '', true),
+			array(0, 'Unit test advertisement', true, '', true, ''),
+			array(1, '', true, 'AD_NAME_REQUIRED', true, ''),
+			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
+			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
+			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
+			array(1, 'Unit test advertisement', false, '', true, '2100-01-03'),
 		);
 	}
 
@@ -456,7 +459,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_edit_data
 	*/
-	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form)
+	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form, $end_date)
 	{
 		self::$valid_form = $valid_form;
 
@@ -464,7 +467,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts')));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -493,7 +496,7 @@ class admin_controller_test extends \phpbb_database_test_case
 						'AD_NOTE'		=> '',
 						'AD_CODE'		=> '',
 						'AD_ENABLED'	=> false,
-						'AD_END_DATE'	=> '',
+						'AD_END_DATE'	=> $end_date,
 					));
 			}
 		}
@@ -516,6 +519,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->assertEquals('', $row['ad_note']);
 			$this->assertEquals('', $row['ad_code']);
 			$this->assertEquals('0', $row['ad_enabled']);
+			$this->assertEquals('4102617600', $row['ad_end_date']);
 
 			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
 				WHERE ad_id = ' . (int) $row['ad_id'] . '
