@@ -30,6 +30,6 @@ class location_below_footer_test extends location_base
 		$crawler = self::request('GET', "index.php");
 
 		// Confirm below footer ad is last visible body children
-		$this->assertContains($ad_code, $crawler->filter('.ad-center')->last()->html());
+		$this->assertContains($ad_code, $crawler->filter('.phpbb-admanagement-center')->last()->html());
 	}
 }
