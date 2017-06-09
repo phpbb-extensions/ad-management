@@ -28,17 +28,21 @@
 				<dd><input class="text medium" type="text" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
+					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_note" name="ad_note" rows="10" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
-					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
@@ -66,14 +70,13 @@
 
 {% else %}
 
-	{% INCLUDEJS '@phpbb_admanagement/scripts.js' %}
-
 	<h1>{{ lang('ACP_MANAGE_ADS_TITLE') }}</h1>
 
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 			<tr>
-				<th style="width: 80%;">{{ lang('AD_NAME') }}</th>
+				<th style="width: 65%;">{{ lang('AD_NAME') }}</th>
+				<th style="width: 15%;">{{ lang('AD_END_DATE') }}</th>
 				<th style="width: 10%;">{{ lang('ENABLED') }}</th>
 				<th style="width: 10%;">{{ lang('ACTION') }}</th>
 			</tr>
@@ -82,7 +85,16 @@
 			{% for ad in loops.ads %}
 				<tr>
 					<td><strong>{{ ad.NAME }}</strong></td>
-					<td><a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}</a></td>
+					<td>
+						{% if ad.S_END_DATE_EXPIRED %}<strong title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error">{% endif %}
+							{{ ad.END_DATE }}
+						{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
+					</td>
+					<td>
+						{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
+							{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
+						{% if not ad.S_END_DATE_EXPIRED %}</a>{% endif %}
+					</td>
 					<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
 				</tr>
 			{% else %}

@@ -16,6 +16,7 @@ namespace phpbb\admanagement\controller;
 class admin_controller
 {
 	const MAX_NAME_LENGTH = 255;
+	const DATE_FORMAT = 'Y-m-d';
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -79,6 +80,8 @@ class admin_controller
 	public function main()
 	{
 		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
+
+		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
 
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
@@ -153,8 +156,9 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ADD_AD'	=> true,
-			'U_BACK'	=> $this->u_action,
+			'S_ADD_AD'				=> true,
+			'U_BACK'				=> $this->u_action,
+			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
 		));
 	}
 
@@ -212,9 +216,10 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_EDIT_AD'	=> true,
-			'EDIT_ID'	=> $ad_id,
-			'U_BACK'	=> $this->u_action,
+			'S_EDIT_AD'				=> true,
+			'EDIT_ID'				=> $ad_id,
+			'U_BACK'				=> $this->u_action,
+			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
 		));
 		$this->assign_locations($data);
 		$this->assign_form_data($data);
@@ -296,20 +301,27 @@ class admin_controller
 		foreach ($this->manager->get_all_ads() as $row)
 		{
 			$ad_enabled = (int) $row['ad_enabled'];
+			$ad_end_date = (int) $row['ad_end_date'];
+			$ad_expired = $ad_end_date > 0 && $ad_end_date < time();
+			if ($ad_expired && $ad_enabled)
+			{
+				$ad_enabled = 0;
+				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
+			}
 
 			$this->template->assign_block_vars('ads', array(
-				'NAME'		=> $row['ad_name'],
-				'S_ENABLED'	=> $ad_enabled,
-				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
-				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
-				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
+				'NAME'					=> $row['ad_name'],
+				'END_DATE'				=> $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
+				'S_END_DATE_EXPIRED'	=> $ad_expired,
+				'S_ENABLED'				=> $ad_enabled,
+				'U_ENABLE'				=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_EDIT'				=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
+				'U_DELETE'				=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
 		}
 
 		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-		));
+		$this->template->assign_var('U_ACTION_ADD', $this->u_action . '&amp;action=add');
 	}
 
 	/**
@@ -360,6 +372,7 @@ class admin_controller
 			'ad_code'		=> $this->request->variable('ad_code', '', true),
 			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
 			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
+			'ad_end_date'	=> (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $this->request->variable('ad_end_date', '')),
 		);
 	}
 
@@ -385,6 +398,10 @@ class admin_controller
 		{
 			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 		}
+		if ($data['ad_end_date'] != 0 && $data['ad_end_date'] < time())
+		{
+			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+		}
 	}
 
 	/**
@@ -403,6 +420,7 @@ class admin_controller
 			'AD_NOTE'		=> $data['ad_note'],
 			'AD_CODE'		=> $data['ad_code'],
 			'AD_ENABLED'	=> $data['ad_enabled'],
+			'AD_END_DATE'	=> $data['ad_end_date'] ? $this->user->format_date($data['ad_end_date'], self::DATE_FORMAT) : '',
 		));
 	}
 

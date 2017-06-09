@@ -68,6 +68,8 @@ class manager
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
+					AND (a.ad_end_date = 0
+						OR a.ad_end_date > ' . time() . ')
 					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY ' . $this->sql_random() . '
 			) z
@@ -86,7 +88,7 @@ class manager
 	*/
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
@@ -214,6 +216,7 @@ class manager
 			'ad_note'		=> '',
 			'ad_code'		=> '',
 			'ad_enabled'	=> '',
+			'ad_end_date'	=> '',
 		));
 	}
 

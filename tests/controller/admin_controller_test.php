@@ -85,6 +85,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->user->timezone = new \DateTimeZone('UTC');
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
@@ -170,6 +171,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			))
 			->getMock();
 
+		$this->template->expects($this->once())
+			->method('assign_var')
+			->with('S_PHPBB_ADMANAGEMENT', true);
+
 		$this->request->expects($this->once())
 			->method('variable')
 			->willReturn($action);
@@ -212,8 +217,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
-				'S_ADD_AD'	=> true,
-				'U_BACK'	=> $this->u_action,
+				'S_ADD_AD'				=> true,
+				'U_BACK'				=> $this->u_action,
+				'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 			));
 		
 		$controller->action_add();
@@ -238,7 +244,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
 
 		$this->template->expects($this->at(0))
 				->method('assign_var')
@@ -255,10 +261,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array('', true, 'AD_NAME_REQUIRED', true),
-			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
-			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
-			array('Unit test advertisement', false, '', true),
+			array('', true, 'AD_NAME_REQUIRED', true, ''),
+			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
+			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
+			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
+			array('Unit test advertisement', false, '', true, '2035-01-01'),
 		);
 	}
 
@@ -267,7 +274,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_add_data
 	*/
-	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form)
+	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form, $end_date)
 	{
 		self::$valid_form = $valid_form;
 
@@ -285,7 +292,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer')));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date));
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
@@ -301,6 +308,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> '',
 					'AD_CODE'		=> '',
 					'AD_ENABLED'	=> false,
+					'AD_END_DATE'	=> $end_date,
 				));
 		}
 		else
@@ -309,28 +317,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$controller->action_add();
-
-		// Check ad and it's locations are in the DB
-		if (!$s_error)
-		{
-			$sql = 'SELECT * FROM ' . $this->ads_table . '
-				WHERE ad_name = "' . $ad_name . '"';
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-
-			$this->assertEquals('', $row['ad_note']);
-			$this->assertEquals('', $row['ad_code']);
-			$this->assertEquals('0', $row['ad_enabled']);
-
-			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $row['ad_id'] . '
-				ORDER BY location_id ASC';
-			$result = $this->db->sql_query($sql);
-			$rows = $this->db->sql_fetchrowset($result);
-
-			$this->assertEquals('above_footer', $row[0]['location_id']);
-			$this->assertEquals('below_footer', $row[1]['location_id']);
-		}
 	}
 
 	/**
@@ -382,9 +368,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->template->expects($this->at(0))
 				->method('assign_vars')
 				->with(array(
-					'S_EDIT_AD'	=> true,
-					'EDIT_ID'	=> $ad_id,
-					'U_BACK'	=> $this->u_action,
+					'S_EDIT_AD'				=> true,
+					'EDIT_ID'				=> $ad_id,
+					'U_BACK'				=> $this->u_action,
+					'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 				));
 
 			$this->template->expects($this->at(3))
@@ -396,6 +383,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_NOTE'		=> 'And it\'s desc',
 					'AD_CODE'		=> 'admanagementcode',
 					'AD_ENABLED'	=> '1',
+					'AD_END_DATE'	=> '2035-01-02',
 				));
 		}
 
@@ -411,7 +399,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array()));
+			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -438,11 +426,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_edit_data()
 	{
 		return array(
-			array(0, 'Unit test advertisement', true, '', true),
-			array(1, '', true, 'AD_NAME_REQUIRED', true),
-			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true),
-			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false),
-			array(1, 'Unit test advertisement', false, '', true),
+			array(0, 'Unit test advertisement', true, '', true, ''),
+			array(1, '', true, 'AD_NAME_REQUIRED', true, ''),
+			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
+			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
+			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
+			array(1, 'Unit test advertisement', false, '', true, '2035-01-03'),
 		);
 	}
 
@@ -451,7 +440,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_edit_data
 	*/
-	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form)
+	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form, $end_date)
 	{
 		self::$valid_form = $valid_form;
 
@@ -459,7 +448,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts')));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -488,6 +477,7 @@ class admin_controller_test extends \phpbb_database_test_case
 						'AD_NOTE'		=> '',
 						'AD_CODE'		=> '',
 						'AD_ENABLED'	=> false,
+						'AD_END_DATE'	=> $end_date,
 					));
 			}
 		}
@@ -497,29 +487,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$controller->action_edit();
-
-		// Check ad and ad locations are in the DB
-		if (!$s_error)
-		{
-			$sql = 'SELECT * FROM ' . $this->ads_table . '
-				WHERE ad_id = "' . (int) $ad_id . '"';
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-
-			$this->assertEquals('Unit test advertisement', $row['ad_name']);
-			$this->assertEquals('', $row['ad_note']);
-			$this->assertEquals('', $row['ad_code']);
-			$this->assertEquals('0', $row['ad_enabled']);
-
-			$sql = 'SELECT location_id FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $row['ad_id'] . '
-				ORDER BY location_id ASC';
-			$result = $this->db->sql_query($sql);
-			$rows = $this->db->sql_fetchrowset($result);
-
-			$this->assertEquals('after_posts', $row[0]['location_id']);
-			$this->assertEquals('before_posts', $row[1]['location_id']);
-		}
 	}
 
 	/**
@@ -560,18 +527,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		else
 		{
 			$controller->action_disable();
-		}
-
-		if ($ad_id)
-		{
-			$sql = 'SELECT ad_enabled
-				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$ad_enabled = (bool) $this->db->sql_fetchfield('ad_enabled', $result);
-			$this->db->sql_freeresult($result);
-
-			$this->assertEquals(!$enable, $ad_enabled);
 		}
 	}
 
@@ -628,27 +583,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$controller->action_delete();
-
-		if ($confirm)
-		{
-			$sql = 'SELECT ad_id
-				FROM ' . $this->ads_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-
-			$this->assertTrue(empty($row));
-
-			$sql = 'SELECT location_id
-				FROM ' . $this->ad_locations_table . '
-				WHERE ad_id = ' . (int) $ad_id;
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-
-			$this->assertTrue(empty($row));
-		}
 	}
 
 	/**
@@ -661,10 +595,8 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->atLeastOnce())
 			->method('assign_block_vars');
 		$this->template->expects($this->once())
-			->method('assign_vars')
-			->with(array(
-				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-			));
+			->method('assign_var')
+			->with('U_ACTION_ADD', $this->u_action . '&amp;action=add');
 
 		$controller->list_ads();
 	}
