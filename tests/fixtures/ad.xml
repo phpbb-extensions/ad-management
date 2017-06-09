@@ -23,6 +23,14 @@
 			<value>0</value>
 			<value>0</value>
 		</row>
+		<row>
+			<value>3</value>
+			<value>Expired ad</value>
+			<value>And it's desc</value>
+			<value>code of expired ad</value>
+			<value>1</value>
+			<value>1</value>
+		</row>
 	</table>
 	<table name="phpbb_ad_locations">
 		<column>ad_id</column>

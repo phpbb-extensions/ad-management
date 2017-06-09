@@ -148,19 +148,6 @@ class manager
 	}
 
 	/**
-	* Disable expired advertisements
-	*
-	* @return	void
-	*/
-	public function disable_expired_ads()
-	{
-		$sql = 'UPDATE ' . $this->ads_table . '
-			SET ad_enabled = 0
-			WHERE ad_end_date < ' . time();
-		$this->db->sql_query($sql);
-	}
-
-	/**
 	* Get all locations for specified advertisement
 	*
 	* @param	int		$ad_id	Advertisement ID
