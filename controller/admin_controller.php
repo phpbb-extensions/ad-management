@@ -81,6 +81,8 @@ class admin_controller
 	{
 		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
 
+		$this->manager->disable_expired_ads();
+
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
 		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
