@@ -83,6 +83,10 @@ class admin_controller
 
 		$this->manager->disable_expired_ads();
 
+		$this->template->assign_vars(array(
+			'S_PHPBB_ADMANAGEMENT'	=> true,
+		));
+
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
 		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
@@ -315,7 +319,6 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ADS'			=> true,
 			'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
 		));
 	}
