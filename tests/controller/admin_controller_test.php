@@ -172,10 +172,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->getMock();
 
 		$this->template->expects($this->once())
-			->method('assign_vars')
-			->with(array(
-				'S_PHPBB_ADMANAGEMENT'	=> true,
-			));
+			->method('assign_var')
+			->with('S_PHPBB_ADMANAGEMENT', true);
 
 		$this->request->expects($this->once())
 			->method('variable')
@@ -597,10 +595,8 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->atLeastOnce())
 			->method('assign_block_vars');
 		$this->template->expects($this->once())
-			->method('assign_vars')
-			->with(array(
-				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
-			));
+			->method('assign_var')
+			->with('U_ACTION_ADD', $this->u_action . '&amp;action=add');
 
 		$controller->list_ads();
 	}
