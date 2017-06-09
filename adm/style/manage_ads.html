@@ -85,8 +85,10 @@
 			{% for ad in loops.ads %}
 				<tr>
 					<td><strong>{{ ad.NAME }}</strong></td>
-					<td{% if ad.S_END_DATE_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error"{% endif %}>
-						{{ ad.END_DATE }}
+					<td>
+						{% if ad.S_END_DATE_EXPIRED %}<strong title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error">{% endif %}
+							{{ ad.END_DATE }}
+						{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
 					</td>
 					<td>
 						{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
