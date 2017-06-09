@@ -88,7 +88,7 @@ class manager
 	*/
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);

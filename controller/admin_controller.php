@@ -303,11 +303,13 @@ class admin_controller
 			$ad_enabled = (int) $row['ad_enabled'];
 
 			$this->template->assign_block_vars('ads', array(
-				'NAME'		=> $row['ad_name'],
-				'S_ENABLED'	=> $ad_enabled,
-				'U_ENABLE'	=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
-				'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
-				'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
+				'NAME'				=> $row['ad_name'],
+				'END_DATE'			=> $row['ad_end_date'] ? $this->user->format_date($row['ad_end_date'], self::DATE_FORMAT) : '',
+				'END_DATE_EXPIRED'	=> (int) $row['ad_end_date'] < time(),
+				'S_ENABLED'			=> $ad_enabled,
+				'U_ENABLE'			=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_EDIT'			=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
+				'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
 		}
 
