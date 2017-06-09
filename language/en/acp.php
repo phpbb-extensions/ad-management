@@ -35,7 +35,7 @@ $lang = array_merge($lang, array(
 		0 => 'Click to enable',
 		1 => 'Click to disable',
 	),
-	'AD_EXPIRED_EXPLAIN'	=> 'This advertisement is past end date. We have disabled it automatically.',
+	'AD_EXPIRED_EXPLAIN'	=> 'This advertisement has expired and has been disabled.',
 	'ACP_ADS_EMPTY'			=> 'No advertisement, yet. Add one with the button below.',
 	'ACP_ADS_ADD'			=> 'Add new advertisement',
 	'ACP_ADS_EDIT'			=> 'Edit advertisement',
