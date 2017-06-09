@@ -303,7 +303,7 @@ class admin_controller
 			$ad_enabled = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
 			$ad_expired = $ad_end_date > 0 && $ad_end_date < time();
-			if ($ad_expired)
+			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
