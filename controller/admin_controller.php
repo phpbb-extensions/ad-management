@@ -128,9 +128,7 @@ class admin_controller
 		add_form_key('phpbb/admanagement/add');
 		if ($preview || $submit)
 		{
-			$data = $this->get_form_data();
-
-			$this->validate($data, 'phpbb/admanagement/add');
+			$data = $this->get_form_data('phpbb/admanagement/add');
 
 			if ($preview)
 			{
@@ -176,9 +174,7 @@ class admin_controller
 		add_form_key('phpbb/admanagement/edit/' . $ad_id);
 		if ($preview || $submit)
 		{
-			$data = $this->get_form_data();
-
-			$this->validate($data, 'phpbb/admanagement/edit/' . $ad_id);
+			$data = $this->get_form_data('phpbb/admanagement/edit/' . $ad_id);
 
 			if ($preview)
 			{
@@ -362,34 +358,27 @@ class admin_controller
 	/**
 	* Get admin form data.
 	*
+	* @param	string	$form_name	The form name.
 	* @return	array	Form data
 	*/
-	protected function get_form_data()
+	protected function get_form_data($form_name)
 	{
-		return array(
+		$data = array(
 			'ad_name'		=> $this->request->variable('ad_name', '', true),
 			'ad_note'		=> $this->request->variable('ad_note', '', true),
 			'ad_code'		=> $this->request->variable('ad_code', '', true),
 			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
 			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
-			'ad_end_date'	=> (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $this->request->variable('ad_end_date', '')),
+			'ad_end_date'	=> $this->request->variable('ad_end_date', ''),
 		);
-	}
 
-	/**
-	* Validate form data.
-	*
-	* @param	array	$data		The form data.
-	* @param	string	$form_name	The form name.
-	* @return void
-	*/
-	protected function validate($data, $form_name)
-	{
+		// Validate form key
 		if (!check_form_key($form_name))
 		{
 			$this->errors[] = $this->user->lang('FORM_INVALID');
 		}
 
+		// Validate ad name
 		if ($data['ad_name'] === '')
 		{
 			$this->errors[] = $this->user->lang('AD_NAME_REQUIRED');
@@ -398,10 +387,27 @@ class admin_controller
 		{
 			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 		}
+
+		// Validate ad end date pattern
+		if (!preg_match('#(^\d{4}\-\d{2}\-\d{2}$)?#', $data['ad_end_date']))
+		{
+			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+
+			// Return immediately to retain end date text.
+			// Admin might just accidentally remove one number, so we
+			// don't want to remove it all.
+			return $data;
+		}
+
+		// Convert ad end date to unix timestamp
+		$data['ad_end_date'] = (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $data['ad_end_date']);
+		// Validate ad end date for already expired date
 		if ($data['ad_end_date'] != 0 && $data['ad_end_date'] < time())
 		{
 			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
 		}
+
+		return $data;
 	}
 
 	/**
@@ -420,8 +426,27 @@ class admin_controller
 			'AD_NOTE'		=> $data['ad_note'],
 			'AD_CODE'		=> $data['ad_code'],
 			'AD_ENABLED'	=> $data['ad_enabled'],
-			'AD_END_DATE'	=> $data['ad_end_date'] ? $this->user->format_date($data['ad_end_date'], self::DATE_FORMAT) : '',
+			'AD_END_DATE'	=> $this->prepare_end_date($data['ad_end_date']),
 		));
+	}
+	/**
+	* Prepare end date for display
+	*
+	* @param	mixed	$end_date	End date.
+	* @return	string	End date prepared for display.
+	*/
+	protected function prepare_end_date($end_date)
+	{
+		if (empty($end_date))
+		{
+			return '';
+		}
+		else if (is_numeric($end_date))
+		{
+			return $this->user->format_date($end_date, self::DATE_FORMAT);
+		}
+
+		return $end_date;
 	}
 
 	/**
