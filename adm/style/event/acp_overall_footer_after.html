@@ -1,9 +1,9 @@
-{% if not definition.INCLUDED_DATETIMEPICKERJS and S_PHPBB_ADMANAGEMENT %}
-	{% INCLUDEJS '@phpbb_admanagement/datetimepicker/jquery.datetimepicker.full.min.js' %}
-	{% DEFINE INCLUDED_DATETIMEPICKERJS = true %}
-{% endif %}
-
 {% if S_PHPBB_ADMANAGEMENT %}
+	{% if not definition.INCLUDED_DATETIMEPICKERJS %}
+		{% INCLUDEJS '@phpbb_admanagement/datetimepicker/jquery.datetimepicker.full.min.js' %}
+		{% DEFINE INCLUDED_DATETIMEPICKERJS = true %}
+	{% endif %}
+
 	<script>
 	/**
 	* This callback replaces enable links with disable links and vice versa.
