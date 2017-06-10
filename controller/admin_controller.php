@@ -441,12 +441,13 @@ class admin_controller
 		{
 			return '';
 		}
-		else if (is_numeric($end_date))
+
+		if (is_numeric($end_date))
 		{
 			return $this->user->format_date($end_date, self::DATE_FORMAT);
 		}
 
-		return $end_date;
+		return (string) $end_date;
 	}
 
 	/**
