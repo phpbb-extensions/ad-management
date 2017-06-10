@@ -127,6 +127,8 @@ class admin_controller
 			}
 
 			$this->config->set('phpbb_admanagement_hide_groups', implode(',', $this->request->variable('hide_groups', array(0))));
+
+			$this->success('ACP_AD_SETTINGS_SAVED');
 		}
 
 		$hide_groups = explode(',', $this->config['phpbb_admanagement_hide_groups']);
