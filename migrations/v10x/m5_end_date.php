@@ -17,7 +17,7 @@ class m5_end_date extends \phpbb\db\migration\migration
 	*/
 	public function effectively_installed()
 	{
-		return $this->db_tools->sql_column_exists($this->table_prefix . 'ads', 'end_date');
+		return $this->db_tools->sql_column_exists($this->table_prefix . 'ads', 'ad_end_date');
 	}
 
 	/**
