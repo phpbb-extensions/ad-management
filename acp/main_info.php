@@ -26,6 +26,11 @@ class main_info
 					'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
 					'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
 				),
+				'settings'	=> array(
+					'title'	=> 'ACP_ADS_SETTINGS_TITLE',
+					'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
+					'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
+				),
 			),
 		);
 	}

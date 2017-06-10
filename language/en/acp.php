@@ -75,4 +75,8 @@ $lang = array_merge($lang, array(
 	'AD_BEFORE_PROFILE_DESC'		=> 'Displays before member profile page content.',
 	'AD_AFTER_PROFILE'				=> 'After user profile',
 	'AD_AFTER_PROFILE_DESC'			=> 'Displays after member profile page content.',
+
+	// Settings
+	'HIDE_GROUPS'			=> 'Hide advertisements for groups',
+	'HIDE_GROUPS_EXPLAIN'	=> 'Members of selected groups will not see any advertisement.',
 ));

@@ -19,7 +19,7 @@ class main_module
 	public $tpl_name;
 	public $u_action;
 
-	public function main()
+	public function main($id, $mode)
 	{
 		global $phpbb_container;
 
@@ -30,11 +30,11 @@ class main_module
 		$admin_controller->set_page_url($this->u_action);
 
 		// Load a template from adm/style for our ACP page
-		$this->tpl_name = 'manage_ads';
+		$this->tpl_name = $mode . '_ads';
 
 		// Set the page title for our ACP page
 		$this->page_title = $admin_controller->get_page_title();
 
-		$admin_controller->main();
+		$admin_controller->{'mode_' . $mode}();
 	}
 }

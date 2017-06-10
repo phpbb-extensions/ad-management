@@ -19,8 +19,11 @@ services:
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
             - '@log'
+            - '@config'
+            - '@dbal.conn'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
+            - '%tables.groups%'
 
     phpbb.admanagement.listener:
         class: phpbb\admanagement\event\main_listener

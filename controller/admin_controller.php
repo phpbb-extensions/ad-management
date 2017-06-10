@@ -36,11 +36,20 @@ class admin_controller
 	/** @var \phpbb\log\log */
 	protected $log;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
 	/** @var string php_ext */
 	protected $php_ext;
 
 	/** @var string ext_path */
 	protected $ext_path;
+
+	/** @var string groups_table */
+	protected $groups_table;
 
 	/** @var string Custom form action */
 	protected $u_action;
@@ -57,10 +66,13 @@ class admin_controller
 	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
 	* @param \phpbb\log\log							$log				The phpBB log system
+	* @param \phpbb\config\config					$config				Config object
+	* @param \phpbb\db\driver\driver_interface		$db					Database object
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
+	* @param string									$groups_table		Groups table
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, \phpbb\log\log $log, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, $php_ext, $ext_path, $groups_table)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -68,20 +80,21 @@ class admin_controller
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
 		$this->log = $log;
+		$this->config = $config;
+		$this->db = $db;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
+		$this->groups_table = $groups_table;
 	}
 
 	/**
-	* Process user request
+	* Process user request for manage mode
 	*
 	* @return void
 	*/
-	public function main()
+	public function mode_manage()
 	{
-		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
-
-		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
+		$this->setup();
 
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
@@ -92,6 +105,44 @@ class admin_controller
 
 		// Otherwise default to this
 		$this->list_ads();
+	}
+
+	/**
+	* Process user request for settings mode
+	*
+	* @return void
+	*/
+	public function mode_settings()
+	{
+		$this->setup();
+		$this->user->add_lang('common');
+
+		add_form_key('phpbb/admanagement/settings');
+		if ($this->request->is_set_post('submit'))
+		{
+			// Validate form key
+			if (!check_form_key('phpbb/admanagement/settings'))
+			{
+				$errors[] = $this->user->lang('FORM_INVALID');
+			}
+
+			$this->config->set('phpbb_admanagement_hide_groups', implode(',', $this->request->variable('hide_groups', array(0))));
+		}
+
+		$hide_groups = explode(',', $this->config['phpbb_admanagement_hide_groups']);
+		$sql = 'SELECT group_id, group_name
+			FROM ' . $this->groups_table;
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$group_name = (!empty($this->user->lang['G_' . $row['group_name']])) ? $this->user->lang('G_' . $row['group_name']) : $row['group_name'];
+
+			$this->template->assign_block_vars('groups', array(
+				'ID'			=> $row['group_id'],
+				'NAME'			=> $group_name,
+				'S_SELECTED'	=> in_array($row['group_id'], $hide_groups),
+			));
+		}
 	}
 
 	/**
@@ -318,6 +369,18 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_var('U_ACTION_ADD', $this->u_action . '&amp;action=add');
+	}
+
+	/**
+	* Perform general tasks
+	*
+	* @return void
+	*/
+	protected function setup()
+	{
+		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
+
+		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
 	}
 
 	/**
