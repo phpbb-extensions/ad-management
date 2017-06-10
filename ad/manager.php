@@ -71,7 +71,7 @@ class manager
 					AND (a.ad_end_date = 0
 						OR a.ad_end_date > ' . time() . ')
 					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
-				ORDER BY ' . $this->sql_random() . '
+				ORDER BY a.ad_priority, ' . $this->sql_random() . '
 			) z
 			ORDER BY z.location_id';
 		$result = $this->db->sql_query($sql);
@@ -256,6 +256,7 @@ class manager
 			'ad_code'		=> '',
 			'ad_enabled'	=> '',
 			'ad_end_date'	=> '',
+			'ad_priority'	=> '',
 		));
 	}
 

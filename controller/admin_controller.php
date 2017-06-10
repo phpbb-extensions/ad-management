@@ -443,6 +443,7 @@ class admin_controller
 			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
 			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
 			'ad_end_date'	=> $this->request->variable('ad_end_date', ''),
+			'ad_priority'	=> $this->request->variable('ad_priority', 5),
 		);
 
 		// Validate form key
@@ -480,6 +481,12 @@ class admin_controller
 			$data['ad_end_date'] = 0;
 		}
 
+		// Validate ad priority
+		if ($data['ad_priority'] < 1 || $data['ad_priority'] > 10)
+		{
+			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
+		}
+
 		return $data;
 	}
 
@@ -500,6 +507,7 @@ class admin_controller
 			'AD_CODE'		=> $data['ad_code'],
 			'AD_ENABLED'	=> $data['ad_enabled'],
 			'AD_END_DATE'	=> $this->prepare_end_date($data['ad_end_date']),
+			'AD_PRIORITY'	=> $data['ad_priority'],
 		));
 	}
 
