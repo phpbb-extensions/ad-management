@@ -388,23 +388,23 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 		}
 
-		// Validate ad end date pattern
-		if (!preg_match('#(^\d{4}\-\d{2}\-\d{2}$)?#', $data['ad_end_date']))
+		// Validate ad end date
+		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $data['ad_end_date']))
 		{
-			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+			$data['ad_end_date'] = (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $data['ad_end_date']);
 
-			// Return immediately to retain end date text.
-			// Admin might just accidentally remove one number, so we
-			// don't want to remove it all.
-			return $data;
+			if ($data['ad_end_date'] < time())
+			{
+				$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+			}
 		}
-
-		// Convert ad end date to unix timestamp
-		$data['ad_end_date'] = (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $data['ad_end_date']);
-		// Validate ad end date for already expired date
-		if ($data['ad_end_date'] != 0 && $data['ad_end_date'] < time())
+		else if ($data['ad_end_date'] !== '')
 		{
 			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+		}
+		else
+		{
+			$data['ad_end_date'] = 0;
 		}
 
 		return $data;
