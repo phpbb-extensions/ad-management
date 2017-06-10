@@ -41,6 +41,7 @@ class main_listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
+			'core.user_setup'			=> 'load_language_on_setup',
 			'core.page_header_after'	=> 'setup_ads',
 		);
 	}
@@ -61,6 +62,22 @@ class main_listener implements EventSubscriberInterface
 		$this->config_text = $config_text;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
+	}
+
+	/**
+	* Load common language file during user setup
+	*
+	* @param	\phpbb\event\data	$event	The event object
+	* @return	void
+	*/
+	public function load_language_on_setup($event)
+	{
+		$lang_set_ext = $event['lang_set_ext'];
+		$lang_set_ext[] = array(
+			'ext_name' => 'phpbb/admanagement',
+			'lang_set' => 'common',
+		);
+		$event['lang_set_ext'] = $lang_set_ext;
 	}
 
 	/**
