@@ -12,11 +12,11 @@ namespace phpbb\admanagement\tests\event;
 
 class main_listener_base extends \phpbb_database_test_case
 {
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
-	protected $request;
-
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
+
+	/** @var \phpbb\user */
+	protected $user;
 
 	/** @var string ads_table */
 	protected $ads_table;
@@ -46,7 +46,7 @@ class main_listener_base extends \phpbb_database_test_case
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$lang = new \phpbb\language\language($lang_loader);
-		$user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
 		// Location types
@@ -66,11 +66,14 @@ class main_listener_base extends \phpbb_database_test_case
 		foreach ($locations as $type)
 		{
 			$class = "\\phpbb\\admanagement\\location\\type\\$type";
-			$location_types['phpbb.admanagement.location.type.' . $type] = new $class($user);
+			$location_types['phpbb.admanagement.location.type.' . $type] = new $class($this->user);
 		}
 
 		// Load/Mock classes required by the listener class
 		$this->template = $this->getMock('\phpbb\template\template');
+		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->manager = new \phpbb\admanagement\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
 		$this->location_manager = new \phpbb\admanagement\location\manager($location_types);
 	}
@@ -84,6 +87,8 @@ class main_listener_base extends \phpbb_database_test_case
 	{
 		return new \phpbb\admanagement\event\main_listener(
 			$this->template,
+			$this->user,
+			$this->config_text,
 			$this->manager,
 			$this->location_manager
 		);

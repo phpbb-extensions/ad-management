@@ -28,6 +28,11 @@ class setup_ads_test extends main_listener_base
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$ads = $this->manager->get_ads($location_ids);
 
+		$this->config_text->expects($this->once())
+			->method('get')
+			->with('phpbb_admanagement_hide_groups')
+			->willReturn('[]');
+
 		// Reconstruct template calls
 		$calls = array();
 		foreach ($ads as $row)

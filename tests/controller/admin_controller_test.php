@@ -43,6 +43,15 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\log\log */
+	protected $log;
+
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
+	protected $config_text;
+
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\cache\driver\driver_interface */
+	protected $cache;
+
 	/** @var string */
 	protected $php_ext;
 
@@ -97,6 +106,10 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->cache = $this->getMock('\phpbb\cache\driver\driver_interface');
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
 
@@ -126,6 +139,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->manager,
 			$this->location_manager,
 			$this->log,
+			$this->config_text,
+			$this->cache,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -135,11 +150,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	* Data for test_main
+	* Data for test_mode_manage
 	*
 	* @return array Array of test data
 	*/
-	public function data_main()
+	public function data_mode_manage()
 	{
 		return array(
 			array('add', 'action_add'),
@@ -151,11 +166,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		);
 	}
 	/**
-	* Test main()
+	* Test mode_manage()
 	*
-	* @dataProvider data_main
+	* @dataProvider data_mode_manage
 	*/
-	public function test_main($action, $expected)
+	public function test_mode_manage($action, $expected)
 	{
 		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
@@ -166,6 +181,8 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->manager,
 				$this->location_manager,
 				$this->log,
+				$this->config_text,
+				$this->cache,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -182,7 +199,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller->expects($this->once())
 			->method($expected);
 
-		$controller->main();
+		$controller->mode_manage();
 	}
 
 	/**

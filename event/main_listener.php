@@ -35,12 +35,6 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
 
-	/** @var string */
-	protected $root_path;
-
-	/** @var string */
-	protected $php_ext;
-
 	/**
 	* {@inheritdoc}
 	*/
@@ -55,22 +49,18 @@ class main_listener implements EventSubscriberInterface
 	* Constructor
 	*
 	* @param \phpbb\template\template				$template			Template object
-	* @param \phpbb\user\user						$user				User object
+	* @param \phpbb\user							$user				User object
 	* @param \phpbb\config\db_text					$config_text		Config text object
 	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
-	* @param string									$root_path			phpBB root path
-	* @param string									$php_ext			PHP extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->config_text = $config_text;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
-		$this->root_path = $root_path;
-		$this->php_ext = $php_ext;
 	}
 
 	/**
