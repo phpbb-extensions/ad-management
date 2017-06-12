@@ -216,7 +216,7 @@ class manager
 			FROM ' . USER_GROUP_TABLE . '
 			WHERE user_id = ' . (int) $user_id . '
 			AND user_pending = 0';
-		$result = $this->db->sql_query($sql, 86400);
+		$result = $this->db->sql_query($sql, 3600);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$memberships[] = $row['group_id'];
