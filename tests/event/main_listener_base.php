@@ -46,7 +46,7 @@ class main_listener_base extends \phpbb_database_test_case
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$lang = new \phpbb\language\language($lang_loader);
-		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
 		// Location types
@@ -66,11 +66,14 @@ class main_listener_base extends \phpbb_database_test_case
 		foreach ($locations as $type)
 		{
 			$class = "\\phpbb\\admanagement\\location\\type\\$type";
-			$location_types['phpbb.admanagement.location.type.' . $type] = new $class($this->user);
+			$location_types['phpbb.admanagement.location.type.' . $type] = new $class($user);
 		}
 
 		// Load/Mock classes required by the listener class
 		$this->template = $this->getMock('\phpbb\template\template');
+		$this->user = $this->getMockBuilder('\phpbb\user')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
 			->disableOriginalConstructor()
 			->getMock();
