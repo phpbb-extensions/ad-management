@@ -19,18 +19,17 @@ services:
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
             - '@log'
-            - '@config'
-            - '@dbal.conn'
+            - '@config_text'
+            - '@cache.driver'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
-            - '%tables.groups%'
 
     phpbb.admanagement.listener:
         class: phpbb\admanagement\event\main_listener
         arguments:
             - '@template'
             - '@user'
-            - '@config'
+            - '@config_text'
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
             - '%core.root_path%'

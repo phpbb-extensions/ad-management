@@ -36,7 +36,7 @@ class m6_hide_for_group extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('phpbb_admanagement_hide_groups', '')),
+			array('config_text.add', array('phpbb_admanagement_hide_groups', '[]')),
 
 			array('module.add', array(
 				'acp',
