@@ -110,7 +110,6 @@ class admin_controller
 	public function mode_settings()
 	{
 		$this->setup();
-		$this->user->add_lang('common');
 
 		add_form_key('phpbb/admanagement/settings');
 		if ($this->request->is_set_post('submit'))
