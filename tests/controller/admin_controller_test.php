@@ -221,8 +221,8 @@ class admin_controller_test extends \phpbb_database_test_case
 				array(
 					'groups',
 					array(
-						'ID'			=> 1,
-						'NAME'			=> 'Administrators',
+						'ID'			=> '1',
+						'NAME'			=> 'ADMINISTRATORS',
 						'S_SELECTED'	=> true,
 					),
 				),

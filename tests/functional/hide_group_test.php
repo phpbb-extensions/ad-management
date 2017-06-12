@@ -66,5 +66,13 @@ class hide_group_test extends location_base
 
 		// Confirm above header ad is not present
 		$this->assertNotContains($ad_code, $crawler->html());
+
+		// Reset hide groups again
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$form_data = array(
+			'hide_groups'	=> array(),
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
 	}
 }

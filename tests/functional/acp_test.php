@@ -281,6 +281,14 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Confirm admin group is selected
 		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
+
+		// Reset hide groups
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$form_data = array(
+			'hide_groups'	=> array(),
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
 	}
 
 	static public function click($link)
