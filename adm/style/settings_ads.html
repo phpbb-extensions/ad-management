@@ -4,6 +4,13 @@
 
 <h1>{{ lang('SETTINGS') }}</h1>
 
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+
 <form id="acp_addmanagement_settings" method="post" action="{{ U_ACTION }}">
 	<fieldset>
 		<dl>

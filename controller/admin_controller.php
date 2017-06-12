@@ -118,13 +118,23 @@ class admin_controller
 			// Validate form key
 			if (!check_form_key('phpbb/admanagement/settings'))
 			{
-				$errors[] = $this->user->lang('FORM_INVALID');
+				$this->errors[] = $this->user->lang('FORM_INVALID');
 			}
 
-			$this->config_text->set('phpbb_admanagement_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
-			$this->cache->destroy('sql', USER_GROUP_TABLE);
+			if (empty($this->errors))
+			{
+				$this->config_text->set('phpbb_admanagement_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
+				$this->cache->destroy('sql', USER_GROUP_TABLE);
 
-			$this->success('ACP_AD_SETTINGS_SAVED');
+				$this->success('ACP_AD_SETTINGS_SAVED');
+			}
+			else
+			{
+				$this->template->assign_vars(array(
+					'S_ERROR'		=> (bool) count($this->errors),
+					'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
+				));
+			}
 		}
 
 		$hide_groups = json_decode($this->config_text->get('phpbb_admanagement_hide_groups'), true);
