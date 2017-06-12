@@ -204,6 +204,45 @@ class manager
 	}
 
 	/**
+	* Load memberships of the user
+	*
+	* @param	int		$user_id	User ID to load memberships
+	* @return	array	List of group IDs user is member of
+	*/
+	public function load_memberships($user_id)
+	{
+		$memberships = array();
+		$sql = 'SELECT group_id
+			FROM ' . USER_GROUP_TABLE . '
+			WHERE user_id = ' . (int) $user_id . '
+			AND user_pending = 0';
+		$result = $this->db->sql_query($sql, 3600);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$memberships[] = $row['group_id'];
+		}
+		$this->db->sql_freeresult($result);
+		return $memberships;
+	}
+
+	/**
+	* Load all board groups
+	*
+	* @return	array	List of groups
+	*/
+	public function load_groups()
+	{
+		$sql = 'SELECT group_id, group_name, group_type
+			FROM ' . GROUPS_TABLE . "
+			ORDER BY group_name ASC";
+		$result = $this->db->sql_query($sql);
+		$groups = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		return $groups;
+	}
+
+	/**
 	* Make sure only necessary data make their way to SQL query
 	*
 	* @param	array	$data	List of data to query the database

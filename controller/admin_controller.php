@@ -36,6 +36,9 @@ class admin_controller
 	/** @var \phpbb\log\log */
 	protected $log;
 
+	/** @var \phpbb\config\db_text */
+	protected $config_text;
+
 	/** @var string php_ext */
 	protected $php_ext;
 
@@ -57,10 +60,11 @@ class admin_controller
 	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
 	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
 	* @param \phpbb\log\log							$log				The phpBB log system
+	* @param \phpbb\config\db_text					$config_text		Config text object
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, \phpbb\log\log $log, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -68,20 +72,19 @@ class admin_controller
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
 		$this->log = $log;
+		$this->config_text = $config_text;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
 
 	/**
-	* Process user request
+	* Process user request for manage mode
 	*
 	* @return void
 	*/
-	public function main()
+	public function mode_manage()
 	{
-		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
-
-		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
+		$this->setup();
 
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
@@ -92,6 +95,51 @@ class admin_controller
 
 		// Otherwise default to this
 		$this->list_ads();
+	}
+
+	/**
+	* Process user request for settings mode
+	*
+	* @return void
+	*/
+	public function mode_settings()
+	{
+		$this->setup();
+
+		add_form_key('phpbb/admanagement/settings');
+		if ($this->request->is_set_post('submit'))
+		{
+			// Validate form key
+			if (!check_form_key('phpbb/admanagement/settings'))
+			{
+				$this->errors[] = $this->user->lang('FORM_INVALID');
+			}
+
+			if (empty($this->errors))
+			{
+				$this->config_text->set('phpbb_admanagement_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
+
+				$this->success('ACP_AD_SETTINGS_SAVED');
+			}
+
+			$this->template->assign_vars(array(
+				'S_ERROR'		=> (bool) count($this->errors),
+				'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
+			));
+		}
+
+		$hide_groups = json_decode($this->config_text->get('phpbb_admanagement_hide_groups'), true);
+		$groups = $this->manager->load_groups();
+		foreach ($groups as $group)
+		{
+			$group_name = ($group['group_type'] == GROUP_SPECIAL) ? $this->user->lang('G_' . $group['group_name']) : $group['group_name'];
+
+			$this->template->assign_block_vars('groups', array(
+				'ID'			=> $group['group_id'],
+				'NAME'			=> $group_name,
+				'S_SELECTED'	=> in_array($group['group_id'], $hide_groups),
+			));
+		}
 	}
 
 	/**
@@ -318,6 +366,18 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_var('U_ACTION_ADD', $this->u_action . '&amp;action=add');
+	}
+
+	/**
+	* Perform general tasks
+	*
+	* @return void
+	*/
+	protected function setup()
+	{
+		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
+
+		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
 	}
 
 	/**

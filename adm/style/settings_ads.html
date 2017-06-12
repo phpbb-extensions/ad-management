@@ -1,0 +1,33 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('SETTINGS') }}</h1>
+
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+
+<form id="acp_addmanagement_settings" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<dl>
+			<dt><label for="hide_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br /><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>
+			<dd><select id="hide_groups" name="hide_groups[]" multiple="multiple" size="8">
+				{% for group in loops.groups %}
+					<option value="{{ group.ID }}"{% if group.S_SELECTED %} selected="selected"{% endif %}>{{ group.NAME }}</option>
+				{% endfor %}
+				</select>
+			</dd>
+		</dl>
+	</fieldset>
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+
+{% include 'overall_footer.html' %}

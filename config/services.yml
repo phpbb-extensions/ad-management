@@ -19,6 +19,7 @@ services:
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
             - '@log'
+            - '@config_text'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
 
@@ -26,6 +27,8 @@ services:
         class: phpbb\admanagement\event\main_listener
         arguments:
             - '@template'
+            - '@user'
+            - '@config_text'
             - '@phpbb.admanagement.ad.manager'
             - '@phpbb.admanagement.location.manager'
         tags:

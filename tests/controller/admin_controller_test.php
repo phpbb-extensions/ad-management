@@ -43,6 +43,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\log\log */
+	protected $log;
+
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
+	protected $config_text;
+
 	/** @var string */
 	protected $php_ext;
 
@@ -97,6 +103,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
 
@@ -126,6 +135,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->manager,
 			$this->location_manager,
 			$this->log,
+			$this->config_text,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -135,11 +145,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	* Data for test_main
+	* Data for test_mode_manage
 	*
 	* @return array Array of test data
 	*/
-	public function data_main()
+	public function data_mode_manage()
 	{
 		return array(
 			array('add', 'action_add'),
@@ -150,12 +160,13 @@ class admin_controller_test extends \phpbb_database_test_case
 			array('', 'list_ads'),
 		);
 	}
+
 	/**
-	* Test main()
+	* Test mode_manage()
 	*
-	* @dataProvider data_main
+	* @dataProvider data_mode_manage
 	*/
-	public function test_main($action, $expected)
+	public function test_mode_manage($action, $expected)
 	{
 		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
@@ -166,6 +177,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->manager,
 				$this->location_manager,
 				$this->log,
+				$this->config_text,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -182,7 +194,103 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller->expects($this->once())
 			->method($expected);
 
-		$controller->main();
+		$controller->mode_manage();
+	}
+
+	/**
+	* Test mode_settings()
+	*/
+	public function test_mode_settings_no_submit()
+	{
+		$controller = $this->get_controller();
+
+		$this->config_text->expects($this->once())
+			->method('get')
+			->with('phpbb_admanagement_hide_groups')
+			->willReturn('[1,3]');
+
+		$this->template->expects($this->exactly(2))
+			->method('assign_block_vars')
+			->withConsecutive(
+				array(
+					'groups',
+					array(
+						'ID'			=> '1',
+						'NAME'			=> 'ADMINISTRATORS',
+						'S_SELECTED'	=> true,
+					),
+				),
+				array(
+					'groups',
+					array(
+						'ID'			=> 2,
+						'NAME'			=> 'Custom group name',
+						'S_SELECTED'	=> false,
+					),
+				)
+			);
+
+		$controller->mode_settings();
+	}
+
+	/**
+	* Data for test_mode_manage
+	*
+	* @return array Array of test data
+	*/
+	public function data_mode_settings()
+	{
+		return array(
+			array(false, array(0)),
+			array(true, array(3)),
+		);
+	}
+
+	/**
+	* Test mode_manage()
+	*
+	* @dataProvider data_mode_settings
+	*/
+	public function test_mode_settings_submit($valid_form, $submit_data)
+	{
+		self::$valid_form = $valid_form;
+
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->once())
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(true);
+
+		if ($valid_form)
+		{
+			$this->request->expects($this->once())
+				->method('variable')
+				->with('hide_groups', array(0))
+				->willReturn($submit_data);
+			
+			$this->config_text->expects($this->once())
+				->method('set')
+				->with('phpbb_admanagement_hide_groups', json_encode($submit_data));
+
+			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
+		}
+		else
+		{
+			$this->template->expects($this->once())
+				->method('assign_vars')
+				->with(array(
+					'S_ERROR'		=> true,
+					'ERROR_MSG'		=> 'The submitted form was invalid. Try submitting again.',
+				));
+			
+			$this->config_text->expects($this->once())
+				->method('get')
+				->with('phpbb_admanagement_hide_groups')
+				->willReturn('[1,3]');
+		}
+
+		$controller->mode_settings();
 	}
 
 	/**

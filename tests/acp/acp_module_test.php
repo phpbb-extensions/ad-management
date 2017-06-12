@@ -57,6 +57,11 @@ class acp_module_test extends \phpbb_test_case
 						'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
 						'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
 					),
+					'settings'	=> array(
+						'title'	=> 'ACP_ADS_SETTINGS_TITLE',
+						'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
+						'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
+					),
 				),
 			),
 		), $this->module_manager->get_module_infos('acp', 'acp_main_module'));
@@ -79,7 +84,18 @@ class acp_module_test extends \phpbb_test_case
 		$this->assertEquals($expected, p_master::module_auth($module_auth, 0));
 	}
 
-	public function test_main_module()
+	public function main_module_test_data()
+	{
+		return array(
+			array('manage'),
+			array('settings'),
+		);
+	}
+
+	/**
+	 * @dataProvider main_module_test_data
+	 */
+	public function test_main_module($mode)
 	{
 		global $phpbb_container, $request, $template;
 
@@ -103,9 +119,9 @@ class acp_module_test extends \phpbb_test_case
 
 		$admin_controller
 			->expects($this->once())
-			->method('main');
+			->method("mode_$mode");
 
 		$p_master = new p_master();
-		$p_master->load('acp', '\phpbb\admanagement\acp\main_module', 'main');
+		$p_master->load('acp', '\phpbb\admanagement\acp\main_module', $mode);
 	}
 }

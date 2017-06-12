@@ -254,6 +254,43 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
+	/**
+	* Test Advertisement management ACP settings
+	*/
+	public function test_acp_settings()
+	{
+		// Load Advertisement management ACP page
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+
+		// Confirm page contains proper heading
+		$this->assertContainsLang('SETTINGS', $crawler->text());
+
+		// Confirm no group is selected yet
+		$this->assertEquals(0, count($crawler->filter('option[selected]')));
+
+		// Submit form
+		$form_data = array(
+			'hide_groups'	=> array(5),
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
+
+		// Load Advertisement management ACP page again
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+
+		// Confirm admin group is selected
+		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
+
+		// Reset hide groups
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$form_data = array(
+			'hide_groups'	=> array(),
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+	}
+
 	static public function click($link)
 	{
 		return self::$client->click($link);

@@ -12,11 +12,11 @@ namespace phpbb\admanagement\tests\event;
 
 class main_listener_base extends \phpbb_database_test_case
 {
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
-	protected $request;
-
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
+
+	/** @var \phpbb\user */
+	protected $user;
 
 	/** @var string ads_table */
 	protected $ads_table;
@@ -71,6 +71,12 @@ class main_listener_base extends \phpbb_database_test_case
 
 		// Load/Mock classes required by the listener class
 		$this->template = $this->getMock('\phpbb\template\template');
+		$this->user = $this->getMockBuilder('\phpbb\user')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->manager = new \phpbb\admanagement\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
 		$this->location_manager = new \phpbb\admanagement\location\manager($location_types);
 	}
@@ -84,6 +90,8 @@ class main_listener_base extends \phpbb_database_test_case
 	{
 		return new \phpbb\admanagement\event\main_listener(
 			$this->template,
+			$this->user,
+			$this->config_text,
 			$this->manager,
 			$this->location_manager
 		);
