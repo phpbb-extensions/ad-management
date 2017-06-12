@@ -232,7 +232,7 @@ class manager
 	*/
 	public function load_groups()
 	{
-		$sql = 'SELECT group_id, group_name
+		$sql = 'SELECT group_id, group_name, group_type
 			FROM ' . GROUPS_TABLE . "
 			ORDER BY group_name ASC";
 		$result = $this->db->sql_query($sql);

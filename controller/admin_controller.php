@@ -140,7 +140,7 @@ class admin_controller
 		$groups = $this->manager->load_groups();
 		foreach ($groups as $group)
 		{
-			$group_name = (!empty($this->user->lang['G_' . $group['group_name']])) ? $this->user->lang('G_' . $group['group_name']) : $group['group_name'];
+			$group_name = ($group['group_type'] == GROUP_SPECIAL) ? $this->user->lang('G_' . $group['group_name']) : $group['group_name'];
 
 			$this->template->assign_block_vars('groups', array(
 				'ID'			=> $group['group_id'],
