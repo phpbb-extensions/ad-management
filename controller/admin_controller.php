@@ -127,13 +127,11 @@ class admin_controller
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
-			else
-			{
-				$this->template->assign_vars(array(
-					'S_ERROR'		=> (bool) count($this->errors),
-					'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
-				));
-			}
+
+			$this->template->assign_vars(array(
+				'S_ERROR'		=> (bool) count($this->errors),
+				'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
+			));
 		}
 
 		$hide_groups = json_decode($this->config_text->get('phpbb_admanagement_hide_groups'), true);
