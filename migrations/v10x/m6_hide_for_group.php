@@ -10,14 +10,14 @@
 
 namespace phpbb\admanagement\migrations\v10x;
 
-class m6_hide_for_group extends \phpbb\db\migration\migration
+class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 {
 	/**
 	* {@inheritDoc}
 	*/
 	public function effectively_installed()
 	{
-		$text_config = new \phpbb\config\db_text($this->db, $this->table_prefix . 'config_text');
+		$config_text = $this->container->get('config_text');
 
 		return $config_text->get('phpbb_admanagement_hide_groups') !== null;
 	}
