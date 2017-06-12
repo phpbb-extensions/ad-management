@@ -33,18 +33,8 @@ class setup_ads_test extends main_listener_base
 			->with('phpbb_admanagement_hide_groups')
 			->willReturn('[]');
 
-		// Reconstruct template calls
-		$calls = array();
-		foreach ($ads as $row)
-		{
-			$calls[] = array(
-				'AD_' . strtoupper($row['location_id']) => htmlspecialchars_decode($row['ad_code']),
-			);
-		}
-
 		$this->template->expects($this->exactly(count($ads)))
-			->method('assign_vars')
-			->will($this->returnValueMap($calls));
+			->method('assign_vars');
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));
