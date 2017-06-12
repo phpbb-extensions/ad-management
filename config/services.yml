@@ -20,7 +20,6 @@ services:
             - '@phpbb.admanagement.location.manager'
             - '@log'
             - '@config_text'
-            - '@cache.driver'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/admanagement/'
 

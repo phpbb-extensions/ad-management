@@ -49,9 +49,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
 	protected $config_text;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\cache\driver\driver_interface */
-	protected $cache;
-
 	/** @var string */
 	protected $php_ext;
 
@@ -109,7 +106,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->cache = $this->getMock('\phpbb\cache\driver\driver_interface');
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
 
@@ -140,7 +136,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->location_manager,
 			$this->log,
 			$this->config_text,
-			$this->cache,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -183,7 +178,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->location_manager,
 				$this->log,
 				$this->config_text,
-				$this->cache,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -278,10 +272,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->config_text->expects($this->once())
 				->method('set')
 				->with('phpbb_admanagement_hide_groups', json_encode($submit_data));
-
-			$this->cache->expects($this->once())
-				->method('destroy')
-				->with('sql', USER_GROUP_TABLE);
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
 		}
