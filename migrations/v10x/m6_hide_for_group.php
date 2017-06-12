@@ -17,7 +17,7 @@ class m6_hide_for_group extends \phpbb\db\migration\migration
 	*/
 	public function effectively_installed()
 	{
-		return isset($this->config['phpbb_admanagement_hide_groups']);
+		return $config_text->get('phpbb_admanagement_hide_groups') !== null;
 	}
 
 	/**
