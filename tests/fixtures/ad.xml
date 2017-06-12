@@ -52,4 +52,19 @@
 			<value>below_header</value>
 		</row>
 	</table>
+	<table name="phpbb_groups">
+		<column>group_id</column>
+		<column>group_name</column>
+		<column>group_desc</column>
+		<row>
+			<value>1</value>
+			<value>ADMINISTRATORS</value>
+			<value></value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>Custom group name</value>
+			<value></value>
+		</row>
+	</table>
 </dataset>
