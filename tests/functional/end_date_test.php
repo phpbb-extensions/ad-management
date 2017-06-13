@@ -13,7 +13,7 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class end_date_test extends location_base
+class end_date_test extends functional_base
 {
 	/**
 	* {@inheritDoc}
@@ -36,7 +36,7 @@ class end_date_test extends location_base
 	{
 		$ad_code = $this->create_ad('above_header');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertContains($ad_code, $crawler->html());
@@ -46,17 +46,26 @@ class end_date_test extends location_base
 	{
 		$ad_code = $this->create_ad('above_footer', '2035-01-01');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertContains($ad_code, $crawler->html());
+
+		return $ad_code;
 	}
 
-	public function test_past_end_date_is_not_displayed()
+	/**
+	 * @depends test_future_end_date_displays
+	 */
+	public function test_past_end_date_is_not_displayed($ad_code)
 	{
-		$ad_code = $this->create_ad('below_footer', '2000-01-01');
+		// Change the ads end date to a time long ago
+		$sql = 'UPDATE phpbb_ads
+			SET ad_end_date = ' . strtotime('2000-01-01') . '
+			WHERE ad_end_date = ' . strtotime('2035-01-01');
+		$this->db->sql_query($sql);
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertNotContains($ad_code, $crawler->html());

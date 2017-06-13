@@ -13,21 +13,13 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_after_profile_test extends location_base
+class location_after_profile_test extends functional_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_after_profile()
 	{
 		$ad_code = $this->create_ad('after_profile');
 
-		$crawler = self::request('GET', "memberlist.php?mode=viewprofile&u=2");
+		$crawler = self::request('GET', 'memberlist.php?mode=viewprofile&u=2');
 
 		// Confirm after profile ad is after profile
 		$this->assertContains($ad_code, $crawler->filter('#viewprofile')->nextAll()->html());

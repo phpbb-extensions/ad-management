@@ -233,8 +233,8 @@ class manager
 	public function load_groups()
 	{
 		$sql = 'SELECT group_id, group_name, group_type
-			FROM ' . GROUPS_TABLE . "
-			ORDER BY group_name ASC";
+			FROM ' . GROUPS_TABLE . '
+			ORDER BY group_name ASC';
 		$result = $this->db->sql_query($sql);
 		$groups = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);

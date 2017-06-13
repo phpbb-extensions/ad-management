@@ -13,7 +13,7 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class hide_group_test extends location_base
+class hide_group_test extends functional_base
 {
 	/**
 	* {@inheritDoc}
@@ -31,20 +31,14 @@ class hide_group_test extends location_base
 			$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
 		}
 
-		// Reset hide groups
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
-		$form_data = array(
-			'hide_groups'	=> array(),
-		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
+		$this->reset_groups();
 	}
 
 	public function test_ad_displays_without_hide_group()
 	{
 		$ad_code = $this->create_ad('above_header');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertContains($ad_code, $crawler->html());
@@ -52,27 +46,33 @@ class hide_group_test extends location_base
 
 	public function test_ad_hides_with_hide_group()
 	{
-		// Hide ads for administratos
+		// Hide ads for administrators
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'hide_groups'	=> array(5),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
 
 		$ad_code = $this->create_ad('below_footer');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is not present
 		$this->assertNotContains($ad_code, $crawler->html());
 
-		// Reset hide groups again
+		$this->reset_groups();
+	}
+
+	protected function reset_groups()
+	{
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'hide_groups'	=> array(),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
+		self::submit($form, $form_data);
 	}
 }

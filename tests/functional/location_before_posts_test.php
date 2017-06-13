@@ -13,21 +13,13 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_before_posts_test extends location_base
+class location_before_posts_test extends functional_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_before_posts()
 	{
 		$ad_code = $this->create_ad('before_posts');
 
-		$crawler = self::request('GET', "viewtopic.php?t=1");
+		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
 		// Confirm before posts ad is before posts
 		$this->assertContains($ad_code, $crawler->filter('.action-bar.bar-top')->nextAll()->html());

@@ -13,21 +13,13 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_above_footer_test extends location_base
+class location_above_footer_test extends functional_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_above_footer()
 	{
 		$ad_code = $this->create_ad('above_footer');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above footer ad is directly before page footer
 		$this->assertContains($ad_code, $crawler->filter('#page-footer')->previousAll()->html());

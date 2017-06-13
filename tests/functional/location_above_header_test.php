@@ -13,16 +13,8 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_above_header_test extends location_base
+class location_above_header_test extends functional_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_above_header()
 	{
 		$ad_code = $this->create_ad('above_header');

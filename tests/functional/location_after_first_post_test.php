@@ -13,21 +13,13 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_after_first_post_test extends location_base
+class location_after_first_post_test extends functional_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_after_first_post()
 	{
 		$ad_code = $this->create_ad('after_first_post');
 
-		$crawler = self::request('GET', "viewtopic.php?t=1");
+		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
 		// Confirm after first post ad is after first post
 		$this->assertContains($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());

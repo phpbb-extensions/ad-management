@@ -43,6 +43,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \phpbb\admanagement\location\manager */
 	protected $location_manager;
 
+	/** @var \phpbb\language\language */
+	protected $lang;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\log\log */
 	protected $log;
 
@@ -85,12 +88,12 @@ class admin_controller_test extends \phpbb_database_test_case
 		global $phpbb_extension_manager, $phpbb_dispatcher, $template, $request, $config, $user;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$lang = new \phpbb\language\language($lang_loader);
+		$this->lang = new \phpbb\language\language($lang_loader);
 
 		// Load/Mock classes required by the controller class
 		$this->db = $this->new_dbal();
 		$this->template = $this->getMock('\phpbb\template\template');
-		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->user = new \phpbb\user($this->lang, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
@@ -117,8 +120,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$template = $this->getMock('\phpbb\template\template');
 		$request = new \phpbb_mock_request();
 		$config = new \phpbb\config\config(array());
-		set_config(null, null, null, $config);
-		$user = new \phpbb\user($lang, '\phpbb\datetime');
+		$user = new \phpbb\user($this->lang, '\phpbb\datetime');
 	}
 
 	/**
@@ -168,6 +170,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*/
 	public function test_mode_manage($action, $expected)
 	{
+		/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\admanagement\controller\admin_controller $controller */
 		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
@@ -268,7 +271,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('variable')
 				->with('hide_groups', array(0))
 				->willReturn($submit_data);
-			
+
 			$this->config_text->expects($this->once())
 				->method('set')
 				->with('phpbb_admanagement_hide_groups', json_encode($submit_data));
@@ -283,7 +286,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'S_ERROR'		=> true,
 					'ERROR_MSG'		=> 'The submitted form was invalid. Try submitting again.',
 				));
-			
+
 			$this->config_text->expects($this->once())
 				->method('get')
 				->with('phpbb_admanagement_hide_groups')
@@ -299,7 +302,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_get_page_title()
 	{
 		$controller = $this->get_controller();
-		$this->assertEquals($controller->get_page_title(), $this->user->lang('ACP_ADMANAGEMENT_TITLE'));
+		$this->assertEquals($controller->get_page_title(), $this->lang->lang('ACP_ADMANAGEMENT_TITLE'));
 	}
 
 	/**
@@ -321,7 +324,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
-		
+
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
@@ -329,7 +332,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_BACK'				=> $this->u_action,
 				'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 			));
-		
+
 		$controller->action_add();
 	}
 
@@ -352,7 +355,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
+			->will($this->onConsecutiveCalls('AD NAME', '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
 
 		$this->template->expects($this->at(0))
 				->method('assign_var')
@@ -507,7 +510,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls(1, $ad_name, '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
+			->will($this->onConsecutiveCalls(1, 'AD NAME', '', '<!-- AD CODE SAMPLE -->', false, array(), ''));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -625,7 +628,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('variable')
 			->with('id', 0)
 			->willReturn($ad_id);
-		
+
 		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 
 		if ($enable)

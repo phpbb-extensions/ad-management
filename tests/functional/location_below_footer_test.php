@@ -13,16 +13,8 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_below_footer_test extends location_base
+class location_below_footer_test extends functional_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_below_footer()
 	{
 		$ad_code = $this->create_ad('below_footer');
