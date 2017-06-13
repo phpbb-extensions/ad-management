@@ -27,7 +27,7 @@ class location_after_profile_test extends location_base
 	{
 		$ad_code = $this->create_ad('after_profile');
 
-		$crawler = self::request('GET', "memberlist.php?mode=viewprofile&u=2");
+		$crawler = self::request('GET', 'memberlist.php?mode=viewprofile&u=2');
 
 		// Confirm after profile ad is after profile
 		$this->assertContains($ad_code, $crawler->filter('#viewprofile')->nextAll()->html());

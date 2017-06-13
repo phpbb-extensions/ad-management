@@ -27,7 +27,7 @@ class location_above_footer_test extends location_base
 	{
 		$ad_code = $this->create_ad('above_footer');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above footer ad is directly before page footer
 		$this->assertContains($ad_code, $crawler->filter('#page-footer')->previousAll()->html());

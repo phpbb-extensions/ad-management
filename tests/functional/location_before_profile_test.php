@@ -27,7 +27,7 @@ class location_before_profile_test extends location_base
 	{
 		$ad_code = $this->create_ad('before_profile');
 
-		$crawler = self::request('GET', "memberlist.php?mode=viewprofile&u=2");
+		$crawler = self::request('GET', 'memberlist.php?mode=viewprofile&u=2');
 
 		// Confirm before profile ad is before profile
 		$this->assertContains($ad_code, $crawler->filter('#viewprofile')->previousAll()->html());

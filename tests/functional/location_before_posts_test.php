@@ -27,7 +27,7 @@ class location_before_posts_test extends location_base
 	{
 		$ad_code = $this->create_ad('before_posts');
 
-		$crawler = self::request('GET', "viewtopic.php?t=1");
+		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
 		// Confirm before posts ad is before posts
 		$this->assertContains($ad_code, $crawler->filter('.action-bar.bar-top')->nextAll()->html());

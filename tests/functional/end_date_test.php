@@ -36,7 +36,7 @@ class end_date_test extends location_base
 	{
 		$ad_code = $this->create_ad('above_header');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertContains($ad_code, $crawler->html());
@@ -46,7 +46,7 @@ class end_date_test extends location_base
 	{
 		$ad_code = $this->create_ad('above_footer', '2035-01-01');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertContains($ad_code, $crawler->html());
@@ -56,7 +56,7 @@ class end_date_test extends location_base
 	{
 		$ad_code = $this->create_ad('below_footer', '2000-01-01');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
 		$this->assertNotContains($ad_code, $crawler->html());
