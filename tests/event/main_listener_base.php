@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\event;
+namespace phpbb\ads\tests\event;
 
 class main_listener_base extends \phpbb_database_test_case
 {
@@ -24,10 +24,10 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var string ads_table */
 	protected $ads_table;
 
-	/** @var \phpbb\admanagement\ad\manager */
+	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\admanagement\location\manager */
+	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
 	/** @var string */
@@ -38,7 +38,7 @@ class main_listener_base extends \phpbb_database_test_case
 	*/
 	static protected function setup_extensions()
 	{
-		return array('phpbb/admanagement');
+		return array('phpbb/ads');
 	}
 
 	/**
@@ -79,8 +79,8 @@ class main_listener_base extends \phpbb_database_test_case
 		$location_types = array();
 		foreach ($locations as $type)
 		{
-			$class = "\\phpbb\\admanagement\\location\\type\\$type";
-			$location_types['phpbb.admanagement.location.type.' . $type] = new $class($user);
+			$class = "\\phpbb\\ads\\location\\type\\$type";
+			$location_types['phpbb.ads.location.type.' . $type] = new $class($user);
 		}
 
 		// Load/Mock classes required by the listener class
@@ -91,18 +91,18 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->manager = new \phpbb\admanagement\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
-		$this->location_manager = new \phpbb\admanagement\location\manager($location_types);
+		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
+		$this->location_manager = new \phpbb\ads\location\manager($location_types);
 	}
 
 	/**
 	* Get the event listener
 	*
-	* @return \phpbb\admanagement\event\main_listener
+	* @return \phpbb\ads\event\main_listener
 	*/
 	protected function get_listener()
 	{
-		return new \phpbb\admanagement\event\main_listener(
+		return new \phpbb\ads\event\main_listener(
 			$this->template,
 			$this->user,
 			$this->config_text,

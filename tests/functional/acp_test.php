@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\functional;
+namespace phpbb\ads\tests\functional;
 
 /**
 * @group functional
@@ -20,7 +20,7 @@ class acp_test extends \phpbb_functional_test_case
 	*/
 	static protected function setup_extensions()
 	{
-		return array('phpbb/admanagement');
+		return array('phpbb/ads');
 	}
 
 	/**
@@ -30,7 +30,7 @@ class acp_test extends \phpbb_functional_test_case
 	{
 		parent::setUp();
 
-		$this->add_lang_ext('phpbb/admanagement', array(
+		$this->add_lang_ext('phpbb/ads', array(
 			'info_acp_admanagement',
 			'acp',
 		));
@@ -45,7 +45,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_module()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Assert Advertisement management module appears in sidebar
 		$this->assertContainsLang('ACP_ADMANAGEMENT_TITLE', $crawler->filter('.menu-block')->text());
@@ -63,7 +63,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_add()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Jump to the add page
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
@@ -116,7 +116,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_ADD_SUCCESS', $crawler->text());
 
 		// Confirm new ad appears in the list, is enabled and end date is displayed correctly
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContains('Functional test name', $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		$this->assertContains('2035-01-01', $crawler->text());
@@ -132,7 +132,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_edit()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Hit edit button
 		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->parents()->first()->link();
@@ -192,7 +192,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_EDIT_SUCCESS', $crawler->text());
 
 		// Confirm new ad appears in the list, is disabled and end date is present and updated
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContains('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
 		$this->assertContains('2035-01-02', $crawler->text());
@@ -208,7 +208,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_enable()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Hit Disabled button
 		$enable_link = $crawler->selectLink($this->lang('DISABLED'))->link();
@@ -216,7 +216,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_ENABLE_SUCCESS', $crawler->text());
 
 		// Load Advertisement management ACP page again
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Hit Enabled button
 		$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
@@ -230,7 +230,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_delete()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Hit delete button
 		$delete_link = $crawler->filter('[title="' . $this->lang('DELETE') . '"]')->parents()->first()->link();
@@ -246,7 +246,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_DELETE_SUCCESS', $crawler->text());
 
 		// Confirm ad list is empty
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContainsLang('ACP_ADS_EMPTY', $crawler->filter('#main')->text());
 
 		// Confirm the log entry has been added correctly
@@ -260,7 +260,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_settings()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 
 		// Confirm page contains proper heading
 		$this->assertContainsLang('SETTINGS', $crawler->text());
@@ -277,13 +277,13 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
 
 		// Load Advertisement management ACP page again
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 
 		// Confirm admin group is selected
 		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
 
 		// Reset hide groups
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'hide_groups'	=> array(),
 		);

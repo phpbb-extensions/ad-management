@@ -1,3 +1,3 @@
 parameters:
-    phpbb.admanagement.tables.ads: '%core.table_prefix%ads'
-    phpbb.admanagement.tables.ad_locations: '%core.table_prefix%ad_locations'
+    phpbb.ads.tables.ads: '%core.table_prefix%ads'
+    phpbb.ads.tables.ad_locations: '%core.table_prefix%ad_locations'

@@ -1,83 +1,83 @@
 services:
-    phpbb.admanagement.location.manager:
-        class: phpbb\admanagement\location\manager
+    phpbb.ads.location.manager:
+        class: phpbb\ads\location\manager
         arguments:
-            - '@phpbb.admanagement.location.type_collection'
+            - '@phpbb.ads.location.type_collection'
 
 # ----- Template locations -----
-    phpbb.admanagement.location.type_collection:
+    phpbb.ads.location.type_collection:
         class: phpbb\di\service_collection
         arguments:
             - '@service_container'
         tags:
-            - { name: service_collection, tag: phpbb.admanagement.location.type }
+            - { name: service_collection, tag: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.above_footer:
-        class: phpbb\admanagement\location\type\above_footer
+    phpbb.ads.location.type.above_footer:
+        class: phpbb\ads\location\type\above_footer
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.above_header:
-        class: phpbb\admanagement\location\type\above_header
+    phpbb.ads.location.type.above_header:
+        class: phpbb\ads\location\type\above_header
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.after_first_post:
-        class: phpbb\admanagement\location\type\after_first_post
+    phpbb.ads.location.type.after_first_post:
+        class: phpbb\ads\location\type\after_first_post
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.after_not_first_post:
-        class: phpbb\admanagement\location\type\after_not_first_post
+    phpbb.ads.location.type.after_not_first_post:
+        class: phpbb\ads\location\type\after_not_first_post
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.after_posts:
-        class: phpbb\admanagement\location\type\after_posts
+    phpbb.ads.location.type.after_posts:
+        class: phpbb\ads\location\type\after_posts
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.after_profile:
-        class: phpbb\admanagement\location\type\after_profile
+    phpbb.ads.location.type.after_profile:
+        class: phpbb\ads\location\type\after_profile
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.before_posts:
-        class: phpbb\admanagement\location\type\before_posts
+    phpbb.ads.location.type.before_posts:
+        class: phpbb\ads\location\type\before_posts
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.before_profile:
-        class: phpbb\admanagement\location\type\before_profile
+    phpbb.ads.location.type.before_profile:
+        class: phpbb\ads\location\type\before_profile
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.below_footer:
-        class: phpbb\admanagement\location\type\below_footer
+    phpbb.ads.location.type.below_footer:
+        class: phpbb\ads\location\type\below_footer
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }
 
-    phpbb.admanagement.location.type.below_header:
-        class: phpbb\admanagement\location\type\below_header
+    phpbb.ads.location.type.below_header:
+        class: phpbb\ads\location\type\below_header
         arguments:
             - '@user'
         tags:
-            - { name: phpbb.admanagement.location.type }
+            - { name: phpbb.ads.location.type }

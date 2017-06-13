@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\controller;
+namespace phpbb\ads\controller;
 
 require_once __DIR__ . '/../../../../../includes/functions_acp.php';
 
@@ -37,10 +37,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var string */
 	protected $ad_locations_table;
 
-	/** @var \phpbb\admanagement\ad\manager */
+	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\admanagement\location\manager */
+	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
 	/** @var \phpbb\language\language */
@@ -66,7 +66,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*/
 	static protected function setup_extensions()
 	{
-		return array('phpbb/admanagement');
+		return array('phpbb/ads');
 	}
 
 	/**
@@ -98,10 +98,10 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
-		$this->manager = new \phpbb\admanagement\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
-		$this->location_manager = new \phpbb\admanagement\location\manager(array(
-			new \phpbb\admanagement\location\type\above_header($this->user),
-			new \phpbb\admanagement\location\type\below_header($this->user),
+		$this->manager = new \phpbb\ads\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		$this->location_manager = new \phpbb\ads\location\manager(array(
+			new \phpbb\ads\location\type\above_header($this->user),
+			new \phpbb\ads\location\type\below_header($this->user),
 		));
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
 			->disableOriginalConstructor()
@@ -110,9 +110,9 @@ class admin_controller_test extends \phpbb_database_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->php_ext = $phpEx;
-		$this->ext_path = $phpbb_root_path . 'ext/phpbb/admanagement/';
+		$this->ext_path = $phpbb_root_path . 'ext/phpbb/ads/';
 
-		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage';
+		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage';
 
 		// globals
 		$phpbb_extension_manager = new \phpbb_mock_extension_manager($phpbb_root_path);
@@ -126,11 +126,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	/**
 	* Returns fresh new controller.
 	*
-	* @return	\phpbb\admanagement\controller\admin_controller	Admin controller
+	* @return	\phpbb\ads\controller\admin_controller	Admin controller
 	*/
 	public function get_controller()
 	{
-		$controller = new \phpbb\admanagement\controller\admin_controller(
+		$controller = new \phpbb\ads\controller\admin_controller(
 			$this->template,
 			$this->user,
 			$this->request,
@@ -170,8 +170,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	*/
 	public function test_mode_manage($action, $expected)
 	{
-		/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\admanagement\controller\admin_controller $controller */
-		$controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
+		/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_controller $controller */
+		$controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->template,
@@ -209,7 +209,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->config_text->expects($this->once())
 			->method('get')
-			->with('phpbb_admanagement_hide_groups')
+			->with('phpbb_ads_hide_groups')
 			->willReturn('[1,3]');
 
 		$this->template->expects($this->exactly(2))
@@ -274,7 +274,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			$this->config_text->expects($this->once())
 				->method('set')
-				->with('phpbb_admanagement_hide_groups', json_encode($submit_data));
+				->with('phpbb_ads_hide_groups', json_encode($submit_data));
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
 		}
@@ -289,7 +289,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			$this->config_text->expects($this->once())
 				->method('get')
-				->with('phpbb_admanagement_hide_groups')
+				->with('phpbb_ads_hide_groups')
 				->willReturn('[1,3]');
 		}
 
@@ -721,7 +721,7 @@ class admin_controller_test extends \phpbb_database_test_case
  */
 function confirm_box()
 {
-	return \phpbb\admanagement\controller\admin_controller_test::$confirm;
+	return \phpbb\ads\controller\admin_controller_test::$confirm;
 }
 
 /**
@@ -740,5 +740,5 @@ function add_form_key()
  */
 function check_form_key()
 {
-	return \phpbb\admanagement\controller\admin_controller_test::$valid_form;
+	return \phpbb\ads\controller\admin_controller_test::$valid_form;
 }

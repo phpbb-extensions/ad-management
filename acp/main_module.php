@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\acp;
+namespace phpbb\ads\acp;
 
 /**
  * Advertisement management ACP module.
@@ -23,8 +23,8 @@ class main_module
 	{
 		global $phpbb_container;
 
-		/** @var \phpbb\admanagement\controller\admin_controller $admin_controller */
-		$admin_controller = $phpbb_container->get('phpbb.admanagement.admin.controller');
+		/** @var \phpbb\ads\controller\admin_controller $admin_controller */
+		$admin_controller = $phpbb_container->get('phpbb.ads.admin.controller');
 
 		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);

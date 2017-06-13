@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\location\type;
+namespace phpbb\ads\location\type;
 
 /**
 * Interface for template location types

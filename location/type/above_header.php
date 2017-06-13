@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\location\type;
+namespace phpbb\ads\location\type;
 
 class above_header extends base
 {

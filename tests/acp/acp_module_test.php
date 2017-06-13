@@ -25,10 +25,10 @@ class acp_module_test extends \phpbb_test_case
 		$this->extension_manager = new \phpbb_mock_extension_manager(
 			$phpbb_root_path,
 			array(
-				'phpbb/admanagement' => array(
-					'ext_name' => 'phpbb/admanagement',
+				'phpbb/ads' => array(
+					'ext_name' => 'phpbb/ads',
 					'ext_active' => '1',
-					'ext_path' => 'ext/phpbb/admanagement/',
+					'ext_path' => 'ext/phpbb/ads/',
 				),
 			));
 		$phpbb_extension_manager = $this->extension_manager;
@@ -48,18 +48,18 @@ class acp_module_test extends \phpbb_test_case
 	public function test_module_info()
 	{
 		$this->assertEquals(array(
-			'\\phpbb\\admanagement\\acp\\main_module' => array(
-				'filename'	=> '\\phpbb\\admanagement\\acp\\main_module',
+			'\\phpbb\\ads\\acp\\main_module' => array(
+				'filename'	=> '\\phpbb\\ads\\acp\\main_module',
 				'title'		=> 'ACP_ADMANAGEMENT_TITLE',
 				'modes'		=> array(
 					'manage'	=> array(
 						'title'	=> 'ACP_MANAGE_ADS_TITLE',
-						'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
+						'auth'	=> 'ext_phpbb/ads && acl_a_board',
 						'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
 					),
 					'settings'	=> array(
 						'title'	=> 'ACP_ADS_SETTINGS_TITLE',
-						'auth'	=> 'ext_phpbb/admanagement && acl_a_board',
+						'auth'	=> 'ext_phpbb/ads && acl_a_board',
 						'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
 					),
 				),
@@ -72,7 +72,7 @@ class acp_module_test extends \phpbb_test_case
 		return array(
 			// module_auth, expected result
 			array('ext_foo/bar', false),
-			array('ext_phpbb/admanagement', true),
+			array('ext_phpbb/ads', true),
 		);
 	}
 
@@ -103,14 +103,14 @@ class acp_module_test extends \phpbb_test_case
 		$request = $this->getMock('\phpbb\request\request');
 		$template = $this->getMock('\phpbb\template\template');
 		$phpbb_container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
-		$admin_controller = $this->getMockBuilder('\phpbb\admanagement\controller\admin_controller')
+		$admin_controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
 			->disableOriginalConstructor()
 			->getMock();
 
 		$phpbb_container
 			->expects($this->any())
 			->method('get')
-			->with('phpbb.admanagement.admin.controller')
+			->with('phpbb.ads.admin.controller')
 			->will($this->returnValue($admin_controller));
 
 		$admin_controller
@@ -122,6 +122,6 @@ class acp_module_test extends \phpbb_test_case
 			->method("mode_$mode");
 
 		$p_master = new p_master();
-		$p_master->load('acp', '\phpbb\admanagement\acp\main_module', $mode);
+		$p_master->load('acp', '\phpbb\ads\acp\main_module', $mode);
 	}
 }

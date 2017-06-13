@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\event;
+namespace phpbb\ads\tests\event;
 
 class main_listener_test extends main_listener_base
 {
@@ -28,6 +28,6 @@ class main_listener_test extends main_listener_base
 	{
 		$this->assertEquals(array(
 			'core.page_header_after',
-		), array_keys(\phpbb\admanagement\event\main_listener::getSubscribedEvents()));
+		), array_keys(\phpbb\ads\event\main_listener::getSubscribedEvents()));
 	}
 }

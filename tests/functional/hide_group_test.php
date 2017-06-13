@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\functional;
+namespace phpbb\ads\tests\functional;
 
 /**
 * @group functional
@@ -23,12 +23,12 @@ class hide_group_test extends functional_base
 		parent::setUp();
 
 		// Disable all existent ads
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 		while (count($crawler->selectLink($this->lang('ENABLED'))))
 		{
 			$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
 			self::$client->click($disable_link);
-			$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+			$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 		}
 
 		$this->reset_groups();
@@ -47,7 +47,7 @@ class hide_group_test extends functional_base
 	public function test_ad_hides_with_hide_group()
 	{
 		// Hide ads for administrators
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'hide_groups'	=> array(5),
 		);
@@ -68,7 +68,7 @@ class hide_group_test extends functional_base
 
 	protected function reset_groups()
 	{
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'hide_groups'	=> array(),
 		);

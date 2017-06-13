@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\controller;
+namespace phpbb\ads\controller;
 
 /**
 * Admin controller
@@ -27,10 +27,10 @@ class admin_controller
 	/** @var \phpbb\request\request */
 	protected $request;
 
-	/** @var \phpbb\admanagement\ad\manager */
+	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\admanagement\location\manager */
+	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
 	/** @var \phpbb\log\log */
@@ -57,14 +57,14 @@ class admin_controller
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\user							$user				User object
 	* @param \phpbb\request\request					$request			Request object
-	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
-	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
+	* @param \phpbb\ads\ad\manager			$manager			Advertisement manager object
+	* @param \phpbb\ads\location\manager	$location_manager	Template location manager object
 	* @param \phpbb\log\log							$log				The phpBB log system
 	* @param \phpbb\config\db_text					$config_text		Config text object
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -106,18 +106,18 @@ class admin_controller
 	{
 		$this->setup();
 
-		add_form_key('phpbb/admanagement/settings');
+		add_form_key('phpbb/ads/settings');
 		if ($this->request->is_set_post('submit'))
 		{
 			// Validate form key
-			if (!check_form_key('phpbb/admanagement/settings'))
+			if (!check_form_key('phpbb/ads/settings'))
 			{
 				$this->errors[] = $this->user->lang('FORM_INVALID');
 			}
 
 			if (empty($this->errors))
 			{
-				$this->config_text->set('phpbb_admanagement_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
+				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
@@ -128,7 +128,7 @@ class admin_controller
 			));
 		}
 
-		$hide_groups = json_decode($this->config_text->get('phpbb_admanagement_hide_groups'), true);
+		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
 		$groups = $this->manager->load_groups();
 		foreach ($groups as $group)
 		{
@@ -173,10 +173,10 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 
-		add_form_key('phpbb/admanagement/add');
+		add_form_key('phpbb/ads/add');
 		if ($preview || $submit)
 		{
-			$data = $this->get_form_data('phpbb/admanagement/add');
+			$data = $this->get_form_data('phpbb/ads/add');
 
 			if ($preview)
 			{
@@ -219,10 +219,10 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 
-		add_form_key('phpbb/admanagement/edit/' . $ad_id);
+		add_form_key('phpbb/ads/edit/' . $ad_id);
 		if ($preview || $submit)
 		{
-			$data = $this->get_form_data('phpbb/admanagement/edit/' . $ad_id);
+			$data = $this->get_form_data('phpbb/ads/edit/' . $ad_id);
 
 			if ($preview)
 			{
@@ -375,7 +375,7 @@ class admin_controller
 	*/
 	protected function setup()
 	{
-		$this->user->add_lang_ext('phpbb/admanagement', 'acp');
+		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
 		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
 	}
