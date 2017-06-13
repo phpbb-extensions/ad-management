@@ -191,7 +191,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
 		$this->assertContainsLang('ACP_AD_EDIT_SUCCESS', $crawler->text());
 
-		// Confirm new ad appears in the list, is disabled and end date is presend and updated
+		// Confirm new ad appears in the list, is disabled and end date is present and updated
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
 		$this->assertContains('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());

@@ -34,7 +34,7 @@ class main_listener_base extends \phpbb_database_test_case
 	protected $ad_locations_table;
 
 	/**
-	* {@intheritDoc}
+	* {@inheritDoc}
 	*/
 	static protected function setup_extensions()
 	{
@@ -42,7 +42,7 @@ class main_listener_base extends \phpbb_database_test_case
 	}
 
 	/**
-	* {@intheritDoc}
+	* {@inheritDoc}
 	*/
 	public function getDataSet()
 	{
@@ -50,7 +50,7 @@ class main_listener_base extends \phpbb_database_test_case
 	}
 
 	/**
-	* {@intheritDoc}
+	* {@inheritDoc}
 	*/
 	public function setUp()
 	{

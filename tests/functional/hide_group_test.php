@@ -52,7 +52,7 @@ class hide_group_test extends location_base
 
 	public function test_ad_hides_with_hide_group()
 	{
-		// Hide ads for administratos
+		// Hide ads for administrators
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'hide_groups'	=> array(5),
