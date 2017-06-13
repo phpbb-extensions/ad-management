@@ -288,7 +288,7 @@ class acp_test extends \phpbb_functional_test_case
 			'hide_groups'	=> array(),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
+		self::submit($form, $form_data);
 	}
 
 	static public function click($link)

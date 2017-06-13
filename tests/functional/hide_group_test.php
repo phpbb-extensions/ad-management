@@ -53,6 +53,8 @@ class hide_group_test extends location_base
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
 
 		$ad_code = $this->create_ad('below_footer');
 
