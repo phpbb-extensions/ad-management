@@ -13,14 +13,6 @@ namespace phpbb\admanagement\tests\event;
 class setup_ads_test extends main_listener_base
 {
 	/**
-	* {@intheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
-	/**
 	* Data for test_setup_ads
 	*
 	* @return array Array of test data

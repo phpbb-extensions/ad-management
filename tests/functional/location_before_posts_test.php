@@ -15,14 +15,6 @@ namespace phpbb\admanagement\tests\functional;
 */
 class location_before_posts_test extends location_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_before_posts()
 	{
 		$ad_code = $this->create_ad('before_posts');

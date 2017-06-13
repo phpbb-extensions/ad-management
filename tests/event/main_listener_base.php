@@ -12,6 +12,9 @@ namespace phpbb\admanagement\tests\event;
 
 class main_listener_base extends \phpbb_database_test_case
 {
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
+	protected $config_text;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
@@ -20,6 +23,15 @@ class main_listener_base extends \phpbb_database_test_case
 
 	/** @var string ads_table */
 	protected $ads_table;
+
+	/** @var \phpbb\admanagement\ad\manager */
+	protected $manager;
+
+	/** @var \phpbb\admanagement\location\manager */
+	protected $location_manager;
+
+	/** @var string */
+	protected $ad_locations_table;
 
 	/**
 	* {@intheritDoc}
@@ -44,6 +56,8 @@ class main_listener_base extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
+		global $phpbb_root_path, $phpEx;
+
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$lang = new \phpbb\language\language($lang_loader);
 		$user = new \phpbb\user($lang, '\phpbb\datetime');
@@ -53,7 +67,7 @@ class main_listener_base extends \phpbb_database_test_case
 		$locations = array(
 			'above_footer',
 			'above_header',
-			'after_first_post', 
+			'after_first_post',
 			'after_not_first_post',
 			'after_posts',
 			'after_profile',

@@ -15,14 +15,6 @@ namespace phpbb\admanagement\tests\functional;
 */
 class location_below_header_test extends location_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_below_header()
 	{
 		$ad_code = $this->create_ad('below_header');

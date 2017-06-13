@@ -15,14 +15,6 @@ namespace phpbb\admanagement\tests\functional;
 */
 class location_after_profile_test extends location_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_after_profile()
 	{
 		$ad_code = $this->create_ad('after_profile');

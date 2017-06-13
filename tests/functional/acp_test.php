@@ -136,7 +136,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Hit edit button
 		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->parents()->first()->link();
-		$crawler = $this->click($edit_link);
+		$crawler = static::click($edit_link);
 		$this->assertContainsLang('ACP_ADS_EDIT', $crawler->filter('#main h1')->text());
 
 		// Confirm error when submitting without required field data
@@ -212,7 +212,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Hit Disabled button
 		$enable_link = $crawler->selectLink($this->lang('DISABLED'))->link();
-		$crawler = $this->click($enable_link);
+		$crawler = static::click($enable_link);
 		$this->assertContainsLang('ACP_AD_ENABLE_SUCCESS', $crawler->text());
 
 		// Load Advertisement management ACP page again
@@ -220,7 +220,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Hit Enabled button
 		$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
-		$crawler = $this->click($disable_link);
+		$crawler = static::click($disable_link);
 		$this->assertContainsLang('ACP_AD_DISABLE_SUCCESS', $crawler->text());
 	}
 
@@ -234,7 +234,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Hit delete button
 		$delete_link = $crawler->filter('[title="' . $this->lang('DELETE') . '"]')->parents()->first()->link();
-		$crawler = $this->click($delete_link);
+		$crawler = static::click($delete_link);
 		$this->assertContainsLang('CONFIRM_OPERATION', $crawler->text());
 
 		// Confirm operation
@@ -266,7 +266,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('SETTINGS', $crawler->text());
 
 		// Confirm no group is selected yet
-		$this->assertEquals(0, count($crawler->filter('option[selected]')));
+		$this->assertCount(0, $crawler->filter('option[selected]'));
 
 		// Submit form
 		$form_data = array(

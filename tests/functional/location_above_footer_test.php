@@ -15,14 +15,6 @@ namespace phpbb\admanagement\tests\functional;
 */
 class location_above_footer_test extends location_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-	}
-
 	public function test_location_above_footer()
 	{
 		$ad_code = $this->create_ad('above_footer');
