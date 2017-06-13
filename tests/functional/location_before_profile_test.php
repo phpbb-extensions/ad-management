@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\functional;
+namespace phpbb\ads\tests\functional;
 
 /**
 * @group functional

@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\migrations\v10x;
+namespace phpbb\ads\migrations\v10x;
 
 class m2_acp_module extends \phpbb\db\migration\migration
 {
@@ -33,7 +33,7 @@ class m2_acp_module extends \phpbb\db\migration\migration
 	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\admanagement\migrations\v10x\m1_initial_schema');
+		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
@@ -53,7 +53,7 @@ class m2_acp_module extends \phpbb\db\migration\migration
 				'acp',
 				'ACP_ADMANAGEMENT_TITLE',
 				array(
-					'module_basename'	=> '\phpbb\admanagement\acp\main_module',
+					'module_basename'	=> '\phpbb\ads\acp\main_module',
 					'modes'				=> array('manage'),
 				),
 			)),

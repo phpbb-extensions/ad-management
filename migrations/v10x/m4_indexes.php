@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\migrations\v10x;
+namespace phpbb\ads\migrations\v10x;
 
 class m4_indexes extends \phpbb\db\migration\migration
 {
@@ -26,8 +26,8 @@ class m4_indexes extends \phpbb\db\migration\migration
 	static public function depends_on()
 	{
 		return array(
-			'\phpbb\admanagement\migrations\v10x\m1_initial_schema',
-			'\phpbb\admanagement\migrations\v10x\m3_template_locations_schema'
+			'\phpbb\ads\migrations\v10x\m1_initial_schema',
+			'\phpbb\ads\migrations\v10x\m3_template_locations_schema'
 		);
 	}
 

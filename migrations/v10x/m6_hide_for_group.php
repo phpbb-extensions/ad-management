@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\migrations\v10x;
+namespace phpbb\ads\migrations\v10x;
 
 class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 {
@@ -19,7 +19,7 @@ class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 	{
 		$config_text = $this->container->get('config_text');
 
-		return $config_text->get('phpbb_admanagement_hide_groups') !== null;
+		return $config_text->get('phpbb_ads_hide_groups') !== null;
 	}
 
 	/**
@@ -27,7 +27,7 @@ class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\admanagement\migrations\v10x\m2_acp_module');
+		return array('\phpbb\ads\migrations\v10x\m2_acp_module');
 	}
 
 	/**
@@ -38,13 +38,13 @@ class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 	public function update_data()
 	{
 		return array(
-			array('config_text.add', array('phpbb_admanagement_hide_groups', '[]')),
+			array('config_text.add', array('phpbb_ads_hide_groups', '[]')),
 
 			array('module.add', array(
 				'acp',
 				'ACP_ADMANAGEMENT_TITLE',
 				array(
-					'module_basename'	=> '\phpbb\admanagement\acp\main_module',
+					'module_basename'	=> '\phpbb\ads\acp\main_module',
 					'modes'				=> array('settings'),
 				),
 			)),

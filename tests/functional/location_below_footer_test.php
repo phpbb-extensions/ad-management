@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\functional;
+namespace phpbb\ads\tests\functional;
 
 /**
 * @group functional
@@ -22,6 +22,6 @@ class location_below_footer_test extends functional_base
 		$crawler = self::request('GET', "index.php");
 
 		// Confirm below footer ad is last visible body children
-		$this->assertContains($ad_code, $crawler->filter('.phpbb-admanagement-center')->last()->html());
+		$this->assertContains($ad_code, $crawler->filter('.phpbb-ads-center')->last()->html());
 	}
 }

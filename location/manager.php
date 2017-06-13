@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\location;
+namespace phpbb\ads\location;
 
 class manager
 {

@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\event;
+namespace phpbb\ads\tests\event;
 
 class setup_ads_test extends main_listener_base
 {
@@ -39,7 +39,7 @@ class setup_ads_test extends main_listener_base
 
 		$this->config_text->expects($this->once())
 			->method('get')
-			->with('phpbb_admanagement_hide_groups')
+			->with('phpbb_ads_hide_groups')
 			->willReturn(json_encode($hide_groups));
 
 		$ads = array();

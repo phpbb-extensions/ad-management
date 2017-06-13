@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\event;
+namespace phpbb\ads\event;
 
 /**
  * @ignore
@@ -29,10 +29,10 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\config\db_text */
 	protected $config_text;
 
-	/** @var \phpbb\admanagement\ad\manager */
+	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\admanagement\location\manager */
+	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
 	/**
@@ -51,10 +51,10 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\user							$user				User object
 	* @param \phpbb\config\db_text					$config_text		Config text object
-	* @param \phpbb\admanagement\ad\manager			$manager			Advertisement manager object
-	* @param \phpbb\admanagement\location\manager	$location_manager	Template location manager object
+	* @param \phpbb\ads\ad\manager			$manager			Advertisement manager object
+	* @param \phpbb\ads\location\manager	$location_manager	Template location manager object
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\admanagement\ad\manager $manager, \phpbb\admanagement\location\manager $location_manager)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -69,7 +69,7 @@ class main_listener implements EventSubscriberInterface
 	public function setup_ads()
 	{
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-		$hide_groups = json_decode($this->config_text->get('phpbb_admanagement_hide_groups'), true);
+		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
 
 		// If user is not in any groups that have ads hidden, display them then
 		if (!array_intersect($user_groups, $hide_groups))

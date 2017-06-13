@@ -8,12 +8,12 @@
  *
  */
 
-namespace phpbb\admanagement\location\type;
+namespace phpbb\ads\location\type;
 
 /**
 * Base class for template location types
 */
-abstract class base implements \phpbb\admanagement\location\type\type_interface
+abstract class base implements \phpbb\ads\location\type\type_interface
 {
 	/**
 	* User object

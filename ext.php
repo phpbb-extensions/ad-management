@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement;
+namespace phpbb\ads;
 
 class ext extends \phpbb\extension\base
 {

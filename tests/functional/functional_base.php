@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\tests\functional;
+namespace phpbb\ads\tests\functional;
 
 /**
 * @group functional
@@ -20,7 +20,7 @@ class functional_base extends \phpbb_functional_test_case
 	*/
 	static protected function setup_extensions()
 	{
-		return array('phpbb/admanagement');
+		return array('phpbb/ads');
 	}
 
 	/**
@@ -30,7 +30,7 @@ class functional_base extends \phpbb_functional_test_case
 	{
 		parent::setUp();
 
-		$this->add_lang_ext('phpbb/admanagement', array(
+		$this->add_lang_ext('phpbb/ads', array(
 			'info_acp_admanagement',
 			'acp',
 		));
@@ -42,7 +42,7 @@ class functional_base extends \phpbb_functional_test_case
 	protected function create_ad($location, $end_date = '')
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-admanagement-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Jump to the add page
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();

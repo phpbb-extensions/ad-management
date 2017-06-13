@@ -3,33 +3,33 @@ imports:
     - { resource: location.yml }
 
 services:
-    phpbb.admanagement.ad.manager:
-        class: phpbb\admanagement\ad\manager
+    phpbb.ads.ad.manager:
+        class: phpbb\ads\ad\manager
         arguments:
             - '@dbal.conn'
-            - '%phpbb.admanagement.tables.ads%'
-            - '%phpbb.admanagement.tables.ad_locations%'
+            - '%phpbb.ads.tables.ads%'
+            - '%phpbb.ads.tables.ad_locations%'
 
-    phpbb.admanagement.admin.controller:
-        class: phpbb\admanagement\controller\admin_controller
+    phpbb.ads.admin.controller:
+        class: phpbb\ads\controller\admin_controller
         arguments:
             - '@template'
             - '@user'
             - '@request'
-            - '@phpbb.admanagement.ad.manager'
-            - '@phpbb.admanagement.location.manager'
+            - '@phpbb.ads.ad.manager'
+            - '@phpbb.ads.location.manager'
             - '@log'
             - '@config_text'
             - '%core.php_ext%'
-            - '%core.root_path%ext/phpbb/admanagement/'
+            - '%core.root_path%ext/phpbb/ads/'
 
-    phpbb.admanagement.listener:
-        class: phpbb\admanagement\event\main_listener
+    phpbb.ads.listener:
+        class: phpbb\ads\event\main_listener
         arguments:
             - '@template'
             - '@user'
             - '@config_text'
-            - '@phpbb.admanagement.ad.manager'
-            - '@phpbb.admanagement.location.manager'
+            - '@phpbb.ads.ad.manager'
+            - '@phpbb.ads.location.manager'
         tags:
             - { name: event.listener }

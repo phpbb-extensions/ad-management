@@ -8,7 +8,7 @@
  *
  */
 
-namespace phpbb\admanagement\migrations\v10x;
+namespace phpbb\ads\migrations\v10x;
 
 /**
 * Migration stage 1: Initial schema
