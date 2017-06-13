@@ -188,7 +188,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->template->expects($this->once())
 			->method('assign_var')
-			->with('S_PHPBB_ADMANAGEMENT', true);
+			->with('S_PHPBB_ADS', true);
 
 		$this->request->expects($this->once())
 			->method('variable')
@@ -302,7 +302,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_get_page_title()
 	{
 		$controller = $this->get_controller();
-		$this->assertEquals($controller->get_page_title(), $this->lang->lang('ACP_ADMANAGEMENT_TITLE'));
+		$this->assertEquals($controller->get_page_title(), $this->lang->lang('ACP_PHPBB_ADS_TITLE'));
 	}
 
 	/**
@@ -492,7 +492,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'ERROR_MSG'		=> '',
 					'AD_NAME'		=> 'One and only',
 					'AD_NOTE'		=> 'And it\'s desc',
-					'AD_CODE'		=> 'admanagementcode',
+					'AD_CODE'		=> 'adscode',
 					'AD_ENABLED'	=> '1',
 					'AD_END_DATE'	=> '2035-01-02',
 				));

@@ -50,17 +50,17 @@ class acp_module_test extends \phpbb_test_case
 		$this->assertEquals(array(
 			'\\phpbb\\ads\\acp\\main_module' => array(
 				'filename'	=> '\\phpbb\\ads\\acp\\main_module',
-				'title'		=> 'ACP_ADMANAGEMENT_TITLE',
+				'title'		=> 'ACP_PHPBB_ADS_TITLE',
 				'modes'		=> array(
 					'manage'	=> array(
 						'title'	=> 'ACP_MANAGE_ADS_TITLE',
 						'auth'	=> 'ext_phpbb/ads && acl_a_board',
-						'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
+						'cat'	=> array('ACP_PHPBB_ADS_TITLE')
 					),
 					'settings'	=> array(
 						'title'	=> 'ACP_ADS_SETTINGS_TITLE',
 						'auth'	=> 'ext_phpbb/ads && acl_a_board',
-						'cat'	=> array('ACP_ADMANAGEMENT_TITLE')
+						'cat'	=> array('ACP_PHPBB_ADS_TITLE')
 					),
 				),
 			),

@@ -31,7 +31,7 @@ class functional_base extends \phpbb_functional_test_case
 		parent::setUp();
 
 		$this->add_lang_ext('phpbb/ads', array(
-			'info_acp_admanagement',
+			'info_acp_phpbb_ads',
 			'acp',
 		));
 

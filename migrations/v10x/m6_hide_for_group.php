@@ -42,7 +42,7 @@ class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 
 			array('module.add', array(
 				'acp',
-				'ACP_ADMANAGEMENT_TITLE',
+				'ACP_PHPBB_ADS_TITLE',
 				array(
 					'module_basename'	=> '\phpbb\ads\acp\main_module',
 					'modes'				=> array('settings'),
