@@ -25,7 +25,7 @@ class m5_end_date extends \phpbb\db\migration\migration
 	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\admanagement\migrations\v10x\m4_indexes');
+		return array('\phpbb\admanagement\migrations\v10x\m1_initial_schema');
 	}
 
 	/**

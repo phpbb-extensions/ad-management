@@ -28,7 +28,7 @@ class m1_initial_schema extends \phpbb\db\migration\migration
 	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v310\gold');
+		return array('\phpbb\db\migration\data\v31x\v316');
 	}
 
 	/**
