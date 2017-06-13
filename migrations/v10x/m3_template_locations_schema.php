@@ -25,7 +25,7 @@ class m3_template_locations_schema extends \phpbb\db\migration\migration
 	*/
 	static public function depends_on()
 	{
-		return array('\phpbb\admanagement\migrations\v10x\m2_acp_module');
+		return array('\phpbb\admanagement\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
