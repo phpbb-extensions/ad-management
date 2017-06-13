@@ -13,7 +13,7 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class hide_group_test extends location_base
+class hide_group_test extends functional_base
 {
 	/**
 	* {@inheritDoc}

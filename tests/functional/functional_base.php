@@ -13,7 +13,7 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_base extends \phpbb_functional_test_case
+class functional_base extends \phpbb_functional_test_case
 {
 	/**
 	* {@inheritDoc}

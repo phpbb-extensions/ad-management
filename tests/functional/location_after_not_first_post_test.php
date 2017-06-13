@@ -13,7 +13,7 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_after_not_first_post_test extends location_base
+class location_after_not_first_post_test extends functional_base
 {
 	public function test_location_after_not_first_post()
 	{

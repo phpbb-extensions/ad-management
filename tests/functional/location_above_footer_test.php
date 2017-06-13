@@ -13,7 +13,7 @@ namespace phpbb\admanagement\tests\functional;
 /**
 * @group functional
 */
-class location_above_footer_test extends location_base
+class location_above_footer_test extends functional_base
 {
 	public function test_location_above_footer()
 	{
