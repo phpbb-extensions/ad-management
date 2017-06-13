@@ -160,7 +160,7 @@ class admin_controller
 	*/
 	public function get_page_title()
 	{
-		return $this->user->lang('ACP_ADMANAGEMENT_TITLE');
+		return $this->user->lang('ACP_PHPBB_ADS_TITLE');
 	}
 
 	/**
@@ -377,7 +377,7 @@ class admin_controller
 	{
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
-		$this->template->assign_var('S_PHPBB_ADMANAGEMENT', true);
+		$this->template->assign_var('S_PHPBB_ADS', true);
 	}
 
 	/**
@@ -569,6 +569,6 @@ class admin_controller
 	*/
 	protected function log($action, $ad_name)
 	{
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_ADMANAGEMENT_' . $action . '_LOG', time(), array($ad_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
 	}
 }

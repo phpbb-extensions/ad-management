@@ -31,7 +31,7 @@ class acp_test extends \phpbb_functional_test_case
 		parent::setUp();
 
 		$this->add_lang_ext('phpbb/ads', array(
-			'info_acp_admanagement',
+			'info_acp_phpbb_ads',
 			'acp',
 		));
 
@@ -48,7 +48,7 @@ class acp_test extends \phpbb_functional_test_case
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 
 		// Assert Advertisement management module appears in sidebar
-		$this->assertContainsLang('ACP_ADMANAGEMENT_TITLE', $crawler->filter('.menu-block')->text());
+		$this->assertContainsLang('ACP_PHPBB_ADS_TITLE', $crawler->filter('.menu-block')->text());
 		$this->assertContainsLang('ACP_MANAGE_ADS_TITLE', $crawler->filter('#activemenu')->text());
 
 		// Assert Advertisement management display appears
@@ -123,7 +123,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
-		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_ADD_LOG', $form_data['ad_name'])), $crawler->text());
+		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_ADD_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
 	/**
@@ -199,7 +199,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
-		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_EDIT_LOG', $form_data['ad_name'])), $crawler->text());
+		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
 	/**
@@ -251,7 +251,7 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
-		$this->assertContains(strip_tags($this->lang('ACP_ADMANAGEMENT_EDIT_LOG', 'Functional test name edited')), $crawler->text());
+		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
 	/**

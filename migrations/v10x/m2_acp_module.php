@@ -20,7 +20,7 @@ class m2_acp_module extends \phpbb\db\migration\migration
 		$sql = 'SELECT module_id
 			FROM ' . $this->table_prefix . "modules
 			WHERE module_class = 'acp'
-				AND module_langname = 'ACP_ADMANAGEMENT_TITLE'";
+				AND module_langname = 'ACP_PHPBB_ADS_TITLE'";
 		$result = $this->db->sql_query($sql);
 		$module_id = (int) $this->db->sql_fetchfield('module_id');
 		$this->db->sql_freeresult($result);
@@ -47,11 +47,11 @@ class m2_acp_module extends \phpbb\db\migration\migration
 			array('module.add', array(
 				'acp',
 				'ACP_CAT_DOT_MODS',
-				'ACP_ADMANAGEMENT_TITLE'
+				'ACP_PHPBB_ADS_TITLE'
 			)),
 			array('module.add', array(
 				'acp',
-				'ACP_ADMANAGEMENT_TITLE',
+				'ACP_PHPBB_ADS_TITLE',
 				array(
 					'module_basename'	=> '\phpbb\ads\acp\main_module',
 					'modes'				=> array('manage'),
