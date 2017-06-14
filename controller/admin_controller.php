@@ -381,7 +381,7 @@ class admin_controller
 	{
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
-		$this->template->assign_var('S_PHPBB_ADS',true);
+		$this->template->assign_var('S_PHPBB_ADS', true);
 	}
 
 	/**
