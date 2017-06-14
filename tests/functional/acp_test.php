@@ -106,8 +106,8 @@ class acp_test extends \phpbb_functional_test_case
 		// Confirm preview
 		$form = $crawler->selectButton($this->lang('PREVIEW'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.ad-center')->count());
-		$this->assertContains($form_data['ad_code'], $crawler->filter('.ad-center')->html());
+		$this->assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
+		$this->assertContains($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
 
 		// Confirm add
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
@@ -182,8 +182,8 @@ class acp_test extends \phpbb_functional_test_case
 		// Confirm preview
 		$form = $crawler->selectButton($this->lang('PREVIEW'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.ad-center')->count());
-		$this->assertContains($form_data['ad_code'], $crawler->filter('.ad-center')->html());
+		$this->assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
+		$this->assertContains($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
 
 		// Confirm edit
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
