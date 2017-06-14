@@ -377,7 +377,10 @@ class admin_controller
 	{
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
-		$this->template->assign_var('S_PHPBB_ADS', true);
+		$this->template->assign_vars(array(
+			'S_PHPBB_ADS'	=> true,
+			'U_ACTION'		=> $this->u_action,
+		));
 	}
 
 	/**
@@ -489,6 +492,7 @@ class admin_controller
 			'AD_END_DATE'	=> $this->prepare_end_date($data['ad_end_date']),
 		));
 	}
+
 	/**
 	* Prepare end date for display
 	*
