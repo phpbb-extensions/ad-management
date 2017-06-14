@@ -19,6 +19,7 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
+	// Manage ads
 	'AD_NAME'				=> 'Name',
 	'AD_NAME_EXPLAIN'		=> 'The ad name is only used to help you identify this advertisement.',
 	'AD_ENABLED'			=> 'Enabled',
@@ -57,21 +58,21 @@ $lang = array_merge($lang, array(
 
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',
-	'AD_ABOVE_HEADER_DESC'			=> 'Displays on every page before page header.',
+	'AD_ABOVE_HEADER_DESC'			=> 'Displays on every page before the page header.',
 	'AD_BELOW_HEADER'				=> 'Below header',
-	'AD_BELOW_HEADER_DESC'			=> 'Displays on every page after page header.',
+	'AD_BELOW_HEADER_DESC'			=> 'Displays on every page after the page header (and before navbar).',
 	'AD_BEFORE_POSTS'				=> 'Before posts',
-	'AD_BEFORE_POSTS_DESC'			=> 'Displays on topic page before first post.',
+	'AD_BEFORE_POSTS_DESC'			=> 'Displays on topic page before the first post.',
 	'AD_AFTER_POSTS'				=> 'After posts',
-	'AD_AFTER_POSTS_DESC'			=> 'Displays on topic page after last post.',
+	'AD_AFTER_POSTS_DESC'			=> 'Displays on topic page after the last post.',
 	'AD_BELOW_FOOTER'				=> 'Below footer',
-	'AD_BELOW_FOOTER_DESC'			=> 'Displays on every page after page footer.',
+	'AD_BELOW_FOOTER_DESC'			=> 'Displays on every page after the page footer.',
 	'AD_ABOVE_FOOTER'				=> 'Above footer',
-	'AD_ABOVE_FOOTER_DESC'			=> 'Displays on every page before page footer.',
+	'AD_ABOVE_FOOTER_DESC'			=> 'Displays on every page before the page footer.',
 	'AD_AFTER_FIRST_POST'			=> 'After first post',
-	'AD_AFTER_FIRST_POST_DESC'		=> 'Displays on topic page after first post.',
+	'AD_AFTER_FIRST_POST_DESC'		=> 'Displays on topic page after the first post.',
 	'AD_AFTER_NOT_FIRST_POST'		=> 'After every post except first',
-	'AD_AFTER_NOT_FIRST_POST_DESC'	=> 'Displays on topic page after every post except first.',
+	'AD_AFTER_NOT_FIRST_POST_DESC'	=> 'Displays on topic page after every post except the first post.',
 	'AD_BEFORE_PROFILE'				=> 'Before user profile',
 	'AD_BEFORE_PROFILE_DESC'		=> 'Displays before member profile page content.',
 	'AD_AFTER_PROFILE'				=> 'After user profile',
@@ -81,5 +82,5 @@ $lang = array_merge($lang, array(
 	'HIDE_GROUPS'			=> 'Hide advertisements for groups',
 	'HIDE_GROUPS_EXPLAIN'	=> 'Members of selected groups will not see any advertisement.',
 
-	'ACP_AD_SETTINGS_SAVED'	=> 'Advertisement management settings saved.'
+	'ACP_AD_SETTINGS_SAVED'	=> 'Advertisement management settings saved.',
 ));
