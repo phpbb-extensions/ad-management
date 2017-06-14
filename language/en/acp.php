@@ -21,7 +21,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	// Manage ads
 	'AD_NAME'				=> 'Name',
-	'AD_NAME_EXPLAIN'		=> 'The ad name is only used to help you identify this advertisement.',
+	'AD_NAME_EXPLAIN'		=> 'The name is only used to help you identify this advertisement.',
 	'AD_ENABLED'			=> 'Enabled',
 	'AD_ENABLED_EXPLAIN'	=> 'If disabled, this advertisement will not be displayed.',
 	'AD_END_DATE'			=> 'End Date',
@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'ACP_ADS_ADD'			=> 'Add new advertisement',
 	'ACP_ADS_EDIT'			=> 'Edit advertisement',
 	'AD_PREVIEW'			=> 'Preview this advertisement',
-	'CONFIGURE_AD'			=> 'Configure ad',
+	'CONFIGURE_AD'			=> 'Configure advertisement',
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',
