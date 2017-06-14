@@ -23,6 +23,7 @@
 
 	<form id="acp_addmanagement_add" method="post" action="{{ U_ACTION }}">
 		<fieldset>
+			<legend>{{ lang('CONFIGURE_AD') }}</legend>
 			<dl>
 				<dt><label for="ad_name">{{ lang('AD_NAME') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" type="text" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
