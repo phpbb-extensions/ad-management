@@ -80,7 +80,7 @@ $lang = array_merge($lang, array(
 
 	// Settings
 	'HIDE_GROUPS'			=> 'Hide advertisements for groups',
-	'HIDE_GROUPS_EXPLAIN'	=> 'Members of selected groups will not see any advertisement.',
+	'HIDE_GROUPS_EXPLAIN'	=> 'Members of selected groups will not see any advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
 
 	'ACP_AD_SETTINGS_SAVED'	=> 'Advertisement management settings saved.',
 ));
