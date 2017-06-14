@@ -9,9 +9,12 @@
 	<h1>{% if S_ADD_AD %}{{ lang('ACP_ADS_ADD') }}{% else %}{{ lang('ACP_ADS_EDIT') }}{% endif %}</h1>
 
 	{% if PREVIEW %}
+		<fieldset>
+			<legend>{{ lang('PREVIEW') }}</legend>
 				<div class="phpbb-ads-center">
 					<div>{{ PREVIEW }}</div>
 				</div>
+		</fieldset>
 	{% endif %}
 
 	{% if S_ERROR %}
