@@ -140,6 +140,8 @@ class admin_controller
 				'S_SELECTED'	=> in_array($group['group_id'], $hide_groups),
 			));
 		}
+
+		$this->template->assign_var('U_ACTION', $this->u_action);
 	}
 
 	/**
@@ -204,6 +206,7 @@ class admin_controller
 		$this->template->assign_vars(array(
 			'S_ADD_AD'				=> true,
 			'U_BACK'				=> $this->u_action,
+			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
 		));
 	}
@@ -263,6 +266,7 @@ class admin_controller
 			'S_EDIT_AD'				=> true,
 			'EDIT_ID'				=> $ad_id,
 			'U_BACK'				=> $this->u_action,
+			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
 		));
 		$this->assign_locations($data);
@@ -377,10 +381,7 @@ class admin_controller
 	{
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
-		$this->template->assign_vars(array(
-			'S_PHPBB_ADS'	=> true,
-			'U_ACTION'		=> $this->u_action,
-		));
+		$this->template->assign_var('S_PHPBB_ADS',true);
 	}
 
 	/**
