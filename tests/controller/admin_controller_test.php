@@ -330,6 +330,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with(array(
 				'S_ADD_AD'				=> true,
 				'U_BACK'				=> $this->u_action,
+				'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 				'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 			));
 
@@ -482,6 +483,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'S_EDIT_AD'				=> true,
 					'EDIT_ID'				=> $ad_id,
 					'U_BACK'				=> $this->u_action,
+					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 					'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
 				));
 
