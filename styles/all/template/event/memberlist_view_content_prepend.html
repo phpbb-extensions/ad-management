@@ -1,5 +1,5 @@
 {% if AD_BEFORE_PROFILE %}
-	<div class="phpbb-ads-center" style="margin: 10px 0;">
-		{{ AD_BEFORE_PROFILE }}
-	</div>
+	{% set PHPBB_ADS_STYLE = 'margin: 10px 0;' %}
+	{% set PHPBB_ADS_CODE = AD_BEFORE_PROFILE %}
+	{% include 'phpbb_ads_default.html' %}
 {% endif %}
