@@ -122,7 +122,7 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
-				$this->config->set('phpbb_ads_adblocker_message', json_encode($this->request->variable('adblocker_message', 0)));
+				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
 				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');

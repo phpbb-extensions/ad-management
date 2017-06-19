@@ -20,10 +20,10 @@ class setup_ads_test extends main_listener_base
 	public function data_setup_ads()
 	{
 		return array(
-			array(array(1)),
-			array(array(2)),
-			array(array(1, 2)),
-			array(array(2, 3)),
+			array(array(1), '0'),
+			array(array(2), '1'),
+			array(array(1, 2), '0'),
+			array(array(2, 3), '1'),
 		);
 	}
 
@@ -32,7 +32,7 @@ class setup_ads_test extends main_listener_base
 	*
 	* @dataProvider data_setup_ads
 	*/
-	public function test_setup_ads($hide_groups)
+	public function test_setup_ads($hide_groups, $allow_adblocker)
 	{
 		$this->user->data['user_id'] = 1;
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
@@ -52,6 +52,12 @@ class setup_ads_test extends main_listener_base
 		$this->template
 			->expects($this->exactly(count($ads)))
 			->method('assign_vars');
+
+		$this->config['phpbb_ads_adblocker_message'] = $allow_adblocker;
+		$this->template
+			->expects($this->exactly((int) $allow_adblocker))
+			->method('assign_var')
+			->with('S_DISPLAY_ADBLOCKER', true);
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));

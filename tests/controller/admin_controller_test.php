@@ -52,6 +52,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
 	protected $config_text;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
+	protected $config;
+
 	/** @var string */
 	protected $php_ext;
 
@@ -109,6 +112,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->config = $this->getMockBuilder('\phpbb\config\config')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/ads/';
 
@@ -138,6 +144,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->location_manager,
 			$this->log,
 			$this->config_text,
+			$this->config,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -181,6 +188,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->location_manager,
 				$this->log,
 				$this->config_text,
+				$this->config,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -212,6 +220,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('phpbb_ads_hide_groups')
 			->willReturn('[1,3]');
 
+		$this->config['phpbb_ads_adblocker_message'] = '1';
+		
 		$this->template->expects($this->exactly(2))
 			->method('assign_block_vars')
 			->withConsecutive(
@@ -232,6 +242,13 @@ class admin_controller_test extends \phpbb_database_test_case
 					),
 				)
 			);
+		
+		$this->template->expects($this->once())
+			->method('assign_vars')
+			->with(array(
+				'U_ACTION'			=> $this->u_action,
+				'ADBLOCKER_MESSAGE'	=> $this->config['phpbb_ads_adblocker_message'],
+			));
 
 		$controller->mode_settings();
 	}
@@ -244,8 +261,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function data_mode_settings()
 	{
 		return array(
-			array(false, array(0)),
-			array(true, array(3)),
+			array(false, 0, array(0)),
+			array(true, 1, array(3)),
 		);
 	}
 
@@ -254,7 +271,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider data_mode_settings
 	*/
-	public function test_mode_settings_submit($valid_form, $submit_data)
+	public function test_mode_settings_submit($valid_form, $adblocker_data, $hide_group_data)
 	{
 		self::$valid_form = $valid_form;
 
@@ -267,20 +284,29 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		if ($valid_form)
 		{
-			$this->request->expects($this->once())
+			$this->request->expects($this->at(1))
+				->method('variable')
+				->with('adblocker_message', 0)
+				->willReturn($adblocker_data);
+
+			$this->request->expects($this->at(2))
 				->method('variable')
 				->with('hide_groups', array(0))
-				->willReturn($submit_data);
+				->willReturn($hide_group_data);
+
+			$this->config->expects($this->once())
+				->method('set')
+				->with('phpbb_ads_adblocker_message', $adblocker_data);
 
 			$this->config_text->expects($this->once())
 				->method('set')
-				->with('phpbb_ads_hide_groups', json_encode($submit_data));
+				->with('phpbb_ads_hide_groups', json_encode($hide_group_data));
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
 		}
 		else
 		{
-			$this->template->expects($this->once())
+			$this->template->expects($this->at(1))
 				->method('assign_vars')
 				->with(array(
 					'S_ERROR'		=> true,
