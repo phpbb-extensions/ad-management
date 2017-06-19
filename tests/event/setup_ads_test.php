@@ -55,9 +55,9 @@ class setup_ads_test extends main_listener_base
 
 		$this->config['phpbb_ads_adblocker_message'] = $allow_adblocker;
 		$this->template
-			->expects($this->exactly((int) $allow_adblocker))
+			->expects($this->once())
 			->method('assign_var')
-			->with('S_DISPLAY_ADBLOCKER', true);
+			->with('S_DISPLAY_ADBLOCKER', $allow_adblocker);
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));

@@ -107,9 +107,6 @@ class main_listener implements EventSubscriberInterface
 		}
 
 		// Display Ad blocker friendly message if allowed
-		if ($this->config['phpbb_ads_adblocker_message'])
-		{
-			$this->template->assign_var('S_DISPLAY_ADBLOCKER', true);
-		}
+		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
 	}
 }
