@@ -79,8 +79,10 @@ $lang = array_merge($lang, array(
 	'AD_AFTER_PROFILE_DESC'			=> 'Displays after member profile page content.',
 
 	// Settings
-	'HIDE_GROUPS'			=> 'Hide advertisements for groups',
-	'HIDE_GROUPS_EXPLAIN'	=> 'Members of selected groups will not see any advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
+	'ADBLOCKER_MESSAGE'				=> 'Ad blocker friendly message',
+	'ADBLOCKER_MESSAGE_EXPLAIN'		=> 'Display a polite message to visitors using ad blockers, advising them to consider disabling ad blocking on this forum.',
+	'HIDE_GROUPS'					=> 'Hide advertisements for groups',
+	'HIDE_GROUPS_EXPLAIN'			=> 'Members of selected groups will not see any advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
 
 	'ACP_AD_SETTINGS_SAVED'	=> 'Advertisement management settings saved.',
 ));

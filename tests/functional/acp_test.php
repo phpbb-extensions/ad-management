@@ -270,7 +270,8 @@ class acp_test extends \phpbb_functional_test_case
 
 		// Submit form
 		$form_data = array(
-			'hide_groups'	=> array(5),
+			'adblocker_message'	=> 1,
+			'hide_groups'		=> array(5),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
@@ -279,7 +280,8 @@ class acp_test extends \phpbb_functional_test_case
 		// Load Advertisement management ACP page again
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 
-		// Confirm admin group is selected
+		// Confirm Adblocker is enabled and admin group is selected
+		$this->assertEquals('1', $crawler->filter('input[name="adblocker_message"][checked]')->attr('value'));
 		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
 
 		// Reset hide groups

@@ -39,6 +39,9 @@ class admin_controller
 	/** @var \phpbb\config\db_text */
 	protected $config_text;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var string php_ext */
 	protected $php_ext;
 
@@ -57,14 +60,15 @@ class admin_controller
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\user							$user				User object
 	* @param \phpbb\request\request					$request			Request object
-	* @param \phpbb\ads\ad\manager			$manager			Advertisement manager object
-	* @param \phpbb\ads\location\manager	$location_manager	Template location manager object
+	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
+	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
 	* @param \phpbb\log\log							$log				The phpBB log system
 	* @param \phpbb\config\db_text					$config_text		Config text object
+	* @param \phpbb\config\config					$config				Config object
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -73,6 +77,7 @@ class admin_controller
 		$this->location_manager = $location_manager;
 		$this->log = $log;
 		$this->config_text = $config_text;
+		$this->config = $config;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
@@ -117,6 +122,7 @@ class admin_controller
 
 			if (empty($this->errors))
 			{
+				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
 				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
@@ -141,7 +147,10 @@ class admin_controller
 			));
 		}
 
-		$this->template->assign_var('U_ACTION', $this->u_action);
+		$this->template->assign_vars(array(
+			'U_ACTION'			=> $this->u_action,
+			'ADBLOCKER_MESSAGE'	=> $this->config['phpbb_ads_adblocker_message'],
+		));
 	}
 
 	/**

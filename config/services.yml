@@ -20,6 +20,7 @@ services:
             - '@phpbb.ads.location.manager'
             - '@log'
             - '@config_text'
+            - '@config'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
 
@@ -29,6 +30,7 @@ services:
             - '@template'
             - '@user'
             - '@config_text'
+            - '@config'
             - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'
         tags:
