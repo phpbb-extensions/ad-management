@@ -29,6 +29,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\config\db_text */
 	protected $config_text;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
@@ -52,14 +55,16 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\template\template				$template			Template object
 	* @param \phpbb\user							$user				User object
 	* @param \phpbb\config\db_text					$config_text		Config text object
-	* @param \phpbb\ads\ad\manager			$manager			Advertisement manager object
-	* @param \phpbb\ads\location\manager	$location_manager	Template location manager object
+	* @param \phpbb\config\config					$config				Config object
+	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
+	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->config_text = $config_text;
+		$this->config = $config;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
 	}
@@ -99,6 +104,12 @@ class main_listener implements EventSubscriberInterface
 					'AD_' . strtoupper($row['location_id'])	=> htmlspecialchars_decode($row['ad_code']),
 				));
 			}
+		}
+
+		// Display Ad blocker friendly message if allowed
+		if ($this->config['phpbb_ads_adblocker_message'])
+		{
+			$this->template->assign_var('S_DISPLAY_ADBLOCKER', true);
 		}
 	}
 }

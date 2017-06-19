@@ -1,3 +1,4 @@
+{% if S_DISPLAY_ADBLOCKER %}
 <div id="phpbb-ads-ab" class="rules" style="display: none;">
 	<div class="inner">
 		<strong>{{ lang('ADBLOCKER_TITLE') ~ lang('COLON') }}</strong> {{ lang('ADBLOCKER_MESSAGE') }}
@@ -20,3 +21,4 @@
 		test.remove();
 	}, 100);
 </script>
+{% endif %}
