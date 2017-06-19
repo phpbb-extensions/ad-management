@@ -56,6 +56,7 @@ class functional_base extends \phpbb_functional_test_case
 			'ad_enabled'	=> true,
 			'ad_locations'	=> array($location),
 			'ad_end_date'	=> $end_date,
+			'ad_priority'	=> 5,
 		);
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();

@@ -94,6 +94,24 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
 		$this->assertContainsLang('AD_END_DATE_INVALID', $crawler->text());
 
+		// Confirm error when submitting too low priority
+		$form_data = array(
+			'ad_priority'	=> 0,
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+
+		// Confirm error when submitting too high priority
+		$form_data = array(
+			'ad_priority'	=> 11,
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+
 		// Create ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name',
@@ -101,6 +119,7 @@ class acp_test extends \phpbb_functional_test_case
 			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> true,
 			'ad_end_date'	=> '2035-01-01',
+			'ad_priority'	=> 1,
 		);
 
 		// Confirm preview
@@ -170,6 +189,24 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
 		$this->assertContainsLang('AD_END_DATE_INVALID', $crawler->text());
 
+		// Confirm error when submitting too low priority
+		$form_data = array(
+			'ad_priority'	=> 0,
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+
+		// Confirm error when submitting too high priority
+		$form_data = array(
+			'ad_priority'	=> 11,
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+
 		// Edit ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name edited',
@@ -177,6 +214,7 @@ class acp_test extends \phpbb_functional_test_case
 			'ad_code'		=> '<!-- SAMPLE ADD CODE EDITED -->',
 			'ad_enabled'	=> false,
 			'ad_end_date'	=> '2035-01-02',
+			'ad_priority'	=> 2,
 		);
 
 		// Confirm preview
