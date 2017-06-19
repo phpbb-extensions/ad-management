@@ -11,9 +11,8 @@
 	{% if PREVIEW %}
 		<fieldset>
 			<legend>{{ lang('PREVIEW') }}</legend>
-				<div class="phpbb-ads-center">
-					{{ PREVIEW }}
-				</div>
+			{% set PHPBB_ADS_CODE = PREVIEW %}
+			{% include '@phpbb_ads/phpbb_ads_default.html' %}
 		</fieldset>
 	{% endif %}
 
