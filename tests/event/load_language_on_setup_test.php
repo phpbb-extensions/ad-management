@@ -15,7 +15,7 @@ class load_language_on_setup_test extends main_listener_base
 	/**
 	* Test the load_language_on_setup_test event
 	*/
-	public function test_load_language_on_setup_test()
+	public function test_load_language_on_setup()
 	{
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
 		$dispatcher->addListener('core.user_setup', array($this->get_listener(), 'load_language_on_setup'));
