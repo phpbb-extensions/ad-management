@@ -17,7 +17,7 @@ class m7_adblocker extends \phpbb\db\migration\migration
 	*/
 	public function effectively_installed()
 	{
-		return isset($this->config['phpbb_ads_adblocker_message']);
+		return $this->config->offsetExists('phpbb_ads_adblocker_message');
 	}
 
 	/**
