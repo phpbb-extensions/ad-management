@@ -1,3 +1,5 @@
-<div class="phpbb-ads-center" style="{{ PHPBB_ADS_STYLE }}">
-	{{ PHPBB_ADS_CODE }}
-</div>
+{% if PHPBB_ADS_CODE %}
+	<div class="phpbb-ads-center" style="{{ PHPBB_ADS_STYLE }}">
+		{{ PHPBB_ADS_CODE }}
+	</div>
+{% endif %}
