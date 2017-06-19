@@ -39,7 +39,7 @@ class functional_base extends \phpbb_functional_test_case
 		$this->admin_login();
 	}
 
-	protected function create_ad($location, $end_date = '')
+	protected function create_ad($location, $end_date = '', $ad_priority = 5)
 	{
 		// Load Advertisement management ACP page
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
@@ -52,11 +52,11 @@ class functional_base extends \phpbb_functional_test_case
 		$form_data = array(
 			'ad_name'		=> 'Functional test template location ' . $location,
 			'ad_note'		=> '',
-			'ad_code'		=> '<!-- SAMPLE ADD CODE ' . $location . ' -->',
+			'ad_code'		=> '<!-- SAMPLE ADD CODE ' . $location . $ad_priority . ' -->',
 			'ad_enabled'	=> true,
 			'ad_locations'	=> array($location),
 			'ad_end_date'	=> $end_date,
-			'ad_priority'	=> 5,
+			'ad_priority'	=> $ad_priority,
 		);
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
