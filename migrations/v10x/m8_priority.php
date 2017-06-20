@@ -42,11 +42,6 @@ class m8_priority extends \phpbb\db\migration\migration
 					'ad_priority' => array('TINT:2', 5),
 				),
 			),
-			'add_index'	=> array(
-				$this->table_prefix . 'ads'	=> array(
-					'ad_priority'	=> array('ad_priority'), // index used in ad\manager::get_ads
-				),
-			),
 		);
 	}
 
@@ -59,11 +54,6 @@ class m8_priority extends \phpbb\db\migration\migration
 	public function revert_schema()
 	{
 		return array(
-			'drop_keys'	=> array(
-				$this->table_prefix . 'ads' => array(
-					'ad_priority',
-				),
-			),
 			'drop_columns' => array(
 				$this->table_prefix . 'ads' => array(
 					'ad_priority',
