@@ -209,6 +209,7 @@ class admin_controller
 		else
 		{
 			$this->assign_locations();
+			$this->template->assign_var('AD_PRIORITY', 5);
 		}
 
 		// Set output vars for display in the template
