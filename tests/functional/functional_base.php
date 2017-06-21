@@ -66,4 +66,11 @@ class functional_base extends \phpbb_functional_test_case
 
 		return $form_data['ad_code'];
 	}
+
+	protected function disable_all_ads()
+	{
+		$sql = 'UPDATE phpbb_ads
+			SET ad_enabled = 0';
+		$this->db->sql_query($sql);
+	}
 }
