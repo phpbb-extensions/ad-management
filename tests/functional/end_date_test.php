@@ -43,24 +43,20 @@ class end_date_test extends functional_base
 
 		// Confirm above header ad is present
 		$this->assertContains($ad_code, $crawler->html());
-
-		return $ad_code;
 	}
 
-	/**
-	 * @depends test_future_end_date_displays
-	 */
-	public function test_past_end_date_is_not_displayed($ad_code)
+	public function test_past_end_date_is_not_displayed()
 	{
+		$ad_code = $this->create_ad('below_header', '2034-01-01');
+
 		// Change the ads end date to a time long ago
 		$sql = 'UPDATE phpbb_ads
-			SET ad_end_date = ' . strtotime('2000-01-01') . '
-			WHERE ad_end_date = ' . strtotime('2035-01-01');
+			SET ad_end_date = ' . strtotime('2000-01-01');
 		$this->db->sql_query($sql);
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is present
+		// Confirm below header ad is not present
 		$this->assertNotContains($ad_code, $crawler->html());
 	}
 }
