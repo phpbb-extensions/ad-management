@@ -47,7 +47,7 @@ $lang = array_merge($lang, array(
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',
-	'AD_END_DATE_INVALID'		=> 'The end date was invalid or has already expired.',
+	'AD_END_DATE_INVALID'		=> 'The end date is invalid or has already expired.',
 	'AD_PRIORITY_INVALID'		=> 'The priority is invalid. Please set a number between 1 and 10.',
 	'ACP_AD_DOES_NOT_EXIST'		=> 'The advertisement does not exist.',
 	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully.',
