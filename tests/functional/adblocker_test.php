@@ -15,11 +15,19 @@ namespace phpbb\ads\tests\functional;
 */
 class adblocker_test extends functional_base
 {
-	/*
-	* @depends test_acp_settings
-	*/
 	public function test_adblocker_code_is_present()
 	{
+		// Enable ad blocker message
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
+		$form_data = array(
+			'adblocker_message'	=> 1,
+			'hide_groups'		=> array(),
+		);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
+
+		// Confirm ad blocker code is present
 		$crawler = self::request('GET', 'index.php');
 		$this->assertEquals(1, $crawler->filter('#phpbb-ads-ab')->count());
 	}
