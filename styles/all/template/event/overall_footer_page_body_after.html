@@ -1,9 +1,4 @@
 {# clear: both; is introduced because of jumpbox in user profile which is floating right #}
-
-{% if AD_ABOVE_FOOTER %}
-	<div class="phpbb-ads-center" style="margin: 10px 0; clear: both;">
-		<div>
-			{{ AD_ABOVE_FOOTER }}
-		</div>
-	</div>
-{% endif %}
+{% set PHPBB_ADS_STYLE = 'margin: 10px 0; clear: both;' %}
+{% set PHPBB_ADS_CODE = AD_ABOVE_FOOTER %}
+{% include '@phpbb_ads/phpbb_ads_default.html' %}
