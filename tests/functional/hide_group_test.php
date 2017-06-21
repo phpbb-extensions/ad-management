@@ -26,6 +26,11 @@ class hide_group_test extends functional_base
 		$this->reset_groups();
 	}
 
+	public function tearDown()
+	{
+		$this->reset_groups();
+	}
+
 	public function test_ad_displays_without_hide_group()
 	{
 		$ad_code = $this->create_ad('above_header');
@@ -54,8 +59,6 @@ class hide_group_test extends functional_base
 
 		// Confirm above header ad is not present
 		$this->assertNotContains($ad_code, $crawler->html());
-
-		$this->reset_groups();
 	}
 
 	protected function reset_groups()
