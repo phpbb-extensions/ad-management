@@ -17,6 +17,7 @@ class admin_controller
 {
 	const MAX_NAME_LENGTH = 255;
 	const DATE_FORMAT = 'Y-m-d';
+	const DEFAULT_PRIORITY = 5;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -209,7 +210,6 @@ class admin_controller
 		else
 		{
 			$this->assign_locations();
-			$this->template->assign_var('AD_PRIORITY', 5);
 		}
 
 		// Set output vars for display in the template
