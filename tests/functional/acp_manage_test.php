@@ -65,19 +65,13 @@ class acp_manage_test extends acp_base
 		$form_data = array(
 			'ad_priority'	=> 0,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Confirm error when submitting too high priority
 		$form_data = array(
 			'ad_priority'	=> 11,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Create ad
 		$form_data = array(
@@ -151,19 +145,13 @@ class acp_manage_test extends acp_base
 		$form_data = array(
 			'ad_priority'	=> 0,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Confirm error when submitting too high priority
 		$form_data = array(
 			'ad_priority'	=> 11,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Edit ad
 		$form_data = array(
