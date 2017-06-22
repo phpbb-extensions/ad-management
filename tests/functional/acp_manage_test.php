@@ -13,36 +13,12 @@ namespace phpbb\ads\tests\functional;
 /**
 * @group functional
 */
-class acp_test extends \phpbb_functional_test_case
+class acp_manage_test extends acp_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	static protected function setup_extensions()
-	{
-		return array('phpbb/ads');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->add_lang_ext('phpbb/ads', array(
-			'info_acp_phpbb_ads',
-			'acp',
-		));
-
-		$this->login();
-		$this->admin_login();
-	}
-
 	/**
 	* Test that Advertisement management ACP module appears
 	*/
-	public function test_acp_module()
+	public function test_acp_manage_module()
 	{
 		// Load Advertisement management ACP page
 		$crawler = $this->get_manage_page();
@@ -274,45 +250,6 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
-	/**
-	* Test Advertisement management ACP settings
-	*/
-	public function test_acp_settings()
-	{
-		// Load Advertisement management ACP page
-		$crawler = $this->get_settings_page();
-
-		// Confirm page contains proper heading
-		$this->assertContainsLang('SETTINGS', $crawler->text());
-
-		// Confirm no group is selected yet
-		$this->assertCount(0, $crawler->filter('option[selected]'));
-
-		// Submit form
-		$form_data = array(
-			'adblocker_message'	=> 1,
-			'hide_groups'		=> array(5),
-		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
-
-		// Load Advertisement management ACP page again
-		$crawler = $this->get_settings_page();
-
-		// Confirm Adblocker is enabled and admin group is selected
-		$this->assertEquals('1', $crawler->filter('input[name="adblocker_message"][checked]')->attr('value'));
-		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
-
-		// Reset hide groups
-		$crawler = $this->get_settings_page();
-		$form_data = array(
-			'hide_groups'	=> array(),
-		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		self::submit($form, $form_data);
-	}
-
 	static public function click($link)
 	{
 		return self::$client->click($link);
@@ -321,11 +258,6 @@ class acp_test extends \phpbb_functional_test_case
 	protected function get_manage_page()
 	{
 		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
-	}
-
-	protected function get_settings_page()
-	{
-		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 	}
 
 	protected function submit_with_error($crawler, $form_data, $error_lang)
