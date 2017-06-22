@@ -262,6 +262,7 @@ class manager
 
 	/**
 	* Get the random statement for this database layer
+	* Random function should generate a float value between 0 and 1
 	*
 	* @return	string	Random statement for current database layer
 	*/
@@ -270,10 +271,15 @@ class manager
 		switch ($this->db->get_sql_layer())
 		{
 			case 'oracle':
+				return 'VALUE()';
+
 			case 'postgres':
+				return 'RANDOM()';
+
+			// https://stackoverflow.com/a/35369410/2908600
 			case 'sqlite':
 			case 'sqlite3':
-				return 'RANDOM()';
+				return '(0.5 - RANDOM() / CAST(-9223372036854775808 AS REAL) / 2)';
 
 			/* All other cases should use the default
 			case 'mssql':
