@@ -444,7 +444,7 @@ class admin_controller
 			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
 			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
 			'ad_end_date'	=> $this->request->variable('ad_end_date', ''),
-			'ad_priority'	=> $this->request->variable('ad_priority', 5),
+			'ad_priority'	=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
 		);
 
 		// Validate form key
