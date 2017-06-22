@@ -7,6 +7,7 @@
 		<column>ad_code</column>
 		<column>ad_enabled</column>
 		<column>ad_end_date</column>
+		<column>ad_priority</column>
 		<row>
 			<value>1</value>
 			<value>One and only</value>
@@ -14,6 +15,7 @@
 			<value>adscode</value>
 			<value>1</value>
 			<value>2051308800</value>
+			<value>5</value>
 		</row>
 		<row>
 			<value>2</value>
@@ -22,6 +24,7 @@
 			<value>code here</value>
 			<value>0</value>
 			<value>0</value>
+			<value>5</value>
 		</row>
 		<row>
 			<value>3</value>
@@ -29,6 +32,16 @@
 			<value>And it's desc</value>
 			<value>code of expired ad</value>
 			<value>1</value>
+			<value>1</value>
+			<value>5</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>Low priority ad</value>
+			<value>And it's desc</value>
+			<value>adscodelow</value>
+			<value>1</value>
+			<value>2051308800</value>
 			<value>1</value>
 		</row>
 	</table>
@@ -50,6 +63,10 @@
 		<row>
 			<value>2</value>
 			<value>below_header</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>above_header</value>
 		</row>
 	</table>
 	<table name="phpbb_groups">
