@@ -48,6 +48,10 @@
 				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY }}" min="1" max="10" placeholder="{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}" /></dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
 				<dd><select id="ad_locations" name="ad_locations[]" multiple="multiple" size="8">
 					{% for location in loops.ad_locations %}

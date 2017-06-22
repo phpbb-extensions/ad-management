@@ -399,11 +399,13 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array('', true, 'AD_NAME_REQUIRED', true, ''),
-			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
-			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
-			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
-			array('Unit test advertisement', false, '', true, '2035-01-01'),
+			array('', true, 'AD_NAME_REQUIRED', true, '', 1),
+			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, '', 1),
+			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01', 1),
+			array('Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 0),
+			array('Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 11),
+			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, '', 1),
+			array('Unit test advertisement', false, '', true, '2035-01-01', 1),
 		);
 	}
 
@@ -412,7 +414,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_add_data
 	*/
-	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form, $end_date)
+	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form, $end_date, $ad_priority)
 	{
 		self::$valid_form = $valid_form;
 
@@ -430,7 +432,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date, $ad_priority));
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
@@ -447,6 +449,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_CODE'		=> '',
 					'AD_ENABLED'	=> false,
 					'AD_END_DATE'	=> $end_date,
+					'AD_PRIORITY'	=> $ad_priority,
 				));
 		}
 		else
@@ -523,6 +526,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_CODE'		=> 'adscode',
 					'AD_ENABLED'	=> '1',
 					'AD_END_DATE'	=> '2035-01-02',
+					'AD_PRIORITY'	=> '5',
 				));
 		}
 
@@ -565,12 +569,14 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_edit_data()
 	{
 		return array(
-			array(0, 'Unit test advertisement', true, '', true, ''),
-			array(1, '', true, 'AD_NAME_REQUIRED', true, ''),
-			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, ''),
-			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01'),
-			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, ''),
-			array(1, 'Unit test advertisement', false, '', true, '2035-01-03'),
+			array(0, 'Unit test advertisement', true, '', true, '', 1),
+			array(1, '', true, 'AD_NAME_REQUIRED', true, '', 1),
+			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, '', 1),
+			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01', 1),
+			array(1, 'Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 0),
+			array(1, 'Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 11),
+			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, '', 1),
+			array(1, 'Unit test advertisement', false, '', true, '2035-01-03', 1),
 		);
 	}
 
@@ -579,7 +585,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_edit_data
 	*/
-	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form, $end_date)
+	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form, $end_date, $ad_priority)
 	{
 		self::$valid_form = $valid_form;
 
@@ -587,7 +593,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date, $ad_priority));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -617,6 +623,7 @@ class admin_controller_test extends \phpbb_database_test_case
 						'AD_CODE'		=> '',
 						'AD_ENABLED'	=> false,
 						'AD_END_DATE'	=> $end_date,
+						'AD_PRIORITY'	=> $ad_priority,
 					));
 			}
 		}
