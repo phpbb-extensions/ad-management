@@ -44,6 +44,15 @@
 			<value>2051308800</value>
 			<value>1</value>
 		</row>
+		<row>
+			<value>5</value>
+			<value>Mid priority ad</value>
+			<value>And it's desc</value>
+			<value>adscodemid</value>
+			<value>1</value>
+			<value>2051308800</value>
+			<value>3</value>
+		</row>
 	</table>
 	<table name="phpbb_ad_locations">
 		<column>ad_id</column>
@@ -66,6 +75,10 @@
 		</row>
 		<row>
 			<value>4</value>
+			<value>above_header</value>
+		</row>
+		<row>
+			<value>5</value>
 			<value>above_header</value>
 		</row>
 	</table>

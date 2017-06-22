@@ -61,7 +61,7 @@ class get_ads_test extends \phpbb_database_test_case
 
 	public function test_get_ads_priority()
 	{
-		$low = $high = 0;
+		$low = $mid = $high = 0;
 
 		$manager = $this->get_manager();
 
@@ -75,12 +75,17 @@ class get_ads_test extends \phpbb_database_test_case
 			{
 				$high++;
 			}
+			else if ($ad['ad_code'] === 'adscodemid')
+			{
+				$mid++;
+			}
 			else if ($ad['ad_code'] === 'adscodelow')
 			{
 				$low++;
 			}
 		}
 
-		$this->assertTrue($high > $low);
+		$this->assertTrue($high > $mid);
+		$this->assertTrue($mid > $low);
 	}
 }
