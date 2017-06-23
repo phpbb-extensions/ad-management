@@ -15,8 +15,8 @@
 	<fieldset>
 		<legend>{{ lang('GENERAL_SETTINGS') }}</legend>
 		<dl>
-			<dt><label for="adblocker_message">{{ lang('ADBLOCKER_MESSAGE') ~ lang('COLON') }}</label><br /><span>{{ lang('ADBLOCKER_MESSAGE_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="adblocker_message" name="adblocker_message" value="1"{% if ADBLOCKER_MESSAGE %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
+			<dt><label for="friendly_message">{{ lang('ADBLOCKER_MESSAGE') ~ lang('COLON') }}</label><br /><span>{{ lang('ADBLOCKER_MESSAGE_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="friendly_message" name="adblocker_message" value="1"{% if ADBLOCKER_MESSAGE %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
 				<label><input type="radio" class="radio" name="adblocker_message" value="0"{% if not ADBLOCKER_MESSAGE %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 		</dl>
 		<dl>
