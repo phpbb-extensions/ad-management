@@ -22,15 +22,12 @@ class hide_group_test extends functional_base
 	{
 		parent::setUp();
 
-		// Disable all existent ads
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
-		while (count($crawler->selectLink($this->lang('ENABLED'))))
-		{
-			$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
-			self::$client->click($disable_link);
-			$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
-		}
+		$this->disable_all_ads();
+		$this->reset_groups();
+	}
 
+	public function tearDown()
+	{
 		$this->reset_groups();
 	}
 
@@ -62,8 +59,6 @@ class hide_group_test extends functional_base
 
 		// Confirm above header ad is not present
 		$this->assertNotContains($ad_code, $crawler->html());
-
-		$this->reset_groups();
 	}
 
 	protected function reset_groups()

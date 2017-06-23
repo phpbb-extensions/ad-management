@@ -13,39 +13,15 @@ namespace phpbb\ads\tests\functional;
 /**
 * @group functional
 */
-class acp_test extends \phpbb_functional_test_case
+class acp_manage_test extends acp_base
 {
-	/**
-	* {@inheritDoc}
-	*/
-	static protected function setup_extensions()
-	{
-		return array('phpbb/ads');
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->add_lang_ext('phpbb/ads', array(
-			'info_acp_phpbb_ads',
-			'acp',
-		));
-
-		$this->login();
-		$this->admin_login();
-	}
-
 	/**
 	* Test that Advertisement management ACP module appears
 	*/
-	public function test_acp_module()
+	public function test_acp_manage_module()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 
 		// Assert Advertisement management module appears in sidebar
 		$this->assertContainsLang('ACP_PHPBB_ADS_TITLE', $crawler->filter('.menu-block')->text());
@@ -63,7 +39,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_add()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 
 		// Jump to the add page
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
@@ -71,46 +47,31 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_ADS_ADD', $crawler->filter('#main h1')->text());
 
 		// Confirm error when submitting without required field data
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_NAME_REQUIRED', $crawler->text());
+		$this->submit_with_error($crawler, array(), $this->lang('AD_NAME_REQUIRED'));
 
 		// Confirm error when submitting too long ad name
 		$form_data = array(
 			'ad_name'		=> str_repeat('a', 256),
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContains($this->lang('AD_NAME_TOO_LONG', 255), $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
 
 		// Confirm error when submitting old end date
 		$form_data = array(
 			'ad_end_date'	=> '2000-01-01',
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_END_DATE_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_END_DATE_INVALID'));
 
 		// Confirm error when submitting too low priority
 		$form_data = array(
 			'ad_priority'	=> 0,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Confirm error when submitting too high priority
 		$form_data = array(
 			'ad_priority'	=> 11,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Create ad
 		$form_data = array(
@@ -135,7 +96,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_ADD_SUCCESS', $crawler->text());
 
 		// Confirm new ad appears in the list, is enabled and end date is displayed correctly
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 		$this->assertContains('Functional test name', $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		$this->assertContains('2035-01-01', $crawler->text());
@@ -151,7 +112,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_edit()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 
 		// Hit edit button
 		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->parents()->first()->link();
@@ -166,46 +127,31 @@ class acp_test extends \phpbb_functional_test_case
 			'ad_enabled'	=> false,
 			'ad_end_date'	=> '',
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_NAME_REQUIRED', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_REQUIRED'));
 
 		// Confirm error when submitting too long ad name
 		$form_data = array(
 			'ad_name'		=> str_repeat('a', 256),
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContains($this->lang('AD_NAME_TOO_LONG', 255), $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
 
 		// Confirm error when submitting old end date
 		$form_data = array(
 			'ad_end_date'	=> '2000-01-01',
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_END_DATE_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_END_DATE_INVALID'));
 
 		// Confirm error when submitting too low priority
 		$form_data = array(
 			'ad_priority'	=> 0,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Confirm error when submitting too high priority
 		$form_data = array(
 			'ad_priority'	=> 11,
 		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContainsLang('AD_PRIORITY_INVALID', $crawler->text());
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
 		// Edit ad
 		$form_data = array(
@@ -230,7 +176,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_EDIT_SUCCESS', $crawler->text());
 
 		// Confirm new ad appears in the list, is disabled and end date is present and updated
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 		$this->assertContains('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
 		$this->assertContains('2035-01-02', $crawler->text());
@@ -246,7 +192,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_enable()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 
 		// Hit Disabled button
 		$enable_link = $crawler->selectLink($this->lang('DISABLED'))->link();
@@ -254,7 +200,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_ENABLE_SUCCESS', $crawler->text());
 
 		// Load Advertisement management ACP page again
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 
 		// Hit Enabled button
 		$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
@@ -268,7 +214,7 @@ class acp_test extends \phpbb_functional_test_case
 	public function test_acp_delete()
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 
 		// Hit delete button
 		$delete_link = $crawler->filter('[title="' . $this->lang('DELETE') . '"]')->parents()->first()->link();
@@ -284,7 +230,7 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContainsLang('ACP_AD_DELETE_SUCCESS', $crawler->text());
 
 		// Confirm ad list is empty
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = $this->get_manage_page();
 		$this->assertContainsLang('ACP_ADS_EMPTY', $crawler->filter('#main')->text());
 
 		// Confirm the log entry has been added correctly
@@ -292,47 +238,21 @@ class acp_test extends \phpbb_functional_test_case
 		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
-	/**
-	* Test Advertisement management ACP settings
-	*/
-	public function test_acp_settings()
-	{
-		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
-
-		// Confirm page contains proper heading
-		$this->assertContainsLang('SETTINGS', $crawler->text());
-
-		// Confirm no group is selected yet
-		$this->assertCount(0, $crawler->filter('option[selected]'));
-
-		// Submit form
-		$form_data = array(
-			'adblocker_message'	=> 1,
-			'hide_groups'		=> array(5),
-		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		$crawler = self::submit($form, $form_data);
-		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
-
-		// Load Advertisement management ACP page again
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
-
-		// Confirm Adblocker is enabled and admin group is selected
-		$this->assertEquals('1', $crawler->filter('input[name="adblocker_message"][checked]')->attr('value'));
-		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
-
-		// Reset hide groups
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
-		$form_data = array(
-			'hide_groups'	=> array(),
-		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		self::submit($form, $form_data);
-	}
-
 	static public function click($link)
 	{
 		return self::$client->click($link);
+	}
+
+	protected function get_manage_page()
+	{
+		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+	}
+
+	protected function submit_with_error($crawler, $form_data, $error_lang)
+	{
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, $form_data);
+		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		$this->assertContains($error_lang, $crawler->text());
 	}
 }
