@@ -221,7 +221,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->willReturn('[1,3]');
 
 		$this->config['phpbb_ads_adblocker_message'] = '1';
-		
+
 		$this->template->expects($this->exactly(2))
 			->method('assign_block_vars')
 			->withConsecutive(
@@ -242,7 +242,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					),
 				)
 			);
-		
+
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
@@ -521,9 +521,9 @@ class admin_controller_test extends \phpbb_database_test_case
 				->with(array(
 					'S_ERROR'		=> false,
 					'ERROR_MSG'		=> '',
-					'AD_NAME'		=> 'One and only',
-					'AD_NOTE'		=> 'And it\'s desc',
-					'AD_CODE'		=> 'adscode',
+					'AD_NAME'		=> 'Primary ad',
+					'AD_NOTE'		=> 'Ad description #1',
+					'AD_CODE'		=> 'Ad Code #1',
 					'AD_ENABLED'	=> '1',
 					'AD_END_DATE'	=> '2035-01-02',
 					'AD_PRIORITY'	=> '5',

@@ -10,18 +10,18 @@
 		<column>ad_priority</column>
 		<row>
 			<value>1</value>
-			<value>One and only</value>
-			<value>And it's desc</value>
-			<value>adscode</value>
+			<value>Primary ad</value>
+			<value>Ad description #1</value>
+			<value>Ad Code #1</value>
 			<value>1</value>
 			<value>2051308800</value>
 			<value>5</value>
 		</row>
 		<row>
 			<value>2</value>
-			<value>Second one</value>
-			<value>And it's desc</value>
-			<value>code here</value>
+			<value>Disabled ad</value>
+			<value>Ad description #2</value>
+			<value>Ad Code #2</value>
 			<value>0</value>
 			<value>0</value>
 			<value>5</value>
@@ -29,8 +29,8 @@
 		<row>
 			<value>3</value>
 			<value>Expired ad</value>
-			<value>And it's desc</value>
-			<value>code of expired ad</value>
+			<value>Ad description #3</value>
+			<value>Ad Code #3</value>
 			<value>1</value>
 			<value>1</value>
 			<value>5</value>
@@ -38,19 +38,19 @@
 		<row>
 			<value>4</value>
 			<value>Low priority ad</value>
-			<value>And it's desc</value>
-			<value>adscodelow</value>
+			<value>Ad description #4</value>
+			<value>Ad Code #4</value>
 			<value>1</value>
-			<value>2051308800</value>
+			<value>0</value>
 			<value>1</value>
 		</row>
 		<row>
 			<value>5</value>
-			<value>Mid priority ad</value>
-			<value>And it's desc</value>
-			<value>adscodemid</value>
+			<value>Med priority ad</value>
+			<value>Ad description #5</value>
+			<value>Ad Code #5</value>
 			<value>1</value>
-			<value>2051308800</value>
+			<value>0</value>
 			<value>3</value>
 		</row>
 	</table>
