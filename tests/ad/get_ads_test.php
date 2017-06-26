@@ -10,55 +10,50 @@
 
 namespace phpbb\ads\tests\ad;
 
-class get_ads_test extends \phpbb_database_test_case
+class get_ads_test extends ad_base
 {
-	/** @var \phpbb\db\driver\driver_interface */
-	protected $db;
-
-	/** @var string */
-	protected $ads_table;
-
-	/** @var string */
-	protected $ad_locations_table;
-
 	/**
-	 * {@inheritDoc}
-	 */
-	static protected function setup_extensions()
-	{
-		return array('phpbb/ads');
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getDataSet()
-	{
-		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->db = $this->new_dbal();
-		$this->ads_table = 'phpbb_ads';
-		$this->ad_locations_table = 'phpbb_ad_locations';
-	}
-
-	/**
-	 * Returns fresh new ad manager.
+	 * Test data provider for test_get_ads()
 	 *
-	 * @return    \phpbb\ads\ad\manager    Ad manager
+	 * @return array Array of test data
 	 */
-	public function get_manager()
+	public function get_ads_data()
 	{
-		return new \phpbb\ads\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		return array(
+			array(array('above_header'), array(
+				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #1'),
+				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #4'),
+				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #5'),
+			)),
+			array(array('below_header'), array(
+				array('location_id' => 'below_header', 'ad_code' => 'Ad Code #1'),
+			)),
+			array(array('foo_bar'), array()),
+			array(array(null), array()),
+		);
 	}
 
+	/**
+	 * Test get_ads() method gets only enabled and unexpired ads
+	 *
+	 * @dataProvider get_ads_data
+	 */
+	public function test_get_ads($locations, $expected)
+	{
+		$manager = $this->get_manager();
+
+		$ads = $manager->get_ads($locations);
+
+		// sort the ads to avoid the randomness of priority settings
+		sort($ads);
+
+		$this->assertEquals($expected, $ads);
+	}
+
+	/**
+	 * Test get_ads() priority feature is working as expected.
+	 * Higher priority ads should occur more frequently in the results.
+	 */
 	public function test_get_ads_priority()
 	{
 		$low = $mid = $high = 0;
@@ -71,15 +66,15 @@ class get_ads_test extends \phpbb_database_test_case
 
 			$ad = end($test);
 
-			if ($ad['ad_code'] === 'adscode')
+			if ($ad['ad_code'] === 'Ad Code #1')
 			{
 				$high++;
 			}
-			else if ($ad['ad_code'] === 'adscodemid')
+			else if ($ad['ad_code'] === 'Ad Code #5')
 			{
 				$mid++;
 			}
-			else if ($ad['ad_code'] === 'adscodelow')
+			else if ($ad['ad_code'] === 'Ad Code #4')
 			{
 				$low++;
 			}
