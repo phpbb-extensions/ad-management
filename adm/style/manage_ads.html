@@ -82,8 +82,10 @@
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 			<tr>
-				<th style="width: 65%;">{{ lang('AD_NAME') }}</th>
+				<th style="width: 45%;">{{ lang('AD_NAME') }}</th>
 				<th style="width: 15%;">{{ lang('AD_END_DATE') }}</th>
+				<th style="width: 10%;">{{ lang('AD_VIEWS') }}</th>
+				<th style="width: 10%;">{{ lang('AD_CLICKS') }}</th>
 				<th style="width: 10%;">{{ lang('ENABLED') }}</th>
 				<th style="width: 10%;">{{ lang('ACTION') }}</th>
 			</tr>
@@ -97,6 +99,8 @@
 							{{ ad.END_DATE }}
 						{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
 					</td>
+					<td>{{ ad.VIEWS }}</td>
+					<td>{{ ad.CLICKS }}</td>
 					<td>
 						{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
 							{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}

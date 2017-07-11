@@ -370,6 +370,8 @@ class admin_controller
 			$this->template->assign_block_vars('ads', array(
 				'NAME'					=> $row['ad_name'],
 				'END_DATE'				=> $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
+				'VIEWS'					=> $row['ad_views'],
+				'CLICKS'				=> $row['ad_clicks'],
 				'S_END_DATE_EXPIRED'	=> $ad_expired,
 				'S_ENABLED'				=> $ad_enabled,
 				'U_ENABLE'				=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
