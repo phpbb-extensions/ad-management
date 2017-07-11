@@ -53,6 +53,15 @@
 			<value>0</value>
 			<value>3</value>
 		</row>
+		<row>
+			<value>6</value>
+			<value>Delete Me Ad</value>
+			<value></value>
+			<value></value>
+			<value>1</value>
+			<value>0</value>
+			<value>5</value>
+		</row>
 	</table>
 	<table name="phpbb_ad_locations">
 		<column>ad_id</column>
@@ -81,20 +90,31 @@
 			<value>5</value>
 			<value>above_header</value>
 		</row>
+		<row>
+			<value>6</value>
+			<value>after_posts</value>
+		</row>
+		<row>
+			<value>6</value>
+			<value>before_posts</value>
+		</row>
 	</table>
 	<table name="phpbb_groups">
 		<column>group_id</column>
 		<column>group_name</column>
 		<column>group_desc</column>
+		<column>group_type</column>
 		<row>
 			<value>1</value>
 			<value>ADMINISTRATORS</value>
 			<value></value>
+			<value>3</value>
 		</row>
 		<row>
 			<value>2</value>
 			<value>Custom group name</value>
 			<value></value>
+			<value>0</value>
 		</row>
 	</table>
 	<table name="phpbb_user_group">
