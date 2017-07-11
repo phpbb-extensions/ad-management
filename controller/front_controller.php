@@ -42,7 +42,7 @@ class front_controller
 	public function increment_clicks($ad_id)
 	{
 		$this->manager->increment_ad_clicks($ad_id);
-	
+
 		return $this->helper->message('');
 	}
 }
