@@ -37,10 +37,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var string */
 	protected $ad_locations_table;
 
-	/** @var \phpbb\ads\ad\manager */
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\ads\location\manager */
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\location\manager */
 	protected $location_manager;
 
 	/** @var \phpbb\language\language */
@@ -101,11 +101,12 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
-		$this->manager = new \phpbb\ads\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
-		$this->location_manager = new \phpbb\ads\location\manager(array(
-			new \phpbb\ads\location\type\above_header($this->user),
-			new \phpbb\ads\location\type\below_header($this->user),
-		));
+		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
 			->disableOriginalConstructor()
 			->getMock();
@@ -222,6 +223,19 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->config['phpbb_ads_adblocker_message'] = '1';
 
+		$this->manager->expects($this->once())
+			->method('load_groups')
+			->willReturn(array(
+				array(
+					'group_id'		=> 1,
+					'group_name'	=> 'ADMINISTRATORS',
+				),
+				array(
+					'group_id'		=> 2,
+					'group_name'	=> 'Custom group name',
+				),
+			));
+
 		$this->template->expects($this->exactly(2))
 			->method('assign_block_vars')
 			->withConsecutive(
@@ -317,6 +331,19 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get')
 				->with('phpbb_ads_hide_groups')
 				->willReturn('[1,3]');
+			
+			$this->manager->expects($this->once())
+				->method('load_groups')
+				->willReturn(array(
+					array(
+						'group_id'		=> 1,
+						'group_name'	=> 'ADMINISTRATORS',
+					),
+					array(
+						'group_id'		=> 2,
+						'group_name'	=> 'Custom group name',
+					),
+				));
 		}
 
 		$controller->mode_settings();
@@ -347,6 +374,19 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
+
+		$this->location_manager->expects($this->once())
+			->method('get_all_locations')
+			->willReturn(array(
+				'above_footer'	=> array(
+					'name'	=> 'AD_FOOTER_HEADER',
+					'desc'	=> 'AD_FOOTER_HEADER_DESC',
+				),
+				'above_header'	=> array(
+					'name'	=> 'AD_ABOVE_HEADER',
+					'desc'	=> 'AD_ABOVE_HEADER_DESC',
+				),
+			));
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
@@ -379,6 +419,19 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
+
+		$this->location_manager->expects($this->once())
+			->method('get_all_locations')
+			->willReturn(array(
+				'above_footer'	=> array(
+					'name'	=> 'AD_FOOTER_HEADER',
+					'desc'	=> 'AD_FOOTER_HEADER_DESC',
+				),
+				'above_header'	=> array(
+					'name'	=> 'AD_ABOVE_HEADER',
+					'desc'	=> 'AD_ABOVE_HEADER_DESC',
+				),
+			));
 
 		$this->request->expects($this->any())
 			->method('variable')
@@ -439,6 +492,19 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		if ($s_error)
 		{
+			$this->location_manager->expects($this->once())
+				->method('get_all_locations')
+				->willReturn(array(
+					'above_footer'	=> array(
+						'name'	=> 'AD_FOOTER_HEADER',
+						'desc'	=> 'AD_FOOTER_HEADER_DESC',
+					),
+					'above_header'	=> array(
+						'name'	=> 'AD_ABOVE_HEADER',
+						'desc'	=> 'AD_ABOVE_HEADER_DESC',
+					),
+				));
+
 			$this->template->expects($this->at(2))
 				->method('assign_vars')
 				->with(array(
@@ -500,12 +566,43 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
 
+		$this->manager->expects($this->once())
+			->method('get_ad')
+			->willReturn(!$ad_id ? false : array(
+				'ad_name'		=> 'Primary ad',
+				'ad_note'		=> 'Ad description #1',
+				'ad_code'		=> 'Ad Code #1',
+				'ad_enabled'	=> '1',
+				'ad_end_date'	=> '2051308800',
+				'ad_priority'	=> '5',
+			));
+
 		if (!$ad_id)
 		{
 			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DOES_NOT_EXIST');
 		}
 		else
 		{
+			$this->manager->expects($this->once())
+				->method('get_ad_locations')
+				->willReturn(!$ad_id ? false : array(
+					'above_footer',
+					'above_header',
+				));
+
+			$this->location_manager->expects($this->once())
+				->method('get_all_locations')
+				->willReturn(array(
+					'above_footer'	=> array(
+						'name'	=> 'AD_FOOTER_HEADER',
+						'desc'	=> 'AD_FOOTER_HEADER_DESC',
+					),
+					'above_header'	=> array(
+						'name'	=> 'AD_ABOVE_HEADER',
+						'desc'	=> 'AD_ABOVE_HEADER_DESC',
+					),
+				));
+
 			$this->template->expects($this->at(0))
 				->method('assign_vars')
 				->with(array(
@@ -553,6 +650,19 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
+
+		$this->location_manager->expects($this->once())
+			->method('get_all_locations')
+			->willReturn(array(
+				'above_footer'	=> array(
+					'name'	=> 'AD_FOOTER_HEADER',
+					'desc'	=> 'AD_FOOTER_HEADER_DESC',
+				),
+				'above_header'	=> array(
+					'name'	=> 'AD_ABOVE_HEADER',
+					'desc'	=> 'AD_ABOVE_HEADER_DESC',
+				),
+			));
 
 		$this->template->expects($this->at(0))
 				->method('assign_var')
@@ -609,10 +719,27 @@ class admin_controller_test extends \phpbb_database_test_case
 		{
 			if (!$s_error)
 			{
+				$this->manager->expects($this->once())
+					->method('update_ad')
+					->willReturn($ad_id ? true : false);
+
 				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_EDIT_SUCCESS');
 			}
 			else
 			{
+				$this->location_manager->expects($this->once())
+					->method('get_all_locations')
+					->willReturn(array(
+						'above_footer'	=> array(
+							'name'	=> 'AD_FOOTER_HEADER',
+							'desc'	=> 'AD_FOOTER_HEADER_DESC',
+						),
+						'above_header'	=> array(
+							'name'	=> 'AD_ABOVE_HEADER',
+							'desc'	=> 'AD_ABOVE_HEADER_DESC',
+						),
+					));
+
 				$this->template->expects($this->at(3))
 					->method('assign_vars')
 					->with(array(
@@ -663,6 +790,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('variable')
 			->with('id', 0)
 			->willReturn($ad_id);
+
+		$this->manager->expects($this->once())
+			->method('update_ad')
+			->willReturn($ad_id ? true : false);
 
 		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 
@@ -724,6 +855,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 			else
 			{
+				$this->manager->expects($this->once())
+					->method('delete_ad')
+					->willReturn($ad_id ? true : false);
+
 				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 			}
 		}
@@ -738,7 +873,18 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->template->expects($this->atLeastOnce())
+		$this->manager->expects($this->once())
+			->method('get_all_ads')
+			->willReturn(array(
+				array(
+					'ad_id'			=> 1,
+					'ad_name'		=> '',
+					'ad_enabled'	=> 1,
+					'ad_end_date'	=> 0,
+				),
+			));
+
+		$this->template->expects($this->once())
 			->method('assign_block_vars');
 		$this->template->expects($this->once())
 			->method('assign_var')

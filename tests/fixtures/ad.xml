@@ -92,11 +92,11 @@
 		</row>
 		<row>
 			<value>6</value>
-			<value>above_header</value>
+			<value>after_posts</value>
 		</row>
 		<row>
 			<value>6</value>
-			<value>below_header</value>
+			<value>before_posts</value>
 		</row>
 	</table>
 	<table name="phpbb_groups">

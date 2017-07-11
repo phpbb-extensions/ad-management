@@ -15,7 +15,7 @@ class get_all_ads_test extends ad_base
 	/**
 	 * Test get_all_ads() method
 	 */
-	public function test_get_all_ads_test()
+	public function test_get_all_ads()
 	{
 		$manager = $this->get_manager();
 
@@ -49,6 +49,12 @@ class get_all_ads_test extends ad_base
 			array(
 				'ad_id' => '5',
 				'ad_name' => 'Med priority ad',
+				'ad_enabled' => '1',
+				'ad_end_date' => '0',
+			),
+			array(
+				'ad_id' => '6',
+				'ad_name' => 'Delete Me Ad',
 				'ad_enabled' => '1',
 				'ad_end_date' => '0',
 			),
