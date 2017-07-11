@@ -108,20 +108,31 @@ class main_listener implements EventSubscriberInterface
 			{
 				$ad_ids[] = $row['ad_id'];
 
-				$ad_code = str_replace('{COUNT_CLICKS}', ' data-ads-click="' . $row['ad_id'] . '"', $row['ad_code']);
+				if ($this->config['phpbb_ads_enable_clicks'])
+				{
+					$ad_code = str_replace('{COUNT_CLICKS}', ' data-ads-click="' . $row['ad_id'] . '"', $row['ad_code']);
+				}
+				else
+				{
+					$ad_code = str_replace('{COUNT_CLICKS}', '', $row['ad_code']);
+				}
 				$ad_code = htmlspecialchars_decode($ad_code);
 				$this->template->assign_vars(array(
 					'AD_' . strtoupper($row['location_id'])	=> $ad_code,
 				));
 			}
 
-			$this->manager->increment_ads_views($ad_ids);
+			if ($this->config['phpbb_ads_enable_views'])
+			{
+				$this->manager->increment_ads_views($ad_ids);
+			}
 		}
 
 		// Display Ad blocker friendly message if allowed
 		$this->template->assign_vars(array(
-			'S_DISPLAY_ADBLOCKER'	=> $this->config['phpbb_ads_adblocker_message'],
-			'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+			'S_DISPLAY_ADBLOCKER'		=> $this->config['phpbb_ads_adblocker_message'],
+			'U_PHPBB_ADS_CLICK'			=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+			'S_PHPBB_ADS_ENABLE_CLICKS'	=> (bool) $this->config['phpbb_ads_enable_clicks'],
 		));
 	}
 }

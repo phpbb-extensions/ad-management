@@ -90,6 +90,10 @@ $lang = array_merge($lang, array(
 	// Settings
 	'ADBLOCKER_MESSAGE'				=> 'Ad blocker detected message',
 	'ADBLOCKER_MESSAGE_EXPLAIN'		=> 'Display a polite message to visitors using ad blockers, advising them to consider disabling ad blocking on this forum.',
+	'ENABLE_VIEWS'					=> 'Count views',
+	'ENABLE_VIEWS_EXPLAIN'			=> 'This will enable counting how many times every ad has been displayed. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
+	'ENABLE_CLICKS'					=> 'Count clicks',
+	'ENABLE_CLICKS_EXPLAIN'			=> 'This will enable counting how many times every ad has been clicked. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
 	'HIDE_GROUPS'					=> 'Hide advertisements for groups',
 	'HIDE_GROUPS_EXPLAIN'			=> 'Members of selected groups will not see any advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
 

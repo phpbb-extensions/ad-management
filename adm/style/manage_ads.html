@@ -92,8 +92,8 @@
 			<tr>
 				<th style="width: 45%;">{{ lang('AD_NAME') }}</th>
 				<th style="width: 15%;">{{ lang('AD_END_DATE') }}</th>
-				<th style="width: 10%;">{{ lang('AD_VIEWS') }}</th>
-				<th style="width: 10%;">{{ lang('AD_CLICKS') }}</th>
+				{% if S_VIEWS_ENABLED %}<th style="width: 10%;">{{ lang('AD_VIEWS') }}</th>{% endif %}
+				{% if S_CLICKS_ENABLED %}<th style="width: 10%;">{{ lang('AD_CLICKS') }}</th>{% endif %}
 				<th style="width: 10%;">{{ lang('ENABLED') }}</th>
 				<th style="width: 10%;">{{ lang('ACTION') }}</th>
 			</tr>
@@ -108,12 +108,12 @@
 						{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
 					</td>
 					<td>
-						{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
+						{% if S_VIEWS_ENABLED and ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
 							{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
 						{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
 					</td>
 					<td>
-						{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
+						{% if S_CLICKS_ENABLED and ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
 							{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
 						{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
 					</td>

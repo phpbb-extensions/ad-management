@@ -124,6 +124,8 @@ class admin_controller
 			if (empty($this->errors))
 			{
 				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
+				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
+				$this->config->set('phpbb_ads_enable_clicks', $this->request->variable('enable_clicks', 0));
 				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
@@ -151,6 +153,8 @@ class admin_controller
 		$this->template->assign_vars(array(
 			'U_ACTION'			=> $this->u_action,
 			'ADBLOCKER_MESSAGE'	=> $this->config['phpbb_ads_adblocker_message'],
+			'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
+			'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
 		));
 	}
 
@@ -383,7 +387,11 @@ class admin_controller
 		}
 
 		// Set output vars for display in the template
-		$this->template->assign_var('U_ACTION_ADD', $this->u_action . '&amp;action=add');
+		$this->template->assign_vars(array(
+			'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
+			'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
+			'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
+		));
 	}
 
 	/**

@@ -2,6 +2,8 @@
 {% set PHPBB_ADS_CODE = AD_BELOW_FOOTER %}
 {% include '@phpbb_ads/phpbb_ads_default.html' %}
 
-<script>
-	var u_phpbb_ads_click = '{{ U_PHPBB_ADS_CLICK }}';
-</script>
+{% if S_PHPBB_ADS_ENABLE_CLICKS %}
+	<script>
+		var u_phpbb_ads_click = '{{ U_PHPBB_ADS_CLICK }}';
+	</script>
+{% endif %}
