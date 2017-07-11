@@ -131,7 +131,7 @@ class manager
 	{
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ad_clicks = ad_clicks + 1
-			WHERE ad_id = ' . $ad_id;
+			WHERE ad_id = ' . (int) $ad_id;
 		$result = $this->db->sql_query($sql);
 	}
 
