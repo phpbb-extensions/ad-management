@@ -38,6 +38,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
+	/** @var \phpbb\controller\helper */
+	protected $controller_helper;
+
 	/**
 	* {@inheritdoc}
 	*/
@@ -58,8 +61,9 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\config\config					$config				Config object
 	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
 	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
+	* @param \phpbb\controller\helper				$controller_helper	Controller helper object
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -67,6 +71,7 @@ class main_listener implements EventSubscriberInterface
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
+		$this->controller_helper = $controller_helper;
 	}
 
 	/**
@@ -103,8 +108,10 @@ class main_listener implements EventSubscriberInterface
 			{
 				$ad_ids[] = $row['ad_id'];
 
+				$ad_code = str_replace('{COUNT_CLICKS}', ' data-ads-click="' . $row['ad_id'] . '"', $row['ad_code']);
+				$ad_code = htmlspecialchars_decode($ad_code);
 				$this->template->assign_vars(array(
-					'AD_' . strtoupper($row['location_id'])	=> htmlspecialchars_decode($row['ad_code']),
+					'AD_' . strtoupper($row['location_id'])	=> $ad_code,
 				));
 			}
 
@@ -112,6 +119,9 @@ class main_listener implements EventSubscriberInterface
 		}
 
 		// Display Ad blocker friendly message if allowed
-		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+		$this->template->assign_vars(array(
+			'S_DISPLAY_ADBLOCKER'	=> $this->config['phpbb_ads_adblocker_message'],
+			'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+		));
 	}
 }

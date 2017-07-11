@@ -24,6 +24,12 @@ services:
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
 
+    phpbb.ads.front.controller:
+        class: phpbb\ads\controller\front_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@controller.helper'
+
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
         arguments:
@@ -33,5 +39,6 @@ services:
             - '@config'
             - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'
+            - '@controller.helper'
         tags:
             - { name: event.listener }

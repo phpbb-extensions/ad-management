@@ -102,12 +102,13 @@ class manager
 	}
 
 	/**
-	* Increment views for specified ads.
+	* Increment views for specified ads
 	*
 	* Note, that views are incremented only by one even when
 	* an ad is displayed multiple times on the same page.
 	*
 	* @param	array	$ad_ids	IDs of ads to increment views
+	* @return	void
 	*/
 	public function increment_ads_views($ad_ids)
 	{
@@ -118,6 +119,20 @@ class manager
 				WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids);
 			$result = $this->db->sql_query($sql);
 		}
+	}
+
+	/**
+	* Increment clicks for specified ad
+	*
+	* @param	array	$ad_id	ID of an ad to increment clicks
+	* @return	void
+	*/
+	public function increment_ad_clicks($ad_id)
+	{
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_clicks = ad_clicks + 1
+			WHERE ad_id = ' . $ad_id;
+		$result = $this->db->sql_query($sql);
 	}
 
 	/**
