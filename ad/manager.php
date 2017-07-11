@@ -71,9 +71,9 @@ class manager
 					AND (a.ad_end_date = 0
 						OR a.ad_end_date > ' . time() . ')
 					AND (a.ad_views_limit = 0
-						OR a.ad_views_limit < a.ad_views)
+						OR a.ad_views_limit > a.ad_views)
 					AND (a.ad_clicks_limit = 0
-						OR a.ad_clicks_limit < a.ad_clicks)
+						OR a.ad_clicks_limit > a.ad_clicks)
 					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY (' . $this->sql_random() . ' * a.ad_priority)
 			) z
@@ -92,7 +92,7 @@ class manager
 	*/
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
@@ -289,12 +289,14 @@ class manager
 	protected function intersect_ad_data($data)
 	{
 		return array_intersect_key($data, array(
-			'ad_name'		=> '',
-			'ad_note'		=> '',
-			'ad_code'		=> '',
-			'ad_enabled'	=> '',
-			'ad_end_date'	=> '',
-			'ad_priority'	=> '',
+			'ad_name'			=> '',
+			'ad_note'			=> '',
+			'ad_code'			=> '',
+			'ad_enabled'		=> '',
+			'ad_end_date'		=> '',
+			'ad_priority'		=> '',
+			'ad_views_limit'	=> '',
+			'ad_clicks_limit'	=> '',
 		));
 	}
 

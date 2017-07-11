@@ -372,6 +372,8 @@ class admin_controller
 				'END_DATE'				=> $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
 				'VIEWS'					=> $row['ad_views'],
 				'CLICKS'				=> $row['ad_clicks'],
+				'VIEWS_LIMIT'			=> $row['ad_views_limit'],
+				'CLICKS_LIMIT'			=> $row['ad_clicks_limit'],
 				'S_END_DATE_EXPIRED'	=> $ad_expired,
 				'S_ENABLED'				=> $ad_enabled,
 				'U_ENABLE'				=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
@@ -440,13 +442,15 @@ class admin_controller
 	protected function get_form_data($form_name)
 	{
 		$data = array(
-			'ad_name'		=> $this->request->variable('ad_name', '', true),
-			'ad_note'		=> $this->request->variable('ad_note', '', true),
-			'ad_code'		=> $this->request->variable('ad_code', '', true),
-			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
-			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
-			'ad_end_date'	=> $this->request->variable('ad_end_date', ''),
-			'ad_priority'	=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_name'			=> $this->request->variable('ad_name', '', true),
+			'ad_note'			=> $this->request->variable('ad_note', '', true),
+			'ad_code'			=> $this->request->variable('ad_code', '', true),
+			'ad_enabled'		=> $this->request->variable('ad_enabled', 0),
+			'ad_locations'		=> $this->request->variable('ad_locations', array('')),
+			'ad_end_date'		=> $this->request->variable('ad_end_date', ''),
+			'ad_priority'		=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_views_limit'	=> $this->request->variable('ad_views_limit', 0),
+			'ad_clicks_limit'	=> $this->request->variable('ad_clicks_limit', 0),
 		);
 
 		// Validate form key
@@ -490,6 +494,18 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
 		}
 
+		// Validate ad views limit
+		if ($data['ad_views_limit'] < 0)
+		{
+			$this->errors[] = $this->user->lang('AD_VIEWS_LIMIT_INVALID');
+		}
+
+		// Validate ad clicks limit
+		if ($data['ad_clicks_limit'] < 0)
+		{
+			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
+		}
+
 		return $data;
 	}
 
@@ -505,12 +521,14 @@ class admin_controller
 			'S_ERROR'		=> (bool) count($this->errors),
 			'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
 
-			'AD_NAME'		=> $data['ad_name'],
-			'AD_NOTE'		=> $data['ad_note'],
-			'AD_CODE'		=> $data['ad_code'],
-			'AD_ENABLED'	=> $data['ad_enabled'],
-			'AD_END_DATE'	=> $this->prepare_end_date($data['ad_end_date']),
-			'AD_PRIORITY'	=> $data['ad_priority'],
+			'AD_NAME'			=> $data['ad_name'],
+			'AD_NOTE'			=> $data['ad_note'],
+			'AD_CODE'			=> $data['ad_code'],
+			'AD_ENABLED'		=> $data['ad_enabled'],
+			'AD_END_DATE'		=> $this->prepare_end_date($data['ad_end_date']),
+			'AD_PRIORITY'		=> $data['ad_priority'],
+			'AD_VIEWS_LIMIT'	=> $data['ad_views_limit'],
+			'AD_CLICKS_LIMIT'	=> $data['ad_clicks_limit'],
 		));
 	}
 
