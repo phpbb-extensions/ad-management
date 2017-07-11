@@ -882,9 +882,15 @@ class admin_controller_test extends \phpbb_database_test_case
 					'ad_enabled'	=> 1,
 					'ad_end_date'	=> 0,
 				),
+				array(
+					'ad_id'			=> 1,
+					'ad_name'		=> '',
+					'ad_enabled'	=> 1,
+					'ad_end_date'	=> 1,
+				),
 			));
 
-		$this->template->expects($this->once())
+		$this->template->expects($this->atLeastOnce())
 			->method('assign_block_vars');
 		$this->template->expects($this->once())
 			->method('assign_var')
