@@ -13,17 +13,33 @@ namespace phpbb\ads\tests\ad;
 class load_memberships_test extends ad_base
 {
 	/**
-	 * Test load_memberships() method
+	 * Test data provider for test_load_memberships()
+	 *
+	 * @return array Array of test data
 	 */
-	public function test_load_memberships()
+	public function load_memberships_data()
+	{
+		return array(
+			array(
+				1, array(1,3),
+				2, array(),
+				null, array(),
+				0, array(),
+			),
+		);
+	}
+
+	/**
+	 * Test load_memberships() method
+	 *
+	 * @dataProvider load_memberships_data
+	 */
+	public function test_load_memberships($user_id, $user_groups)
 	{
 		$manager = $this->get_manager();
 
-		$memberships = $manager->load_memberships(1);
+		$memberships = $manager->load_memberships($user_id);
 
-		$this->assertEquals(array(
-			1,
-			3,
-		), $memberships);
+		$this->assertEquals($user_groups, $memberships);
 	}
 }

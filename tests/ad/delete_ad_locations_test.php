@@ -19,15 +19,10 @@ class delete_ad_locations_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
+		$this->assertNotEmpty($manager->get_ad_locations(6));
+
 		$manager->delete_ad_locations(6);
 
-		$sql = 'SELECT location_id
-			FROM phpbb_ad_locations
-			WHERE ad_id = 6';
-		$result = $this->db->sql_query($sql);
-		$affected_rows = $this->db->sql_affectedrows();
-		$this->db->sql_freeresult($result);
-
-		$this->assertEquals(0, $affected_rows);
+		$this->assertEmpty($manager->get_ad_locations(6));
 	}
 }

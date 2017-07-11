@@ -55,15 +55,10 @@ class insert_ad_test extends ad_base
 
 		$ad_id = $manager->insert_ad($data);
 
-		$this->assertGreaterThan(0, $ad_id);
+		$this->assertGreaterThan(6, $ad_id);
 
-		$sql = 'SELECT ad_name
-			FROM phpbb_ads
-			WHERE ad_id = ' . $ad_id;
-		$result = $this->db->sql_query($sql);
-		$ad_name = $this->db->sql_fetchfield('ad_name');
-		$this->db->sql_freeresult($result);
+		$new_ad = $manager->get_ad($ad_id);
 
-		$this->assertEquals($data['ad_name'], $ad_name);
+		$this->assertEquals($data['ad_name'], $new_ad['ad_name']);
 	}
 }

@@ -19,17 +19,12 @@ class delete_ad_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
+		$this->assertNotEmpty($manager->get_ad(6));
+
 		$affected_rows = $manager->delete_ad(6);
 
 		$this->assertEquals(1, $affected_rows);
 
-		$sql = 'SELECT ad_id
-			FROM phpbb_ads
-			WHERE ad_id = 6';
-		$result = $this->db->sql_query($sql);
-		$affected_rows = $this->db->sql_affectedrows();
-		$this->db->sql_freeresult($result);
-
-		$this->assertEquals(0, $affected_rows);
+		$this->assertEmpty($manager->get_ad(6));
 	}
 }

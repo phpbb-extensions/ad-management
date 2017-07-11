@@ -25,7 +25,6 @@ class update_ad_test extends ad_base
 				array(
 					'ad_name'	=> 'Primary ad Updated',
 				),
-				1,
 			),
 			array(
 				1,
@@ -33,21 +32,18 @@ class update_ad_test extends ad_base
 					'ad_name'	=> 'Primary ad Updated #2',
 					'ad_note'	=> 'Note Updated',
 				),
-				1,
 			),
 			array(
 				0,
 				array(
 					'ad_name'	=> '',
 				),
-				0,
 			),
 			array(
 				9999,
 				array(
 					'ad_name'	=> '',
 				),
-				0,
 			),
 		);
 	}
@@ -57,24 +53,16 @@ class update_ad_test extends ad_base
 	 *
 	 * @dataProvider update_ad_data
 	 */
-	public function test_update_ad($ad_id, $data, $affected_rows)
+	public function test_update_ad($ad_id, $data)
 	{
 		$manager = $this->get_manager();
 
-		$updated = $manager->update_ad($ad_id, $data);
+		$manager->update_ad($ad_id, $data);
 
-		$this->assertEquals($affected_rows, $updated);
-
-		$sql = 'SELECT ' . implode(', ', array_keys($data)) . '
-			FROM phpbb_ads
-			WHERE ad_id = ' . (int) $ad_id;
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		foreach (array_keys($data) as $key)
+		$ad = $manager->get_ad($ad_id);
+		foreach ($data as $key => $value)
 		{
-			$this->assertEquals($data[$key], $row[$key]);
+			$this->assertEquals($value, $ad[$key]);
 		}
 	}
 }

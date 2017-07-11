@@ -27,8 +27,8 @@ class insert_ad_locations_test extends ad_base
 				),
 				array(
 					'above_header',
-					'below_header',
 					'after_first_post',
+					'below_header',
 				),
 			),
 			array(
@@ -39,9 +39,9 @@ class insert_ad_locations_test extends ad_base
 				),
 				array(
 					'above_header',
-					'below_header',
 					'after_posts',
 					'after_profile',
+					'below_header',
 				),
 			),
 		);
@@ -58,14 +58,6 @@ class insert_ad_locations_test extends ad_base
 
 		$manager->insert_ad_locations($ad_id, $ad_locations);
 
-		$sql = 'SELECT location_id
-			FROM phpbb_ad_locations
-			WHERE ad_id = ' . $ad_id;
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$this->assertTrue(in_array($row['location_id'], $expected));
-		}
-		$this->db->sql_freeresult($result);
+		$this->assertEquals($manager->get_ad_locations($ad_id), $expected);
 	}
 }
