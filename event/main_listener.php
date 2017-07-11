@@ -131,7 +131,7 @@ class main_listener implements EventSubscriberInterface
 		// Display Ad blocker friendly message if allowed
 		$this->template->assign_vars(array(
 			'S_DISPLAY_ADBLOCKER'		=> $this->config['phpbb_ads_adblocker_message'],
-			'U_PHPBB_ADS_CLICK'			=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+			'UA_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
 			'S_PHPBB_ADS_ENABLE_CLICKS'	=> (bool) $this->config['phpbb_ads_enable_clicks'],
 		));
 	}
