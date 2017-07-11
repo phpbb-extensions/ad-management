@@ -61,15 +61,19 @@ class manager
 	*/
 	public function get_ads($ad_locations)
 	{
-		$sql = 'SELECT location_id, ad_code
+		$sql = 'SELECT location_id, ad_id, ad_code
 			FROM (
-				SELECT al.location_id, a.ad_code
+				SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
 					AND (a.ad_end_date = 0
 						OR a.ad_end_date > ' . time() . ')
+					AND (a.ad_views_limit = 0
+						OR a.ad_views_limit < a.ad_views)
+					AND (a.ad_clicks_limit = 0
+						OR a.ad_clicks_limit < a.ad_clicks)
 					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY (' . $this->sql_random() . ' * a.ad_priority)
 			) z
@@ -88,13 +92,32 @@ class manager
 	*/
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
 
 		return $data;
+	}
+
+	/**
+	* Increment views for specified ads.
+	*
+	* Note, that views are incremented only by one even when
+	* an ad is displayed multiple times on the same page.
+	*
+	* @param	array	$ad_ids	IDs of ads to increment views
+	*/
+	public function increment_ads_views($ad_ids)
+	{
+		if (!empty($ad_ids))
+		{
+			$sql = 'UPDATE ' . $this->ads_table . '
+				SET ad_views = ad_views + 1
+				WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids);
+			$result = $this->db->sql_query($sql);
+		}
 	}
 
 	/**

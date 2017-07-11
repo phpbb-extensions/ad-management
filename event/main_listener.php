@@ -97,13 +97,18 @@ class main_listener implements EventSubscriberInterface
 		if (!array_intersect($user_groups, $hide_groups))
 		{
 			$location_ids = $this->location_manager->get_all_location_ids();
+			$ad_ids = array();
 
 			foreach ($this->manager->get_ads($location_ids) as $row)
 			{
+				$ad_ids[] = $row['ad_id'];
+
 				$this->template->assign_vars(array(
 					'AD_' . strtoupper($row['location_id'])	=> htmlspecialchars_decode($row['ad_code']),
 				));
 			}
+
+			$this->manager->increment_ads_views($ad_ids);
 		}
 
 		// Display Ad blocker friendly message if allowed
