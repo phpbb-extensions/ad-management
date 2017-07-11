@@ -27,4 +27,18 @@ class delete_ad_test extends ad_base
 
 		$this->assertEmpty($manager->get_ad(6));
 	}
+
+	/**
+	 * Test delete_ad() method with non-existent ad
+	 */
+	public function test_delete_ad_no_ad()
+	{
+		$manager = $this->get_manager();
+
+		$total_ads = count($manager->get_all_ads());
+
+		$manager->delete_ad_locations(0);
+
+		$this->assertEquals(count($manager->get_all_ads()), $total_ads);
+	}
 }

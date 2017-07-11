@@ -26,7 +26,6 @@ class delete_ad_locations_test extends ad_base
 		$this->assertEmpty($manager->get_ad_locations(6));
 	}
 
-
 	/**
 	 * Test delete_ad_locations() method with non-existent ad
 	 */
