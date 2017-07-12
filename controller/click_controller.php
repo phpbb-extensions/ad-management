@@ -13,7 +13,7 @@ namespace phpbb\ads\controller;
 /**
 * Front controller
 */
-class front_controller
+class click_controller
 {
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
@@ -36,11 +36,16 @@ class front_controller
 	/**
 	* Increment clicks for an ad
 	*
-	* @param int	$ad_id	Advertisement ID
-	* @return void
+	* @param	int	$ad_id	Advertisement ID
+	* @return	\Symfony\Component\HttpFoundation\Response	A Symfony Response object
 	*/
 	public function increment_clicks($ad_id)
 	{
+		if (!$ad_id)
+		{
+			throw new \phpbb\exception\http_exception(404, 'NOT_FOUND');
+		}
+
 		$this->manager->increment_ad_clicks($ad_id);
 
 		return $this->helper->message('');

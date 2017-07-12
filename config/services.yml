@@ -7,6 +7,7 @@ services:
         class: phpbb\ads\ad\manager
         arguments:
             - '@dbal.conn'
+            - '@config'
             - '%phpbb.ads.tables.ads%'
             - '%phpbb.ads.tables.ad_locations%'
 
@@ -24,8 +25,8 @@ services:
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
 
-    phpbb.ads.front.controller:
-        class: phpbb\ads\controller\front_controller
+    phpbb.ads.click.controller:
+        class: phpbb\ads\controller\click_controller
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@controller.helper'

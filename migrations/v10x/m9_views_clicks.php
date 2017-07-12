@@ -92,8 +92,8 @@ class m9_views_clicks extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('phpbb_ads_enable_views', 1)),
-			array('config.add', array('phpbb_ads_enable_clicks', 1)),
+			array('config.add', array('phpbb_ads_enable_views', 0)),
+			array('config.add', array('phpbb_ads_enable_clicks', 0)),
 		);
 	}
 }

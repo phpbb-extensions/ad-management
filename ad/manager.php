@@ -15,6 +15,9 @@ class manager
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var string */
 	protected $ads_table;
 
@@ -22,15 +25,17 @@ class manager
 	protected $ad_locations_table;
 
 	/**
-	* Constructor
-	*
-	* @param	\phpbb\db\driver\driver_interface	$db					DB driver interface
-	* @param	string								$ads_table			Ads table
-	* @param	string								$ad_locations_table	Ad locations table
-	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, $ads_table, $ad_locations_table)
+	 * Constructor
+	 *
+	 * @param    \phpbb\db\driver\driver_interface $db                 DB driver interface
+	 * @param    \phpbb\config\config              $config             Config object
+	 * @param    string                            $ads_table          Ads table
+	 * @param    string                            $ad_locations_table Ad locations table
+	 */
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, $ads_table, $ad_locations_table)
 	{
 		$this->db = $db;
+		$this->config = $config;
 		$this->ads_table = $ads_table;
 		$this->ad_locations_table = $ad_locations_table;
 	}
@@ -61,20 +66,21 @@ class manager
 	*/
 	public function get_ads($ad_locations)
 	{
+		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
+		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
+
 		$sql = 'SELECT location_id, ad_id, ad_code
 			FROM (
 				SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
-				LEFT JOIN ' . $this->ads_table . ' a
+				LEFT JOIN ' . $this->ads_table . " a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
 					AND (a.ad_end_date = 0
 						OR a.ad_end_date > ' . time() . ')
-					AND (a.ad_views_limit = 0
-						OR a.ad_views_limit > a.ad_views)
-					AND (a.ad_clicks_limit = 0
-						OR a.ad_clicks_limit > a.ad_clicks)
-					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
+					$sql_where_views
+					$sql_where_clicks
+					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY (' . $this->sql_random() . ' * a.ad_priority)
 			) z
 			ORDER BY z.location_id';
@@ -117,7 +123,7 @@ class manager
 			$sql = 'UPDATE ' . $this->ads_table . '
 				SET ad_views = ad_views + 1
 				WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids);
-			$result = $this->db->sql_query($sql);
+			$this->db->sql_query($sql);
 		}
 	}
 
@@ -132,7 +138,7 @@ class manager
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ad_clicks = ad_clicks + 1
 			WHERE ad_id = ' . (int) $ad_id;
-		$result = $this->db->sql_query($sql);
+		$this->db->sql_query($sql);
 	}
 
 	/**
