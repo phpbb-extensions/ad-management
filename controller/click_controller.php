@@ -37,7 +37,7 @@ class click_controller
 	* Increment clicks for an ad
 	*
 	* @param	int	$ad_id	Advertisement ID
-	* @return	\Symfony\Component\HttpFoundation\Response	A Symfony Response object
+	* @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
 	*/
 	public function increment_clicks($ad_id)
 	{
