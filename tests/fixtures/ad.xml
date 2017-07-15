@@ -75,6 +75,10 @@
 			<value>below_header</value>
 		</row>
 		<row>
+			<value>1</value>
+			<value>after_profile</value>
+		</row>
+		<row>
 			<value>2</value>
 			<value>above_header</value>
 		</row>
@@ -85,6 +89,10 @@
 		<row>
 			<value>4</value>
 			<value>above_header</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>before_profile</value>
 		</row>
 		<row>
 			<value>5</value>

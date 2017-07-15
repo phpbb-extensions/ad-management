@@ -20,11 +20,11 @@ class get_ads_test extends ad_base
 	public function get_ads_data()
 	{
 		return array(
-			array(array('above_header'), array(
-				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
+			array(array('after_profile'), array(
+				array('location_id' => 'after_profile', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
 			)),
-			array(array('below_header'), array(
-				array('location_id' => 'below_header', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
+			array(array('before_profile'), array(
+				array('location_id' => 'before_profile', 'ad_code' => 'Ad Code #4', 'ad_id' => '4'),
 			)),
 			array(array('foo_bar'), array()),
 			array(array(null), array()),
@@ -41,9 +41,6 @@ class get_ads_test extends ad_base
 		$manager = $this->get_manager();
 
 		$ads = $manager->get_ads($locations);
-
-		// sort the ads to avoid the randomness of priority settings
-		sort($ads);
 
 		$this->assertEquals($expected, $ads);
 	}
