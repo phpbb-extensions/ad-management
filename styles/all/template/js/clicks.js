@@ -1,7 +1,9 @@
-$(function() {
+(function ($, u_phpbb_ads_click) {
 	'use strict';
 
-	$('[data-ads-id]').on('click', function(e) {
-		$.get(u_phpbb_ads_click.replace(/0$/, $(this).attr('data-ads-id')));
+	$(function() {
+		$('[data-ad-id]').on('click', 'a', function (e) {
+			$.get(u_phpbb_ads_click.replace(/0$/, $(e.delegateTarget).attr('data-ad-id')));
+		});
 	});
-});
+})(jQuery, u_phpbb_ads_click);

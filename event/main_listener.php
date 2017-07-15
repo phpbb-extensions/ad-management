@@ -107,11 +107,10 @@ class main_listener implements EventSubscriberInterface
 			foreach ($this->manager->get_ads($location_ids) as $row)
 			{
 				$ad_ids[] = $row['ad_id'];
-				$ad_code = $row['ad_code'];
-				$replacement = $this->config['phpbb_ads_enable_clicks'] ? ' data-ads-id="' . $row['ad_id'] . '"' : '';
-				$ad_code = str_replace('{COUNT_CLICKS}', $replacement, $ad_code);
+
 				$this->template->assign_vars(array(
-					'AD_' . strtoupper($row['location_id'])	=> htmlspecialchars_decode($ad_code),
+					'AD_' . strtoupper($row['location_id']) . '_ID'	=> $row['ad_id'],
+					'AD_' . strtoupper($row['location_id'])			=> htmlspecialchars_decode($row['ad_code']),
 				));
 			}
 
