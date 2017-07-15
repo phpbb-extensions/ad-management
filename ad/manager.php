@@ -137,7 +137,7 @@ class manager
 	/**
 	* Increment clicks for specified ad
 	*
-	* @param	array	$ad_id	ID of an ad to increment clicks
+	* @param	int	$ad_id	ID of an ad to increment clicks
 	* @return	void
 	*/
 	public function increment_ad_clicks($ad_id)

@@ -22,7 +22,7 @@ class click_controller
 	protected $helper;
 
 	/** @var \phpbb\request\request */
-	protected request;
+	protected $request;
 
 	/**
 	 * Constructor
