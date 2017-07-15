@@ -22,7 +22,6 @@ class increment_ads_views_test extends ad_base
 		return array(
 			array(array(1)),
 			array(array(2,3)),
-			array(array()),
 		);
 	}
 
