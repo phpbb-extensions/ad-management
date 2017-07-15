@@ -262,6 +262,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with(array(
 				'U_ACTION'			=> $this->u_action,
 				'ADBLOCKER_MESSAGE'	=> $this->config['phpbb_ads_adblocker_message'],
+				'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
+				'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
 			));
 
 		$controller->mode_settings();
@@ -305,12 +307,30 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			$this->request->expects($this->at(2))
 				->method('variable')
+				->with('enable_views', 0)
+				->willReturn(1);
+
+			$this->request->expects($this->at(3))
+				->method('variable')
+				->with('enable_clicks', 0)
+				->willReturn(1);
+
+			$this->request->expects($this->at(4))
+				->method('variable')
 				->with('hide_groups', array(0))
 				->willReturn($hide_group_data);
 
-			$this->config->expects($this->once())
+			$this->config->expects($this->at(0))
 				->method('set')
 				->with('phpbb_ads_adblocker_message', $adblocker_data);
+
+			$this->config->expects($this->at(1))
+				->method('set')
+				->with('phpbb_ads_enable_views', 1);
+
+			$this->config->expects($this->at(2))
+				->method('set')
+				->with('phpbb_ads_enable_clicks', 1);
 
 			$this->config_text->expects($this->once())
 				->method('set')
@@ -485,7 +505,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date, $ad_priority));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date, $ad_priority, 0, 0));
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
@@ -508,14 +528,16 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->template->expects($this->at(2))
 				->method('assign_vars')
 				->with(array(
-					'S_ERROR'		=> $s_error,
-					'ERROR_MSG'		=> $error_msg,
-					'AD_NAME'		=> $ad_name,
-					'AD_NOTE'		=> '',
-					'AD_CODE'		=> '',
-					'AD_ENABLED'	=> false,
-					'AD_END_DATE'	=> $end_date,
-					'AD_PRIORITY'	=> $ad_priority,
+					'S_ERROR'			=> $s_error,
+					'ERROR_MSG'			=> $error_msg,
+					'AD_NAME'			=> $ad_name,
+					'AD_NOTE'			=> '',
+					'AD_CODE'			=> '',
+					'AD_ENABLED'		=> false,
+					'AD_END_DATE'		=> $end_date,
+					'AD_PRIORITY'		=> $ad_priority,
+					'AD_VIEWS_LIMIT'	=> 0,
+					'AD_CLICKS_LIMIT'	=> 0,
 				));
 		}
 		else
@@ -569,12 +591,14 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->manager->expects($this->once())
 			->method('get_ad')
 			->willReturn(!$ad_id ? false : array(
-				'ad_name'		=> 'Primary ad',
-				'ad_note'		=> 'Ad description #1',
-				'ad_code'		=> 'Ad Code #1',
-				'ad_enabled'	=> '1',
-				'ad_end_date'	=> '2051308800',
-				'ad_priority'	=> '5',
+				'ad_name'			=> 'Primary ad',
+				'ad_note'			=> 'Ad description #1',
+				'ad_code'			=> 'Ad Code #1',
+				'ad_enabled'		=> '1',
+				'ad_end_date'		=> '2051308800',
+				'ad_priority'		=> '5',
+				'ad_views_limit'	=> '0',
+				'ad_clicks_limit'	=> '0',
 			));
 
 		if (!$ad_id)
@@ -616,14 +640,16 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->template->expects($this->at(3))
 				->method('assign_vars')
 				->with(array(
-					'S_ERROR'		=> false,
-					'ERROR_MSG'		=> '',
-					'AD_NAME'		=> 'Primary ad',
-					'AD_NOTE'		=> 'Ad description #1',
-					'AD_CODE'		=> 'Ad Code #1',
-					'AD_ENABLED'	=> '1',
-					'AD_END_DATE'	=> '2035-01-02',
-					'AD_PRIORITY'	=> '5',
+					'S_ERROR'			=> false,
+					'ERROR_MSG'			=> '',
+					'AD_NAME'			=> 'Primary ad',
+					'AD_NOTE'			=> 'Ad description #1',
+					'AD_CODE'			=> 'Ad Code #1',
+					'AD_ENABLED'		=> '1',
+					'AD_END_DATE'		=> '2035-01-02',
+					'AD_PRIORITY'		=> '5',
+					'AD_VIEWS_LIMIT'	=> '0',
+					'AD_CLICKS_LIMIT'	=> '0',
 				));
 		}
 
@@ -703,7 +729,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date, $ad_priority));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date, $ad_priority, 0, 0));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -743,14 +769,16 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->template->expects($this->at(3))
 					->method('assign_vars')
 					->with(array(
-						'S_ERROR'		=> $s_error,
-						'ERROR_MSG'		=> $error_msg,
-						'AD_NAME'		=> $ad_name,
-						'AD_NOTE'		=> '',
-						'AD_CODE'		=> '',
-						'AD_ENABLED'	=> false,
-						'AD_END_DATE'	=> $end_date,
-						'AD_PRIORITY'	=> $ad_priority,
+						'S_ERROR'			=> $s_error,
+						'ERROR_MSG'			=> $error_msg,
+						'AD_NAME'			=> $ad_name,
+						'AD_NOTE'			=> '',
+						'AD_CODE'			=> '',
+						'AD_ENABLED'		=> false,
+						'AD_END_DATE'		=> $end_date,
+						'AD_PRIORITY'		=> $ad_priority,
+						'AD_VIEWS_LIMIT'	=> 0,
+						'AD_CLICKS_LIMIT'	=> 0,
 					));
 			}
 		}
@@ -893,8 +921,12 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->atLeastOnce())
 			->method('assign_block_vars');
 		$this->template->expects($this->once())
-			->method('assign_var')
-			->with('U_ACTION_ADD', $this->u_action . '&amp;action=add');
+			->method('assign_vars')
+			->with(array(
+				'U_ACTION_ADD'	=> $this->u_action . '&amp;action=add',
+				'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
+				'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
+			));
 
 		$controller->list_ads();
 	}

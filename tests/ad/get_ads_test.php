@@ -21,12 +21,10 @@ class get_ads_test extends ad_base
 	{
 		return array(
 			array(array('above_header'), array(
-				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #1'),
-				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #4'),
-				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #5'),
+				array('location_id' => 'above_header', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
 			)),
 			array(array('below_header'), array(
-				array('location_id' => 'below_header', 'ad_code' => 'Ad Code #1'),
+				array('location_id' => 'below_header', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
 			)),
 			array(array('foo_bar'), array()),
 			array(array(null), array()),

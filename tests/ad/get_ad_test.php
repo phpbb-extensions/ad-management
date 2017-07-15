@@ -28,6 +28,10 @@ class get_ad_test extends ad_base
 				'ad_enabled' => '1',
 				'ad_end_date' => '2051308800',
 				'ad_priority' => '5',
+				'ad_views'	=> '0',
+				'ad_clicks'	=> '0',
+				'ad_views_limit'	=> '0',
+				'ad_clicks_limit'	=> '0',
 			)),
 			array(0, false),
 		);

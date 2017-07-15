@@ -32,6 +32,8 @@ class acp_settings_test extends acp_base
 		// Submit form
 		$form_data = array(
 			'adblocker_message'	=> 1,
+			'enable_views'		=> 1,
+			'enable_clicks'		=> 1,
 			'hide_groups'		=> array(5),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
@@ -41,8 +43,10 @@ class acp_settings_test extends acp_base
 		// Load Advertisement management ACP page again
 		$crawler = $this->get_settings_page();
 
-		// Confirm Adblocker is enabled and admin group is selected
+		// Confirm Adblocker, views and clicks are enabled and admin group is selected
 		$this->assertEquals('1', $crawler->filter('input[name="adblocker_message"][checked]')->attr('value'));
+		$this->assertEquals('1', $crawler->filter('input[name="enable_views"][checked]')->attr('value'));
+		$this->assertEquals('1', $crawler->filter('input[name="enable_clicks"][checked]')->attr('value'));
 		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
 
 		// Reset hide groups
