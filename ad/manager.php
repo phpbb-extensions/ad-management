@@ -81,7 +81,7 @@ class manager
 					$sql_where_views
 					$sql_where_clicks
 					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
-				ORDER BY (' . $this->sql_random() . ' * a.ad_priority)
+				ORDER BY (' . $this->sql_random() . ' * a.ad_priority) DESC
 			) z
 			ORDER BY z.location_id';
 		$result = $this->db->sql_query($sql);
