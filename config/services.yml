@@ -30,6 +30,7 @@ services:
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@controller.helper'
+            - '@request'
 
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener

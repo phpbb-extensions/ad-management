@@ -21,16 +21,21 @@ class click_controller
 	/** @var \phpbb\controller\helper */
 	protected $helper;
 
+	/** @var \phpbb\request\request */
+	protected request;
+
 	/**
-	* Constructor
-	*
-	* @param \phpbb\ads\ad\manager		$manager	Advertisement manager object
-	* @param \phpbb\controller\helper	$helper		Controller helper object
-	*/
-	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\controller\helper $helper)
+	 * Constructor
+	 *
+	 * @param \phpbb\ads\ad\manager    $manager Advertisement manager object
+	 * @param \phpbb\controller\helper $helper  Controller helper object
+	 * @param \phpbb\request\request   $request	Request object
+	 */
+	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\controller\helper $helper, \phpbb\request\request $request)
 	{
 		$this->manager = $manager;
 		$this->helper = $helper;
+		$this->request = $request;
 	}
 
 	/**
@@ -41,13 +46,13 @@ class click_controller
 	*/
 	public function increment_clicks($ad_id)
 	{
-		if (!$ad_id)
+		if ($this->request->is_ajax() && !empty($ad_id))
 		{
-			throw new \phpbb\exception\http_exception(404, 'NOT_FOUND');
+			$this->manager->increment_ad_clicks($ad_id);
+
+			return new \Symfony\Component\HttpFoundation\JsonResponse();
 		}
 
-		$this->manager->increment_ad_clicks($ad_id);
-
-		return $this->helper->message('');
+		throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 	}
 }
