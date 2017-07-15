@@ -89,13 +89,13 @@ class manager
 		$this->db->sql_freeresult($result);
 
 		$current_location_id = '';
-		$filtered = array_filter($data, function($row) use (&$current_location_id) {
+		$data = array_filter($data, function($row) use (&$current_location_id) {
 			$return = $current_location_id != $row['location_id'];
 			$current_location_id = $row['location_id'];
 			return $return;
 		});
 
-		return $filtered;
+		return $data;
 	}
 
 	/**
