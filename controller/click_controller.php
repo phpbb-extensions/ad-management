@@ -18,9 +18,6 @@ class click_controller
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\controller\helper */
-	protected $helper;
-
 	/** @var \phpbb\request\request */
 	protected $request;
 
@@ -28,13 +25,11 @@ class click_controller
 	 * Constructor
 	 *
 	 * @param \phpbb\ads\ad\manager    $manager Advertisement manager object
-	 * @param \phpbb\controller\helper $helper  Controller helper object
 	 * @param \phpbb\request\request   $request	Request object
 	 */
-	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\controller\helper $helper, \phpbb\request\request $request)
+	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\request\request $request)
 	{
 		$this->manager = $manager;
-		$this->helper = $helper;
 		$this->request = $request;
 	}
 
