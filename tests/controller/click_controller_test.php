@@ -76,7 +76,7 @@ class click_controller_test extends \phpbb_database_test_case
 		);
 	}
 	/**
-	 * Test action_delete() method
+	 * Test increment_clicks() method
 	 *
 	 * @dataProvider increment_clicks_data
 	 */
