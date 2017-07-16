@@ -51,14 +51,6 @@ class m9_views_clicks extends \phpbb\db\migration\migration
 					'ad_clicks_limit'	=> array('UINT', 0),
 				),
 			),
-			'add_index'	=> array(
-				$this->table_prefix . 'ads'	=> array(
-					'ad_views'			=> array('ad_views'), // index used in ad\manager::get_ads
-					'ad_clicks'			=> array('ad_clicks'), // index used in ad\manager::get_ads
-					'ad_views_limit'	=> array('ad_views_limit'), // index used in ad\manager::get_ads
-					'ad_clicks_limit'	=> array('ad_clicks_limit'), // index used in ad\manager::get_ads
-				),
-			),
 		);
 	}
 
@@ -71,14 +63,6 @@ class m9_views_clicks extends \phpbb\db\migration\migration
 	public function revert_schema()
 	{
 		return array(
-			'drop_keys'	=> array(
-				$this->table_prefix . 'ads' => array(
-					'ad_clicks_limit',
-					'ad_views_limit',
-					'ad_clicks',
-					'ad_views',
-				),
-			),
 			'drop_columns' => array(
 				$this->table_prefix . 'ads' => array(
 					'ad_views',
