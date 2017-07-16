@@ -52,6 +52,9 @@ class admin_controller
 	/** @var string ext_path */
 	protected $ext_path;
 
+	/** @var \auth_admin Auth admin */
+	protected $auth_admin;
+
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -86,6 +89,12 @@ class admin_controller
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
+
+		if (!class_exists('auth_admin'))
+		{
+			include($this->root_path . 'includes/acp/auth.' . $this->php_ext);
+		}
+		$this->auth_admin = new \auth_admin();
 	}
 
 	/**
@@ -208,6 +217,9 @@ class admin_controller
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
+				// Add u_phpbb_ads_owner permission
+				$this->auth_admin->acl_set('user', 0, $data['ad_owner'], array('u_phpbb_ads_owner'	=> 1));
+
 				$this->log('ADD', $data['ad_name']);
 
 				$this->success('ACP_AD_ADD_SUCCESS');
@@ -242,6 +254,12 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 
+		$ad = $this->manager->get_ad($ad_id);
+		if (empty($ad))
+		{
+			$this->error('ACP_AD_DOES_NOT_EXIST');
+		}
+
 		add_form_key('phpbb/ads/edit/' . $ad_id);
 		if ($preview || $submit)
 		{
@@ -253,6 +271,12 @@ class admin_controller
 			}
 			else if (empty($this->errors))
 			{
+				// Delete u_phpbb_ads_owner permission if old owner owns no more ads
+				if (count($this->manager->get_all_ads($ad['ad_owner'])) == 1)
+				{
+					$this->auth_admin->acl_delete('user', $ad['ad_owner'], false, 'u_phpbb_ads_owner');
+				}
+
 				$success = $this->manager->update_ad($ad_id, $data);
 
 				if ($success)
@@ -261,21 +285,20 @@ class admin_controller
 					$this->manager->delete_ad_locations($ad_id);
 					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
+					// Add u_phpbb_ads_owner permission to new owner
+					$this->auth_admin->acl_set('user', 0, $data['ad_owner'], array('u_phpbb_ads_owner'	=> 1));
+
 					$this->log('EDIT', $data['ad_name']);
 
 					$this->success('ACP_AD_EDIT_SUCCESS');
 				}
+
 				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
 		}
 		else
 		{
-			// Load ad data
-			$data = $this->manager->get_ad($ad_id);
-			if (empty($data))
-			{
-				$this->error('ACP_AD_DOES_NOT_EXIST');
-			}
+			$data = $ad;
 
 			// Load ad template locations
 			$data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
@@ -332,6 +355,12 @@ class admin_controller
 				// Delete ad and it's template locations
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
+
+				// Delete u_phpbb_ads_owner permission if old owner owns no more ads
+				if (count($this->manager->get_all_ads($ad_data['ad_owner'])) == 1)
+				{
+					$this->auth_admin->acl_delete('user', $ad_data['ad_owner'], false, 'u_phpbb_ads_owner');
+				}
 
 				// Only notify user on error or if not ajax
 				if (!$success)
