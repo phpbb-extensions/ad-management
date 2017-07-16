@@ -24,6 +24,7 @@ class get_ad_locations_test extends ad_base
 				1,
 				array(
 					'above_header',
+					'after_profile',
 					'below_header',
 				),
 			),

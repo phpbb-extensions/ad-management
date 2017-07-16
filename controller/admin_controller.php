@@ -124,6 +124,8 @@ class admin_controller
 			if (empty($this->errors))
 			{
 				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
+				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
+				$this->config->set('phpbb_ads_enable_clicks', $this->request->variable('enable_clicks', 0));
 				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
@@ -151,6 +153,8 @@ class admin_controller
 		$this->template->assign_vars(array(
 			'U_ACTION'			=> $this->u_action,
 			'ADBLOCKER_MESSAGE'	=> $this->config['phpbb_ads_adblocker_message'],
+			'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
+			'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
 		));
 	}
 
@@ -370,6 +374,10 @@ class admin_controller
 			$this->template->assign_block_vars('ads', array(
 				'NAME'					=> $row['ad_name'],
 				'END_DATE'				=> $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
+				'VIEWS'					=> $row['ad_views'],
+				'CLICKS'				=> $row['ad_clicks'],
+				'VIEWS_LIMIT'			=> $row['ad_views_limit'],
+				'CLICKS_LIMIT'			=> $row['ad_clicks_limit'],
 				'S_END_DATE_EXPIRED'	=> $ad_expired,
 				'S_ENABLED'				=> $ad_enabled,
 				'U_ENABLE'				=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
@@ -379,7 +387,11 @@ class admin_controller
 		}
 
 		// Set output vars for display in the template
-		$this->template->assign_var('U_ACTION_ADD', $this->u_action . '&amp;action=add');
+		$this->template->assign_vars(array(
+			'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
+			'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
+			'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
+		));
 	}
 
 	/**
@@ -438,13 +450,15 @@ class admin_controller
 	protected function get_form_data($form_name)
 	{
 		$data = array(
-			'ad_name'		=> $this->request->variable('ad_name', '', true),
-			'ad_note'		=> $this->request->variable('ad_note', '', true),
-			'ad_code'		=> $this->request->variable('ad_code', '', true),
-			'ad_enabled'	=> $this->request->variable('ad_enabled', 0),
-			'ad_locations'	=> $this->request->variable('ad_locations', array('')),
-			'ad_end_date'	=> $this->request->variable('ad_end_date', ''),
-			'ad_priority'	=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_name'			=> $this->request->variable('ad_name', '', true),
+			'ad_note'			=> $this->request->variable('ad_note', '', true),
+			'ad_code'			=> $this->request->variable('ad_code', '', true),
+			'ad_enabled'		=> $this->request->variable('ad_enabled', 0),
+			'ad_locations'		=> $this->request->variable('ad_locations', array('')),
+			'ad_end_date'		=> $this->request->variable('ad_end_date', ''),
+			'ad_priority'		=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_views_limit'	=> $this->request->variable('ad_views_limit', 0),
+			'ad_clicks_limit'	=> $this->request->variable('ad_clicks_limit', 0),
 		);
 
 		// Validate form key
@@ -488,6 +502,18 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
 		}
 
+		// Validate ad views limit
+		if ($data['ad_views_limit'] < 0)
+		{
+			$this->errors[] = $this->user->lang('AD_VIEWS_LIMIT_INVALID');
+		}
+
+		// Validate ad clicks limit
+		if ($data['ad_clicks_limit'] < 0)
+		{
+			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
+		}
+
 		return $data;
 	}
 
@@ -503,12 +529,14 @@ class admin_controller
 			'S_ERROR'		=> (bool) count($this->errors),
 			'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
 
-			'AD_NAME'		=> $data['ad_name'],
-			'AD_NOTE'		=> $data['ad_note'],
-			'AD_CODE'		=> $data['ad_code'],
-			'AD_ENABLED'	=> $data['ad_enabled'],
-			'AD_END_DATE'	=> $this->prepare_end_date($data['ad_end_date']),
-			'AD_PRIORITY'	=> $data['ad_priority'],
+			'AD_NAME'			=> $data['ad_name'],
+			'AD_NOTE'			=> $data['ad_note'],
+			'AD_CODE'			=> $data['ad_code'],
+			'AD_ENABLED'		=> $data['ad_enabled'],
+			'AD_END_DATE'		=> $this->prepare_end_date($data['ad_end_date']),
+			'AD_PRIORITY'		=> $data['ad_priority'],
+			'AD_VIEWS_LIMIT'	=> $data['ad_views_limit'],
+			'AD_CLICKS_LIMIT'	=> $data['ad_clicks_limit'],
 		));
 	}
 
