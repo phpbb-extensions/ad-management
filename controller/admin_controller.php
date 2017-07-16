@@ -43,6 +43,9 @@ class admin_controller
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var string root_path */
+	protected $root_path;
+
 	/** @var string php_ext */
 	protected $php_ext;
 
@@ -66,10 +69,11 @@ class admin_controller
 	* @param \phpbb\log\log							$log				The phpBB log system
 	* @param \phpbb\config\db_text					$config_text		Config text object
 	* @param \phpbb\config\config					$config				Config object
+	* @param string									$root_path			phpBB root path
 	* @param string									$php_ext			PHP extension
 	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $root_path, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -79,6 +83,7 @@ class admin_controller
 		$this->log = $log;
 		$this->config_text = $config_text;
 		$this->config = $config;
+		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
@@ -222,6 +227,7 @@ class admin_controller
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
+			'U_FIND_USERNAME'		=> append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_addmanagement_add&amp;field=ad_owner'),
 		));
 	}
 
@@ -282,6 +288,7 @@ class admin_controller
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
+			'U_FIND_USERNAME'		=> append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=ucp&amp;field=add'),
 		));
 		$this->assign_locations($data);
 		$this->assign_form_data($data);
@@ -459,7 +466,11 @@ class admin_controller
 			'ad_priority'		=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
 			'ad_views_limit'	=> $this->request->variable('ad_views_limit', 0),
 			'ad_clicks_limit'	=> $this->request->variable('ad_clicks_limit', 0),
+			'ad_owner'		=> $this->request->variable('ad_owner', '', true),
 		);
+
+		// Get owner id
+		$data['ad_owner'] = $this->manager->get_owner_id_from_username($data['ad_owner']);
 
 		// Validate form key
 		if (!check_form_key($form_name))
@@ -502,6 +513,7 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
 		}
 
+
 		// Validate ad views limit
 		if ($data['ad_views_limit'] < 0)
 		{
@@ -512,6 +524,12 @@ class admin_controller
 		if ($data['ad_clicks_limit'] < 0)
 		{
 			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
+		}
+
+		// Validate ad owner
+		if ($data['ad_owner'] === false)
+		{
+			$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
 		}
 
 		return $data;
@@ -537,6 +555,7 @@ class admin_controller
 			'AD_PRIORITY'		=> $data['ad_priority'],
 			'AD_VIEWS_LIMIT'	=> $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT'	=> $data['ad_clicks_limit'],
+			'AD_OWNER'		=> $this->manager->get_owner_username_from_id($data['ad_owner']),
 		));
 	}
 

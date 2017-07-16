@@ -22,6 +22,7 @@ services:
             - '@log'
             - '@config_text'
             - '@config'
+            - '%core.root_path%'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
 

@@ -48,6 +48,11 @@
 				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" type="text" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
+				<dd><strong><a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a></strong></dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
 				<dd><select id="ad_locations" name="ad_locations[]" multiple="multiple" size="8">
 					{% for location in loops.ad_locations %}
