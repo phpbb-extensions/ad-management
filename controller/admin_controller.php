@@ -513,7 +513,6 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
 		}
 
-
 		// Validate ad views limit
 		if ($data['ad_views_limit'] < 0)
 		{
