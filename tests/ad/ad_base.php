@@ -15,6 +15,9 @@ class ad_base extends \phpbb_database_test_case
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var string */
 	protected $ads_table;
 
@@ -45,6 +48,7 @@ class ad_base extends \phpbb_database_test_case
 		parent::setUp();
 
 		$this->db = $this->new_dbal();
+		$this->config = new \phpbb\config\config(array());
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
 	}
@@ -56,6 +60,6 @@ class ad_base extends \phpbb_database_test_case
 	 */
 	public function get_manager()
 	{
-		return new \phpbb\ads\ad\manager($this->db, $this->ads_table, $this->ad_locations_table);
+		return new \phpbb\ads\ad\manager($this->db, $this->config, $this->ads_table, $this->ad_locations_table);
 	}
 }

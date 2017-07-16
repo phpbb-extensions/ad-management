@@ -15,6 +15,9 @@ class manager
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var string */
 	protected $ads_table;
 
@@ -22,15 +25,17 @@ class manager
 	protected $ad_locations_table;
 
 	/**
-	* Constructor
-	*
-	* @param	\phpbb\db\driver\driver_interface	$db					DB driver interface
-	* @param	string								$ads_table			Ads table
-	* @param	string								$ad_locations_table	Ad locations table
-	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, $ads_table, $ad_locations_table)
+	 * Constructor
+	 *
+	 * @param    \phpbb\db\driver\driver_interface $db                 DB driver interface
+	 * @param    \phpbb\config\config              $config             Config object
+	 * @param    string                            $ads_table          Ads table
+	 * @param    string                            $ad_locations_table Ad locations table
+	 */
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, $ads_table, $ad_locations_table)
 	{
 		$this->db = $db;
+		$this->config = $config;
 		$this->ads_table = $ads_table;
 		$this->ad_locations_table = $ad_locations_table;
 	}
@@ -61,22 +66,34 @@ class manager
 	*/
 	public function get_ads($ad_locations)
 	{
-		$sql = 'SELECT location_id, ad_code
+		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
+		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
+
+		$sql = 'SELECT location_id, ad_id, ad_code
 			FROM (
-				SELECT al.location_id, a.ad_code
+				SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
-				LEFT JOIN ' . $this->ads_table . ' a
+				LEFT JOIN ' . $this->ads_table . " a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
 					AND (a.ad_end_date = 0
-						OR a.ad_end_date > ' . time() . ')
-					AND ' . $this->db->sql_in_set('al.location_id', $ad_locations) . '
-				ORDER BY (' . $this->sql_random() . ' * a.ad_priority)
+						OR a.ad_end_date > " . time() . ")
+					$sql_where_views
+					$sql_where_clicks
+					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
+				ORDER BY (' . $this->sql_random() . ' * a.ad_priority) DESC
 			) z
 			ORDER BY z.location_id';
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
+
+		$current_location_id = '';
+		$data = array_filter($data, function($row) use (&$current_location_id) {
+			$return = $current_location_id != $row['location_id'];
+			$current_location_id = $row['location_id'];
+			return $return;
+		});
 
 		return $data;
 	}
@@ -88,13 +105,47 @@ class manager
 	*/
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
 
 		return $data;
+	}
+
+	/**
+	* Increment views for specified ads
+	*
+	* Note, that views are incremented only by one even when
+	* an ad is displayed multiple times on the same page.
+	*
+	* @param	array	$ad_ids	IDs of ads to increment views
+	* @return	void
+	*/
+	public function increment_ads_views($ad_ids)
+	{
+		if (!empty($ad_ids))
+		{
+			$sql = 'UPDATE ' . $this->ads_table . '
+				SET ad_views = ad_views + 1
+				WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids);
+			$this->db->sql_query($sql);
+		}
+	}
+
+	/**
+	* Increment clicks for specified ad
+	*
+	* @param	int	$ad_id	ID of an ad to increment clicks
+	* @return	void
+	*/
+	public function increment_ad_clicks($ad_id)
+	{
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_clicks = ad_clicks + 1
+			WHERE ad_id = ' . (int) $ad_id;
+		$this->db->sql_query($sql);
 	}
 
 	/**
@@ -251,12 +302,14 @@ class manager
 	protected function intersect_ad_data($data)
 	{
 		return array_intersect_key($data, array(
-			'ad_name'		=> '',
-			'ad_note'		=> '',
-			'ad_code'		=> '',
-			'ad_enabled'	=> '',
-			'ad_end_date'	=> '',
-			'ad_priority'	=> '',
+			'ad_name'			=> '',
+			'ad_note'			=> '',
+			'ad_code'			=> '',
+			'ad_enabled'		=> '',
+			'ad_end_date'		=> '',
+			'ad_priority'		=> '',
+			'ad_views_limit'	=> '',
+			'ad_clicks_limit'	=> '',
 		));
 	}
 

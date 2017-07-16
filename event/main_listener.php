@@ -38,6 +38,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
+	/** @var \phpbb\controller\helper */
+	protected $controller_helper;
+
 	/**
 	* {@inheritdoc}
 	*/
@@ -58,8 +61,9 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\config\config					$config				Config object
 	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
 	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
+	* @param \phpbb\controller\helper				$controller_helper	Controller helper object
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -67,6 +71,7 @@ class main_listener implements EventSubscriberInterface
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
+		$this->controller_helper = $controller_helper;
 	}
 
 	/**
@@ -97,16 +102,34 @@ class main_listener implements EventSubscriberInterface
 		if (!array_intersect($user_groups, $hide_groups))
 		{
 			$location_ids = $this->location_manager->get_all_location_ids();
+			$ad_ids = array();
 
 			foreach ($this->manager->get_ads($location_ids) as $row)
 			{
+				$ad_ids[] = $row['ad_id'];
+
 				$this->template->assign_vars(array(
-					'AD_' . strtoupper($row['location_id'])	=> htmlspecialchars_decode($row['ad_code']),
+					'AD_' . strtoupper($row['location_id']) . '_ID'	=> $row['ad_id'],
+					'AD_' . strtoupper($row['location_id'])			=> htmlspecialchars_decode($row['ad_code']),
 				));
+			}
+
+			if ($this->config['phpbb_ads_enable_views'])
+			{
+				$this->manager->increment_ads_views($ad_ids);
 			}
 		}
 
 		// Display Ad blocker friendly message if allowed
 		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+
+		// Add click tracking template variables
+		if ($this->config['phpbb_ads_enable_clicks'])
+		{
+			$this->template->assign_vars(array(
+				'UA_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
+			));
+		}
 	}
 }

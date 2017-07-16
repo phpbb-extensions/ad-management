@@ -28,6 +28,7 @@ class insert_ad_locations_test extends ad_base
 				array(
 					'above_header',
 					'after_first_post',
+					'after_profile',
 					'below_header',
 				),
 			),
