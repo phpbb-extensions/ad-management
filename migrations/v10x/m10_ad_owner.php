@@ -61,4 +61,30 @@ class m10_ad_owner extends \phpbb\db\migration\migration
 			),
 		);
 	}
+
+	/**
+	 * Add the UCP module and new permission
+	 *
+	 * @return array Array of data update instructions
+	 */
+	public function update_data()
+	{
+		return array(
+			array('module.add', array(
+				'ucp',
+				'',
+				'UCP_PHPBB_ADS_TITLE'
+			)),
+			array('module.add', array(
+				'ucp',
+				'UCP_PHPBB_ADS_TITLE',
+				array(
+					'module_basename' => '\phpbb\ads\ucp\main_module',
+					'modes'           => array('stats'),
+				),
+			)),
+
+			array('permission.add', array('u_phpbb_ads_owner')),
+		);
+	}
 }

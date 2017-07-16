@@ -32,6 +32,13 @@ services:
             - '@phpbb.ads.ad.manager'
             - '@request'
 
+    phpbb.ads.ucp.controller:
+        class: phpbb\ads\controller\ucp_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@user'
+            - '@template'
+
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
         arguments:
