@@ -287,6 +287,8 @@ class admin_controller
 		}
 		else
 		{
+			// Copy ad data to new variable. $data is now either newly submitted data when user
+			// attempts to preview or submit the form, or old data otherwise.
 			$data = $ad;
 
 			// Load ad template locations
@@ -484,6 +486,10 @@ class admin_controller
 		// Get owner id
 		\user_get_id_name($ad_owner_id, $data['ad_owner']);
 		$data['ad_owner'] = $ad_owner_id[0];
+		if (empty($data['ad_owner']))
+		{
+			$data['ad_owner'] = 0;
+		}
 
 		// Validate form key
 		if (!check_form_key($form_name))
