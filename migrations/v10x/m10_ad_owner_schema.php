@@ -10,7 +10,7 @@
 
 namespace phpbb\ads\migrations\v10x;
 
-class m10_ad_owner extends \phpbb\db\migration\migration
+class m10_ad_owner_schema extends \phpbb\db\migration\migration
 {
 	/**
 	 * {@inheritDoc}
@@ -25,7 +25,10 @@ class m10_ad_owner extends \phpbb\db\migration\migration
 	 */
 	static public function depends_on()
 	{
-		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
+		return array(
+			'\phpbb\ads\migrations\v10x\m1_initial_schema',
+			'\phpbb\ads\migrations\v10x\m9_views_clicks',
+		);
 	}
 
 	/**
@@ -59,32 +62,6 @@ class m10_ad_owner extends \phpbb\db\migration\migration
 					'ad_owner',
 				),
 			),
-		);
-	}
-
-	/**
-	 * Add the UCP module and new permission
-	 *
-	 * @return array Array of data update instructions
-	 */
-	public function update_data()
-	{
-		return array(
-			array('module.add', array(
-				'ucp',
-				'',
-				'UCP_PHPBB_ADS_TITLE'
-			)),
-			array('module.add', array(
-				'ucp',
-				'UCP_PHPBB_ADS_TITLE',
-				array(
-					'module_basename' => '\phpbb\ads\ucp\main_module',
-					'modes'           => array('stats'),
-				),
-			)),
-
-			array('permission.add', array('u_phpbb_ads_owner')),
 		);
 	}
 }

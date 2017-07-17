@@ -99,19 +99,32 @@ class manager
 	}
 
 	/**
-	 * Get all advertisements. You can specify ad owner and only
-	 * his ads will be returned.
+	 * Get all advertisements.
 	 *
-	 * @param	int	$ad_owner	Ad owner
 	 * @return	array	List of all ads
 	 */
-	public function get_all_ads($ad_owner = 0)
+	public function get_all_ads()
 	{
-		$sql_where = $ad_owner ? 'WHERE ad_owner = ' . (int) $ad_owner : '';
-
 		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
+			FROM ' . $this->ads_table;
+		$result = $this->db->sql_query($sql);
+		$data = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		return $data;
+	}
+
+	/**
+	 * Get all owner's ads
+	 *
+	 * @param	int	$user_id	Ad owner
+	 * @return	array	List of owner's ads
+	 */
+	public function get_ads_by_owner($user_id)
+	{
+		$sql = 'SELECT ad_name, ad_views, ad_clicks
 			FROM ' . $this->ads_table . '
-			' . $sql_where;
+			WHERE ad_owner = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);

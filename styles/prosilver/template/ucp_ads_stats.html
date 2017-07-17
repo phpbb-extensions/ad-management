@@ -1,35 +1,30 @@
 {% include 'ucp_header.html' %}
 
 <h2>{{ lang('UCP_PHPBB_ADS_STATS') }}</h2>
-
 <div class="panel">
 	<div class="inner">
-		{% if loops.ads %}
-		<ul class="topiclist">
-			<li class="header">
-				<dl class="row-item">
-					<dt>Name</dt>
-					<dd class="topics">Views</dd>
-					<dd class="posts">Clicks</dd>
-				</dl>
-			</li>
+		{% if not S_VIEWS_ENABLED %}<p class="error">{{ lang('AD_VIEWS_DISABLED') }}</p>{% endif %}
+		{% if not S_CLICKS_ENABLED %}<p class="error">{{ lang('AD_CLICKS_DISABLED') }}</p>{% endif %}
+		<table class="table1">
+			<thead>
+			<tr>
+				<th class="name">{{ lang('AD_NAME') }}</th>
+				{% if S_VIEWS_ENABLED %}<th class="center" style="width: 15%">{{ lang('AD_VIEWS') }}</th>{% endif %}
+				{% if S_CLICKS_ENABLED %}<th class="center" style="width: 15%">{{ lang('AD_CLICKS') }}</th>{% endif %}
+			</tr>
+			</thead>
+			<tbody>
 			{% for ad in loops.ads %}
-			<li class="row{% if loop.index0 is even %} bg2{% else %} bg1{% endif %}">
-				<dl class="row-item">
-					<dt>
-						{{ ad.NAME }}
-					</dt>
-					<dd class="topics">
-						{{ ad.VIEWS }}
-					</dd>
-					<dd class="posts">
-						{{ ad.CLICKS }}
-					</dd>
-				</dl>
-			</li>
+			<tr class="{% if loop.index0 is even %}bg2{% else %}bg1{% endif %}">
+				<td>{{ ad.NAME }}</td>
+				{% if S_VIEWS_ENABLED %}<td class="center">{{ ad.VIEWS }}</td>{% endif %}
+				{% if S_CLICKS_ENABLED %}<td class="center">{{ ad.CLICKS }}</td>{% endif %}
+			</tr>
+			{% else %}
+				<tr><td colspan="3" class="bg1" style="text-align: center">{{ lang('NO_ADS') }}</td></tr>
 			{% endfor %}
-		</ul>
-		{% endif %}
+			</tbody>
+		</table>
 	</div>
 </div>
 

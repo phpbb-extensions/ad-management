@@ -19,5 +19,5 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACL_U_PHPBB_ADS_OWNER' => 'Can see advertisement UCP module',
+	'ACL_U_PHPBB_ADS_OWNER' => 'Can view advertisement statistics',
 ));

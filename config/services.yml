@@ -38,6 +38,7 @@ services:
             - '@phpbb.ads.ad.manager'
             - '@user'
             - '@template'
+            - '@config'
 
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener

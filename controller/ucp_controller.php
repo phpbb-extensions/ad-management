@@ -24,6 +24,9 @@ class ucp_controller
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -33,12 +36,14 @@ class ucp_controller
 	 * @param \phpbb\ads\ad\manager		$manager 	Advertisement manager object
 	 * @param \phpbb\user				$user		User object
 	 * @param \phpbb\template\template	$template	Template object
+	 * @param \phpbb\config\config		$config		Config object
 	 */
-	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\user $user, \phpbb\template\template $template)
+	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\user $user, \phpbb\template\template $template, \phpbb\config\config $config)
 	{
 		$this->manager = $manager;
 		$this->user = $user;
 		$this->template = $template;
+		$this->config = $config;
 	}
 
 	/**
@@ -62,7 +67,9 @@ class ucp_controller
 	 */
 	public function main()
 	{
-		foreach ($this->manager->get_all_ads($this->user->data['user_id']) as $ad)
+		$this->user->add_lang_ext('phpbb/ads', 'ucp');
+
+		foreach ($this->manager->get_ads_by_owner($this->user->data['user_id']) as $ad)
 		{
 			$this->template->assign_block_vars('ads', array(
 				'NAME'		=> $ad['ad_name'],
@@ -70,5 +77,10 @@ class ucp_controller
 				'CLICKS'	=> $ad['ad_clicks'],
 			));
 		}
+
+		$this->template->assign_vars(array(
+			'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
+			'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
+		));
 	}
 }
