@@ -24,11 +24,17 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var string ads_table */
 	protected $ads_table;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
 	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
+
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\controller\helper */
+	protected $controller_helper;
 
 	/** @var string */
 	protected $ad_locations_table;
@@ -92,8 +98,11 @@ class main_listener_base extends \phpbb_database_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->config = new \phpbb\config\config(array('phpbb_ads_adblocker_message' => '0'));
-		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->ads_table, $this->ad_locations_table);
+		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->config, $this->ads_table, $this->ad_locations_table);
 		$this->location_manager = new \phpbb\ads\location\manager($location_types);
+		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
+			->disableOriginalConstructor()
+			->getMock();
 	}
 
 	/**
@@ -109,7 +118,8 @@ class main_listener_base extends \phpbb_database_test_case
 			$this->config_text,
 			$this->config,
 			$this->manager,
-			$this->location_manager
+			$this->location_manager,
+			$this->controller_helper
 		);
 	}
 }

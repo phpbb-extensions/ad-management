@@ -1,0 +1,5 @@
+phpbb_ads_click:
+    path: /ads/click/{ad_id}
+    defaults: { _controller: phpbb.ads.click.controller:increment_clicks }
+    requirements:
+        id: '\d+'
