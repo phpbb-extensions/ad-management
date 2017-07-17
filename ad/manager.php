@@ -312,42 +312,6 @@ class manager
 	}
 
 	/**
-	 * Get user_id from username
-	 *
-	 * @param	string	$username	Username
-	 * @return	mixed	User id matching username
-	 */
-	public function get_owner_id_from_username($username)
-	{
-		$sql = 'SELECT user_id
-			FROM ' . USERS_TABLE . "
-			WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($username)) . "'";
-		$result = $this->db->sql_query($sql);
-		$user_id = $this->db->sql_fetchfield('user_id');
-		$this->db->sql_freeresult($result);
-
-		return $user_id;
-	}
-
-	/**
-	 * Get user_id from username
-	 *
-	 * @param	int		$user_id	User ID
-	 * @return	mixed	Username matching user_id
-	 */
-	public function get_owner_username_from_id($user_id)
-	{
-		$sql = 'SELECT username
-			FROM ' . USERS_TABLE . '
-			WHERE user_id = ' . (int) $user_id;
-		$result = $this->db->sql_query($sql);
-		$username = $this->db->sql_fetchfield('username');
-		$this->db->sql_freeresult($result);
-
-		return $username;
-	}
-
-	/**
 	* Make sure only necessary data make their way to SQL query
 	*
 	* @param	array	$data	List of data to query the database

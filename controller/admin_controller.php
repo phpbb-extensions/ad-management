@@ -102,6 +102,11 @@ class admin_controller
 	{
 		$this->setup();
 
+		if (!function_exists('user_get_id_name'))
+		{
+			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+		}
+
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
 		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
@@ -495,7 +500,8 @@ class admin_controller
 		);
 
 		// Get owner id
-		$data['ad_owner'] = $this->manager->get_owner_id_from_username($data['ad_owner']);
+		\user_get_id_name($ad_owner_id, $data['ad_owner']);
+		$data['ad_owner'] = $ad_owner_id[0];
 
 		// Validate form key
 		if (!check_form_key($form_name))
@@ -567,6 +573,8 @@ class admin_controller
 	 */
 	protected function assign_form_data($data)
 	{
+		\user_get_id_name($data['ad_owner'], $ad_owner_name);
+
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (bool) count($this->errors),
 			'ERROR_MSG' => count($this->errors) ? implode('<br />', $this->errors) : '',
@@ -579,7 +587,7 @@ class admin_controller
 			'AD_PRIORITY'     => $data['ad_priority'],
 			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $this->manager->get_owner_username_from_id($data['ad_owner']),
+			'AD_OWNER'        => $ad_owner_name[(int) $data['ad_owner'][0]],
 		));
 	}
 
