@@ -328,7 +328,7 @@ class manager
 			'ad_priority'		=> '',
 			'ad_views_limit'	=> '',
 			'ad_clicks_limit'	=> '',
-			'ad_owner'		=> '',
+			'ad_owner'			=> '',
 		));
 	}
 
