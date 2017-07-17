@@ -218,9 +218,6 @@ class admin_controller
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
-				// Add u_phpbb_ads_owner permission
-				$this->auth_admin->acl_set('user', 0, $data['ad_owner'], array('u_phpbb_ads_owner' => 1));
-
 				$this->log('ADD', $data['ad_name']);
 
 				$this->success('ACP_AD_ADD_SUCCESS');
@@ -272,12 +269,6 @@ class admin_controller
 			}
 			else if (empty($this->errors))
 			{
-				// Delete u_phpbb_ads_owner permission if old owner owns no more ads
-				if (count($this->manager->get_ads_by_owner($ad['ad_owner'])) == 1)
-				{
-					$this->auth_admin->acl_delete('user', $ad['ad_owner'], false, 'u_phpbb_ads_owner');
-				}
-
 				$success = $this->manager->update_ad($ad_id, $data);
 
 				if ($success)
@@ -285,9 +276,6 @@ class admin_controller
 					// Only insert new ad locations to DB when ad exists
 					$this->manager->delete_ad_locations($ad_id);
 					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
-
-					// Add u_phpbb_ads_owner permission to new owner
-					$this->auth_admin->acl_set('user', 0, $data['ad_owner'], array('u_phpbb_ads_owner' => 1));
 
 					$this->log('EDIT', $data['ad_name']);
 
@@ -356,12 +344,6 @@ class admin_controller
 				// Delete ad and it's template locations
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
-
-				// Delete u_phpbb_ads_owner permission if old owner owns no more ads
-				if (count($this->manager->get_ads_by_owner($ad_data['ad_owner'])) == 1)
-				{
-					$this->auth_admin->acl_delete('user', $ad_data['ad_owner'], false, 'u_phpbb_ads_owner');
-				}
 
 				// Only notify user on error or if not ajax
 				if (!$success)

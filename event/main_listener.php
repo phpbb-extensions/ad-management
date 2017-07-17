@@ -47,7 +47,6 @@ class main_listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.permissions'			=> 'set_permissions',
 			'core.user_setup'			=> 'load_language_on_setup',
 			'core.page_header_after'	=> 'setup_ads',
 		);
@@ -73,19 +72,6 @@ class main_listener implements EventSubscriberInterface
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
 		$this->controller_helper = $controller_helper;
-	}
-
-	/**
-	 * Wire up ad owner permission
-	 *
-	 * @param	\phpbb\event\data	$event	The event object
-	 * @return	void
-	 */
-	public function set_permissions($event)
-	{
-		$permissions = $event['permissions'];
-		$permissions['u_phpbb_ads_owner'] = array('lang' => 'ACL_U_PHPBB_ADS_OWNER', 'cat' => 'misc');
-		$event['permissions'] = $permissions;
 	}
 
 	/**

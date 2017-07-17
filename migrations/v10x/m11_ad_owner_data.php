@@ -45,8 +45,6 @@ class m11_ad_owner_data extends \phpbb\db\migration\migration
 					'modes'           => array('stats'),
 				),
 			)),
-
-			array('permission.add', array('u_phpbb_ads_owner')),
 		);
 	}
 }
