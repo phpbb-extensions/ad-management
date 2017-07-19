@@ -534,7 +534,7 @@ class admin_controller
 		if (!empty($data['ad_owner']))
 		{
 			user_get_id_name($ad_owner_id, $data['ad_owner']);
-			if (!empty($data['ad_owner'] && (!count($ad_owner_id) || ($data['ad_owner'] = $ad_owner_id[0]) === false)))
+			if (!empty($data['ad_owner']) && (!count($ad_owner_id) || ($data['ad_owner'] = $ad_owner_id[0]) === false))
 			{
 				$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
 			}
