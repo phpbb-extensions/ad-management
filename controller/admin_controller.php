@@ -477,14 +477,6 @@ class admin_controller
 			'ad_owner'        => $this->request->variable('ad_owner', '', true),
 		);
 
-		// Get owner id
-		user_get_id_name($ad_owner_id, $data['ad_owner']);
-		$data['ad_owner'] = $ad_owner_id[0];
-		if (empty($data['ad_owner']))
-		{
-			$data['ad_owner'] = 0;
-		}
-
 		// Validate form key
 		if (!check_form_key($form_name))
 		{
@@ -539,6 +531,13 @@ class admin_controller
 		}
 
 		// Validate ad owner
+		// Get owner id
+		user_get_id_name($ad_owner_id, $data['ad_owner']);
+		$data['ad_owner'] = $ad_owner_id[0];
+		if (empty($data['ad_owner']))
+		{
+			$data['ad_owner'] = 0;
+		}
 		if ($data['ad_owner'] === false)
 		{
 			$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
