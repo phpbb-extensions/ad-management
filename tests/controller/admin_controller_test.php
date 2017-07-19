@@ -56,6 +56,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	protected $config;
 
 	/** @var string */
+	protected $root_path;
+
+	/** @var string */
 	protected $php_ext;
 
 	/** @var string */
@@ -88,7 +91,12 @@ class admin_controller_test extends \phpbb_database_test_case
 		parent::setUp();
 
 		global $phpbb_root_path, $phpEx;
-		global $phpbb_extension_manager, $phpbb_dispatcher, $template, $request, $config, $user;
+		global $phpbb_extension_manager, $phpbb_dispatcher, $template, $request, $config, $user, $db;
+
+		if (!function_exists('user_get_id_name'))
+		{
+			include($phpbb_root_path . 'includes/functions_user.' . $phpEx);
+		}
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$this->lang = new \phpbb\language\language($lang_loader);
@@ -116,6 +124,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/ads/';
 
@@ -128,6 +137,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$request = new \phpbb_mock_request();
 		$config = new \phpbb\config\config(array());
 		$user = new \phpbb\user($this->lang, '\phpbb\datetime');
+		$db = $this->db;
 	}
 
 	/**
@@ -146,6 +156,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->log,
 			$this->config_text,
 			$this->config,
+			$this->root_path,
 			$this->php_ext,
 			$this->ext_path
 		);
@@ -190,6 +201,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->log,
 				$this->config_text,
 				$this->config,
+				$this->root_path,
 				$this->php_ext,
 				$this->ext_path,
 			))
@@ -418,6 +430,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_BACK'				=> $this->u_action,
 				'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 				'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
+				'U_FIND_USERNAME'		=> append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true'),
 			));
 
 		$controller->action_add();
@@ -472,16 +485,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array('', true, 'AD_NAME_REQUIRED', true, '', 1, 0, 0),
-			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, '', 1, 0, 0),
-			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01', 1, 0, 0),
-			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, 'abcd', 1, 0, 0),
-			array('Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 0, 0, 0),
-			array('Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 11, 0, 0),
-			array('Unit test advertisement', true, 'AD_VIEWS_LIMIT_INVALID', true, '', 5, -1, 0),
-			array('Unit test advertisement', true, 'AD_CLICKS_LIMIT_INVALID', true, '', 5, 0, -1),
-			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, '', 1, 0, 0),
-			array('Unit test advertisement', false, '', true, '2035-01-01', 1, 0, 0),
+			array('', true, 'AD_NAME_REQUIRED', true, '', 1, 0, 0, ''),
+			array(str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, '', 1, 0, 0, ''),
+			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01', 1, 0, 0, ''),
+			array('Unit test advertisement', true, 'AD_END_DATE_INVALID', true, 'abcd', 1, 0, 0, ''),
+			array('Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 0, 0, 0, ''),
+			array('Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 11, 0, 0, ''),
+			array('Unit test advertisement', true, 'AD_VIEWS_LIMIT_INVALID', true, '', 5, -1, 0, ''),
+			array('Unit test advertisement', true, 'AD_CLICKS_LIMIT_INVALID', true, '', 5, 0, -1, ''),
+			array('Unit test advertisement', true, 'AD_OWNER_INVALID', true, '', 5, 0, 0, 'non-existent user'),
+			array('Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, '', 1, 0, 0, ''),
+			array('Unit test advertisement', false, '', true, '2035-01-01', 1, 0, 0, 'admin'),
 		);
 	}
 
@@ -490,7 +504,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_add_data
 	*/
-	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form, $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit)
+	public function test_action_add_submit($ad_name, $s_error, $error_msg, $valid_form, $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner)
 	{
 		self::$valid_form = $valid_form;
 
@@ -508,7 +522,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit));
+			->will($this->onConsecutiveCalls($ad_name, '', '', false, array('above_footer', 'below_footer'), $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner));
 
 		$this->template->expects($this->any())
 			->method('assign_block_vars');
@@ -541,6 +555,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_PRIORITY'		=> $ad_priority,
 					'AD_VIEWS_LIMIT'	=> $ad_views_limit,
 					'AD_CLICKS_LIMIT'	=> $ad_clicks_limit,
+					'AD_OWNER'			=> $ad_owner,
 				));
 		}
 		else
@@ -602,6 +617,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_priority'		=> '5',
 				'ad_views_limit'	=> '0',
 				'ad_clicks_limit'	=> '0',
+				'ad_owner'			=> '2',
 			));
 
 		if (!$ad_id)
@@ -638,6 +654,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_BACK'				=> $this->u_action,
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 					'PICKER_DATE_FORMAT'	=> $controller::DATE_FORMAT,
+					'U_FIND_USERNAME'		=> append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true'),
 				));
 
 			$this->template->expects($this->at(3))
@@ -653,6 +670,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_PRIORITY'		=> '5',
 					'AD_VIEWS_LIMIT'	=> '0',
 					'AD_CLICKS_LIMIT'	=> '0',
+					'AD_OWNER'			=> 'admin',
 				));
 		}
 
@@ -708,17 +726,18 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_edit_data()
 	{
 		return array(
-			array(0, 'Unit test advertisement', true, '', true, '', 1, 0, 0),
-			array(1, '', true, 'AD_NAME_REQUIRED', true, '', 1, 0, 0),
-			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, '', 1, 0, 0),
-			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01', 1, 0, 0),
-			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, 'abcd', 1, 0, 0),
-			array(1, 'Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 0, 0, 0),
-			array(1, 'Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 11, 0, 0),
-			array(1, 'Unit test advertisement', true, 'AD_VIEWS_LIMIT_INVALID', true, '', 5, -1, 0),
-			array(1, 'Unit test advertisement', true, 'AD_CLICKS_LIMIT_INVALID', true, '', 5, 0, -1),
-			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, '', 1, 0, 0),
-			array(1, 'Unit test advertisement', false, '', true, '2035-01-03', 1, 1, 1),
+			array(0, 'Unit test advertisement', true, '', true, '', 1, 0, 0, ''),
+			array(1, '', true, 'AD_NAME_REQUIRED', true, '', 1, 0, 0, ''),
+			array(1, str_repeat('a', 256), true, 'AD_NAME_TOO_LONG', true, '', 1, 0, 0, ''),
+			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, '2000-01-01', 1, 0, 0, ''),
+			array(1, 'Unit test advertisement', true, 'AD_END_DATE_INVALID', true, 'abcd', 1, 0, 0, ''),
+			array(1, 'Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 0, 0, 0, ''),
+			array(1, 'Unit test advertisement', true, 'AD_PRIORITY_INVALID', true, '', 11, 0, 0, ''),
+			array(1, 'Unit test advertisement', true, 'AD_VIEWS_LIMIT_INVALID', true, '', 5, -1, 0, ''),
+			array(1, 'Unit test advertisement', true, 'AD_CLICKS_LIMIT_INVALID', true, '', 5, 0, -1, ''),
+			array(1, 'Unit test advertisement', true, 'AD_OWNER_INVALID', true, '', 5, 0, 0, 'non-existent user'),
+			array(1, 'Unit test advertisement', true, 'The submitted form was invalid. Try submitting again.', false, '', 1, 0, 0, ''),
+			array(1, 'Unit test advertisement', false, '', true, '2035-01-03', 1, 1, 1, 'admin'),
 		);
 	}
 
@@ -727,7 +746,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_edit_data
 	*/
-	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form, $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit)
+	public function test_action_edit_submit($ad_id, $ad_name, $s_error, $error_msg, $valid_form, $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner)
 	{
 		self::$valid_form = $valid_form;
 
@@ -735,7 +754,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->request->expects($this->any())
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit));
+			->will($this->onConsecutiveCalls($ad_id, $ad_name, '', '', false, array('after_posts', 'before_posts'), $end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner));
 
 		$this->request->expects($this->at(1))
 			->method('is_set_post')
@@ -785,6 +804,7 @@ class admin_controller_test extends \phpbb_database_test_case
 						'AD_PRIORITY'		=> $ad_priority,
 						'AD_VIEWS_LIMIT'	=> $ad_views_limit,
 						'AD_CLICKS_LIMIT'	=> $ad_clicks_limit,
+						'AD_OWNER'			=> $ad_owner,
 					));
 			}
 		}

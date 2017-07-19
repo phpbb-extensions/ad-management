@@ -531,16 +531,17 @@ class admin_controller
 		}
 
 		// Validate ad owner
-		// Get owner id
-		user_get_id_name($ad_owner_id, $data['ad_owner']);
-		$data['ad_owner'] = $ad_owner_id[0];
-		if (empty($data['ad_owner']))
+		if (!empty($data['ad_owner']))
+		{
+			user_get_id_name($ad_owner_id, $data['ad_owner']);
+			if (!empty($data['ad_owner'] && (!count($ad_owner_id) || ($data['ad_owner'] = $ad_owner_id[0]) === false)))
+			{
+				$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
+			}
+		}
+		else
 		{
 			$data['ad_owner'] = 0;
-		}
-		if ($data['ad_owner'] === false)
-		{
-			$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
 		}
 
 		return $data;
@@ -568,7 +569,7 @@ class admin_controller
 			'AD_PRIORITY'     => $data['ad_priority'],
 			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $ad_owner_name[(int) $data['ad_owner'][0]],
+			'AD_OWNER'        => isset($ad_owner_name[(int) $data['ad_owner'][0]]) ? $ad_owner_name[(int) $data['ad_owner'][0]] : $data['ad_owner'][0],
 		));
 	}
 
