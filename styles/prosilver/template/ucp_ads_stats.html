@@ -19,7 +19,7 @@
 				{% if S_CLICKS_ENABLED %}<td class="center">{{ ad.CLICKS }}</td>{% endif %}
 			</tr>
 			{% else %}
-				<tr><td colspan="3" class="bg1" style="text-align: center">{{ lang('NO_ADS') }}</td></tr>
+				<tr><td colspan="{{ 1 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" class="bg1" style="text-align: center">{{ lang('NO_ADS') }}</td></tr>
 			{% endfor %}
 			</tbody>
 		</table>
