@@ -89,8 +89,6 @@ class admin_controller
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
-
-		$this->auth_admin = $this->get_auth_admin();
 	}
 
 	/**
@@ -660,19 +658,5 @@ class admin_controller
 	protected function log($action, $ad_name)
 	{
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
-	}
-
-	/**
-	 * Get auth_admin class
-	 *
-	 * @return \auth_admin
-	 */
-	protected function get_auth_admin()
-	{
-		if (!class_exists('auth_admin'))
-		{
-			include($this->root_path . 'includes/acp/auth.' . $this->php_ext);
-		}
-		return new \auth_admin();
 	}
 }
