@@ -250,12 +250,6 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 
-		$ad = $this->manager->get_ad($ad_id);
-		if (empty($ad))
-		{
-			$this->error('ACP_AD_DOES_NOT_EXIST');
-		}
-
 		add_form_key('phpbb/ads/edit/' . $ad_id);
 		if ($preview || $submit)
 		{
@@ -285,9 +279,11 @@ class admin_controller
 		}
 		else
 		{
-			// Copy ad data to new variable. $data is now either newly submitted data when user
-			// attempts to preview or submit the form, or old data otherwise.
-			$data = $ad;
+			$data = $this->manager->get_ad($ad_id);
+			if (empty($data))
+			{
+				$this->error('ACP_AD_DOES_NOT_EXIST');
+			}
 
 			// Load ad template locations
 			$data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
