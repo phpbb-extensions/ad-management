@@ -235,7 +235,7 @@ class admin_controller
 			'U_BACK'             => $this->u_action,
 			'U_ACTION'           => "{$this->u_action}&amp;action=add",
 			'PICKER_DATE_FORMAT' => self::DATE_FORMAT,
-			'U_FIND_USERNAME'    => append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true'),
+			'U_FIND_USERNAME'    => $this->get_find_username_link(),
 		));
 	}
 
@@ -300,7 +300,7 @@ class admin_controller
 			'U_BACK'             => $this->u_action,
 			'U_ACTION'           => "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 			'PICKER_DATE_FORMAT' => self::DATE_FORMAT,
-			'U_FIND_USERNAME'    => append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true'),
+			'U_FIND_USERNAME'    => $this->get_find_username_link(),
 		));
 		$this->assign_locations($data);
 		$this->assign_form_data($data);
@@ -658,5 +658,10 @@ class admin_controller
 	protected function log($action, $ad_name)
 	{
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
+	}
+
+	protected function get_find_username_link()
+	{
+		return append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true');
 	}
 }
