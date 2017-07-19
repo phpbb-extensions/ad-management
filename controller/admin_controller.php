@@ -478,7 +478,7 @@ class admin_controller
 		);
 
 		// Get owner id
-		\user_get_id_name($ad_owner_id, $data['ad_owner']);
+		user_get_id_name($ad_owner_id, $data['ad_owner']);
 		$data['ad_owner'] = $ad_owner_id[0];
 		if (empty($data['ad_owner']))
 		{
@@ -555,7 +555,7 @@ class admin_controller
 	 */
 	protected function assign_form_data($data)
 	{
-		\user_get_id_name($data['ad_owner'], $ad_owner_name);
+		user_get_id_name($data['ad_owner'], $ad_owner_name);
 
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (bool) count($this->errors),
