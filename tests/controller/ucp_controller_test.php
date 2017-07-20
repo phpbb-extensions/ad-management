@@ -50,6 +50,8 @@ class ucp_controller_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
+		global $phpbb_root_path;
+
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
@@ -61,6 +63,8 @@ class ucp_controller_test extends \phpbb_database_test_case
 			'phpbb_ads_enable_views'	=> 0,
 			'phpbb_ads_enable_clicks'	=> 0,
 		));
+
+		$this->u_action = $phpbb_root_path . 'ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats';
 	}
 
 	/**
@@ -76,6 +80,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 			$this->template,
 			$this->config
 		);
+		$controller->set_page_url($this->u_action);
 
 		return $controller;
 	}
