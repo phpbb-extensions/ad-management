@@ -23,7 +23,7 @@
 		</div>
 	{% endif %}
 
-	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}">
+	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 		<fieldset>
 			<legend>{{ lang('CONFIGURE_AD') }}</legend>
 			<dl>
@@ -42,6 +42,13 @@
 			<dl>
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
+			</dl>
+			<dl>
+				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br /><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
+				<dd>
+					<input type="file" accept="image/*" id="banner" name="banner" />
+					<button id="upload_banner" name="upload_banner">{{ lang('BANNER_UPLOAD') }}</button>
+				</dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>

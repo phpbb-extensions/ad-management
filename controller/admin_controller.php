@@ -43,6 +43,9 @@ class admin_controller
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\files\upload */
+	protected $files_upload;
+
 	/** @var string root_path */
 	protected $root_path;
 
@@ -59,21 +62,22 @@ class admin_controller
 	protected $errors = array();
 
 	/**
-	 * Constructor
-	 *
-	 * @param \phpbb\template\template    $template         Template object
-	 * @param \phpbb\user                 $user             User object
-	 * @param \phpbb\request\request      $request          Request object
-	 * @param \phpbb\ads\ad\manager       $manager          Advertisement manager object
-	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
-	 * @param \phpbb\log\log              $log              The phpBB log system
-	 * @param \phpbb\config\db_text       $config_text      Config text object
-	 * @param \phpbb\config\config        $config           Config object
-	 * @param string                      $root_path        phpBB root path
-	 * @param string                      $php_ext          PHP extension
-	 * @param string                      $ext_path         Path to this extension
-	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $root_path, $php_ext, $ext_path)
+	* Constructor
+	*
+	* @param \phpbb\template\template		$template			Template object
+	* @param \phpbb\user					$user				User object
+	* @param \phpbb\request\request			$request			Request object
+	* @param \phpbb\ads\ad\manager			$manager			Advertisement manager object
+	* @param \phpbb\ads\location\manager	$location_manager	Template location manager object
+	* @param \phpbb\log\log					$log				The phpBB log system
+	* @param \phpbb\config\db_text			$config_text		Config text object
+	* @param \phpbb\config\config			$config				Config object
+	* @param \phpbb\files\upload			$files_upload		Files upload object
+	* @param string                      	$root_path			phpBB root path
+	* @param string							$php_ext			PHP extension
+	* @param string							$ext_path			Path to this extension
+	*/
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\files\upload $files_upload, $root_path, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -83,6 +87,7 @@ class admin_controller
 		$this->log = $log;
 		$this->config_text = $config_text;
 		$this->config = $config;
+		$this->files_upload = $files_upload;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
@@ -198,15 +203,20 @@ class admin_controller
 	{
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
+		$upload_banner = $this->request->is_set_post('upload_banner');
 
 		add_form_key('phpbb/ads/add');
-		if ($preview || $submit)
+		if ($preview || $submit || $upload_banner)
 		{
 			$data = $this->get_form_data('phpbb/ads/add');
 
 			if ($preview)
 			{
 				$this->ad_preview($data['ad_code']);
+			}
+			else if ($upload_banner)
+			{
+				$data['ad_code'] = $this->process_banner_upload($data['ad_code']);
 			}
 			else if (empty($this->errors))
 			{
@@ -246,15 +256,20 @@ class admin_controller
 		$ad_id = $this->request->variable('id', 0);
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
+		$upload_banner = $this->request->is_set_post('upload_banner');
 
 		add_form_key('phpbb/ads/edit/' . $ad_id);
-		if ($preview || $submit)
+		if ($preview || $submit || $upload_banner)
 		{
 			$data = $this->get_form_data('phpbb/ads/edit/' . $ad_id);
 
 			if ($preview)
 			{
 				$this->ad_preview($data['ad_code']);
+			}
+			else if ($upload_banner)
+			{
+				$data['ad_code'] = $this->process_banner_upload($data['ad_code']);
 			}
 			else if (empty($this->errors))
 			{
@@ -413,6 +428,7 @@ class admin_controller
 	 */
 	protected function setup()
 	{
+		$this->user->add_lang('posting'); // Used by process_banner_upload() file errors
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
 		$this->template->assign_var('S_PHPBB_ADS', true);
@@ -454,11 +470,65 @@ class admin_controller
 	}
 
 	/**
-	 * Get admin form data.
+	 * Upload image and return updated ad code or <img> of new banner when using ajax.
 	 *
-	 * @param    string $form_name The form name.
-	 * @return    array    Form data
+	 * @param	 string	 $ad_code	 Current ad code
+	 * @return	 mixed	 JsonResponse when request is ajax or updated ad code otherwise.
 	 */
+	protected function process_banner_upload($ad_code)
+	{
+		// Set file restrictions
+		$this->files_upload->reset_vars();
+		$this->files_upload->set_allowed_extensions(array('gif', 'jpg', 'jpeg', 'png'));
+
+		// Upload file
+		$file = $this->files_upload->handle_upload('files.types.form', 'banner');
+		$file->clean_filename('unique_ext');
+		$file->move_file('images/phpbb_ads');
+
+		// Problem with uploading
+		if (sizeof($file->error))
+		{
+			$file->remove();
+			if ($this->request->is_ajax())
+			{
+				$json_response = new \phpbb\json_response;
+				$json_response->send(array(
+					'success'	=> false,
+					'title'		=> $this->user->lang('INFORMATION'),
+					'text'		=> implode(',', $file->error),
+				));
+			}
+			else
+			{
+				$this->errors[] = implode(',', $file->error);
+			}
+		}
+		else
+		{
+			$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $file->get('realname') . '" />';
+
+			if ($this->request->is_ajax())
+			{
+				$json_response = new \phpbb\json_response;
+				$json_response->send(array(
+					'success'	=> true,
+					'text'		=> $banner_html,
+				));
+			}
+
+			return $ad_code . "\n\n" . $banner_html;
+		}
+
+		return $ad_code;
+	}
+
+	/**
+	* Get admin form data.
+	*
+	* @param	string	$form_name	The form name.
+	* @return	array	Form data
+	*/
 	protected function get_form_data($form_name)
 	{
 		$data = array(
