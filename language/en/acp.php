@@ -52,6 +52,7 @@ $lang = array_merge($lang, array(
 	'ACP_ADS_EDIT'				=> 'Edit advertisement',
 	'AD_PREVIEW'				=> 'Preview this advertisement',
 	'CONFIGURE_AD'				=> 'Configure advertisement',
+	'BANNER_UPLOAD'				=> 'Upload banner',
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',
@@ -60,6 +61,7 @@ $lang = array_merge($lang, array(
 	'AD_VIEWS_LIMIT_INVALID'	=> 'The views limit is invalid. Please set a non-negative number.',
 	'AD_CLICKS_LIMIT_INVALID'	=> 'The clicks limit is invalid. Please set a non-negative number.',
 	'AD_OWNER_INVALID'			=> 'The ad owner is invalid. Please select a user using the Find a member link.',
+	'NO_FILE_SELECTED'			=> 'No file selected.',
 	'ACP_AD_DOES_NOT_EXIST'		=> 'The advertisement does not exist.',
 	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully.',
 	'ACP_AD_EDIT_SUCCESS'		=> 'Advertisement edited successfully.',
