@@ -52,9 +52,6 @@ class admin_controller
 	/** @var string ext_path */
 	protected $ext_path;
 
-	/** @var \auth_admin Auth admin */
-	protected $auth_admin;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -555,8 +552,6 @@ class admin_controller
 	 */
 	protected function assign_form_data($data)
 	{
-		user_get_id_name($data['ad_owner'], $ad_owner_name);
-
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (bool) count($this->errors),
 			'ERROR_MSG' => count($this->errors) ? implode('<br />', $this->errors) : '',
@@ -569,7 +564,7 @@ class admin_controller
 			'AD_PRIORITY'     => $data['ad_priority'],
 			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => isset($ad_owner_name[(int) $data['ad_owner'][0]]) ? $ad_owner_name[(int) $data['ad_owner'][0]] : $data['ad_owner'][0],
+			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
 		));
 	}
 
@@ -594,6 +589,26 @@ class admin_controller
 		return (string) $end_date;
 	}
 
+	/**
+	 * Prepare ad owner for display
+	 *
+	 * @param	mixed	$ad_owner	End date.
+	 * @return	string	End date prepared for display.
+	 */
+	protected function prepare_ad_owner($ad_owner)
+	{
+		if ($ad_owner)
+		{
+			user_get_id_name($ad_owner, $ad_owner_name);
+			if (empty($ad_owner_name))
+			{
+				return $ad_owner[0];
+			}
+			return $ad_owner_name[(int) $ad_owner[0]];
+		}
+
+		return '';
+	}
 	/**
 	 * Assign template locations data to the template.
 	 *
