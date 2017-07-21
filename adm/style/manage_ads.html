@@ -23,7 +23,7 @@
 		</div>
 	{% endif %}
 
-	<form id="acp_addmanagement_add" method="post" action="{{ U_ACTION }}">
+	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}">
 		<fieldset>
 			<legend>{{ lang('CONFIGURE_AD') }}</legend>
 			<dl>
@@ -45,7 +45,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY }}" min="1" max="10" placeholder="{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}" /></dd>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
@@ -67,6 +67,11 @@
 			<dl>
 				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
 				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" type="text" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
+				<dd>[ <a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
