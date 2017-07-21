@@ -15,7 +15,7 @@ namespace phpbb\ads\ucp;
  */
 class main_info
 {
-	function module()
+	public function module()
 	{
 		return array(
 			'filename'	=> '\phpbb\ads\ucp\main_module',
