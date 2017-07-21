@@ -22,6 +22,7 @@ services:
             - '@log'
             - '@config_text'
             - '@config'
+            - '%core.root_path%'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
 
@@ -30,6 +31,14 @@ services:
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@request'
+
+    phpbb.ads.ucp.controller:
+        class: phpbb\ads\controller\ucp_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@user'
+            - '@template'
+            - '@config'
 
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener

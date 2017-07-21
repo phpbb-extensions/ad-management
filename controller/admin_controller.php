@@ -43,6 +43,9 @@ class admin_controller
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var string root_path */
+	protected $root_path;
+
 	/** @var string php_ext */
 	protected $php_ext;
 
@@ -56,20 +59,21 @@ class admin_controller
 	protected $errors = array();
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template				$template			Template object
-	* @param \phpbb\user							$user				User object
-	* @param \phpbb\request\request					$request			Request object
-	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
-	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
-	* @param \phpbb\log\log							$log				The phpBB log system
-	* @param \phpbb\config\db_text					$config_text		Config text object
-	* @param \phpbb\config\config					$config				Config object
-	* @param string									$php_ext			PHP extension
-	* @param string									$ext_path			Path to this extension
-	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $php_ext, $ext_path)
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template    $template         Template object
+	 * @param \phpbb\user                 $user             User object
+	 * @param \phpbb\request\request      $request          Request object
+	 * @param \phpbb\ads\ad\manager       $manager          Advertisement manager object
+	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
+	 * @param \phpbb\log\log              $log              The phpBB log system
+	 * @param \phpbb\config\db_text       $config_text      Config text object
+	 * @param \phpbb\config\config        $config           Config object
+	 * @param string                      $root_path        phpBB root path
+	 * @param string                      $php_ext          PHP extension
+	 * @param string                      $ext_path         Path to this extension
+	 */
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $root_path, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -79,18 +83,24 @@ class admin_controller
 		$this->log = $log;
 		$this->config_text = $config_text;
 		$this->config = $config;
+		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
 	}
 
 	/**
-	* Process user request for manage mode
-	*
-	* @return void
-	*/
+	 * Process user request for manage mode
+	 *
+	 * @return void
+	 */
 	public function mode_manage()
 	{
 		$this->setup();
+
+		if (!function_exists('user_get_id_name'))
+		{
+			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+		}
 
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
@@ -104,10 +114,10 @@ class admin_controller
 	}
 
 	/**
-	* Process user request for settings mode
-	*
-	* @return void
-	*/
+	 * Process user request for settings mode
+	 *
+	 * @return void
+	 */
 	public function mode_settings()
 	{
 		$this->setup();
@@ -132,8 +142,8 @@ class admin_controller
 			}
 
 			$this->template->assign_vars(array(
-				'S_ERROR'		=> (bool) count($this->errors),
-				'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
+				'S_ERROR'   => (bool) count($this->errors),
+				'ERROR_MSG' => count($this->errors) ? implode('<br />', $this->errors) : '',
 			));
 		}
 
@@ -144,46 +154,46 @@ class admin_controller
 			$group_name = ($group['group_type'] == GROUP_SPECIAL) ? $this->user->lang('G_' . $group['group_name']) : $group['group_name'];
 
 			$this->template->assign_block_vars('groups', array(
-				'ID'			=> $group['group_id'],
-				'NAME'			=> $group_name,
-				'S_SELECTED'	=> in_array($group['group_id'], $hide_groups),
+				'ID'         => $group['group_id'],
+				'NAME'       => $group_name,
+				'S_SELECTED' => in_array($group['group_id'], $hide_groups),
 			));
 		}
 
 		$this->template->assign_vars(array(
-			'U_ACTION'			=> $this->u_action,
-			'ADBLOCKER_MESSAGE'	=> $this->config['phpbb_ads_adblocker_message'],
-			'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
-			'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
+			'U_ACTION'          => $this->u_action,
+			'ADBLOCKER_MESSAGE' => $this->config['phpbb_ads_adblocker_message'],
+			'ENABLE_VIEWS'      => $this->config['phpbb_ads_enable_views'],
+			'ENABLE_CLICKS'     => $this->config['phpbb_ads_enable_clicks'],
 		));
 	}
 
 	/**
-	* Set page url
-	*
-	* @param string $u_action Custom form action
-	* @return void
-	*/
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 * @return void
+	 */
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
 	}
 
 	/**
-	* Get ACP page title for Ads module
-	*
-	* @return string	Language string for Ads ACP module
-	*/
+	 * Get ACP page title for Ads module
+	 *
+	 * @return string    Language string for Ads ACP module
+	 */
 	public function get_page_title()
 	{
 		return $this->user->lang('ACP_PHPBB_ADS_TITLE');
 	}
 
 	/**
-	* Add an advertisement
-	*
-	* @return void
-	*/
+	 * Add an advertisement
+	 *
+	 * @return void
+	 */
 	public function action_add()
 	{
 		$preview = $this->request->is_set_post('preview');
@@ -218,18 +228,19 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ADD_AD'				=> true,
-			'U_BACK'				=> $this->u_action,
-			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
-			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
+			'S_ADD_AD'           => true,
+			'U_BACK'             => $this->u_action,
+			'U_ACTION'           => "{$this->u_action}&amp;action=add",
+			'PICKER_DATE_FORMAT' => self::DATE_FORMAT,
+			'U_FIND_USERNAME'    => $this->get_find_username_link(),
 		));
 	}
 
 	/**
-	* Edit an advertisement
-	*
-	* @return void
-	*/
+	 * Edit an advertisement
+	 *
+	 * @return void
+	 */
 	public function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
@@ -259,12 +270,12 @@ class admin_controller
 
 					$this->success('ACP_AD_EDIT_SUCCESS');
 				}
+
 				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
 		}
 		else
 		{
-			// Load ad data
 			$data = $this->manager->get_ad($ad_id);
 			if (empty($data))
 			{
@@ -277,41 +288,42 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_EDIT_AD'				=> true,
-			'EDIT_ID'				=> $ad_id,
-			'U_BACK'				=> $this->u_action,
-			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
-			'PICKER_DATE_FORMAT'	=> self::DATE_FORMAT,
+			'S_EDIT_AD'          => true,
+			'EDIT_ID'            => $ad_id,
+			'U_BACK'             => $this->u_action,
+			'U_ACTION'           => "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
+			'PICKER_DATE_FORMAT' => self::DATE_FORMAT,
+			'U_FIND_USERNAME'    => $this->get_find_username_link(),
 		));
 		$this->assign_locations($data);
 		$this->assign_form_data($data);
 	}
 
 	/**
-	* Enable an advertisement
-	*
-	* @return void
-	*/
+	 * Enable an advertisement
+	 *
+	 * @return void
+	 */
 	public function action_enable()
 	{
 		$this->ad_enable(true);
 	}
 
 	/**
-	* Disable an advertisement
-	*
-	* @return void
-	*/
+	 * Disable an advertisement
+	 *
+	 * @return void
+	 */
 	public function action_disable()
 	{
 		$this->ad_enable(false);
 	}
 
 	/**
-	* Delete an advertisement
-	*
-	* @return void
-	*/
+	 * Delete an advertisement
+	 *
+	 * @return void
+	 */
 	public function action_delete()
 	{
 		$ad_id = $this->request->variable('id', 0);
@@ -344,20 +356,20 @@ class admin_controller
 			else
 			{
 				confirm_box(false, $this->user->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
-					'id'		=> $ad_id,
-					'i'			=> $this->request->variable('i', ''),
-					'mode'		=> $this->request->variable('mode', ''),
-					'action'	=> 'delete'
+					'id'     => $ad_id,
+					'i'      => $this->request->variable('i', ''),
+					'mode'   => $this->request->variable('mode', ''),
+					'action' => 'delete'
 				)));
 			}
 		}
 	}
 
 	/**
-	* Display the ads
-	*
-	* @return void
-	*/
+	 * Display the ads
+	 *
+	 * @return void
+	 */
 	public function list_ads()
 	{
 		foreach ($this->manager->get_all_ads() as $row)
@@ -372,33 +384,33 @@ class admin_controller
 			}
 
 			$this->template->assign_block_vars('ads', array(
-				'NAME'					=> $row['ad_name'],
-				'END_DATE'				=> $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
-				'VIEWS'					=> $row['ad_views'],
-				'CLICKS'				=> $row['ad_clicks'],
-				'VIEWS_LIMIT'			=> $row['ad_views_limit'],
-				'CLICKS_LIMIT'			=> $row['ad_clicks_limit'],
-				'S_END_DATE_EXPIRED'	=> $ad_expired,
-				'S_ENABLED'				=> $ad_enabled,
-				'U_ENABLE'				=> $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
-				'U_EDIT'				=> $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
-				'U_DELETE'				=> $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
+				'NAME'               => $row['ad_name'],
+				'END_DATE'           => $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
+				'VIEWS'              => $row['ad_views'],
+				'CLICKS'             => $row['ad_clicks'],
+				'VIEWS_LIMIT'        => $row['ad_views_limit'],
+				'CLICKS_LIMIT'       => $row['ad_clicks_limit'],
+				'S_END_DATE_EXPIRED' => $ad_expired,
+				'S_ENABLED'          => $ad_enabled,
+				'U_ENABLE'           => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_EDIT'             => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
+				'U_DELETE'           => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
 		}
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
-			'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
-			'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
+			'U_ACTION_ADD'     => $this->u_action . '&amp;action=add',
+			'S_VIEWS_ENABLED'  => $this->config['phpbb_ads_enable_views'],
+			'S_CLICKS_ENABLED' => $this->config['phpbb_ads_enable_clicks'],
 		));
 	}
 
 	/**
-	* Perform general tasks
-	*
-	* @return void
-	*/
+	 * Perform general tasks
+	 *
+	 * @return void
+	 */
 	protected function setup()
 	{
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
@@ -407,17 +419,17 @@ class admin_controller
 	}
 
 	/**
-	* Enable/disable an advertisement
-	*
-	* @param	bool	$enable	Enable or disable the advertisement?
-	* @return void
-	*/
+	 * Enable/disable an advertisement
+	 *
+	 * @param    bool $enable Enable or disable the advertisement?
+	 * @return void
+	 */
 	protected function ad_enable($enable)
 	{
 		$ad_id = $this->request->variable('id', 0);
 
 		$success = $this->manager->update_ad($ad_id, array(
-			'ad_enabled'	=> (int) $enable,
+			'ad_enabled' => (int) $enable,
 		));
 
 		// If AJAX was used, show user a result message
@@ -425,8 +437,8 @@ class admin_controller
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'text'	=> $this->user->lang($enable ? 'ENABLED' : 'DISABLED'),
-				'title'	=> $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
+				'text'  => $this->user->lang($enable ? 'ENABLED' : 'DISABLED'),
+				'title' => $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
 			));
 		}
 
@@ -442,23 +454,24 @@ class admin_controller
 	}
 
 	/**
-	* Get admin form data.
-	*
-	* @param	string	$form_name	The form name.
-	* @return	array	Form data
-	*/
+	 * Get admin form data.
+	 *
+	 * @param    string $form_name The form name.
+	 * @return    array    Form data
+	 */
 	protected function get_form_data($form_name)
 	{
 		$data = array(
-			'ad_name'			=> $this->request->variable('ad_name', '', true),
-			'ad_note'			=> $this->request->variable('ad_note', '', true),
-			'ad_code'			=> $this->request->variable('ad_code', '', true),
-			'ad_enabled'		=> $this->request->variable('ad_enabled', 0),
-			'ad_locations'		=> $this->request->variable('ad_locations', array('')),
-			'ad_end_date'		=> $this->request->variable('ad_end_date', ''),
-			'ad_priority'		=> $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
-			'ad_views_limit'	=> $this->request->variable('ad_views_limit', 0),
-			'ad_clicks_limit'	=> $this->request->variable('ad_clicks_limit', 0),
+			'ad_name'         => $this->request->variable('ad_name', '', true),
+			'ad_note'         => $this->request->variable('ad_note', '', true),
+			'ad_code'         => $this->request->variable('ad_code', '', true),
+			'ad_enabled'      => $this->request->variable('ad_enabled', 0),
+			'ad_locations'    => $this->request->variable('ad_locations', array('')),
+			'ad_end_date'     => $this->request->variable('ad_end_date', ''),
+			'ad_priority'     => $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_views_limit'  => $this->request->variable('ad_views_limit', 0),
+			'ad_clicks_limit' => $this->request->variable('ad_clicks_limit', 0),
+			'ad_owner'        => $this->request->variable('ad_owner', '', true),
 		);
 
 		// Validate form key
@@ -514,38 +527,57 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
 		}
 
+		// Validate ad owner. Username in $data['ad_owner'] will be replaced with user_id.
+		if (!empty($data['ad_owner']))
+		{
+			// Function returns false if everything is OK.
+			if (user_get_id_name($ad_owner_id, $data['ad_owner']))
+			{
+				$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
+			}
+			else
+			{
+				$data['ad_owner'] = $ad_owner_id[0];
+			}
+		}
+		else
+		{
+			$data['ad_owner'] = 0;
+		}
+
 		return $data;
 	}
 
 	/**
-	* Assign form data to the template.
-	*
-	* @param	array	$data	The form data.
-	* @return void
-	*/
+	 * Assign form data to the template.
+	 *
+	 * @param    array $data The form data.
+	 * @return void
+	 */
 	protected function assign_form_data($data)
 	{
 		$this->template->assign_vars(array(
-			'S_ERROR'		=> (bool) count($this->errors),
-			'ERROR_MSG'		=> count($this->errors) ? implode('<br />', $this->errors) : '',
+			'S_ERROR'   => (bool) count($this->errors),
+			'ERROR_MSG' => count($this->errors) ? implode('<br />', $this->errors) : '',
 
-			'AD_NAME'			=> $data['ad_name'],
-			'AD_NOTE'			=> $data['ad_note'],
-			'AD_CODE'			=> $data['ad_code'],
-			'AD_ENABLED'		=> $data['ad_enabled'],
-			'AD_END_DATE'		=> $this->prepare_end_date($data['ad_end_date']),
-			'AD_PRIORITY'		=> $data['ad_priority'],
-			'AD_VIEWS_LIMIT'	=> $data['ad_views_limit'],
-			'AD_CLICKS_LIMIT'	=> $data['ad_clicks_limit'],
+			'AD_NAME'         => $data['ad_name'],
+			'AD_NOTE'         => $data['ad_note'],
+			'AD_CODE'         => $data['ad_code'],
+			'AD_ENABLED'      => $data['ad_enabled'],
+			'AD_END_DATE'     => $this->prepare_end_date($data['ad_end_date']),
+			'AD_PRIORITY'     => $data['ad_priority'],
+			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
+			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
+			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
 		));
 	}
 
 	/**
-	* Prepare end date for display
-	*
-	* @param	mixed	$end_date	End date.
-	* @return	string	End date prepared for display.
-	*/
+	 * Prepare end date for display
+	 *
+	 * @param    mixed $end_date End date.
+	 * @return    string    End date prepared for display.
+	 */
 	protected function prepare_end_date($end_date)
 	{
 		if (empty($end_date))
@@ -562,64 +594,89 @@ class admin_controller
 	}
 
 	/**
-	* Assign template locations data to the template.
-	*
-	* @param	mixed	$data	The form data or nothing.
-	* @return	void
-	*/
+	 * Prepare ad owner for display. Method takes user_id
+	 * of the ad owner and returns his/her username.
+	 *
+	 * @param	int		$ad_owner	User ID
+	 * @return	string	Username belonging to $ad_owner.
+	 */
+	protected function prepare_ad_owner($ad_owner)
+	{
+		// Returns false when no errors occur trying to find the user
+		if (false === user_get_id_name($ad_owner, $ad_owner_name))
+		{
+			if (empty($ad_owner_name))
+			{
+				return $ad_owner[0];
+			}
+			return $ad_owner_name[(int) $ad_owner[0]];
+		}
+		return '';
+	}
+	/**
+	 * Assign template locations data to the template.
+	 *
+	 * @param    mixed $data The form data or nothing.
+	 * @return    void
+	 */
 	protected function assign_locations($data = false)
 	{
 		foreach ($this->location_manager->get_all_locations() as $location_id => $location_data)
 		{
 			$this->template->assign_block_vars('ad_locations', array(
-				'LOCATION_ID'	=> $location_id,
-				'LOCATION_DESC'	=> $location_data['desc'],
-				'LOCATION_NAME'	=> $location_data['name'],
-				'S_SELECTED'	=> $data ? in_array($location_id, $data['ad_locations']) : false,
+				'LOCATION_ID'   => $location_id,
+				'LOCATION_DESC' => $location_data['desc'],
+				'LOCATION_NAME' => $location_data['name'],
+				'S_SELECTED'    => $data ? in_array($location_id, $data['ad_locations']) : false,
 			));
 		}
 	}
 
 	/**
-	* Prepare advertisement preview
-	*
-	* @param	string	$code	Ad code to preview
-	* @return	void
-	*/
+	 * Prepare advertisement preview
+	 *
+	 * @param    string $code Ad code to preview
+	 * @return    void
+	 */
 	protected function ad_preview($code)
 	{
 		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($code));
 	}
 
 	/**
-	* Print success message.
-	*
-	* It takes arguments in the form of a language key, followed by language substitution values.
-	*/
+	 * Print success message.
+	 *
+	 * It takes arguments in the form of a language key, followed by language substitution values.
+	 */
 	protected function success()
 	{
 		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action));
 	}
 
 	/**
-	* Print error message.
-	*
-	* It takes arguments in the form of a language key, followed by language substitution values.
-	*/
+	 * Print error message.
+	 *
+	 * It takes arguments in the form of a language key, followed by language substitution values.
+	 */
 	protected function error()
 	{
 		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
 	}
 
 	/**
-	* Log action
-	*
-	* @param	string	$action		Performed action in uppercase
-	* @param	string	$ad_name	Advertisement name
-	* @return	void
-	*/
+	 * Log action
+	 *
+	 * @param    string $action  Performed action in uppercase
+	 * @param    string $ad_name Advertisement name
+	 * @return    void
+	 */
 	protected function log($action, $ad_name)
 	{
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
+	}
+
+	protected function get_find_username_link()
+	{
+		return append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true');
 	}
 }

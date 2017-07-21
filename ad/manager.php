@@ -99,14 +99,32 @@ class manager
 	}
 
 	/**
-	* Get all advertisements
-	*
-	* @return	array	List of all ads
-	*/
+	 * Get all advertisements.
+	 *
+	 * @return	array	List of all ads
+	 */
 	public function get_all_ads()
 	{
 		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
 			FROM ' . $this->ads_table;
+		$result = $this->db->sql_query($sql);
+		$data = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		return $data;
+	}
+
+	/**
+	 * Get all owner's ads
+	 *
+	 * @param	int	$user_id	Ad owner
+	 * @return	array	List of owner's ads
+	 */
+	public function get_ads_by_owner($user_id)
+	{
+		$sql = 'SELECT ad_name, ad_views, ad_clicks
+			FROM ' . $this->ads_table . '
+			WHERE ad_owner = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
@@ -310,6 +328,7 @@ class manager
 			'ad_priority'		=> '',
 			'ad_views_limit'	=> '',
 			'ad_clicks_limit'	=> '',
+			'ad_owner'			=> '',
 		));
 	}
 

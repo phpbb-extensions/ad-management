@@ -1,0 +1,29 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_PHPBB_ADS_STATS') }}</h2>
+<div class="panel">
+	<div class="inner">
+		<table class="table1">
+			<thead>
+			<tr>
+				<th class="name">{{ lang('AD_NAME') }}</th>
+				{% if S_VIEWS_ENABLED %}<th class="center" style="width: 15%">{{ lang('AD_VIEWS') }}</th>{% endif %}
+				{% if S_CLICKS_ENABLED %}<th class="center" style="width: 15%">{{ lang('AD_CLICKS') }}</th>{% endif %}
+			</tr>
+			</thead>
+			<tbody>
+			{% for ad in loops.ads %}
+			<tr class="{% if loop.index0 is even %}bg2{% else %}bg1{% endif %}">
+				<td>{{ ad.NAME }}</td>
+				{% if S_VIEWS_ENABLED %}<td class="center">{{ ad.VIEWS }}</td>{% endif %}
+				{% if S_CLICKS_ENABLED %}<td class="center">{{ ad.CLICKS }}</td>{% endif %}
+			</tr>
+			{% else %}
+				<tr><td colspan="{{ 1 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" class="bg1" style="text-align: center">{{ lang('NO_ADS') }}</td></tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}
