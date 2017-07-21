@@ -527,13 +527,17 @@ class admin_controller
 			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
 		}
 
-		// Validate ad owner
+		// Validate ad owner. Username in $data['ad_owner'] will be replaced with user_id.
 		if (!empty($data['ad_owner']))
 		{
-			user_get_id_name($ad_owner_id, $data['ad_owner']);
-			if (!empty($data['ad_owner']) && (!count($ad_owner_id) || ($data['ad_owner'] = $ad_owner_id[0]) === false))
+			// Function returns false if everything is OK.
+			if (user_get_id_name($ad_owner_id, $data['ad_owner']))
 			{
 				$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
+			}
+			else
+			{
+				$data['ad_owner'] = $ad_owner_id[0];
 			}
 		}
 		else
@@ -590,23 +594,23 @@ class admin_controller
 	}
 
 	/**
-	 * Prepare ad owner for display
+	 * Prepare ad owner for display. Method takes user_id
+	 * of the ad owner and returns his/her username.
 	 *
-	 * @param	mixed	$ad_owner	End date.
-	 * @return	string	End date prepared for display.
+	 * @param	int		$ad_owner	User ID
+	 * @return	string	Username belonging to $ad_owner.
 	 */
 	protected function prepare_ad_owner($ad_owner)
 	{
-		if ($ad_owner)
+		// Returns false when no errors occur trying to find the user
+		if (false === user_get_id_name($ad_owner, $ad_owner_name))
 		{
-			user_get_id_name($ad_owner, $ad_owner_name);
 			if (empty($ad_owner_name))
 			{
 				return $ad_owner[0];
 			}
 			return $ad_owner_name[(int) $ad_owner[0]];
 		}
-
 		return '';
 	}
 	/**

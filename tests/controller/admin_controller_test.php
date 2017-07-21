@@ -555,7 +555,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'AD_PRIORITY'		=> $ad_priority,
 					'AD_VIEWS_LIMIT'	=> $ad_views_limit,
 					'AD_CLICKS_LIMIT'	=> $ad_clicks_limit,
-					'AD_OWNER'			=> $ad_owner,
+					'AD_OWNER'			=> '',
 				));
 		}
 		else
@@ -804,7 +804,7 @@ class admin_controller_test extends \phpbb_database_test_case
 						'AD_PRIORITY'		=> $ad_priority,
 						'AD_VIEWS_LIMIT'	=> $ad_views_limit,
 						'AD_CLICKS_LIMIT'	=> $ad_clicks_limit,
-						'AD_OWNER'			=> $ad_owner,
+						'AD_OWNER'			=> '',
 					));
 			}
 		}
