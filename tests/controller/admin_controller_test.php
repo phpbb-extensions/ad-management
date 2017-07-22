@@ -55,6 +55,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
 	protected $config;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\files\upload */
+	protected $files_upload;
+
 	/** @var string */
 	protected $root_path;
 
@@ -124,6 +127,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->files_upload = $this->getMockBuilder('\phpbb\files\upload')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/ads/';
@@ -156,6 +162,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->log,
 			$this->config_text,
 			$this->config,
+			$this->files_upload,
 			$this->root_path,
 			$this->php_ext,
 			$this->ext_path
@@ -201,6 +208,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->log,
 				$this->config_text,
 				$this->config,
+				$this->files_upload,
 				$this->root_path,
 				$this->php_ext,
 				$this->ext_path,
@@ -407,6 +415,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('submit')
 			->willReturn(false);
 
+		$this->request->expects($this->at(2))
+			->method('is_set_post')
+			->with('upload_banner')
+			->willReturn(false);
+
 		$this->location_manager->expects($this->once())
 			->method('get_all_locations')
 			->willReturn(array(
@@ -453,6 +466,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('submit')
 			->willReturn(false);
 
+		$this->request->expects($this->at(2))
+			->method('is_set_post')
+			->with('upload_banner')
+			->willReturn(false);
+
 		$this->location_manager->expects($this->once())
 			->method('get_all_locations')
 			->willReturn(array(
@@ -473,6 +491,120 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->at(0))
 				->method('assign_var')
 				->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
+
+		$controller->action_add();
+	}
+
+	/**
+	 * Test data for the test_action_add_upload_banner() function
+	 *
+	 * @return array Array of test data
+	 */
+	public function action_add_upload_banner_data()
+	{
+		return array(
+			array(array()),
+			array(array('NO_FILE')),
+		);
+	}
+
+	/**
+	 * Test action_add() method with upload_banner submitted data
+	 *
+	 * @dataProvider action_add_upload_banner_data
+	 */
+	public function test_action_add_upload_banner($file_error)
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		$this->request->expects($this->at(2))
+			->method('is_set_post')
+			->with('upload_banner')
+			->willReturn(true);
+
+		$this->request->expects($this->any())
+			->method('variable')
+			->will($this->onConsecutiveCalls('AD NAME', '', '<!-- AD CODE SAMPLE -->', false, array(), '', 5, 0, 0));
+
+		$this->files_upload->expects($this->once())
+			->method('reset_vars');
+
+		$this->files_upload->expects($this->once())
+			->method('set_allowed_extensions')
+			->with(array('gif', 'jpg', 'jpeg', 'png'));
+
+		// Mock filespec
+		$file = $this->getMockBuilder('\phpbb\files\filespec')
+			->disableOriginalConstructor()
+			->getMock();
+
+		$this->files_upload->expects($this->once())
+			->method('handle_upload')
+			->with('files.types.form', 'banner')
+			->willReturn($file);
+
+		$file->expects($this->once())
+			->method('clean_filename')
+			->with('unique_ext');
+
+		$file->expects($this->once())
+			->method('move_file')
+			->with('images/phpbb_ads');
+
+		$file->error = $file_error;
+
+		if (sizeof($file_error))
+		{
+			$file->expects($this->once())
+				->method('remove');
+		}
+		else
+		{
+			$file->expects($this->once())
+				->method('get')
+				->with('realname')
+				->willReturn('abcdef.jpg');
+		}
+
+		$this->location_manager->expects($this->once())
+			->method('get_all_locations')
+			->willReturn(array(
+				'above_footer'	=> array(
+					'name'	=> 'AD_FOOTER_HEADER',
+					'desc'	=> 'AD_FOOTER_HEADER_DESC',
+				),
+				'above_header'	=> array(
+					'name'	=> 'AD_ABOVE_HEADER',
+					'desc'	=> 'AD_ABOVE_HEADER_DESC',
+				),
+			));
+
+		$this->template->expects($this->at(2))
+			->method('assign_vars')
+			->with(array(
+				'S_ERROR'   => (bool) count($file_error),
+				'ERROR_MSG' => count($file_error) ? implode('<br />', $file_error) : '',
+
+				'AD_NAME'         => 'AD NAME',
+				'AD_NOTE'         => '',
+				'AD_CODE'         => count($file_error) ? '<!-- AD CODE SAMPLE -->' : "<!-- AD CODE SAMPLE -->\n\n<img src=\"" . generate_board_url() . '/images/phpbb_ads/abcdef.jpg" />',
+				'AD_ENABLED'      => false,
+				'AD_END_DATE'     => '',
+				'AD_PRIORITY'     => 5,
+				'AD_VIEWS_LIMIT'  => 0,
+				'AD_CLICKS_LIMIT' => 0,
+				'AD_OWNER'        => '',
+			));
 
 		$controller->action_add();
 	}
