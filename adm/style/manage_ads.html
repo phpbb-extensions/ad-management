@@ -23,7 +23,7 @@
 		</div>
 	{% endif %}
 
-	<form id="acp_addmanagement_add" method="post" action="{{ U_ACTION }}">
+	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 		<fieldset>
 			<legend>{{ lang('CONFIGURE_AD') }}</legend>
 			<dl>
@@ -36,10 +36,6 @@
 					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
-			</dl>
-			<dl>
 				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_note" name="ad_note" rows="10" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
@@ -48,8 +44,15 @@
 				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
 			</dl>
 			<dl>
+				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br /><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
+				<dd>
+					<input type="file" accept="image/*" class="inputbox autowidth" id="banner" name="banner" />
+					<input type="submit" class="button2" id="upload_banner" name="upload_banner" value="{{ lang('BANNER_UPLOAD') }}">
+				</dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY }}" min="1" max="10" placeholder="{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}" /></dd>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
@@ -59,6 +62,23 @@
 					{% endfor %}
 					</select>
 				</dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" size="20" min="0" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" type="text" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
+				<dd>[ <a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
@@ -82,8 +102,10 @@
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 			<tr>
-				<th style="width: 65%;">{{ lang('AD_NAME') }}</th>
+				<th>{{ lang('AD_NAME') }}</th>
 				<th style="width: 15%;">{{ lang('AD_END_DATE') }}</th>
+				{% if S_VIEWS_ENABLED %}<th style="width: 10%;">{{ lang('AD_VIEWS') }}</th>{% endif %}
+				{% if S_CLICKS_ENABLED %}<th style="width: 10%;">{{ lang('AD_CLICKS') }}</th>{% endif %}
 				<th style="width: 10%;">{{ lang('ENABLED') }}</th>
 				<th style="width: 10%;">{{ lang('ACTION') }}</th>
 			</tr>
@@ -97,6 +119,20 @@
 							{{ ad.END_DATE }}
 						{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
 					</td>
+					{% if S_VIEWS_ENABLED %}
+						<td>
+							{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
+								{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
+							{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
+						</td>
+					{% endif %}
+					{% if S_CLICKS_ENABLED %}
+						<td>
+							{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
+								{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
+							{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
+						</td>
+					{% endif %}
 					<td>
 						{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
 							{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}

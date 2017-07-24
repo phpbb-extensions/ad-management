@@ -8,50 +8,66 @@
 		<column>ad_enabled</column>
 		<column>ad_end_date</column>
 		<column>ad_priority</column>
+		<column>ad_owner</column>
 		<row>
 			<value>1</value>
-			<value>One and only</value>
-			<value>And it's desc</value>
-			<value>adscode</value>
+			<value>Primary ad</value>
+			<value>Ad description #1</value>
+			<value>Ad Code #1</value>
 			<value>1</value>
 			<value>2051308800</value>
 			<value>5</value>
+			<value>2</value>
 		</row>
 		<row>
 			<value>2</value>
-			<value>Second one</value>
-			<value>And it's desc</value>
-			<value>code here</value>
+			<value>Disabled ad</value>
+			<value>Ad description #2</value>
+			<value>Ad Code #2</value>
 			<value>0</value>
 			<value>0</value>
 			<value>5</value>
+			<value>2</value>
 		</row>
 		<row>
 			<value>3</value>
 			<value>Expired ad</value>
-			<value>And it's desc</value>
-			<value>code of expired ad</value>
+			<value>Ad description #3</value>
+			<value>Ad Code #3</value>
 			<value>1</value>
 			<value>1</value>
 			<value>5</value>
+			<value>0</value>
 		</row>
 		<row>
 			<value>4</value>
 			<value>Low priority ad</value>
-			<value>And it's desc</value>
-			<value>adscodelow</value>
+			<value>Ad description #4</value>
+			<value>Ad Code #4</value>
 			<value>1</value>
-			<value>2051308800</value>
+			<value>0</value>
 			<value>1</value>
+			<value>0</value>
 		</row>
 		<row>
 			<value>5</value>
-			<value>Mid priority ad</value>
-			<value>And it's desc</value>
-			<value>adscodemid</value>
+			<value>Med priority ad</value>
+			<value>Ad description #5</value>
+			<value>Ad Code #5</value>
 			<value>1</value>
-			<value>2051308800</value>
+			<value>0</value>
 			<value>3</value>
+			<value>0</value>
+		</row>
+		<row>
+			<value>6</value>
+			<value>Delete Me Ad</value>
+			<value></value>
+			<value></value>
+			<value>1</value>
+			<value>0</value>
+			<value>5</value>
+			<value>0</value>
 		</row>
 	</table>
 	<table name="phpbb_ad_locations">
@@ -66,6 +82,10 @@
 			<value>below_header</value>
 		</row>
 		<row>
+			<value>1</value>
+			<value>after_profile</value>
+		</row>
+		<row>
 			<value>2</value>
 			<value>above_header</value>
 		</row>
@@ -78,22 +98,51 @@
 			<value>above_header</value>
 		</row>
 		<row>
+			<value>4</value>
+			<value>before_profile</value>
+		</row>
+		<row>
 			<value>5</value>
 			<value>above_header</value>
+		</row>
+		<row>
+			<value>6</value>
+			<value>after_posts</value>
+		</row>
+		<row>
+			<value>6</value>
+			<value>before_posts</value>
 		</row>
 	</table>
 	<table name="phpbb_groups">
 		<column>group_id</column>
 		<column>group_name</column>
 		<column>group_desc</column>
+		<column>group_type</column>
 		<row>
 			<value>1</value>
 			<value>ADMINISTRATORS</value>
 			<value></value>
+			<value>3</value>
 		</row>
 		<row>
 			<value>2</value>
 			<value>Custom group name</value>
+			<value></value>
+			<value>0</value>
+		</row>
+	</table>
+	<table name="phpbb_users">
+		<column>user_id</column>
+		<column>username</column>
+		<column>username_clean</column>
+		<column>user_permissions</column>
+		<column>user_sig</column>
+		<row>
+			<value>2</value>
+			<value>admin</value>
+			<value>admin</value>
+			<value></value>
 			<value></value>
 		</row>
 	</table>

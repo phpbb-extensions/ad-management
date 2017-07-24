@@ -1,1 +1,4 @@
 {% INCLUDECSS '@phpbb_ads/phpbbads.css' %}
+{% if S_PHPBB_ADS_ENABLE_CLICKS %}
+	{% INCLUDEJS '@phpbb_ads/js/clicks.js' %}
+{% endif %}

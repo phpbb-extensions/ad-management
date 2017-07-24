@@ -7,6 +7,7 @@ services:
         class: phpbb\ads\ad\manager
         arguments:
             - '@dbal.conn'
+            - '@config'
             - '%phpbb.ads.tables.ads%'
             - '%phpbb.ads.tables.ad_locations%'
 
@@ -21,8 +22,25 @@ services:
             - '@log'
             - '@config_text'
             - '@config'
+            - '@files.upload'
+            - '@filesystem'
+            - '%core.root_path%'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
+
+    phpbb.ads.click.controller:
+        class: phpbb\ads\controller\click_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@request'
+
+    phpbb.ads.ucp.controller:
+        class: phpbb\ads\controller\ucp_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@user'
+            - '@template'
+            - '@config'
 
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
@@ -33,5 +51,6 @@ services:
             - '@config'
             - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'
+            - '@controller.helper'
         tags:
             - { name: event.listener }

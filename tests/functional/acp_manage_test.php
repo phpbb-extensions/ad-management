@@ -73,6 +73,24 @@ class acp_manage_test extends acp_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
+		// Confirm error when submitting too low views limit
+		$form_data = array(
+			'ad_views_limit'	=> -1,
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_VIEWS_LIMIT_INVALID'));
+
+		// Confirm error when submitting too low clicks limit
+		$form_data = array(
+			'ad_clicks_limit'	=> -1,
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_CLICKS_LIMIT_INVALID'));
+
+		// Confirm error when submitting wrong username for ad owner
+		$form_data = array(
+			'ad_owner'	=> 'non-existent user',
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_OWNER_INVALID'));
+
 		// Create ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name',
@@ -81,6 +99,9 @@ class acp_manage_test extends acp_base
 			'ad_enabled'	=> true,
 			'ad_end_date'	=> '2035-01-01',
 			'ad_priority'	=> 1,
+			'ad_views_limit'	=> 0,
+			'ad_clicks_limit'	=> 0,
+			'ad_owner'	=> 'admin',
 		);
 
 		// Confirm preview
@@ -153,6 +174,24 @@ class acp_manage_test extends acp_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
+		// Confirm error when submitting too low views limit
+		$form_data = array(
+			'ad_views_limit'	=> -1,
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_VIEWS_LIMIT_INVALID'));
+
+		// Confirm error when submitting too low clicks limit
+		$form_data = array(
+			'ad_clicks_limit'	=> -1,
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_CLICKS_LIMIT_INVALID'));
+
+		// Confirm error when submitting wrong username for ad owner
+		$form_data = array(
+			'ad_owner'	=> 'non-existent user',
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_OWNER_INVALID'));
+
 		// Edit ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name edited',
@@ -161,6 +200,9 @@ class acp_manage_test extends acp_base
 			'ad_enabled'	=> false,
 			'ad_end_date'	=> '2035-01-02',
 			'ad_priority'	=> 2,
+			'ad_views_limit'	=> 0,
+			'ad_clicks_limit'	=> 0,
+			'ad_owner'	=> 'admin',
 		);
 
 		// Confirm preview
