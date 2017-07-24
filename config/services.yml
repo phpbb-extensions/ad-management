@@ -18,15 +18,30 @@ services:
             - '@user'
             - '@request'
             - '@phpbb.ads.ad.manager'
-            - '@phpbb.ads.location.manager'
-            - '@log'
             - '@config_text'
             - '@config'
+            - '@phpbb.ads.admin.input'
+            - '@phpbb.ads.admin.helper'
+
+    phpbb.ads.admin.helper:
+        class: phpbb\ads\controller\admin_helper
+        arguments:
+            - '@user'
+            - '@template'
+            - '@log'
+            - '@phpbb.ads.location.manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    phpbb.ads.admin.input:
+        class: phpbb\ads\controller\admin_input
+        arguments:
+            - '@user'
+            - '@request'
             - '@files.upload'
             - '@filesystem'
             - '%core.root_path%'
             - '%core.php_ext%'
-            - '%core.root_path%ext/phpbb/ads/'
 
     phpbb.ads.click.controller:
         class: phpbb\ads\controller\click_controller
