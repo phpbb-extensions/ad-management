@@ -38,7 +38,7 @@ class m12_banner_dir extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('custom', array($this, 'create_banner_dir')),
+			array('custom', array(array(&$this, 'create_banner_dir'))),
 		);
 	}
 
