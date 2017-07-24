@@ -491,8 +491,7 @@ class admin_controller
 		$file->clean_filename('unique_ext');
 
 		// First lets create phpbb_ads directory if needed
-		$dir = $this->root_path . 'images/phpbb_ads';
-		if (!$this->filesystem->exists($dir))
+		if (!$this->filesystem->exists($this->root_path . 'images/phpbb_ads'))
 		{
 			try
 			{
@@ -505,7 +504,7 @@ class admin_controller
 		}
 
 		// Move file to proper location
-		if (!$file->move_file($dir))
+		if (!$file->move_file('images/phpbb_ads'))
 		{
 			$file->set_error($this->user->lang('FILE_MOVE_UNSUCCESSFUL'));
 		}
