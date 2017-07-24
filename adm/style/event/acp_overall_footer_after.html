@@ -36,6 +36,42 @@
 			timepicker: false
 		});
 		$.datetimepicker.setLocale('{{ S_USER_LANG }}');
+
+		$('#upload_banner').click(function(e) {
+			e.preventDefault();
+
+			var file = $('#banner')[0].files[0];
+			if (file) {
+				var formData = new FormData();
+				formData.append('banner', file);
+				formData.append('upload_banner', true);
+				$.ajax({
+					method: 'POST',
+					url: window.location.href,
+					data: formData,
+					processData: false,
+					async: true,
+					cache: false,
+					contentType: false,
+					success: function(data) {
+						if (data.success) {
+							$('#ad_code').val(function(i, text) {
+								return (text.length ? text + "\n\n" : '') + data.text;
+							});
+						}
+						else {
+							phpbb.alert(data.title, data.text);
+						}
+					},
+					error: function(err) {
+						phpbb.alert(err.title, err.text);
+					}
+				});
+			}
+			else {
+				phpbb.alert('{{ lang('INFORMATION') }}', '{{ lang('NO_FILE_SELECTED') }}');
+			}
+		});
 	});
 	</script>
 {% endif %}
