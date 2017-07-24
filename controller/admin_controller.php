@@ -503,12 +503,12 @@ class admin_controller
 				$json_response->send(array(
 					'success'	=> false,
 					'title'		=> $this->user->lang('INFORMATION'),
-					'text'		=> implode(', ', $file->error),
+					'text'		=> implode('<br />', $file->error),
 				));
 			}
 			else
 			{
-				$this->errors[] = implode(', ', $file->error);
+				$this->errors[] = implode('<br />', $file->error);
 			}
 		}
 		else
