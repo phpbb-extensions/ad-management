@@ -56,7 +56,7 @@
 					success: function(data) {
 						if (data.success) {
 							$('#ad_code').val(function(i, text) {
-								return text + "\n\n" + data.text;
+								return (text.length ? text + "\n\n" : '') + data.text;
 							});
 						}
 						else {
