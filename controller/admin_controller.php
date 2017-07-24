@@ -484,10 +484,17 @@ class admin_controller
 		// Upload file
 		$file = $this->files_upload->handle_upload('files.types.form', 'banner');
 		$file->clean_filename('unique_ext');
-		$file->move_file('images/phpbb_ads');
+		if (!$file->move_file('images/phpbb_ads'))
+		{
+			$file->set_error($this->user->lang('NO_UPLOAD_DIRECTORY'));
+		}
+		if (!$file->is_image())
+		{
+			$file->set_error($this->user->lang('NOT_IMAGE'));
+		}
 
 		// Problem with uploading
-		if (sizeof($file->error))
+		if (count($file->error))
 		{
 			$file->remove();
 			if ($this->request->is_ajax())
@@ -496,12 +503,12 @@ class admin_controller
 				$json_response->send(array(
 					'success'	=> false,
 					'title'		=> $this->user->lang('INFORMATION'),
-					'text'		=> implode(',', $file->error),
+					'text'		=> implode(', ', $file->error),
 				));
 			}
 			else
 			{
-				$this->errors[] = implode(',', $file->error);
+				$this->errors[] = implode(', ', $file->error);
 			}
 		}
 		else
@@ -517,7 +524,7 @@ class admin_controller
 				));
 			}
 
-			return $ad_code . "\n\n" . $banner_html;
+			return ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
 		}
 
 		return $ad_code;
