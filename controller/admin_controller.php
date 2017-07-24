@@ -46,6 +46,9 @@ class admin_controller
 	/** @var \phpbb\files\upload */
 	protected $files_upload;
 
+	/** @var \phpbb\filesystem\filesystem_interface */
+	protected $filesystem;
+
 	/** @var string root_path */
 	protected $root_path;
 
@@ -64,20 +67,21 @@ class admin_controller
 	/**
 	* Constructor
 	*
-	* @param \phpbb\template\template		$template			Template object
-	* @param \phpbb\user					$user				User object
-	* @param \phpbb\request\request			$request			Request object
-	* @param \phpbb\ads\ad\manager			$manager			Advertisement manager object
-	* @param \phpbb\ads\location\manager	$location_manager	Template location manager object
-	* @param \phpbb\log\log					$log				The phpBB log system
-	* @param \phpbb\config\db_text			$config_text		Config text object
-	* @param \phpbb\config\config			$config				Config object
-	* @param \phpbb\files\upload			$files_upload		Files upload object
-	* @param string                      	$root_path			phpBB root path
-	* @param string							$php_ext			PHP extension
-	* @param string							$ext_path			Path to this extension
+	* @param \phpbb\template\template				$template			Template object
+	* @param \phpbb\user							$user				User object
+	* @param \phpbb\request\request					$request			Request object
+	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
+	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
+	* @param \phpbb\log\log							$log				The phpBB log system
+	* @param \phpbb\config\db_text					$config_text		Config text object
+	* @param \phpbb\config\config					$config				Config object
+	* @param \phpbb\files\upload					$files_upload		Files upload object
+	* @param \phpbb\filesystem\filesystem_interface	$filesystem			Filesystem object
+	* @param string                      			$root_path			phpBB root path
+	* @param string									$php_ext			PHP extension
+	* @param string									$ext_path			Path to this extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\files\upload $files_upload, $root_path, $php_ext, $ext_path)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\files\upload $files_upload, \phpbb\filesystem\filesystem_interface $filesystem, $root_path, $php_ext, $ext_path)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -88,6 +92,7 @@ class admin_controller
 		$this->config_text = $config_text;
 		$this->config = $config;
 		$this->files_upload = $files_upload;
+		$this->filesystem = $filesystem;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_path = $ext_path;
@@ -484,9 +489,25 @@ class admin_controller
 		// Upload file
 		$file = $this->files_upload->handle_upload('files.types.form', 'banner');
 		$file->clean_filename('unique_ext');
+
+		// First lets create phpbb_ads directory if needed
+		$dir = $this->root_path . 'images/phpbb_ads';
+		if (!$this->filesystem->exists($dir))
+		{
+			try
+			{
+				$this->filesystem->mkdir($this->root_path . 'images/phpbb_ads');
+			}
+			catch (\phpbb\filesystem\exception\filesystem_exception $e)
+			{
+				$file->set_error($this->user->lang($e->getMessage()));
+			}
+		}
+
+		// Move file to proper location
 		if (!$file->move_file('images/phpbb_ads'))
 		{
-			$file->set_error($this->user->lang('NO_UPLOAD_DIRECTORY'));
+			$file->set_error($this->user->lang('CANNOT_CREATE_DIRECTORY'));
 		}
 
 		// Problem with uploading

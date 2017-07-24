@@ -23,6 +23,7 @@ services:
             - '@config_text'
             - '@config'
             - '@files.upload'
+            - '@filesystem'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%core.root_path%ext/phpbb/ads/'
