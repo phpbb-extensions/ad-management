@@ -58,6 +58,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\files\upload */
 	protected $files_upload;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\filesystem\filesystem */
+	protected $filesystem;
+
 	/** @var string */
 	protected $root_path;
 
@@ -130,6 +133,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->files_upload = $this->getMockBuilder('\phpbb\files\upload')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->filesystem = $this->getMockBuilder('\phpbb\filesystem\filesystem')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 		$this->ext_path = $phpbb_root_path . 'ext/phpbb/ads/';
@@ -163,6 +169,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->config_text,
 			$this->config,
 			$this->files_upload,
+			$this->filesystem,
 			$this->root_path,
 			$this->php_ext,
 			$this->ext_path
@@ -209,6 +216,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->config_text,
 				$this->config,
 				$this->files_upload,
+				$this->filesystem,
 				$this->root_path,
 				$this->php_ext,
 				$this->ext_path,
