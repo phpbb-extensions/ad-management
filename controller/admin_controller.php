@@ -505,7 +505,7 @@ class admin_controller
 		}
 
 		// Move file to proper location
-		if (!$file->move_file('images/phpbb_ads'))
+		if (!$file->move_file($dir))
 		{
 			$file->set_error($this->user->lang('FILE_MOVE_UNSUCCESSFUL'));
 		}
