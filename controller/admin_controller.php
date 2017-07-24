@@ -473,7 +473,7 @@ class admin_controller
 	 * Upload image and return updated ad code or <img> of new banner when using ajax.
 	 *
 	 * @param	 string	 $ad_code	 Current ad code
-	 * @return	 mixed	 JsonResponse when request is ajax or updated ad code otherwise.
+	 * @return	 mixed	 \phpbb\json_response when request is ajax or updated ad code otherwise.
 	 */
 	protected function process_banner_upload($ad_code)
 	{
