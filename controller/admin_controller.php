@@ -488,10 +488,6 @@ class admin_controller
 		{
 			$file->set_error($this->user->lang('NO_UPLOAD_DIRECTORY'));
 		}
-		if (!$file->is_image())
-		{
-			$file->set_error($this->user->lang('NOT_IMAGE'));
-		}
 
 		// Problem with uploading
 		if (count($file->error))
