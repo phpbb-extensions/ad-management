@@ -41,6 +41,12 @@ class admin_controller
 	/** @var \phpbb\ads\controller\admin_helper */
 	protected $helper;
 
+	/** @var string root_path */
+	protected $root_path;
+
+	/** @var string php_ext */
+	protected $php_ext;
+
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -55,8 +61,10 @@ class admin_controller
 	* @param \phpbb\config\config               $config           Config object
 	* @param \phpbb\ads\controller\admin_input 	$input			  Admin input object
 	* @param \phpbb\ads\controller\admin_helper $helper			  Admin helper object
+	* @param string								$root_path		  phpBB root path
+	* @param string								$php_ext		  PHP extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -66,6 +74,8 @@ class admin_controller
 		$this->config = $config;
 		$this->input = $input;
 		$this->helper = $helper;
+		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 	}
 
 	/**
@@ -76,7 +86,6 @@ class admin_controller
 	public function mode_manage()
 	{
 		$this->setup();
-		$this->input->setup();
 
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
@@ -179,9 +188,9 @@ class admin_controller
 			}
 			else if ($upload_banner)
 			{
-				$data['ad_code'] = $this->input->process_banner_upload($data['ad_code']);
+				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
 			}
-			else if (empty($this->input->get_errors()))
+			else if (empty($this->input->has_errors()))
 			{
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
@@ -233,9 +242,9 @@ class admin_controller
 			}
 			else if ($upload_banner)
 			{
-				$data['ad_code'] = $this->input->process_banner_upload($data['ad_code']);
+				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
 			}
-			else if (empty($this->input->get_errors()))
+			else if (empty($this->input->has_errors()))
 			{
 				$success = $this->manager->update_ad($ad_id, $data);
 
@@ -393,7 +402,12 @@ class admin_controller
 	 */
 	protected function setup()
 	{
-		$this->user->add_lang('posting'); // Used by process_banner_upload() file errors
+		if (!function_exists('user_get_id_name'))
+		{
+			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+		}
+
+		$this->user->add_lang('posting'); // Used by banner_upload() file errors
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
 		$this->template->assign_var('S_PHPBB_ADS', true);

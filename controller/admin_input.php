@@ -35,9 +35,6 @@ class admin_input
 	/** @var string */
 	protected $root_path;
 
-	/** @var string */
-	protected $php_ext;
-
 	/** @var array Form validation errors */
 	protected $errors = array();
 
@@ -49,29 +46,24 @@ class admin_input
 	 * @param \phpbb\files\upload						$files_upload	Files upload object
 	 * @param \phpbb\filesystem\filesystem_interface	$filesystem		Filesystem object
 	 * @param string									$root_path		Root path
-	 * @param string									$php_ext		PHP extension
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\request\request $request, \phpbb\files\upload $files_upload, \phpbb\filesystem\filesystem_interface $filesystem, $root_path, $php_ext)
+	public function __construct(\phpbb\user $user, \phpbb\request\request $request, \phpbb\files\upload $files_upload, \phpbb\filesystem\filesystem_interface $filesystem, $root_path)
 	{
 		$this->user = $user;
 		$this->request = $request;
 		$this->files_upload = $files_upload;
 		$this->filesystem = $filesystem;
 		$this->root_path = $root_path;
-		$this->php_ext = $php_ext;
-	}
-
-	public function setup()
-	{
-		if (!function_exists('user_get_id_name'))
-		{
-			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
-		}
 	}
 
 	public function get_errors()
 	{
 		return $this->errors;
+	}
+
+	public function has_errors()
+	{
+		return count($this->errors);
 	}
 
 	/**
@@ -123,7 +115,7 @@ class admin_input
 	 * @param	 string	 $ad_code	 Current ad code
 	 * @return	 mixed	 \phpbb\json_response when request is ajax or updated ad code otherwise.
 	 */
-	public function process_banner_upload($ad_code)
+	public function banner_upload($ad_code)
 	{
 		// Set file restrictions
 		$this->files_upload->reset_vars();
@@ -262,10 +254,8 @@ class admin_input
 		{
 			return 0;
 		}
-		else
-		{
-			user_get_id_name($ad_owner_id, $ad_owner);
-			return $ad_owner_id[0];
-		}
+
+		user_get_id_name($ad_owner_id, $ad_owner);
+		return $ad_owner_id[0];
 	}
 }

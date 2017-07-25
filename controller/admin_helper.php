@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\controller;
 
+use \phpbb\ads\controller\admin_controller as controller;
+
 /**
  * Admin helper
  */
@@ -134,7 +136,7 @@ class admin_helper
 
 		if (is_numeric($end_date))
 		{
-			return $this->user->format_date($end_date, self::DATE_FORMAT);
+			return $this->user->format_date($end_date, controller::DATE_FORMAT);
 		}
 
 		return (string) $end_date;

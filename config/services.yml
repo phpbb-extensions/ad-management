@@ -22,6 +22,8 @@ services:
             - '@config'
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.admin.helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     phpbb.ads.admin.helper:
         class: phpbb\ads\controller\admin_helper
@@ -41,7 +43,6 @@ services:
             - '@files.upload'
             - '@filesystem'
             - '%core.root_path%'
-            - '%core.php_ext%'
 
     phpbb.ads.click.controller:
         class: phpbb\ads\controller\click_controller
