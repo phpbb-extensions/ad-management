@@ -141,30 +141,23 @@ class admin_input
 			$file->set_error($this->user->lang('FILE_MOVE_UNSUCCESSFUL'));
 		}
 
+		$error = count($file->error);
+		$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $file->get('realname') . '" />';
+		$error_string = implode('<br />', $file->error);
+
 		// Problem with uploading
-		if (count($file->error))
+		if ($error)
 		{
 			$file->remove();
-			if ($this->request->is_ajax())
-			{
-				$this->send_ajax_response(false, implode('<br />', $file->error));
-			}
-
-			$this->errors[] = implode('<br />', $file->error);
+			$this->errors[] = $error_string;
 		}
-		else
+
+		if ($this->request->is_ajax())
 		{
-			$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $file->get('realname') . '" />';
-
-			if ($this->request->is_ajax())
-			{
-				$this->send_ajax_response(true, $banner_html);
-			}
-
-			return ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
+			$this->send_ajax_response(!$error, $error ? $error_string : $banner_html);
 		}
 
-		return $ad_code;
+		return ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
 	}
 
 	protected function validate_ad_name($ad_name)
