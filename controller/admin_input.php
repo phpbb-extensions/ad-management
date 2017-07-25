@@ -25,14 +25,8 @@ class admin_input
 	/** @var \phpbb\request\request */
 	protected $request;
 
-	/** @var \phpbb\files\upload */
-	protected $files_upload;
-
-	/** @var \phpbb\filesystem\filesystem_interface */
-	protected $filesystem;
-
-	/** @var string */
-	protected $root_path;
+	/** @var \phpbb\ads\banner\banner */
+	protected $banner;
 
 	/** @var array Form validation errors */
 	protected $errors = array();
@@ -42,17 +36,13 @@ class admin_input
 	 *
 	 * @param \phpbb\user								$user			User object
 	 * @param \phpbb\request\request					$request		Request object
-	 * @param \phpbb\files\upload						$files_upload	Files upload object
-	 * @param \phpbb\filesystem\filesystem_interface	$filesystem		Filesystem object
-	 * @param string									$root_path		Root path
+	 * @param \phpbb\ads\banner\banner					$banner			Banner upload object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\request\request $request, \phpbb\files\upload $files_upload, \phpbb\filesystem\filesystem_interface $filesystem, $root_path)
+	public function __construct(\phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
 	{
 		$this->user = $user;
 		$this->request = $request;
-		$this->files_upload = $files_upload;
-		$this->filesystem = $filesystem;
-		$this->root_path = $root_path;
+		$this->banner = $banner;
 	}
 
 	/**
@@ -129,47 +119,33 @@ class admin_input
 	 */
 	public function banner_upload($ad_code)
 	{
-		// Set file restrictions
-		$this->files_upload->reset_vars();
-		$this->files_upload->set_allowed_extensions(array('gif', 'jpg', 'jpeg', 'png'));
-
-		// Upload file
-		$file = $this->files_upload->handle_upload('files.types.form', 'banner');
-		$file->clean_filename('unique_ext');
-
-		// First lets create phpbb_ads directory if needed
 		try
 		{
-			$this->create_storage_dir();
+			$this->banner->create_storage_dir();
+			$realname = $this->banner->upload();
+
+			$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $realname . '" />';
+
+			if ($this->request->is_ajax())
+			{
+				$this->send_ajax_response(true, $banner_html);
+			}
+
+			$ad_code = ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
 		}
-		catch (\phpbb\filesystem\exception\filesystem_exception $e)
+		catch (\phpbb\exception\runtime_exception $e)
 		{
-			$file->set_error($this->user->lang($e->getMessage()));
+			$this->banner->remove();
+
+			if ($this->request->is_ajax())
+			{
+				$this->send_ajax_response(false, $this->user->lang($e->getMessage()));
+			}
+
+			$this->errors[] = $this->user->lang($e->getMessage());
 		}
 
-		// Move file to proper location
-		if (!$file->move_file('images/phpbb_ads'))
-		{
-			$file->set_error($this->user->lang('FILE_MOVE_UNSUCCESSFUL'));
-		}
-
-		$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $file->get('realname') . '" />';
-		$error = count($file->error);
-		$error_string = implode('<br />', $file->error);
-
-		// Problem with uploading
-		if ($error)
-		{
-			$file->remove();
-			$this->errors[] = $error_string;
-		}
-
-		if ($this->request->is_ajax())
-		{
-			$this->send_ajax_response(!$error, $error ? $error_string : $banner_html);
-		}
-
-		return ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
+		return $ad_code;
 	}
 
 	protected function validate_ad_name($ad_name)
@@ -248,14 +224,6 @@ class admin_input
 
 		user_get_id_name($ad_owner_id, $ad_owner);
 		return $ad_owner_id[0];
-	}
-
-	protected function create_storage_dir()
-	{
-		if (!$this->filesystem->exists($this->root_path . 'images/phpbb_ads'))
-		{
-			$this->filesystem->mkdir($this->root_path . 'images/phpbb_ads');
-		}
 	}
 
 	protected function send_ajax_response($success, $text)

@@ -23,14 +23,8 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
 	protected $request;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\files\upload */
-	protected $files_upload;
-
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\filesystem\filesystem */
-	protected $filesystem;
-
-	/** @var string */
-	protected $root_path;
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\banner\banner */
+	protected $banner;
 
 	/**
 	 * {@inheritDoc}
@@ -67,13 +61,9 @@ class admin_input_test extends \phpbb_database_test_case
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->files_upload = $this->getMockBuilder('\phpbb\files\upload')
+		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->filesystem = $this->getMockBuilder('\phpbb\filesystem\filesystem')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->root_path = $phpbb_root_path;
 
 		// Global variables
 		$db = $this->new_dbal();
@@ -89,9 +79,7 @@ class admin_input_test extends \phpbb_database_test_case
 		$input = new \phpbb\ads\controller\admin_input(
 			$this->user,
 			$this->request,
-			$this->files_upload,
-			$this->filesystem,
-			$this->root_path
+			$this->banner
 		);
 
 		return $input;
@@ -173,15 +161,11 @@ class admin_input_test extends \phpbb_database_test_case
 	public function banner_upload_data()
 	{
 		return array(
-			array(false, false, false, array('CANNOT_CREATE_DIRECTORY', 'FILE_MOVE_UNSUCCESSFUL'), '', '<img src="http://images/phpbb_ads/" />'),
-			array(false, false, true, array('CANNOT_CREATE_DIRECTORY'), '', '<img src="http://images/phpbb_ads/" />'),
-			array(false, true, false, array('FILE_MOVE_UNSUCCESSFUL'), '', '<img src="http://images/phpbb_ads/" />'),
-			array(false, true, true, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
-			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', '<img src="http://images/phpbb_ads/" />'),
-			array(true, false, true, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
-			array(true, true, false, array('FILE_MOVE_UNSUCCESSFUL'), '', '<img src="http://images/phpbb_ads/" />'),
-			array(true, true, true, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
-			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
+			array(false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
+			array(false, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
+			array(true, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
+			array(true, true, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
+			array(true, true, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
 		);
 	}
 
@@ -190,65 +174,34 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider banner_upload_data
 	 */
-	public function test_banner_upload($images_dir_exists, $can_create_directory, $can_move_file, $file_error, $ad_code, $ad_code_expected)
+	public function test_banner_upload($can_create_directory, $can_move_file, $file_error, $ad_code, $ad_code_expected)
 	{
 		$input_controller = $this->get_input_controller();
 
-		$this->files_upload->expects($this->once())
-			->method('reset_vars');
-
-		$this->files_upload->expects($this->once())
-			->method('set_allowed_extensions')
-			->with(array('gif', 'jpg', 'jpeg', 'png'));
-
-		// Mock filespec
-		$file = $this->getMockBuilder('\phpbb\files\filespec')
-			->disableOriginalConstructor()
-			->getMock();
-		$file->error = $file_error;
-
-		$this->files_upload->expects($this->once())
-			->method('handle_upload')
-			->with('files.types.form', 'banner')
-			->willReturn($file);
-
-		$file->expects($this->once())
-			->method('clean_filename')
-			->with('unique_ext');
-
-		$this->filesystem->expects($this->once())
-			->method('exists')
-			->with($this->root_path . 'images/phpbb_ads')
-			->willReturn($images_dir_exists);
-
-		if (!$images_dir_exists)
+		$create_storage_dir = $this->banner->expects($this->once())
+			->method('create_storage_dir');
+		if (!$can_create_directory)
 		{
-			$mkdir = $this->filesystem->expects($this->once())
-				->method('mkdir')
-				->with($this->root_path . 'images/phpbb_ads');
-
-			if (!$can_create_directory)
-			{
-				$mkdir->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('CANNOT_CREATE_DIRECTORY'));
-			}
-		}
-
-		$file->expects($this->once())
-			->method('move_file')
-			->with('images/phpbb_ads')
-			->willReturn($can_move_file);
-
-		if (count($file_error))
-		{
-			$file->expects($this->once())
-				->method('remove');
+			$create_storage_dir->willThrowException(new \phpbb\exception\runtime_exception('CANNOT_CREATE_DIRECTORY'));
 		}
 		else
 		{
-			$file->expects($this->once())
-				->method('get')
-				->with('realname')
-				->willReturn('abcdef.jpg');
+			$upload = $this->banner->expects($this->once())
+				->method('upload');
+			if (!$can_move_file)
+			{
+				$upload->willThrowException(new \phpbb\exception\runtime_exception('FILE_MOVE_UNSUCCESSFUL'));
+			}
+			else
+			{
+				$upload->willReturn('abcdef.jpg');
+			}
+		}
+
+		if (!$can_create_directory || !$can_move_file)
+		{
+			$this->banner->expects($this->once())
+				->method('remove');
 		}
 
 		$result = $input_controller->banner_upload($ad_code);

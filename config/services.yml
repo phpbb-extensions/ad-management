@@ -11,6 +11,14 @@ services:
             - '%phpbb.ads.tables.ads%'
             - '%phpbb.ads.tables.ad_locations%'
 
+    phpbb.ads.banner.banner:
+        class: phpbb\ads\banner\banner
+        arguments:
+            - '@files.upload'
+            - '@filesystem'
+            - '%core.root_path%'
+            - '%phpbb.ads.tables.ad_locations%'
+
     phpbb.ads.admin.controller:
         class: phpbb\ads\controller\admin_controller
         arguments:
@@ -40,9 +48,7 @@ services:
         arguments:
             - '@user'
             - '@request'
-            - '@files.upload'
-            - '@filesystem'
-            - '%core.root_path%'
+            - '@phpbb.ads.banner.banner'
 
     phpbb.ads.click.controller:
         class: phpbb\ads\controller\click_controller
