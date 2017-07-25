@@ -126,16 +126,13 @@ class admin_input
 		$file->clean_filename('unique_ext');
 
 		// First lets create phpbb_ads directory if needed
-		if (!$this->filesystem->exists($this->root_path . 'images/phpbb_ads'))
+		try
 		{
-			try
-			{
-				$this->filesystem->mkdir($this->root_path . 'images/phpbb_ads');
-			}
-			catch (\phpbb\filesystem\exception\filesystem_exception $e)
-			{
-				$file->set_error($this->user->lang($e->getMessage()));
-			}
+			$this->create_storage_dir();
+		}
+		catch (\phpbb\filesystem\exception\filesystem_exception $e)
+		{
+			$file->set_error($this->user->lang($e->getMessage()));
 		}
 
 		// Move file to proper location
@@ -150,17 +147,10 @@ class admin_input
 			$file->remove();
 			if ($this->request->is_ajax())
 			{
-				$json_response = new \phpbb\json_response;
-				$json_response->send(array(
-					'success'	=> false,
-					'title'		=> $this->user->lang('INFORMATION'),
-					'text'		=> implode('<br />', $file->error),
-				));
+				$this->send_ajax_response(false, implode('<br />', $file->error));
 			}
-			else
-			{
-				$this->errors[] = implode('<br />', $file->error);
-			}
+
+			$this->errors[] = implode('<br />', $file->error);
 		}
 		else
 		{
@@ -168,11 +158,7 @@ class admin_input
 
 			if ($this->request->is_ajax())
 			{
-				$json_response = new \phpbb\json_response;
-				$json_response->send(array(
-					'success'	=> true,
-					'text'		=> $banner_html,
-				));
+				$this->send_ajax_response(true, $banner_html);
 			}
 
 			return ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
@@ -257,5 +243,23 @@ class admin_input
 
 		user_get_id_name($ad_owner_id, $ad_owner);
 		return $ad_owner_id[0];
+	}
+
+	protected function create_storage_dir()
+	{
+		if (!$this->filesystem->exists($this->root_path . 'images/phpbb_ads'))
+		{
+			$this->filesystem->mkdir($this->root_path . 'images/phpbb_ads');
+		}
+	}
+
+	protected function send_ajax_response($success, $text)
+	{
+		$json_response = new \phpbb\json_response;
+		$json_response->send(array(
+			'success'	=> $success,
+			'title'		=> $this->user->lang('INFORMATION'),
+			'text'		=> $text,
+		));
 	}
 }
