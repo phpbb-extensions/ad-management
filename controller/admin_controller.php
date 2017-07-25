@@ -190,7 +190,7 @@ class admin_controller
 			{
 				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
 			}
-			else if (empty($this->input->has_errors()))
+			else if ($this->input->has_errors())
 			{
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
@@ -244,7 +244,7 @@ class admin_controller
 			{
 				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
 			}
-			else if (empty($this->input->has_errors()))
+			else if ($this->input->has_errors())
 			{
 				$success = $this->manager->update_ad($ad_id, $data);
 
