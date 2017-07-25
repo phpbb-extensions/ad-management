@@ -29,6 +29,7 @@ class main_listener_test extends main_listener_base
 		$this->assertEquals(array(
 			'core.user_setup',
 			'core.page_header_after',
+			'core.delete_user_after',
 		), array_keys(\phpbb\ads\event\main_listener::getSubscribedEvents()));
 	}
 }

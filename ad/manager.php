@@ -217,6 +217,25 @@ class manager
 	}
 
 	/**
+	 * Remove ad owner
+	 *
+	 * @param	array	$user_ids	User IDs
+	 * @return	void
+	 */
+	public function remove_ad_owner(array $user_ids)
+	{
+		if (empty($user_ids))
+		{
+			return;
+		}
+
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_owner = 0
+			WHERE ' . $this->db->sql_in_set('ad_owner', $user_ids);
+		$this->db->sql_query($sql);
+	}
+
+	/**
 	* Get all locations for specified advertisement
 	*
 	* @param	int		$ad_id	Advertisement ID

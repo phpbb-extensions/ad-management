@@ -49,6 +49,7 @@ class main_listener implements EventSubscriberInterface
 		return array(
 			'core.user_setup'			=> 'load_language_on_setup',
 			'core.page_header_after'	=> 'setup_ads',
+			'core.delete_user_after'	=> 'remove_ad_owner',
 		);
 	}
 
@@ -131,5 +132,16 @@ class main_listener implements EventSubscriberInterface
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 		}
+	}
+
+	/**
+	 * Remove ad owner when deleting user(s)
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
+	public function remove_ad_owner($event)
+	{
+		$this->manager->remove_ad_owner($event['user_ids']);
 	}
 }
