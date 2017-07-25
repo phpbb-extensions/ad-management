@@ -104,7 +104,10 @@ class admin_input
 
 		// Replace end date and owner with IDs that will be stored in the DB
 		$data['ad_end_date'] = $this->end_date_to_timestamp($data['ad_end_date']);
-		$data['ad_owner'] = $this->owner_to_id($data['ad_owner']);
+		if (!in_array($this->user->lang('AD_OWNER_INVALID'), $this->errors))
+		{
+			$data['ad_owner'] = $this->owner_to_id($data['ad_owner']);
+		}
 
 		return $data;
 	}
