@@ -10,14 +10,13 @@
 
 namespace phpbb\ads\controller;
 
-use \phpbb\ads\controller\admin_controller as controller;
-
 /**
  * Admin input
  */
 class admin_input
 {
 	const MAX_NAME_LENGTH = 255;
+	const DATE_FORMAT = 'Y-m-d';
 	const DEFAULT_PRIORITY = 5;
 
 	/** @var \phpbb\user */
@@ -56,11 +55,21 @@ class admin_input
 		$this->root_path = $root_path;
 	}
 
+	/**
+	 * Gets all errors
+	 *
+	 * @return	array	Errors
+	 */
 	public function get_errors()
 	{
 		return $this->errors;
 	}
 
+	/**
+	 * Returns number of errors.
+	 *
+	 * @return	int	Number of errors
+	 */
 	public function has_errors()
 	{
 		return count($this->errors);
@@ -104,7 +113,7 @@ class admin_input
 
 		// Replace end date and owner with IDs that will be stored in the DB
 		$data['ad_end_date'] = $this->end_date_to_timestamp($data['ad_end_date']);
-		if (!in_array($this->user->lang('AD_OWNER_INVALID'), $this->errors))
+		if (!in_array('AD_OWNER_INVALID', $this->errors))
 		{
 			$data['ad_owner'] = $this->owner_to_id($data['ad_owner']);
 		}
@@ -144,8 +153,8 @@ class admin_input
 			$file->set_error($this->user->lang('FILE_MOVE_UNSUCCESSFUL'));
 		}
 
-		$error = count($file->error);
 		$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $file->get('realname') . '" />';
+		$error = count($file->error);
 		$error_string = implode('<br />', $file->error);
 
 		// Problem with uploading
@@ -167,7 +176,7 @@ class admin_input
 	{
 		if ($ad_name === '')
 		{
-			$this->errors[] = $this->user->lang('AD_NAME_REQUIRED');
+			$this->errors[] = 'AD_NAME_REQUIRED';
 		}
 		if (truncate_string($ad_name, self::MAX_NAME_LENGTH) !== $ad_name)
 		{
@@ -183,12 +192,12 @@ class admin_input
 
 			if ($end_date < time())
 			{
-				$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+				$this->errors[] = 'AD_END_DATE_INVALID';
 			}
 		}
 		else if ($end_date !== '')
 		{
-			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
+			$this->errors[] = 'AD_END_DATE_INVALID';
 		}
 	}
 
@@ -196,7 +205,7 @@ class admin_input
 	{
 		if ($ad_priority < 1 || $ad_priority > 10)
 		{
-			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
+			$this->errors[] = 'AD_PRIORITY_INVALID';
 		}
 	}
 
@@ -204,7 +213,7 @@ class admin_input
 	{
 		if ($ad_views_limit < 0)
 		{
-			$this->errors[] = $this->user->lang('AD_VIEWS_LIMIT_INVALID');
+			$this->errors[] = 'AD_VIEWS_LIMIT_INVALID';
 		}
 	}
 
@@ -212,7 +221,7 @@ class admin_input
 	{
 		if ($ad_clicks_limit < 0)
 		{
-			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
+			$this->errors[] = 'AD_CLICKS_LIMIT_INVALID';
 		}
 	}
 
@@ -221,13 +230,13 @@ class admin_input
 		// user_get_id_name function returns false if everything is OK.
 		if (!empty($ad_owner) && user_get_id_name($ad_owner_id, $ad_owner))
 		{
-			$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
+			$this->errors[] = 'AD_OWNER_INVALID';
 		}
 	}
 
 	protected function end_date_to_timestamp($end_date)
 	{
-		return (int) $this->user->get_timestamp_from_format(controller::DATE_FORMAT, $end_date);
+		return (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $end_date);
 	}
 
 	protected function owner_to_id($ad_owner)

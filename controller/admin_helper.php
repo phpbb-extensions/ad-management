@@ -10,7 +10,7 @@
 
 namespace phpbb\ads\controller;
 
-use \phpbb\ads\controller\admin_controller as controller;
+use \phpbb\ads\controller\admin_input as input;
 
 /**
  * Admin helper
@@ -97,6 +97,8 @@ class admin_helper
 
 	public function assign_errors(array $errors)
 	{
+		$errors = array_map(array($this->user, 'lang'), $errors);
+
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (bool) count($errors),
 			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
@@ -136,7 +138,7 @@ class admin_helper
 
 		if (is_numeric($end_date))
 		{
-			return $this->user->format_date($end_date, controller::DATE_FORMAT);
+			return $this->user->format_date($end_date, input::DATE_FORMAT);
 		}
 
 		return (string) $end_date;
