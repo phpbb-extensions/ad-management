@@ -28,7 +28,7 @@ abstract class base implements \phpbb\ads\location\type\type_interface
 	protected $language;
 
 	/**
-	* Construct an after_profile template location object
+	* Construct a template location object
 	*
 	* @param	\phpbb\user					$user		User object
 	* @param	\phpbb\language\language	$language	Language object
