@@ -28,6 +28,7 @@ services:
             - '@phpbb.ads.ad.manager'
             - '@config_text'
             - '@config'
+            - '@group_helper'
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.admin.helper'
             - '%core.root_path%'

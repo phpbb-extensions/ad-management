@@ -35,6 +35,9 @@ class admin_controller
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\group\helper */
+	protected $group_helper;
+
 	/** @var \phpbb\ads\controller\admin_input */
 	protected $input;
 
@@ -59,12 +62,13 @@ class admin_controller
 	* @param \phpbb\ads\ad\manager              $manager          Advertisement manager object
 	* @param \phpbb\config\db_text              $config_text      Config text object
 	* @param \phpbb\config\config               $config           Config object
+	* @param \phpbb\group\helper                $group_helper     Group helper object
 	* @param \phpbb\ads\controller\admin_input 	$input			  Admin input object
 	* @param \phpbb\ads\controller\admin_helper $helper			  Admin helper object
 	* @param string								$root_path		  phpBB root path
 	* @param string								$php_ext		  PHP extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -72,6 +76,7 @@ class admin_controller
 		$this->manager = $manager;
 		$this->config_text = $config_text;
 		$this->config = $config;
+		$this->group_helper = $group_helper;
 		$this->input = $input;
 		$this->helper = $helper;
 		$this->root_path = $root_path;
@@ -128,11 +133,9 @@ class admin_controller
 		$groups = $this->manager->load_groups();
 		foreach ($groups as $group)
 		{
-			$group_name = ($group['group_type'] == GROUP_SPECIAL) ? $this->language->lang('G_' . $group['group_name']) : $group['group_name'];
-
 			$this->template->assign_block_vars('groups', array(
 				'ID'         => $group['group_id'],
-				'NAME'       => $group_name,
+				'NAME'       => $this->group_helper->get_name($group['group_name']),
 				'S_SELECTED' => in_array($group['group_id'], $hide_groups),
 			));
 		}

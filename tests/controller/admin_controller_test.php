@@ -37,6 +37,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\group\helper */
+	protected $group_helper;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_input */
 	protected $input;
 
@@ -93,6 +96,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->group_helper = new \phpbb\group\helper($this->language);
 		$this->input = $this->getMockBuilder('\phpbb\ads\controller\admin_input')
 			->disableOriginalConstructor()
 			->getMock();
@@ -122,6 +126,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->manager,
 			$this->config_text,
 			$this->config,
+			$this->group_helper,
 			$this->input,
 			$this->helper,
 			$this->root_path,
@@ -166,6 +171,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->manager,
 				$this->config_text,
 				$this->config,
+				$this->group_helper,
 				$this->input,
 				$this->helper,
 				$this->root_path,
@@ -221,7 +227,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'groups',
 					array(
 						'ID'			=> '1',
-						'NAME'			=> 'ADMINISTRATORS',
+						'NAME'			=> 'Administrators',
 						'S_SELECTED'	=> true,
 					),
 				),
