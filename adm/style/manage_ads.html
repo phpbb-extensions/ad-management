@@ -52,7 +52,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_input::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
