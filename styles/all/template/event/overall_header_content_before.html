@@ -1,3 +1,14 @@
+{% INCLUDECSS '@phpbb_ads/phpbbads.css' %}
+{% if S_PHPBB_ADS_ENABLE_CLICKS %}
+	{% INCLUDEJS '@phpbb_ads/js/clicks.js' %}
+{% endif %}
+
+{% if S_PHPBB_ADS_ENABLE_CLICKS %}
+<script>
+	var u_phpbb_ads_click = '{{ UA_PHPBB_ADS_CLICK }}';
+</script>
+{% endif %}
+
 {% if S_DISPLAY_ADBLOCKER %}
 <div id="phpbb-ads-ab" class="rules" style="display: none;">
 	<div class="inner">
