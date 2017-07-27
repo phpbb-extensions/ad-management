@@ -10,7 +10,7 @@
 
 namespace phpbb\ads\controller;
 
-use \phpbb\ads\controller\admin_input as input;
+use phpbb\ads\controller\admin_input as input;
 
 /**
  * Admin helper
@@ -153,14 +153,17 @@ class admin_helper
 	 */
 	protected function prepare_ad_owner($ad_owner)
 	{
+		$user_id = array($ad_owner);
+		$user_name = array();
+
 		// Returns false when no errors occur trying to find the user
-		if (false === user_get_id_name($ad_owner, $ad_owner_name))
+		if (false === user_get_id_name($user_id, $user_name))
 		{
-			if (empty($ad_owner_name))
+			if (empty($user_name))
 			{
-				return $ad_owner[0];
+				return $user_id[0];
 			}
-			return $ad_owner_name[(int) $ad_owner[0]];
+			return $user_name[(int) $user_id[0]];
 		}
 		return '';
 	}

@@ -45,6 +45,8 @@ class banner
 
 	/**
 	 * Create storage directory for banners uploaded by Ads Management
+	 *
+	 * @throws \phpbb\filesystem\exception\filesystem_exception
 	 */
 	public function create_storage_dir()
 	{
@@ -56,6 +58,9 @@ class banner
 
 	/**
 	 * Handle banner upload
+	 *
+	 * @throws	\phpbb\exception\runtime_exception
+	 * @return	string	Filename
 	 */
 	public function upload()
 	{

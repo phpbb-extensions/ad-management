@@ -148,6 +148,11 @@ class admin_input
 		return $ad_code;
 	}
 
+	/**
+	 * Validate advertisement name
+	 *
+	 * @param string $ad_name Advertisement name
+	 */
 	protected function validate_ad_name($ad_name)
 	{
 		if ($ad_name === '')
@@ -160,6 +165,11 @@ class admin_input
 		}
 	}
 
+	/**
+	 * Validate advertisement end date
+	 *
+	 * @param string $end_date Advertisement end date
+	 */
 	protected function validate_ad_end_date($end_date)
 	{
 		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $end_date))
@@ -177,6 +187,11 @@ class admin_input
 		}
 	}
 
+	/**
+	 * Validate advertisement priority
+	 *
+	 * @param int $ad_priority Advertisement priority
+	 */
 	protected function validate_ad_priority($ad_priority)
 	{
 		if ($ad_priority < 1 || $ad_priority > 10)
@@ -185,6 +200,11 @@ class admin_input
 		}
 	}
 
+	/**
+	 * Validate advertisement views limit
+	 *
+	 * @param int $ad_views_limit Advertisement views limit
+	 */
 	protected function validate_ad_views_limit($ad_views_limit)
 	{
 		if ($ad_views_limit < 0)
@@ -193,6 +213,11 @@ class admin_input
 		}
 	}
 
+	/**
+	 * Validate advertisement clicks limit
+	 *
+	 * @param int $ad_clicks_limit Advertisement clicks limit
+	 */
 	protected function validate_ad_clicks_limit($ad_clicks_limit)
 	{
 		if ($ad_clicks_limit < 0)
@@ -201,6 +226,11 @@ class admin_input
 		}
 	}
 
+	/**
+	 * Validate advertisement owner
+	 *
+	 * @param string $ad_owner Advertisement owner
+	 */
 	protected function validate_ad_owner($ad_owner)
 	{
 		// user_get_id_name function returns false if everything is OK.
@@ -210,11 +240,23 @@ class admin_input
 		}
 	}
 
+	/**
+	 * Convert format of end date from string to unix timestamp
+	 *
+	 * @param string $end_date Advertisement end date in YYYY-MM-DD format
+	 * @return int Advertisement end date in unix timestamp
+	 */
 	protected function end_date_to_timestamp($end_date)
 	{
 		return (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $end_date);
 	}
 
+	/**
+	 * Convert advertisement owner username to ID
+	 *
+	 * @param string $ad_owner Advertisement owner username
+	 * @return int Advertisement owner ID
+	 */
 	protected function owner_to_id($ad_owner)
 	{
 		if (empty($ad_owner))
@@ -226,6 +268,12 @@ class admin_input
 		return $ad_owner_id[0];
 	}
 
+	/**
+	 * Send ajax response
+	 *
+	 * @param bool $success Is request successful?
+	 * @param string $text Text to return
+	 */
 	protected function send_ajax_response($success, $text)
 	{
 		$json_response = new \phpbb\json_response;
