@@ -22,13 +22,21 @@ abstract class base implements \phpbb\ads\location\type\type_interface
 	protected $user;
 
 	/**
+	 * Language object
+	 * @var \phpbb\language\language
+	 */
+	protected $language;
+
+	/**
 	* Construct an after_profile template location object
 	*
-	* @param	\phpbb\user	$user	User object
+	* @param	\phpbb\user					$user		User object
+	* @param	\phpbb\language\language	$language	Language object
 	*/
-	public function __construct(\phpbb\user $user)
+	public function __construct(\phpbb\user $user, \phpbb\language\language $language)
 	{
 		$this->user = $user;
+		$this->language = $language;
 	}
 
 	/**
@@ -36,7 +44,7 @@ abstract class base implements \phpbb\ads\location\type\type_interface
 	*/
 	public function get_name()
 	{
-		return $this->user->lang('AD_' . strtoupper($this->get_id()));
+		return $this->language->lang('AD_' . strtoupper($this->get_id()));
 	}
 
 	/**
@@ -44,7 +52,7 @@ abstract class base implements \phpbb\ads\location\type\type_interface
 	*/
 	public function get_desc()
 	{
-		return $this->user->lang('AD_' . strtoupper($this->get_id()) . '_DESC');
+		return $this->language->lang('AD_' . strtoupper($this->get_id()) . '_DESC');
 	}
 
 	/**

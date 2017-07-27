@@ -16,6 +16,7 @@ services:
         class: phpbb\ads\location\type\above_footer
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -23,6 +24,7 @@ services:
         class: phpbb\ads\location\type\above_header
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -30,6 +32,7 @@ services:
         class: phpbb\ads\location\type\after_first_post
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -37,6 +40,7 @@ services:
         class: phpbb\ads\location\type\after_not_first_post
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -44,6 +48,7 @@ services:
         class: phpbb\ads\location\type\after_posts
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -51,6 +56,7 @@ services:
         class: phpbb\ads\location\type\after_profile
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -58,6 +64,7 @@ services:
         class: phpbb\ads\location\type\before_posts
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -65,6 +72,7 @@ services:
         class: phpbb\ads\location\type\before_profile
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -72,6 +80,7 @@ services:
         class: phpbb\ads\location\type\below_footer
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }
 
@@ -79,5 +88,6 @@ services:
         class: phpbb\ads\location\type\below_header
         arguments:
             - '@user'
+            - '@language'
         tags:
             - { name: phpbb.ads.location.type }

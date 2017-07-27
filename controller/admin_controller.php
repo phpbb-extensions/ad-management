@@ -20,8 +20,8 @@ class admin_controller
 	/** @var \phpbb\template\template */
 	protected $template;
 
-	/** @var \phpbb\user */
-	protected $user;
+	/** @var \phpbb\language\language */
+	protected $language;
 
 	/** @var \phpbb\request\request */
 	protected $request;
@@ -54,7 +54,7 @@ class admin_controller
 	* Constructor
 	*
 	* @param \phpbb\template\template		    $template		  Template object
-	* @param \phpbb\user                        $user             User object
+	* @param \phpbb\language\language           $language         Language object
 	* @param \phpbb\request\request             $request          Request object
 	* @param \phpbb\ads\ad\manager              $manager          Advertisement manager object
 	* @param \phpbb\config\db_text              $config_text      Config text object
@@ -64,10 +64,10 @@ class admin_controller
 	* @param string								$root_path		  phpBB root path
 	* @param string								$php_ext		  PHP extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
-		$this->user = $user;
+		$this->language = $language;
 		$this->request = $request;
 		$this->manager = $manager;
 		$this->config_text = $config_text;
@@ -121,14 +121,14 @@ class admin_controller
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
 
-			$this->helper->assign_errors(array($this->user->lang('FORM_INVALID')));
+			$this->helper->assign_errors(array($this->language->lang('FORM_INVALID')));
 		}
 
 		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
 		$groups = $this->manager->load_groups();
 		foreach ($groups as $group)
 		{
-			$group_name = ($group['group_type'] == GROUP_SPECIAL) ? $this->user->lang('G_' . $group['group_name']) : $group['group_name'];
+			$group_name = ($group['group_type'] == GROUP_SPECIAL) ? $this->language->lang('G_' . $group['group_name']) : $group['group_name'];
 
 			$this->template->assign_block_vars('groups', array(
 				'ID'         => $group['group_id'],
@@ -163,7 +163,7 @@ class admin_controller
 	 */
 	public function get_page_title()
 	{
-		return $this->user->lang('ACP_PHPBB_ADS_TITLE');
+		return $this->language->lang('ACP_PHPBB_ADS_TITLE');
 	}
 
 	/**
@@ -344,7 +344,7 @@ class admin_controller
 			}
 			else
 			{
-				confirm_box(false, $this->user->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
+				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
 					'id'     => $ad_id,
 					'i'      => $this->request->variable('i', ''),
 					'mode'   => $this->request->variable('mode', ''),
@@ -374,7 +374,7 @@ class admin_controller
 
 			$this->template->assign_block_vars('ads', array(
 				'NAME'               => $row['ad_name'],
-				'END_DATE'           => $ad_end_date ? $this->user->format_date($ad_end_date, input::DATE_FORMAT) : '',
+				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
 				'VIEWS'              => $row['ad_views'],
 				'CLICKS'             => $row['ad_clicks'],
 				'VIEWS_LIMIT'        => $row['ad_views_limit'],
@@ -407,8 +407,8 @@ class admin_controller
 			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
 		}
 
-		$this->user->add_lang('posting'); // Used by banner_upload() file errors
-		$this->user->add_lang_ext('phpbb/ads', 'acp');
+		$this->language->add_lang('posting'); // Used by banner_upload() file errors
+		$this->language->add_lang('acp', 'phpbb/ads');
 
 		$this->template->assign_var('S_PHPBB_ADS', true);
 	}
@@ -432,8 +432,8 @@ class admin_controller
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'text'  => $this->user->lang($enable ? 'ENABLED' : 'DISABLED'),
-				'title' => $this->user->lang('AD_ENABLE_TITLE', (int) $enable),
+				'text'  => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
+				'title' => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
 			));
 		}
 
@@ -466,7 +466,7 @@ class admin_controller
 	 */
 	protected function success()
 	{
-		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action));
+		trigger_error(call_user_func_array(array($this->language, 'lang'), func_get_args()) . adm_back_link($this->u_action));
 	}
 
 	/**
@@ -476,6 +476,6 @@ class admin_controller
 	 */
 	protected function error()
 	{
-		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
+		trigger_error(call_user_func_array(array($this->language, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
 	}
 }
