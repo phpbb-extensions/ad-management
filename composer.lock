@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "038b816c578c763889b8b800537e1c87",
-    "content-hash": "01557606293676c83f4af3c276b02e43",
+    "content-hash": "f76360cc523a98b1035b3a406e154a13",
     "packages": [
         {
             "name": "composer/installers",
@@ -119,7 +118,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2017-04-24 06:37:16"
+            "time": "2017-04-24T06:37:16+00:00"
         }
     ],
     "packages-dev": [
@@ -174,7 +173,7 @@
                 "task",
                 "tool"
             ],
-            "time": "2012-11-29 21:23:47"
+            "time": "2012-11-29T21:23:47+00:00"
         }
     ],
     "aliases": [],

@@ -27,18 +27,18 @@
         "php": ">=5.3.3",
         "composer/installers": "~1.0"
     },
-    "extra": {
+	"require-dev": {
+		"phing/phing": "2.4.*"
+	},
+	"extra": {
         "display-name": "Advertisement Management",
         "soft-require": {
             "phpbb/phpbb": ">=3.1.6"
-        }
-    },
-    "require-dev": {
-        "phing/phing": "2.4.*"
-    },
-    "version-check": {
-        "host": "version.phpbb.com",
-        "directory": "/phpbb-extensions",
-        "filename": "ad_management_versions.json"
+        },
+		"version-check": {
+			"host": "www.phpbb.com",
+			"directory": "/customise/db/extension/ads",
+			"filename": "version_check"
+		}
     }
 }
