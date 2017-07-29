@@ -10,15 +10,13 @@
 
 namespace phpbb\ads\controller;
 
+use phpbb\ads\controller\admin_input as input;
+
 /**
 * Admin controller
 */
 class admin_controller
 {
-	const MAX_NAME_LENGTH = 255;
-	const DATE_FORMAT = 'Y-m-d';
-	const DEFAULT_PRIORITY = 5;
-
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -31,17 +29,17 @@ class admin_controller
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\ads\location\manager */
-	protected $location_manager;
-
-	/** @var \phpbb\log\log */
-	protected $log;
-
 	/** @var \phpbb\config\db_text */
 	protected $config_text;
 
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/** @var \phpbb\ads\controller\admin_input */
+	protected $input;
+
+	/** @var \phpbb\ads\controller\admin_helper */
+	protected $helper;
 
 	/** @var string root_path */
 	protected $root_path;
@@ -49,43 +47,35 @@ class admin_controller
 	/** @var string php_ext */
 	protected $php_ext;
 
-	/** @var string ext_path */
-	protected $ext_path;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
-	/** @var array Form validation errors */
-	protected $errors = array();
-
 	/**
-	 * Constructor
-	 *
-	 * @param \phpbb\template\template    $template         Template object
-	 * @param \phpbb\user                 $user             User object
-	 * @param \phpbb\request\request      $request          Request object
-	 * @param \phpbb\ads\ad\manager       $manager          Advertisement manager object
-	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
-	 * @param \phpbb\log\log              $log              The phpBB log system
-	 * @param \phpbb\config\db_text       $config_text      Config text object
-	 * @param \phpbb\config\config        $config           Config object
-	 * @param string                      $root_path        phpBB root path
-	 * @param string                      $php_ext          PHP extension
-	 * @param string                      $ext_path         Path to this extension
-	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\log\log $log, \phpbb\config\db_text $config_text, \phpbb\config\config $config, $root_path, $php_ext, $ext_path)
+	* Constructor
+	*
+	* @param \phpbb\template\template		    $template		  Template object
+	* @param \phpbb\user                        $user             User object
+	* @param \phpbb\request\request             $request          Request object
+	* @param \phpbb\ads\ad\manager              $manager          Advertisement manager object
+	* @param \phpbb\config\db_text              $config_text      Config text object
+	* @param \phpbb\config\config               $config           Config object
+	* @param \phpbb\ads\controller\admin_input 	$input			  Admin input object
+	* @param \phpbb\ads\controller\admin_helper $helper			  Admin helper object
+	* @param string								$root_path		  phpBB root path
+	* @param string								$php_ext		  PHP extension
+	*/
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;
 		$this->manager = $manager;
-		$this->location_manager = $location_manager;
-		$this->log = $log;
 		$this->config_text = $config_text;
 		$this->config = $config;
+		$this->input = $input;
+		$this->helper = $helper;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
-		$this->ext_path = $ext_path;
 	}
 
 	/**
@@ -96,11 +86,6 @@ class admin_controller
 	public function mode_manage()
 	{
 		$this->setup();
-
-		if (!function_exists('user_get_id_name'))
-		{
-			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
-		}
 
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
@@ -126,12 +111,7 @@ class admin_controller
 		if ($this->request->is_set_post('submit'))
 		{
 			// Validate form key
-			if (!check_form_key('phpbb/ads/settings'))
-			{
-				$this->errors[] = $this->user->lang('FORM_INVALID');
-			}
-
-			if (empty($this->errors))
+			if (check_form_key('phpbb/ads/settings'))
 			{
 				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
 				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
@@ -141,10 +121,7 @@ class admin_controller
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
 
-			$this->template->assign_vars(array(
-				'S_ERROR'   => (bool) count($this->errors),
-				'ERROR_MSG' => count($this->errors) ? implode('<br />', $this->errors) : '',
-			));
+			$this->helper->assign_errors(array($this->user->lang('FORM_INVALID')));
 		}
 
 		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
@@ -198,32 +175,38 @@ class admin_controller
 	{
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
+		$upload_banner = $this->request->is_set_post('upload_banner');
 
 		add_form_key('phpbb/ads/add');
-		if ($preview || $submit)
+		if ($preview || $submit || $upload_banner)
 		{
-			$data = $this->get_form_data('phpbb/ads/add');
+			$data = $this->input->get_form_data('phpbb/ads/add');
 
 			if ($preview)
 			{
 				$this->ad_preview($data['ad_code']);
 			}
-			else if (empty($this->errors))
+			else if ($upload_banner)
+			{
+				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
+			}
+			else if (!$this->input->has_errors())
 			{
 				$ad_id = $this->manager->insert_ad($data);
 				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
-				$this->log('ADD', $data['ad_name']);
+				$this->helper->log('ADD', $data['ad_name']);
 
 				$this->success('ACP_AD_ADD_SUCCESS');
 			}
 
-			$this->assign_locations($data);
-			$this->assign_form_data($data);
+			$this->helper->assign_locations($data['ad_locations']);
+			$this->helper->assign_form_data($data);
+			$this->helper->assign_errors($this->input->get_errors());
 		}
 		else
 		{
-			$this->assign_locations();
+			$this->helper->assign_locations();
 		}
 
 		// Set output vars for display in the template
@@ -231,8 +214,8 @@ class admin_controller
 			'S_ADD_AD'           => true,
 			'U_BACK'             => $this->u_action,
 			'U_ACTION'           => "{$this->u_action}&amp;action=add",
-			'PICKER_DATE_FORMAT' => self::DATE_FORMAT,
-			'U_FIND_USERNAME'    => $this->get_find_username_link(),
+			'PICKER_DATE_FORMAT' => input::DATE_FORMAT,
+			'U_FIND_USERNAME'    => $this->helper->get_find_username_link(),
 		));
 	}
 
@@ -246,17 +229,22 @@ class admin_controller
 		$ad_id = $this->request->variable('id', 0);
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
+		$upload_banner = $this->request->is_set_post('upload_banner');
 
 		add_form_key('phpbb/ads/edit/' . $ad_id);
-		if ($preview || $submit)
+		if ($preview || $submit || $upload_banner)
 		{
-			$data = $this->get_form_data('phpbb/ads/edit/' . $ad_id);
+			$data = $this->input->get_form_data('phpbb/ads/edit/' . $ad_id);
 
 			if ($preview)
 			{
 				$this->ad_preview($data['ad_code']);
 			}
-			else if (empty($this->errors))
+			else if ($upload_banner)
+			{
+				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
+			}
+			else if (!$this->input->has_errors())
 			{
 				$success = $this->manager->update_ad($ad_id, $data);
 
@@ -266,7 +254,7 @@ class admin_controller
 					$this->manager->delete_ad_locations($ad_id);
 					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
 
-					$this->log('EDIT', $data['ad_name']);
+					$this->helper->log('EDIT', $data['ad_name']);
 
 					$this->success('ACP_AD_EDIT_SUCCESS');
 				}
@@ -292,11 +280,12 @@ class admin_controller
 			'EDIT_ID'            => $ad_id,
 			'U_BACK'             => $this->u_action,
 			'U_ACTION'           => "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
-			'PICKER_DATE_FORMAT' => self::DATE_FORMAT,
-			'U_FIND_USERNAME'    => $this->get_find_username_link(),
+			'PICKER_DATE_FORMAT' => input::DATE_FORMAT,
+			'U_FIND_USERNAME'    => $this->helper->get_find_username_link(),
 		));
-		$this->assign_locations($data);
-		$this->assign_form_data($data);
+		$this->helper->assign_locations($data['ad_locations']);
+		$this->helper->assign_form_data($data);
+		$this->helper->assign_errors($this->input->get_errors());
 	}
 
 	/**
@@ -345,7 +334,7 @@ class admin_controller
 				}
 				else
 				{
-					$this->log('DELETE', $ad_data['ad_name']);
+					$this->helper->log('DELETE', $ad_data['ad_name']);
 
 					if (!$this->request->is_ajax())
 					{
@@ -385,7 +374,7 @@ class admin_controller
 
 			$this->template->assign_block_vars('ads', array(
 				'NAME'               => $row['ad_name'],
-				'END_DATE'           => $ad_end_date ? $this->user->format_date($ad_end_date, self::DATE_FORMAT) : '',
+				'END_DATE'           => $ad_end_date ? $this->user->format_date($ad_end_date, input::DATE_FORMAT) : '',
 				'VIEWS'              => $row['ad_views'],
 				'CLICKS'             => $row['ad_clicks'],
 				'VIEWS_LIMIT'        => $row['ad_views_limit'],
@@ -413,6 +402,12 @@ class admin_controller
 	 */
 	protected function setup()
 	{
+		if (!function_exists('user_get_id_name'))
+		{
+			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+		}
+
+		$this->user->add_lang('posting'); // Used by banner_upload() file errors
 		$this->user->add_lang_ext('phpbb/ads', 'acp');
 
 		$this->template->assign_var('S_PHPBB_ADS', true);
@@ -454,185 +449,6 @@ class admin_controller
 	}
 
 	/**
-	 * Get admin form data.
-	 *
-	 * @param    string $form_name The form name.
-	 * @return    array    Form data
-	 */
-	protected function get_form_data($form_name)
-	{
-		$data = array(
-			'ad_name'         => $this->request->variable('ad_name', '', true),
-			'ad_note'         => $this->request->variable('ad_note', '', true),
-			'ad_code'         => $this->request->variable('ad_code', '', true),
-			'ad_enabled'      => $this->request->variable('ad_enabled', 0),
-			'ad_locations'    => $this->request->variable('ad_locations', array('')),
-			'ad_end_date'     => $this->request->variable('ad_end_date', ''),
-			'ad_priority'     => $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
-			'ad_views_limit'  => $this->request->variable('ad_views_limit', 0),
-			'ad_clicks_limit' => $this->request->variable('ad_clicks_limit', 0),
-			'ad_owner'        => $this->request->variable('ad_owner', '', true),
-		);
-
-		// Validate form key
-		if (!check_form_key($form_name))
-		{
-			$this->errors[] = $this->user->lang('FORM_INVALID');
-		}
-
-		// Validate ad name
-		if ($data['ad_name'] === '')
-		{
-			$this->errors[] = $this->user->lang('AD_NAME_REQUIRED');
-		}
-		if (truncate_string($data['ad_name'], self::MAX_NAME_LENGTH) !== $data['ad_name'])
-		{
-			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
-		}
-
-		// Validate ad end date
-		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $data['ad_end_date']))
-		{
-			$data['ad_end_date'] = (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $data['ad_end_date']);
-
-			if ($data['ad_end_date'] < time())
-			{
-				$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
-			}
-		}
-		else if ($data['ad_end_date'] !== '')
-		{
-			$this->errors[] = $this->user->lang('AD_END_DATE_INVALID');
-		}
-		else
-		{
-			$data['ad_end_date'] = 0;
-		}
-
-		// Validate ad priority
-		if ($data['ad_priority'] < 1 || $data['ad_priority'] > 10)
-		{
-			$this->errors[] = $this->user->lang('AD_PRIORITY_INVALID');
-		}
-
-		// Validate ad views limit
-		if ($data['ad_views_limit'] < 0)
-		{
-			$this->errors[] = $this->user->lang('AD_VIEWS_LIMIT_INVALID');
-		}
-
-		// Validate ad clicks limit
-		if ($data['ad_clicks_limit'] < 0)
-		{
-			$this->errors[] = $this->user->lang('AD_CLICKS_LIMIT_INVALID');
-		}
-
-		// Validate ad owner. Username in $data['ad_owner'] will be replaced with user_id.
-		if (!empty($data['ad_owner']))
-		{
-			// Function returns false if everything is OK.
-			if (user_get_id_name($ad_owner_id, $data['ad_owner']))
-			{
-				$this->errors[] = $this->user->lang('AD_OWNER_INVALID');
-			}
-			else
-			{
-				$data['ad_owner'] = $ad_owner_id[0];
-			}
-		}
-		else
-		{
-			$data['ad_owner'] = 0;
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Assign form data to the template.
-	 *
-	 * @param    array $data The form data.
-	 * @return void
-	 */
-	protected function assign_form_data($data)
-	{
-		$this->template->assign_vars(array(
-			'S_ERROR'   => (bool) count($this->errors),
-			'ERROR_MSG' => count($this->errors) ? implode('<br />', $this->errors) : '',
-
-			'AD_NAME'         => $data['ad_name'],
-			'AD_NOTE'         => $data['ad_note'],
-			'AD_CODE'         => $data['ad_code'],
-			'AD_ENABLED'      => $data['ad_enabled'],
-			'AD_END_DATE'     => $this->prepare_end_date($data['ad_end_date']),
-			'AD_PRIORITY'     => $data['ad_priority'],
-			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
-			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
-		));
-	}
-
-	/**
-	 * Prepare end date for display
-	 *
-	 * @param    mixed $end_date End date.
-	 * @return    string    End date prepared for display.
-	 */
-	protected function prepare_end_date($end_date)
-	{
-		if (empty($end_date))
-		{
-			return '';
-		}
-
-		if (is_numeric($end_date))
-		{
-			return $this->user->format_date($end_date, self::DATE_FORMAT);
-		}
-
-		return (string) $end_date;
-	}
-
-	/**
-	 * Prepare ad owner for display. Method takes user_id
-	 * of the ad owner and returns his/her username.
-	 *
-	 * @param	int		$ad_owner	User ID
-	 * @return	string	Username belonging to $ad_owner.
-	 */
-	protected function prepare_ad_owner($ad_owner)
-	{
-		// Returns false when no errors occur trying to find the user
-		if (false === user_get_id_name($ad_owner, $ad_owner_name))
-		{
-			if (empty($ad_owner_name))
-			{
-				return $ad_owner[0];
-			}
-			return $ad_owner_name[(int) $ad_owner[0]];
-		}
-		return '';
-	}
-	/**
-	 * Assign template locations data to the template.
-	 *
-	 * @param    mixed $data The form data or nothing.
-	 * @return    void
-	 */
-	protected function assign_locations($data = false)
-	{
-		foreach ($this->location_manager->get_all_locations() as $location_id => $location_data)
-		{
-			$this->template->assign_block_vars('ad_locations', array(
-				'LOCATION_ID'   => $location_id,
-				'LOCATION_DESC' => $location_data['desc'],
-				'LOCATION_NAME' => $location_data['name'],
-				'S_SELECTED'    => $data ? in_array($location_id, $data['ad_locations']) : false,
-			));
-		}
-	}
-
-	/**
 	 * Prepare advertisement preview
 	 *
 	 * @param    string $code Ad code to preview
@@ -661,22 +477,5 @@ class admin_controller
 	protected function error()
 	{
 		trigger_error(call_user_func_array(array($this->user, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
-	}
-
-	/**
-	 * Log action
-	 *
-	 * @param    string $action  Performed action in uppercase
-	 * @param    string $ad_name Advertisement name
-	 * @return    void
-	 */
-	protected function log($action, $ad_name)
-	{
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
-	}
-
-	protected function get_find_username_link()
-	{
-		return append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true');
 	}
 }

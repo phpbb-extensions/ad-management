@@ -23,7 +23,7 @@
 		</div>
 	{% endif %}
 
-	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}">
+	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 		<fieldset>
 			<legend>{{ lang('CONFIGURE_AD') }}</legend>
 			<dl>
@@ -44,8 +44,15 @@
 				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
 			</dl>
 			<dl>
+				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br /><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
+				<dd>
+					<input type="file" accept="image/*" class="inputbox autowidth" id="banner" name="banner" />
+					<input type="submit" class="button2" id="upload_banner" name="upload_banner" value="{{ lang('BANNER_UPLOAD') }}">
+				</dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_controller::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_input::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
