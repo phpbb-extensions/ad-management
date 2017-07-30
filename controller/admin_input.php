@@ -51,6 +51,40 @@ class admin_input
 	}
 
 	/**
+	 * Get a variable from the form
+	 *
+	 * @param string $name    The form variable's name from which data shall be retrieved.
+	 * @param mixed  $default A default value that is returned if the variable was not set.
+	 * @param bool   $mbyte   If the variable may contain any UTF-8 characters.
+	 * @return mixed The value of the form variable or the $default value.
+	 */
+	public function get($name, $default, $mbyte = false)
+	{
+		return $this->request->variable($name, $default, $mbyte);
+	}
+
+	/**
+	 * Check if a variable is posted
+	 *
+	 * @param string $name The form variable's name from which data shall be retrieved.
+	 * @return bool True if form variable is posted, false otherwise.
+	 */
+	public function is_set_post($name)
+	{
+		return $this->request->is_set_post($name);
+	}
+
+	/**
+	 * Check if a request is AJAX
+	 *
+	 * @return bool True if the request is AJAX, false otherwise.
+	 */
+	public function is_ajax()
+	{
+		return $this->request->is_ajax();
+	}
+
+	/**
 	 * Gets all errors
 	 *
 	 * @return	array	Errors

@@ -24,7 +24,6 @@ services:
         arguments:
             - '@template'
             - '@language'
-            - '@request'
             - '@phpbb.ads.ad.manager'
             - '@config_text'
             - '@config'
