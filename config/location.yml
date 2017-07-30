@@ -4,6 +4,13 @@ services:
         arguments:
             - '@phpbb.ads.location.type_collection'
 
+    phpbb.ads.location.type.base:
+        class: phpbb\ads\location\type\base
+        abstract: true
+        arguments:
+            - '@user'
+            - '@language'
+
 # ----- Template locations -----
     phpbb.ads.location.type_collection:
         class: phpbb\di\service_collection
@@ -11,13 +18,6 @@ services:
             - '@service_container'
         tags:
             - { name: service_collection, tag: phpbb.ads.location.type }
-
-    phpbb.ads.location.type.base:
-        class: phpbb\ads\location\type\base
-        abstract: true
-        arguments:
-            - '@user'
-            - '@language'
 
     phpbb.ads.location.type.above_footer:
         class: phpbb\ads\location\type\above_footer
