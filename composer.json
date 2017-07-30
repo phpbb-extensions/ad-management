@@ -1,44 +1,44 @@
 {
-    "name": "phpbb/ads",
-    "type": "phpbb-extension",
-    "description": "An extension for phpBB that allows administrators to manage and display advertisements on their forums.",
-    "homepage": "https://www.phpbb.com",
-    "version": "1.0.0-b2",
-    "keywords": ["phpbb", "extension", "advertisement"],
-    "license": "GPL-2.0",
-    "authors": [
-        {
-            "name": "Jakub Senko",
-            "email": "jakubsenko@gmail.com",
-            "role": "Extension Developer"
-        },
-        {
-            "name": "Matt Friedman",
-            "homepage": "http://mattfriedman.me",
-            "role": "Extensions Development Team Lead"
-        },
-        {
-            "name": "Derky",
-            "homepage": "http://www.derky.nl",
-            "role": "Extensions Team"
-        }
-    ],
-    "require": {
-        "php": ">=5.4",
-        "composer/installers": "~1.0"
-    },
-    "require-dev": {
-        "phing/phing": "2.4.*"
-    },
-    "extra": {
-        "display-name": "Advertisement Management",
-        "soft-require": {
-            "phpbb/phpbb": ">=3.2.0"
-        },
-        "version-check": {
-            "host": "www.phpbb.com",
-            "directory": "/customise/db/extension/ads",
-            "filename": "version_check"
-        }
-    }
+	"name": "phpbb/ads",
+	"type": "phpbb-extension",
+	"description": "An extension for phpBB that allows administrators to manage and display advertisements on their forums.",
+	"homepage": "https://www.phpbb.com",
+	"version": "1.0.0-b2",
+	"keywords": ["phpbb", "extension", "advertisement"],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Jakub Senko",
+			"email": "jakubsenko@gmail.com",
+			"role": "Extension Developer"
+		},
+		{
+			"name": "Matt Friedman",
+			"homepage": "http://mattfriedman.me",
+			"role": "Extensions Development Team Lead"
+		},
+		{
+			"name": "Derky",
+			"homepage": "http://www.derky.nl",
+			"role": "Extensions Team"
+		}
+	],
+	"require": {
+		"php": ">=5.4",
+		"composer/installers": "~1.0"
+	},
+	"require-dev": {
+		"phing/phing": "2.4.*"
+	},
+	"extra": {
+		"display-name": "Advertisement Management",
+		"soft-require": {
+			"phpbb/phpbb": ">=3.2.0"
+		},
+		"version-check": {
+			"host": "www.phpbb.com",
+			"directory": "/customise/db/extension/ads",
+			"filename": "version_check"
+		}
+	}
 }
