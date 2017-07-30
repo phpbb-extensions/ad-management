@@ -179,6 +179,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			))
 			->getMock();
 
+		$this->template->expects($this->once())
+			->method('assign_var')
+			->with('S_PHPBB_ADS', true);
+
 		$this->request->expects($this->once())
 			->method('variable')
 			->willReturn($action);

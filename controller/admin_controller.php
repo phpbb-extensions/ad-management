@@ -412,6 +412,8 @@ class admin_controller
 
 		$this->language->add_lang('posting'); // Used by banner_upload() file errors
 		$this->language->add_lang('acp', 'phpbb/ads');
+
+		$this->template->assign_var('S_PHPBB_ADS', true);
 	}
 
 	/**
