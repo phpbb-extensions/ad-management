@@ -26,7 +26,7 @@
 
 	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 		<fieldset>
-			<legend>{{ lang('CONFIGURE_AD') }}</legend>
+			<legend>{{ lang('AD_SETTINGS') }}</legend>
 			<dl>
 				<dt><label for="ad_name">{{ lang('AD_NAME') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" type="text" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
@@ -38,12 +38,15 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
-				<dd><textarea id="ad_note" name="ad_note" rows="10" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
+				<dd><textarea id="ad_note" name="ad_note" rows="5" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
-				<dd><textarea id="ad_code" name="ad_code" rows="25" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
+				<dd><textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
 			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{{ lang('AD_BANNER') }}</legend>
 			<dl>
 				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br /><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
 				<dd>
@@ -51,10 +54,9 @@
 					<input type="submit" class="button2" id="upload_banner" name="upload_banner" value="{{ lang('BANNER_UPLOAD') }}">
 				</dd>
 			</dl>
-			<dl>
-				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_input::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
-			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{{ lang('AD_PLACEMENT') }}</legend>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
 				<dd><select id="ad_locations" name="ad_locations[]" multiple="multiple" size="8">
@@ -65,8 +67,16 @@
 				</dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
+				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\controller\\admin_input::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
+			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{{ lang('AD_OPTIONS') }}</legend>
+			<dl>
+				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" type="text" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
+				<dd>[ <a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
@@ -77,9 +87,8 @@
 				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0" /></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
-				<dd><input class="text medium" type="text" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
-				<dd>[ <a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd>
+				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
