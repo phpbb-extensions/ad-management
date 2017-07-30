@@ -1,11 +1,9 @@
 {% include 'overall_header.html' %}
 
-{% INCLUDECSS '@phpbb_ads/phpbbads.css' %}
-{% INCLUDECSS '@phpbb_ads/datetimepicker/jquery.datetimepicker.min.css' %}
-
 <a id="maincontent"></a>
 
 {% if S_ADD_AD or S_EDIT_AD %}
+	{% INCLUDECSS '@phpbb_ads/phpbbads.css' %}
 
 	<a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
 

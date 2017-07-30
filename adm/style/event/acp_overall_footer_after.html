@@ -1,7 +1,8 @@
 {% if S_PHPBB_ADS %}
-	{% if not definition.INCLUDED_DATETIMEPICKERJS %}
+	{% if not definition.INCLUDED_DATETIMEPICKER %}
+		{% INCLUDECSS '@phpbb_ads/datetimepicker/jquery.datetimepicker.min.css' %}
 		{% INCLUDEJS '@phpbb_ads/datetimepicker/jquery.datetimepicker.full.min.js' %}
-		{% DEFINE INCLUDED_DATETIMEPICKERJS = true %}
+		{% DEFINE INCLUDED_DATETIMEPICKER = true %}
 	{% endif %}
 
 	<script>
