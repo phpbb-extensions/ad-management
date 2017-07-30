@@ -86,7 +86,7 @@ class main_listener_base extends \phpbb_database_test_case
 		foreach ($locations as $type)
 		{
 			$class = "\\phpbb\\ads\\location\\type\\$type";
-			$location_types['phpbb.ads.location.type.' . $type] = new $class($user);
+			$location_types['phpbb.ads.location.type.' . $type] = new $class($user, $lang);
 		}
 
 		// Load/Mock classes required by the listener class

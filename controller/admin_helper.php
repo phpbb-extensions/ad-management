@@ -20,6 +20,9 @@ class admin_helper
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -39,15 +42,17 @@ class admin_helper
 	 * Constructor
 	 *
 	 * @param \phpbb\user						$user				User object
+	 * @param \phpbb\language\language          $language           Language object
 	 * @param \phpbb\template\template			$template			Template object
 	 * @param \phpbb\log\log					$log				The phpBB log system
 	 * @param \phpbb\ads\location\manager		$location_manager	Template location manager object
 	 * @param string							$root_path			phpBB root path
 	 * @param string							$php_ext			PHP extension
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
+	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
 	{
 		$this->user = $user;
+		$this->language = $language;
 		$this->template = $template;
 		$this->log = $log;
 		$this->location_manager = $location_manager;
@@ -97,7 +102,7 @@ class admin_helper
 
 	public function assign_errors(array $errors)
 	{
-		$errors = array_map(array($this->user, 'lang'), $errors);
+		$errors = array_map(array($this->language, 'lang'), $errors);
 
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (bool) count($errors),
@@ -129,7 +134,7 @@ class admin_helper
 	 * @param	mixed	$end_date	End date.
 	 * @return	string	End date prepared for display.
 	 */
-	protected function prepare_end_date($end_date)
+	public function prepare_end_date($end_date)
 	{
 		if (empty($end_date))
 		{
