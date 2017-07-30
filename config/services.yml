@@ -23,11 +23,12 @@ services:
         class: phpbb\ads\controller\admin_controller
         arguments:
             - '@template'
-            - '@user'
+            - '@language'
             - '@request'
             - '@phpbb.ads.ad.manager'
             - '@config_text'
             - '@config'
+            - '@group_helper'
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.admin.helper'
             - '%core.root_path%'
@@ -37,6 +38,7 @@ services:
         class: phpbb\ads\controller\admin_helper
         arguments:
             - '@user'
+            - '@language'
             - '@template'
             - '@log'
             - '@phpbb.ads.location.manager'
@@ -47,6 +49,7 @@ services:
         class: phpbb\ads\controller\admin_input
         arguments:
             - '@user'
+            - '@language'
             - '@request'
             - '@phpbb.ads.banner.banner'
 
@@ -61,6 +64,7 @@ services:
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@user'
+            - '@language'
             - '@template'
             - '@config'
 
