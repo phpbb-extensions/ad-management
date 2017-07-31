@@ -25,9 +25,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
 	protected $language;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
-	protected $request;
-
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
@@ -86,7 +83,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		// Load/Mock classes required by the controller class
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->language = new \phpbb\language\language($lang_loader);
-		$this->request = $this->getMock('\phpbb\request\request');
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
@@ -122,7 +118,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller = new \phpbb\ads\controller\admin_controller(
 			$this->template,
 			$this->language,
-			$this->request,
 			$this->manager,
 			$this->config_text,
 			$this->config,
@@ -167,7 +162,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			->setConstructorArgs(array(
 				$this->template,
 				$this->language,
-				$this->request,
 				$this->manager,
 				$this->config_text,
 				$this->config,
@@ -183,8 +177,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_var')
 			->with('S_PHPBB_ADS', true);
 
-		$this->request->expects($this->once())
-			->method('variable')
+		$this->input->expects($this->once())
+			->method('get')
 			->willReturn($action);
 
 		$controller->expects($this->once())
@@ -277,30 +271,30 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->input->expects($this->once())
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
 
 		if ($valid_form)
 		{
-			$this->request->expects($this->at(1))
-				->method('variable')
+			$this->input->expects($this->at(1))
+				->method('get')
 				->with('adblocker_message', 0)
 				->willReturn($adblocker_data);
 
-			$this->request->expects($this->at(2))
-				->method('variable')
+			$this->input->expects($this->at(2))
+				->method('get')
 				->with('enable_views', 0)
 				->willReturn(1);
 
-			$this->request->expects($this->at(3))
-				->method('variable')
+			$this->input->expects($this->at(3))
+				->method('get')
 				->with('enable_clicks', 0)
 				->willReturn(1);
 
-			$this->request->expects($this->at(4))
-				->method('variable')
+			$this->input->expects($this->at(4))
+				->method('get')
 				->with('hide_groups', array(0))
 				->willReturn($hide_group_data);
 
@@ -332,7 +326,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get')
 				->with('phpbb_ads_hide_groups')
 				->willReturn('[1,3]');
-			
+
 			$this->manager->expects($this->once())
 				->method('load_groups')
 				->willReturn(array(
@@ -366,17 +360,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(0))
+		$this->input->expects($this->at(0))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(false);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(false);
@@ -408,17 +402,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(0))
+		$this->input->expects($this->at(0))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(true);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(false);
@@ -464,17 +458,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(0))
+		$this->input->expects($this->at(0))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(false);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(true);
@@ -536,17 +530,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(0))
+		$this->input->expects($this->at(0))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(false);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(false);
@@ -633,22 +627,22 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
-			->method('variable')
+		$this->input->expects($this->once())
+			->method('get')
 			->with('id', 0)
 			->willReturn($ad_id);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(false);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
 
-		$this->request->expects($this->at(3))
+		$this->input->expects($this->at(3))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(false);
@@ -739,22 +733,22 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
-			->method('variable')
+		$this->input->expects($this->once())
+			->method('get')
 			->with('id', 0)
 			->willReturn(1);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(true);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(false);
 
-		$this->request->expects($this->at(3))
+		$this->input->expects($this->at(3))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(false);
@@ -832,22 +826,22 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
-			->method('variable')
+		$this->input->expects($this->once())
+			->method('get')
 			->with('id', 0)
 			->willReturn(1);
 
-		$this->request->expects($this->at(1))
+		$this->input->expects($this->at(1))
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(false);
 
-		$this->request->expects($this->at(2))
+		$this->input->expects($this->at(2))
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
 
-		$this->request->expects($this->at(3))
+		$this->input->expects($this->at(3))
 			->method('is_set_post')
 			->with('upload_banner')
 			->willReturn(false);
@@ -950,8 +944,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
-			->method('variable')
+		$this->input->expects($this->once())
+			->method('get')
 			->with('id', 0)
 			->willReturn($ad_id);
 
@@ -995,19 +989,19 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(0))
-			->method('variable')
+		$this->input->expects($this->at(0))
+			->method('get')
 			->with('id', 0)
 			->willReturn($ad_id);
 
 		if (!$confirm)
 		{
-			$this->request->expects($this->at(1))
-				->method('variable')
+			$this->input->expects($this->at(1))
+				->method('get')
 				->with('i', '')
 				->willReturn('');
-			$this->request->expects($this->at(2))
-				->method('variable')
+			$this->input->expects($this->at(2))
+				->method('get')
 				->with('mode', '')
 				->willReturn('');
 		}
@@ -1086,4 +1080,3 @@ function confirm_box()
 function add_form_key()
 {
 }
-

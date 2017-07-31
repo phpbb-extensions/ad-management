@@ -24,6 +24,7 @@ class remove_ad_owner_test extends ad_base
 			array(array('3', '4')),
 		);
 	}
+
 	/**
 	 * Test remove_ad_owner() method
 	 *

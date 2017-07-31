@@ -23,9 +23,6 @@ class admin_controller
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	/** @var \phpbb\request\request */
-	protected $request;
-
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
@@ -58,7 +55,6 @@ class admin_controller
 	*
 	* @param \phpbb\template\template		    $template		  Template object
 	* @param \phpbb\language\language           $language         Language object
-	* @param \phpbb\request\request             $request          Request object
 	* @param \phpbb\ads\ad\manager              $manager          Advertisement manager object
 	* @param \phpbb\config\db_text              $config_text      Config text object
 	* @param \phpbb\config\config               $config           Config object
@@ -68,11 +64,10 @@ class admin_controller
 	* @param string								$root_path		  phpBB root path
 	* @param string								$php_ext		  PHP extension
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
-		$this->request = $request;
 		$this->manager = $manager;
 		$this->config_text = $config_text;
 		$this->config = $config;
@@ -93,7 +88,7 @@ class admin_controller
 		$this->setup();
 
 		// Trigger specific action
-		$action = $this->request->variable('action', '');
+		$action = $this->input->get('action', '');
 		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
 		{
 			$this->{'action_' . $action}();
@@ -113,15 +108,15 @@ class admin_controller
 		$this->setup();
 
 		add_form_key('phpbb/ads/settings');
-		if ($this->request->is_set_post('submit'))
+		if ($this->input->is_set_post('submit'))
 		{
 			// Validate form key
 			if (check_form_key('phpbb/ads/settings'))
 			{
-				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
-				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
-				$this->config->set('phpbb_ads_enable_clicks', $this->request->variable('enable_clicks', 0));
-				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
+				$this->config->set('phpbb_ads_adblocker_message', $this->input->get('adblocker_message', 0));
+				$this->config->set('phpbb_ads_enable_views', $this->input->get('enable_views', 0));
+				$this->config->set('phpbb_ads_enable_clicks', $this->input->get('enable_clicks', 0));
+				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->input->get('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
@@ -176,9 +171,9 @@ class admin_controller
 	 */
 	public function action_add()
 	{
-		$preview = $this->request->is_set_post('preview');
-		$submit = $this->request->is_set_post('submit');
-		$upload_banner = $this->request->is_set_post('upload_banner');
+		$preview = $this->input->is_set_post('preview');
+		$submit = $this->input->is_set_post('submit');
+		$upload_banner = $this->input->is_set_post('upload_banner');
 
 		add_form_key('phpbb/ads/add');
 		if ($preview || $submit || $upload_banner)
@@ -229,10 +224,10 @@ class admin_controller
 	 */
 	public function action_edit()
 	{
-		$ad_id = $this->request->variable('id', 0);
-		$preview = $this->request->is_set_post('preview');
-		$submit = $this->request->is_set_post('submit');
-		$upload_banner = $this->request->is_set_post('upload_banner');
+		$ad_id = $this->input->get('id', 0);
+		$preview = $this->input->is_set_post('preview');
+		$submit = $this->input->is_set_post('submit');
+		$upload_banner = $this->input->is_set_post('upload_banner');
 
 		add_form_key('phpbb/ads/edit/' . $ad_id);
 		if ($preview || $submit || $upload_banner)
@@ -318,7 +313,7 @@ class admin_controller
 	 */
 	public function action_delete()
 	{
-		$ad_id = $this->request->variable('id', 0);
+		$ad_id = $this->input->get('id', 0);
 		if ($ad_id)
 		{
 			if (confirm_box(true))
@@ -339,7 +334,7 @@ class admin_controller
 				{
 					$this->helper->log('DELETE', $ad_data['ad_name']);
 
-					if (!$this->request->is_ajax())
+					if (!$this->input->is_ajax())
 					{
 						$this->success('ACP_AD_DELETE_SUCCESS');
 					}
@@ -349,8 +344,8 @@ class admin_controller
 			{
 				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
 					'id'     => $ad_id,
-					'i'      => $this->request->variable('i', ''),
-					'mode'   => $this->request->variable('mode', ''),
+					'i'      => $this->input->get('i', ''),
+					'mode'   => $this->input->get('mode', ''),
 					'action' => 'delete'
 				)));
 			}
@@ -424,14 +419,14 @@ class admin_controller
 	 */
 	protected function ad_enable($enable)
 	{
-		$ad_id = $this->request->variable('id', 0);
+		$ad_id = $this->input->get('id', 0);
 
 		$success = $this->manager->update_ad($ad_id, array(
 			'ad_enabled' => (int) $enable,
 		));
 
 		// If AJAX was used, show user a result message
-		if ($this->request->is_ajax())
+		if ($this->input->is_ajax())
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
