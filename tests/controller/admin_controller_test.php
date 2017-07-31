@@ -332,7 +332,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get')
 				->with('phpbb_ads_hide_groups')
 				->willReturn('[1,3]');
-			
+
 			$this->manager->expects($this->once())
 				->method('load_groups')
 				->willReturn(array(
@@ -934,10 +934,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function ad_enable_data()
 	{
 		return array(
-			array(0, true, 'ACP_AD_ENABLE_ERRORED'),
-			array(0, false, 'ACP_AD_DISABLE_ERRORED'),
-			array(1, false, 'ACP_AD_DISABLE_SUCCESS'),
-			array(1, true, 'ACP_AD_ENABLE_SUCCESS'),
+			array(0, true, false, 'ACP_AD_ENABLE_ERRORED'),
+			array(0, false, false, 'ACP_AD_DISABLE_ERRORED'),
+			array(1, false, false, 'ACP_AD_DISABLE_SUCCESS'),
+			array(1, true, false, 'ACP_AD_ENABLE_SUCCESS'),
+			array(1, false, true, 'ACP_AD_DISABLE_SUCCESS'),
+			array(1, true, true, 'ACP_AD_ENABLE_SUCCESS'),
 		);
 	}
 
@@ -946,7 +948,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider ad_enable_data
 	*/
-	public function test_ad_enable($ad_id, $enable, $err_msg)
+	public function test_ad_enable($ad_id, $enable, $is_ajax, $err_msg)
 	{
 		$controller = $this->get_controller();
 
@@ -959,7 +961,19 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('update_ad')
 			->willReturn($ad_id ? true : false);
 
-		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
+		$this->request->expects($this->once())
+			->method('is_ajax')
+			->willReturn($is_ajax);
+
+		if ($is_ajax)
+		{
+			// Handle trigger_error() output called from json_response
+			$this->setExpectedTriggerError(E_WARNING);
+		}
+		else
+		{
+			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
+		}
 
 		if ($enable)
 		{
