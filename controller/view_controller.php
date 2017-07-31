@@ -43,7 +43,7 @@ class view_controller
 	{
 		$ad_ids = explode('-', $ad_ids);
 
-		if ($this->request->is_ajax() && !empty($ad_ids))
+		if ($this->request->is_ajax())
 		{
 			$this->manager->increment_ads_views($ad_ids);
 

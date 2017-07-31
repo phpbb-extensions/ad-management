@@ -8,4 +8,4 @@ phpbb_ads_view:
     path: /adsview/{ad_ids}
     defaults: { _controller: phpbb.ads.view.controller:increment_views }
     requirements:
-        ad_ids: '(\d-)*\d'
+        ad_ids: '(\d+-)*\d+'
