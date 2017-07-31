@@ -1,9 +1,9 @@
 phpbb_ads_click:
-    path: /ads/click/{ad_id}
+    path: /adsclick/{ad_id}
     defaults: { _controller: phpbb.ads.click.controller:increment_clicks }
     requirements:
         id: '\d+'
 
 phpbb_ads_view:
-    path: /ads/view
+    path: /adsview
     defaults: { _controller: phpbb.ads.view.controller:increment_views }
