@@ -119,8 +119,7 @@ class main_listener implements EventSubscriberInterface
 			{
 				$this->template->assign_vars(array(
 					'S_INCREMENT_VIEWS'		=> count($ad_ids),
-					'INCREMENT_VIEWS'		=> json_encode($ad_ids),
-					'UA_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view'),
+					'UA_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('ad_ids' => implode('-', $ad_ids))),
 				));
 			}
 		}

@@ -36,13 +36,16 @@ class view_controller
 	/**
 	 * Increment views for ads
 	 *
+	 * @param	string	$ad_ids	Advertisement IDs
 	 * @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
 	 */
-	public function increment_views()
+	public function increment_views($ad_ids)
 	{
-		if ($this->request->is_ajax() && $this->request->is_set_post('ad_ids'))
+		$ad_ids = explode('-', $ad_ids);
+
+		if ($this->request->is_ajax() && !empty($ad_ids))
 		{
-			$this->manager->increment_ads_views($this->request->variable('ad_ids', array(0)));
+			$this->manager->increment_ads_views($ad_ids);
 
 			return new \Symfony\Component\HttpFoundation\JsonResponse();
 		}

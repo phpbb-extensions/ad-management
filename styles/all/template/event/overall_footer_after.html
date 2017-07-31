@@ -4,16 +4,11 @@
 
 {% if S_INCREMENT_VIEWS %}
 	<script>
-		var u_phpbb_ads_views = '{{ UA_PHPBB_ADS_VIEWS }}';
-		var increment_views = '{{ INCREMENT_VIEWS }}';
-
 		(function($) {
 			'use strict';
 
 			$(window).on('load', function() {
-				$.post(u_phpbb_ads_views, {
-					ad_ids: JSON.parse(increment_views)
-				});
+				$.get('{{ UA_PHPBB_ADS_VIEWS }}');
 			});
 		})(jQuery);
 	</script>

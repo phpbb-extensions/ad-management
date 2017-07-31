@@ -5,5 +5,5 @@ phpbb_ads_click:
         id: '\d+'
 
 phpbb_ads_view:
-    path: /adsview
+    path: /adsview/{ad_ids}
     defaults: { _controller: phpbb.ads.view.controller:increment_views }
