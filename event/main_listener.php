@@ -117,7 +117,11 @@ class main_listener implements EventSubscriberInterface
 
 			if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'])
 			{
-				$this->manager->increment_ads_views($ad_ids);
+				$this->template->assign_vars(array(
+					'S_INCREMENT_VIEWS'		=> count($ad_ids),
+					'INCREMENT_VIEWS'		=> json_encode($ad_ids),
+					'UA_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view'),
+				));
 			}
 		}
 

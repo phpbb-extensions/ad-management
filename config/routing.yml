@@ -3,3 +3,7 @@ phpbb_ads_click:
     defaults: { _controller: phpbb.ads.click.controller:increment_clicks }
     requirements:
         id: '\d+'
+
+phpbb_ads_view:
+    path: /ads/view
+    defaults: { _controller: phpbb.ads.view.controller:increment_views }
