@@ -42,11 +42,9 @@ class view_controller
 	 */
 	public function increment_views($ad_ids)
 	{
-		$ad_ids = explode('-', $ad_ids);
-
 		if ($this->request->is_ajax())
 		{
-			$this->manager->increment_ads_views($ad_ids);
+			$this->manager->increment_ads_views(explode('-', $ad_ids));
 
 			return new \Symfony\Component\HttpFoundation\JsonResponse();
 		}
