@@ -37,6 +37,7 @@ class view_controller
 	 * Increment views for ads
 	 *
 	 * @param	string	$ad_ids	Advertisement IDs
+	 * @throws	\phpbb\exception\http_exception
 	 * @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
 	 */
 	public function increment_views($ad_ids)
