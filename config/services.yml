@@ -68,6 +68,12 @@ services:
             - '@template'
             - '@config'
 
+    phpbb.ads.view.controller:
+        class: phpbb\ads\controller\view_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@request'
+
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
         arguments:

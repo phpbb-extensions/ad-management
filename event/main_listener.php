@@ -115,9 +115,12 @@ class main_listener implements EventSubscriberInterface
 				));
 			}
 
-			if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'])
+			if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
 			{
-				$this->manager->increment_ads_views($ad_ids);
+				$this->template->assign_vars(array(
+					'S_INCREMENT_VIEWS'		=> true,
+					'UA_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('ad_ids' => implode('-', $ad_ids))),
+				));
 			}
 		}
 
