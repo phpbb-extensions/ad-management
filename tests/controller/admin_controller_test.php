@@ -22,8 +22,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \phpbb\user */
-	protected $user;
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	protected $language;
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
 	protected $request;
@@ -36,6 +36,9 @@ class admin_controller_test extends \phpbb_database_test_case
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
 	protected $config;
+
+	/** @var \phpbb\group\helper */
+	protected $group_helper;
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_input */
 	protected $input;
@@ -79,12 +82,10 @@ class admin_controller_test extends \phpbb_database_test_case
 		global $phpbb_dispatcher;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$lang = new \phpbb\language\language($lang_loader);
 
 		// Load/Mock classes required by the controller class
 		$this->template = $this->getMock('\phpbb\template\template');
-		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
-		$this->user->timezone = new \DateTimeZone('UTC');
+		$this->language = new \phpbb\language\language($lang_loader);
 		$this->request = $this->getMock('\phpbb\request\request');
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
@@ -95,6 +96,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->group_helper = new \phpbb\group\helper($this->language);
 		$this->input = $this->getMockBuilder('\phpbb\ads\controller\admin_input')
 			->disableOriginalConstructor()
 			->getMock();
@@ -119,11 +121,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = new \phpbb\ads\controller\admin_controller(
 			$this->template,
-			$this->user,
+			$this->language,
 			$this->request,
 			$this->manager,
 			$this->config_text,
 			$this->config,
+			$this->group_helper,
 			$this->input,
 			$this->helper,
 			$this->root_path,
@@ -163,11 +166,12 @@ class admin_controller_test extends \phpbb_database_test_case
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->template,
-				$this->user,
+				$this->language,
 				$this->request,
 				$this->manager,
 				$this->config_text,
 				$this->config,
+				$this->group_helper,
 				$this->input,
 				$this->helper,
 				$this->root_path,
@@ -223,7 +227,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'groups',
 					array(
 						'ID'			=> '1',
-						'NAME'			=> 'ADMINISTRATORS',
+						'NAME'			=> 'Administrators',
 						'S_SELECTED'	=> true,
 					),
 				),
@@ -328,7 +332,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get')
 				->with('phpbb_ads_hide_groups')
 				->willReturn('[1,3]');
-			
+
 			$this->manager->expects($this->once())
 				->method('load_groups')
 				->willReturn(array(
@@ -352,7 +356,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_get_page_title()
 	{
 		$controller = $this->get_controller();
-		$this->assertEquals($controller->get_page_title(), $this->user->lang('ACP_PHPBB_ADS_TITLE'));
+		$this->assertEquals($controller->get_page_title(), $this->language->lang('ACP_PHPBB_ADS_TITLE'));
 	}
 
 	/**
@@ -930,10 +934,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function ad_enable_data()
 	{
 		return array(
-			array(0, true, 'ACP_AD_ENABLE_ERRORED'),
-			array(0, false, 'ACP_AD_DISABLE_ERRORED'),
-			array(1, false, 'ACP_AD_DISABLE_SUCCESS'),
-			array(1, true, 'ACP_AD_ENABLE_SUCCESS'),
+			array(0, true, false, 'ACP_AD_ENABLE_ERRORED'),
+			array(0, false, false, 'ACP_AD_DISABLE_ERRORED'),
+			array(1, false, false, 'ACP_AD_DISABLE_SUCCESS'),
+			array(1, true, false, 'ACP_AD_ENABLE_SUCCESS'),
+			array(1, false, true, 'ACP_AD_DISABLE_SUCCESS'),
+			array(1, true, true, 'ACP_AD_ENABLE_SUCCESS'),
 		);
 	}
 
@@ -942,7 +948,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider ad_enable_data
 	*/
-	public function test_ad_enable($ad_id, $enable, $err_msg)
+	public function test_ad_enable($ad_id, $enable, $is_ajax, $err_msg)
 	{
 		$controller = $this->get_controller();
 
@@ -955,7 +961,19 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('update_ad')
 			->willReturn($ad_id ? true : false);
 
-		$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
+		$this->request->expects($this->once())
+			->method('is_ajax')
+			->willReturn($is_ajax);
+
+		if ($is_ajax)
+		{
+			// Handle trigger_error() output called from json_response
+			$this->setExpectedTriggerError(E_WARNING);
+		}
+		else
+		{
+			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
+		}
 
 		if ($enable)
 		{

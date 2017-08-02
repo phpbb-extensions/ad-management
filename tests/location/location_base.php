@@ -18,6 +18,9 @@ class location_base extends \phpbb_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -36,8 +39,8 @@ class location_base extends \phpbb_test_case
 		global $phpbb_root_path, $phpEx;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$lang = new \phpbb\language\language($lang_loader);
-		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->language = new \phpbb\language\language($lang_loader);
+		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		// Location types
 		$locations = array(
 			'above_footer',
@@ -55,7 +58,7 @@ class location_base extends \phpbb_test_case
 		foreach ($locations as $type)
 		{
 			$class = "\\phpbb\\ads\\location\\type\\$type";
-			$location_types['phpbb.ads.location.type.' . $type] = new $class($this->user);
+			$location_types['phpbb.ads.location.type.' . $type] = new $class($this->user, $this->language);
 		}
 
 		$this->template_locations = $location_types;

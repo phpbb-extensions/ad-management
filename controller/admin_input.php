@@ -22,6 +22,9 @@ class admin_input
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/** @var \phpbb\request\request */
 	protected $request;
 
@@ -35,12 +38,14 @@ class admin_input
 	 * Constructor
 	 *
 	 * @param \phpbb\user								$user			User object
+	 * @param \phpbb\language\language                  $language       Language object
 	 * @param \phpbb\request\request					$request		Request object
 	 * @param \phpbb\ads\banner\banner					$banner			Banner upload object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
+	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
 	{
 		$this->user = $user;
+		$this->language = $language;
 		$this->request = $request;
 		$this->banner = $banner;
 	}
@@ -89,7 +94,7 @@ class admin_input
 		// Validate form key
 		if (!check_form_key($form_name))
 		{
-			$this->errors[] = $this->user->lang('FORM_INVALID');
+			$this->errors[] = $this->language->lang('FORM_INVALID');
 		}
 
 		// Validate each property. Every method adds errors directly to $this->errors.
@@ -139,10 +144,10 @@ class admin_input
 
 			if ($this->request->is_ajax())
 			{
-				$this->send_ajax_response(false, $this->user->lang($e->getMessage()));
+				$this->send_ajax_response(false, $this->language->lang($e->getMessage()));
 			}
 
-			$this->errors[] = $this->user->lang($e->getMessage());
+			$this->errors[] = $this->language->lang($e->getMessage());
 		}
 
 		return $ad_code;
@@ -161,7 +166,7 @@ class admin_input
 		}
 		if (truncate_string($ad_name, self::MAX_NAME_LENGTH) !== $ad_name)
 		{
-			$this->errors[] = $this->user->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
+			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
 		}
 	}
 
@@ -279,7 +284,7 @@ class admin_input
 		$json_response = new \phpbb\json_response;
 		$json_response->send(array(
 			'success'	=> $success,
-			'title'		=> $this->user->lang('INFORMATION'),
+			'title'		=> $this->language->lang('INFORMATION'),
 			'text'		=> $text,
 		));
 	}

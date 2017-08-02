@@ -18,6 +18,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\user */
 	protected $user;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	protected $language;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
@@ -50,7 +53,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path;
+		global $phpbb_root_path, $phpEx;
+
+		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
@@ -58,6 +63,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->language = new \phpbb\language\language($lang_loader);
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->config = new \phpbb\config\config(array(
 			'phpbb_ads_enable_views'	=> 0,
@@ -77,6 +83,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$controller = new \phpbb\ads\controller\ucp_controller(
 			$this->manager,
 			$this->user,
+			$this->language,
 			$this->template,
 			$this->config
 		);
@@ -92,7 +99,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->assertEquals($this->user->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
+		$this->assertEquals($this->language->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
 	}
 
 	/**
@@ -135,10 +142,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->config['phpbb_ads_enable_views'] = $enable_views;
 		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
 		$controller = $this->get_controller();
-
-		$this->user->expects($this->once())
-			->method('add_lang_ext')
-			->with('phpbb/ads', 'ucp');
 
 		$this->manager->expects($this->once())
 			->method('get_ads_by_owner')
