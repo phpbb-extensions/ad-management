@@ -57,7 +57,7 @@ class pop_up extends base
 
 		$this->template->assign_vars(array(
 			'POP_UP_COOKIE_NAME'	=> $this->config['cookie_name'] . '_pop_up',
-			'POP_UP_COOKIE_EXPIRES'	=> gmdate('D, d M Y H:i:s T', time() + 86400),
+			'POP_UP_COOKIE_EXPIRES'	=> gmdate('D, d M Y H:i:s T', strtotime('+1 day')),
 			'POP_UP_COOKIE_PATH'	=> $this->config['cookie_path'],
 		));
 		return true;
