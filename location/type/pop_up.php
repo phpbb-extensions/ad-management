@@ -26,6 +26,7 @@ class pop_up extends base
 	 * @param \phpbb\language\language $language Language object
 	 * @param \phpbb\request\request   $request  Request object
 	 * @param \phpbb\config\config     $config   Config object
+	 * @param \phpbb\template\template $template Template object
 	 */
 	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\config\config $config, \phpbb\template\template $template)
 	{
