@@ -15,13 +15,13 @@ namespace phpbb\ads\tests\functional;
  */
 class location_after_footer_navbar_test extends functional_base
 {
-	public function test_location_after_header_navbar()
+	public function test_location_after_footer_navbar()
 	{
 		$ad_code = $this->create_ad('after_footer_navbar');
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm after header navbar ad is present on correct location
+		// Confirm after footer navbar ad is present on correct location
 		$this->assertContains($ad_code, $crawler->filter('.copyright')->html());
 	}
 }
