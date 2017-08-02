@@ -2,3 +2,10 @@
 	display: flex;
 	justify-content: center;
 }
+
+#phpbbad-slide-up {
+	position: fixed;
+	right: 0;
+	bottom: -100%;
+	transition: bottom 0.3s;
+}

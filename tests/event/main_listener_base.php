@@ -87,6 +87,7 @@ class main_listener_base extends \phpbb_database_test_case
 			'below_footer',
 			'below_header',
 			'pop_up',
+			'slide_up',
 		);
 		$location_types = array();
 		foreach ($locations as $type)

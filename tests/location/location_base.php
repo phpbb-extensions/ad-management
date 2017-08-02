@@ -59,6 +59,7 @@ class location_base extends \phpbb_test_case
 			'below_footer',
 			'below_header',
 			'pop_up',
+			'slide_up',
 		);
 		$location_types = array();
 		foreach ($locations as $type)

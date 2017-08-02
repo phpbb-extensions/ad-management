@@ -28,6 +28,7 @@ class get_all_location_ids_test extends location_base
 				'below_footer',
 				'below_header',
 				'pop_up',
+				'slide_up',
 			)),
 			array('viewtopic', '', array(
 				'above_footer',
@@ -41,6 +42,7 @@ class get_all_location_ids_test extends location_base
 				'below_footer',
 				'below_header',
 				'pop_up',
+				'slide_up',
 			)),
 			array('memberlist', 'viewprofile', array(
 				'above_footer',
@@ -52,6 +54,7 @@ class get_all_location_ids_test extends location_base
 				'below_footer',
 				'below_header',
 				'pop_up',
+				'slide_up',
 			)),
 		);
 	}

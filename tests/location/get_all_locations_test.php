@@ -74,6 +74,10 @@ class get_all_locations_test extends location_base
 				'name'	=> 'AD_POP_UP',
 				'desc'	=> 'AD_POP_UP_DESC',
 			),
+			'slide_up'	=> array(
+				'name'	=> 'AD_SLIDE_UP',
+				'desc'	=> 'AD_SLIDE_UP_DESC',
+			),
 		), $locations);
 	}
 }

@@ -12,3 +12,24 @@
 		})(jQuery);
 	</script>
 {% endif %}
+
+{% if AD_SLIDE_UP and AD_SLIDE_UP_ID %}
+	{% set PHPBB_ADS_STYLE = '' %}
+	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_SLIDE_UP, AD_SLIDE_UP_ID %}
+	<div id="phpbbad-slide-up">
+		{% include '@phpbb_ads/phpbb_ads_default.html' %}
+	</div>
+
+	<script>
+		(function($) {
+			'use strict';
+
+			$(window).on('scroll', function() {
+				var page_footer = $('#page-footer');
+				if (page_footer.offset().top - $(window).scrollTop() < $(window).height()) {
+					$('#phpbbad-slide-up').css({bottom: 0});
+				}
+			});
+		})(jQuery);
+	</script>
+{% endif %}
