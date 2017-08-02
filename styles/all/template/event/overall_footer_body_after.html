@@ -1,0 +1,14 @@
+{% if AD_POP_UP %}
+	{% set PHPBB_ADS_STYLE = '' %}
+	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_POP_UP, AD_POP_UP_ID %}
+	<script>
+		(function($) {
+			'use strict';
+
+			$(window).on('load', function() {
+				document.cookie = '{{ POP_UP_COOKIE_NAME }}=true; expires={{ POP_UP_COOKIE_EXPIRES }}; path={{ POP_UP_COOKIE_PATH }}';
+				phpbb.alert('{{ lang('POP_UP_TITLE') }}', `{% include '@phpbb_ads/phpbb_ads_default.html' %}`);
+			});
+		})(jQuery);
+	</script>
+{% endif %}

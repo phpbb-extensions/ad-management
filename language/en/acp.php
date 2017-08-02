@@ -105,6 +105,8 @@ $lang = array_merge($lang, array(
 	'AD_AFTER_HEADER_NAVBAR_DESC'	=> 'Displays on every page after header navigation bar.',
 	'AD_AFTER_FOOTER_NAVBAR'		=> 'After footer navbar',
 	'AD_AFTER_FOOTER_NAVBAR_DESC'	=> 'Displays on every page after footer navigation bar.',
+	'AD_POP_UP'						=> 'Pop-up',
+	'AD_POP_UP_DESC'				=> 'Displays once per day when user visits this board as overlaying box. User need to close this box to continue to the content. Please, be aware, that this kind of advertisement is very obtrusive to the user!',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',
