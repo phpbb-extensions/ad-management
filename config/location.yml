@@ -37,6 +37,12 @@ services:
         tags:
             - { name: phpbb.ads.location.type }
 
+    phpbb.ads.location.type.after_footer_navbar:
+        class: phpbb\ads\location\type\after_footer_navbar
+        parent: phpbb.ads.location.type.base
+        tags:
+            - { name: phpbb.ads.location.type }
+
     phpbb.ads.location.type.after_header_navbar:
         class: phpbb\ads\location\type\after_header_navbar
         parent: phpbb.ads.location.type.base

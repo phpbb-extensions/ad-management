@@ -103,6 +103,8 @@ $lang = array_merge($lang, array(
 	'AD_AFTER_PROFILE_DESC'			=> 'Displays after member profile page content.',
 	'AD_AFTER_HEADER_NAVBAR'		=> 'After header navbar',
 	'AD_AFTER_HEADER_NAVBAR_DESC'	=> 'Displays on every page after header navigation bar.',
+	'AD_AFTER_FOOTER_NAVBAR'		=> 'After footer navbar',
+	'AD_AFTER_FOOTER_NAVBAR_DESC'	=> 'Displays on every page after footer navigation bar.',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',
