@@ -21,6 +21,9 @@ class ucp_controller
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -35,13 +38,15 @@ class ucp_controller
 	 *
 	 * @param \phpbb\ads\ad\manager		$manager 	Advertisement manager object
 	 * @param \phpbb\user				$user		User object
+	 * @param \phpbb\language\language	$language	Language object
 	 * @param \phpbb\template\template	$template	Template object
 	 * @param \phpbb\config\config		$config		Config object
 	 */
-	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\user $user, \phpbb\template\template $template, \phpbb\config\config $config)
+	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\user $user, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\config\config $config)
 	{
 		$this->manager = $manager;
 		$this->user = $user;
+		$this->language = $language;
 		$this->template = $template;
 		$this->config = $config;
 	}
@@ -59,7 +64,7 @@ class ucp_controller
 	 */
 	public function get_page_title()
 	{
-		return $this->user->lang('UCP_PHPBB_ADS_STATS');
+		return $this->language->lang('UCP_PHPBB_ADS_STATS');
 	}
 
 	/**
@@ -67,7 +72,7 @@ class ucp_controller
 	 */
 	public function main()
 	{
-		$this->user->add_lang_ext('phpbb/ads', 'ucp');
+		$this->language->add_lang('ucp', 'phpbb/ads');
 
 		foreach ($this->manager->get_ads_by_owner($this->user->data['user_id']) as $ad)
 		{

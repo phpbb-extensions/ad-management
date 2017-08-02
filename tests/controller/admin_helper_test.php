@@ -15,6 +15,9 @@ class admin_helper_test extends \phpbb_database_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	protected $language;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
@@ -62,10 +65,10 @@ class admin_helper_test extends \phpbb_database_test_case
 		}
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$lang = new \phpbb\language\language($lang_loader);
 
 		// Load/Mock classes required by the controller class
-		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->language = new \phpbb\language\language($lang_loader);
+		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
@@ -90,6 +93,7 @@ class admin_helper_test extends \phpbb_database_test_case
 	{
 		$helper = new \phpbb\ads\controller\admin_helper(
 			$this->user,
+			$this->language,
 			$this->template,
 			$this->log,
 			$this->location_manager,

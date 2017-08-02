@@ -20,6 +20,9 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	protected $language;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
 	protected $request;
 
@@ -53,10 +56,10 @@ class admin_input_test extends \phpbb_database_test_case
 		global $db;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$lang = new \phpbb\language\language($lang_loader);
 
 		// Load/Mock classes required by the controller class
-		$this->user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->language = new \phpbb\language\language($lang_loader);
+		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
@@ -78,6 +81,7 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		$input = new \phpbb\ads\controller\admin_input(
 			$this->user,
+			$this->language,
 			$this->request,
 			$this->banner
 		);
@@ -95,6 +99,7 @@ class admin_input_test extends \phpbb_database_test_case
 		return array(
 			array(false, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', '', 0, array('The submitted form was invalid. Try submitting again.')),
 			array(true, '', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', '', 0, array('AD_NAME_REQUIRED')),
+			array(true, str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', '', 0, array('AD_NAME_TOO_LONG')),
 			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '5', '', '', '', 0, array('AD_END_DATE_INVALID')),
 			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '5', '', '', '', 0, array('AD_END_DATE_INVALID')),
 			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '0', '', '', '', 0, array('AD_PRIORITY_INVALID')),
@@ -161,11 +166,13 @@ class admin_input_test extends \phpbb_database_test_case
 	public function banner_upload_data()
 	{
 		return array(
-			array(false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
-			array(false, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
-			array(true, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
-			array(true, true, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
-			array(true, true, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
+			array(false, false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
+			array(false, true, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
+			array(false, true, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
+			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
+			array(true, true, false, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
+			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
+			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
 		);
 	}
 
@@ -174,7 +181,7 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider banner_upload_data
 	 */
-	public function test_banner_upload($can_create_directory, $can_move_file, $file_error, $ad_code, $ad_code_expected)
+	public function test_banner_upload($can_create_directory, $can_move_file, $is_ajax, $file_error, $ad_code, $ad_code_expected)
 	{
 		$input_controller = $this->get_input_controller();
 
@@ -202,6 +209,16 @@ class admin_input_test extends \phpbb_database_test_case
 		{
 			$this->banner->expects($this->once())
 				->method('remove');
+		}
+
+		$this->request->expects($this->once())
+			->method('is_ajax')
+			->willReturn($is_ajax);
+
+		if ($is_ajax)
+		{
+			// Handle trigger_error() output called from json_response
+			$this->setExpectedTriggerError(E_WARNING);
 		}
 
 		$result = $input_controller->banner_upload($ad_code);

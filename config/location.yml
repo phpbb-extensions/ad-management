@@ -4,6 +4,13 @@ services:
         arguments:
             - '@phpbb.ads.location.type_collection'
 
+    phpbb.ads.location.type.base:
+        class: phpbb\ads\location\type\base
+        abstract: true
+        arguments:
+            - '@user'
+            - '@language'
+
 # ----- Template locations -----
     phpbb.ads.location.type_collection:
         class: phpbb\di\service_collection
@@ -14,70 +21,60 @@ services:
 
     phpbb.ads.location.type.above_footer:
         class: phpbb\ads\location\type\above_footer
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.above_header:
         class: phpbb\ads\location\type\above_header
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.after_first_post:
         class: phpbb\ads\location\type\after_first_post
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.after_not_first_post:
         class: phpbb\ads\location\type\after_not_first_post
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.after_posts:
         class: phpbb\ads\location\type\after_posts
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.after_profile:
         class: phpbb\ads\location\type\after_profile
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.before_posts:
         class: phpbb\ads\location\type\before_posts
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.before_profile:
         class: phpbb\ads\location\type\before_profile
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.below_footer:
         class: phpbb\ads\location\type\below_footer
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }
 
     phpbb.ads.location.type.below_header:
         class: phpbb\ads\location\type\below_header
-        arguments:
-            - '@user'
+        parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }

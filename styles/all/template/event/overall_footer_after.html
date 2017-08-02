@@ -2,8 +2,14 @@
 {% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_BELOW_FOOTER, AD_BELOW_FOOTER_ID %}
 {% include '@phpbb_ads/phpbb_ads_default.html' %}
 
-{% if S_PHPBB_ADS_ENABLE_CLICKS %}
+{% if S_INCREMENT_VIEWS %}
 	<script>
-		var u_phpbb_ads_click = '{{ UA_PHPBB_ADS_CLICK }}';
+		(function($) {
+			'use strict';
+
+			$(window).on('load', function() {
+				$.get('{{ UA_PHPBB_ADS_VIEWS }}');
+			});
+		})(jQuery);
 	</script>
 {% endif %}
