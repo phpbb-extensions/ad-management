@@ -19,7 +19,7 @@ class location_above_header_test extends functional_base
 	{
 		$ad_code = $this->create_ad('above_header');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is first child of body
 		$this->assertContains($ad_code, $crawler->filter('body')->children()->first()->html());

@@ -19,7 +19,7 @@ class location_below_footer_test extends functional_base
 	{
 		$ad_code = $this->create_ad('below_footer');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm below footer ad is last visible body children
 		$this->assertContains($ad_code, $crawler->filter('.phpbb-ads-center')->last()->html());

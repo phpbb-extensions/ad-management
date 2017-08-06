@@ -1100,4 +1100,3 @@ function confirm_box()
 function add_form_key()
 {
 }
-
