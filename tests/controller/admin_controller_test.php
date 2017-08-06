@@ -46,6 +46,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_helper */
 	protected $helper;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\analyser\manager */
+	protected $analyser;
+
 	/** @var string root_path */
 	protected $root_path;
 
@@ -103,6 +106,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->helper = $this->getMockBuilder('\phpbb\ads\controller\admin_helper')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 
@@ -129,6 +135,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->group_helper,
 			$this->input,
 			$this->helper,
+			$this->analyser,
 			$this->root_path,
 			$this->php_ext
 		);
@@ -174,6 +181,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->group_helper,
 				$this->input,
 				$this->helper,
+				$this->analyser,
 				$this->root_path,
 				$this->php_ext
 			))
@@ -381,6 +389,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('upload_banner')
 			->willReturn(false);
 
+		$this->request->expects($this->at(3))
+			->method('is_set_post')
+			->with('analyse_ad_code')
+			->willReturn(false);
+
 		$this->helper->expects($this->once())
 			->method('assign_locations');
 
@@ -421,6 +434,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request->expects($this->at(2))
 			->method('is_set_post')
 			->with('upload_banner')
+			->willReturn(false);
+
+		$this->request->expects($this->at(3))
+			->method('is_set_post')
+			->with('analyse_ad_code')
 			->willReturn(false);
 
 		$this->input->expects($this->once())
@@ -479,6 +497,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('upload_banner')
 			->willReturn(true);
 
+		$this->request->expects($this->at(3))
+			->method('is_set_post')
+			->with('analyse_ad_code')
+			->willReturn(false);
+
 		$this->input->expects($this->once())
 			->method('get_form_data')
 			->with('phpbb/ads/add')
@@ -500,6 +523,67 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_form_data')
 			->with(array(
 				'ad_code'		=> 'Ad Code #1 with img',
+				'ad_locations'	=> array(),
+			));
+
+		$this->input->expects($this->once())
+			->method('get_errors')
+			->willReturn(array());
+
+		$this->helper->expects($this->once())
+			->method('assign_errors')
+			->with(array());
+
+		$controller->action_add();
+	}
+
+	/**
+	 * Test action_add() method with analyse_ad_code submitted data
+	 */
+	public function test_action_add_analyse_ad_code()
+	{
+		$controller = $this->get_controller();
+
+		$this->request->expects($this->at(0))
+			->method('is_set_post')
+			->with('preview')
+			->willReturn(false);
+
+		$this->request->expects($this->at(1))
+			->method('is_set_post')
+			->with('submit')
+			->willReturn(false);
+
+		$this->request->expects($this->at(2))
+			->method('is_set_post')
+			->with('upload_banner')
+			->willReturn(false);
+
+		$this->request->expects($this->at(3))
+			->method('is_set_post')
+			->with('analyse_ad_code')
+			->willReturn(true);
+
+		$this->input->expects($this->once())
+			->method('get_form_data')
+			->with('phpbb/ads/add')
+			->willReturn(array(
+				'ad_code'		=> 'Ad Code #1',
+				'ad_locations'	=> array(),
+			));
+
+		$this->analyser->expects($this->once())
+			->method('run')
+			->with('Ad Code #1');
+
+		$this->helper->expects($this->once())
+			->method('assign_locations')
+			->with(array());
+
+		$this->helper->expects($this->once())
+			->method('assign_form_data')
+			->with(array(
+				'ad_code'		=> 'Ad Code #1',
 				'ad_locations'	=> array(),
 			));
 
@@ -549,6 +633,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request->expects($this->at(2))
 			->method('is_set_post')
 			->with('upload_banner')
+			->willReturn(false);
+
+		$this->request->expects($this->at(3))
+			->method('is_set_post')
+			->with('analyse_ad_code')
 			->willReturn(false);
 
 		$this->input->expects($this->once())
@@ -651,6 +740,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request->expects($this->at(3))
 			->method('is_set_post')
 			->with('upload_banner')
+			->willReturn(false);
+
+		$this->request->expects($this->at(4))
+			->method('is_set_post')
+			->with('analyse_ad_code')
 			->willReturn(false);
 
 		$this->manager->expects($this->once())
@@ -759,6 +853,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('upload_banner')
 			->willReturn(false);
 
+		$this->request->expects($this->at(4))
+			->method('is_set_post')
+			->with('analyse_ad_code')
+			->willReturn(false);
+
 		$this->input->expects($this->once())
 			->method('get_form_data')
 			->with('phpbb/ads/edit/1')
@@ -850,6 +949,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request->expects($this->at(3))
 			->method('is_set_post')
 			->with('upload_banner')
+			->willReturn(false);
+
+		$this->request->expects($this->at(4))
+			->method('is_set_post')
+			->with('analyse_ad_code')
 			->willReturn(false);
 
 		$this->input->expects($this->once())

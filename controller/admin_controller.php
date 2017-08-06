@@ -44,6 +44,9 @@ class admin_controller
 	/** @var \phpbb\ads\controller\admin_helper */
 	protected $helper;
 
+	/** @var \phpbb\ads\analyser\manager */
+	protected $analyser;
+
 	/** @var string root_path */
 	protected $root_path;
 
@@ -65,10 +68,11 @@ class admin_controller
 	 * @param \phpbb\group\helper					$group_helper	Group helper object
 	 * @param \phpbb\ads\controller\admin_input 	$input			Admin input object
 	 * @param \phpbb\ads\controller\admin_helper	$helper			Admin helper object
+	 * @param \phpbb\ads\analyser\manager			$analyser		Ad code analyser object
 	 * @param string								$root_path		phpBB root path
 	 * @param string								$php_ext		PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -79,6 +83,7 @@ class admin_controller
 		$this->group_helper = $group_helper;
 		$this->input = $input;
 		$this->helper = $helper;
+		$this->analyser = $analyser;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -179,9 +184,10 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 		$upload_banner = $this->request->is_set_post('upload_banner');
+		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
 
 		add_form_key('phpbb/ads/add');
-		if ($preview || $submit || $upload_banner)
+		if ($preview || $submit || $upload_banner || $analyse_ad_code)
 		{
 			$data = $this->input->get_form_data('phpbb/ads/add');
 
@@ -192,6 +198,10 @@ class admin_controller
 			else if ($upload_banner)
 			{
 				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
+			}
+			else if ($analyse_ad_code)
+			{
+				$this->analyser->run($data['ad_code']);
 			}
 			else if (!$this->input->has_errors())
 			{
@@ -233,9 +243,10 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 		$upload_banner = $this->request->is_set_post('upload_banner');
+		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
 
 		add_form_key('phpbb/ads/edit/' . $ad_id);
-		if ($preview || $submit || $upload_banner)
+		if ($preview || $submit || $upload_banner || $analyse_ad_code)
 		{
 			$data = $this->input->get_form_data('phpbb/ads/edit/' . $ad_id);
 
@@ -246,6 +257,10 @@ class admin_controller
 			else if ($upload_banner)
 			{
 				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
+			}
+			else if ($analyse_ad_code)
+			{
+				$this->analyser->run($data['ad_code']);
 			}
 			else if (!$this->input->has_errors())
 			{
