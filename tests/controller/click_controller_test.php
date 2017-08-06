@@ -83,9 +83,8 @@ class click_controller_test extends \phpbb_database_test_case
 	public function test_increment_clicks($ad_id, $is_ajax)
 	{
 		$controller = $this->get_controller();
-		$db = $this->new_dbal();
 
-		$this->request->expects($this->once())
+		$this->request->expects($ad_id ? $this->once() : $this->never())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
