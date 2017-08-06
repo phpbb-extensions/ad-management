@@ -25,9 +25,15 @@
 			'use strict';
 
 			$(window).on('scroll', function() {
-				var page_footer = $('#page-footer');
-				if (page_footer.offset().top - $(window).scrollTop() < $(window).height()) {
-					$('#phpbbad-slide-up').css({bottom: 0});
+				var $pageFooter = $('#page-footer'),
+					$slider = $('#phpbbad-slide-up'),
+					position = $pageFooter.offset().top - $(window).scrollTop(),
+					is_high_enough = $('body').height() > $(window).height() + $slider.height();
+				if (is_high_enough && position < $(window).height()) {
+					$slider.css({transform: 'translateY(0)'});
+				}
+				if (position > $(window).height()) {
+					$slider.css({transform: 'translateY(100%)'});
 				}
 			});
 		})(jQuery);
