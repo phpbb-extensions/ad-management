@@ -10,3 +10,12 @@
 	transform: translateY(100%);
 	transition: transform 0.3s;
 }
+
+.phpbbad-slide-up-hide {
+	text-align: center;
+}
+
+.phpbbad-slide-up-icon {
+	width: 30px;
+	background-color: white;
+}

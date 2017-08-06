@@ -1,4 +1,5 @@
 <div id="phpbbad-slide-up">
+	<div class="phpbbad-slide-up-hide"><i class="phpbbad-slide-up-icon icon fa-chevron-down"></i></div>
 	{% include '@phpbb_ads/phpbb_ads_default.html' %}
 </div>
 
@@ -6,17 +7,27 @@
 	(function($) {
 		'use strict';
 
+		var $slider = $('#phpbbad-slide-up'),
+			lastScrollTop = 0;
+
 		$(window).on('scroll', function() {
-			var $pageFooter = $('#page-footer'),
-				$slider = $('#phpbbad-slide-up'),
-				position = $pageFooter.offset().top - $(window).scrollTop(),
-				isHighEnough = $('body').height() > $(window).height() + $slider.height();
-			if (isHighEnough && position < $(window).height()) {
+			var windowScrollTop = $(window).scrollTop();
+			// Only show ad when we are at the bottom of the page and scrolling down.
+			// Second part of the condition solves issue when user scrolls to the very
+			// bottom of the page, hides the ad with the icon, but then scrolls up.
+			// In this case, an ad is slided up for a short while, looking like it is
+			// a bug.
+			if (windowScrollTop + $(window).height() > $(document).height() - 10 && windowScrollTop > lastScrollTop) {
 				$slider.css({transform: 'translateY(0)'});
 			}
-			if (position > $(window).height()) {
+			else {
 				$slider.css({transform: 'translateY(100%)'});
 			}
+			lastScrollTop = windowScrollTop;
+		});
+
+		$('.phpbbad-slide-up-icon').on('click', function() {
+			$slider.css({transform: 'translateY(100%)'});
 		});
 	})(jQuery);
 </script>
