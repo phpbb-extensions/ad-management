@@ -1,0 +1,11 @@
+{% if S_INCREMENT_VIEWS %}
+	<script>
+		(function($) {
+			'use strict';
+
+			$(window).on('load', function() {
+				$.get('{{ UA_PHPBB_ADS_VIEWS }}');
+			});
+		})(jQuery);
+	</script>
+{% endif %}

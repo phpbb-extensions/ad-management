@@ -1,0 +1,24 @@
+{% if S_DISPLAY_ADBLOCKER %}
+	<div id="phpbb-ads-ab" class="rules" style="display: none;">
+		<div class="inner">
+			<strong>{{ lang('ADBLOCKER_TITLE') ~ lang('COLON') }}</strong> {{ lang('ADBLOCKER_MESSAGE') }}
+		</div>
+	</div>
+
+	<script>
+		'use strict';
+
+		// Test presence of AdBlock and show message if present
+		// Credit: https://christianheilmann.com/2015/12/25/detecting-adblock-without-an-extra-http-overhead/
+		var test = document.createElement('div');
+		test.innerHTML = '&nbsp;';
+		test.className = 'adsbox';
+		document.body.appendChild(test);
+		window.setTimeout(function() {
+			if (test.offsetHeight === 0) {
+				document.getElementById('phpbb-ads-ab').removeAttribute('style');
+			}
+			test.remove();
+		}, 100);
+	</script>
+{% endif %}

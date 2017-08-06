@@ -119,7 +119,9 @@ class main_listener implements EventSubscriberInterface
 			{
 				$this->template->assign_vars(array(
 					'S_INCREMENT_VIEWS'		=> true,
-					'UA_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('ad_ids' => implode('-', $ad_ids))),
+					// Obfuscate URL to prevent crawlers increasing view counters.
+					// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
+					'UA_PHPBB_ADS_VIEWS'	=> str_replace('adsview', "' + (![]+[])[+!+[]] + 'dsview", $this->controller_helper->route('phpbb_ads_view', array('ad_ids' => implode('-', $ad_ids)))),
 				));
 			}
 		}
