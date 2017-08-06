@@ -31,7 +31,7 @@ class m2_acp_module extends \phpbb\db\migration\migration
 	/**
 	* {@inheritDoc}
 	*/
-	static public function depends_on()
+	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}

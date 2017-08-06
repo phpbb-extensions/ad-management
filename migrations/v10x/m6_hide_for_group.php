@@ -25,7 +25,7 @@ class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 	/**
 	* {@inheritDoc}
 	*/
-	static public function depends_on()
+	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m2_acp_module');
 	}
