@@ -1,0 +1,11 @@
+{% if AD_POP_UP and AD_POP_UP_ID %}
+	{% set PHPBB_ADS_STYLE = '' %}
+	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_POP_UP, AD_POP_UP_ID %}
+	{% include '@phpbb_ads/includes/phpbb_ads_pop_up.html' %}
+{% endif %}
+
+{% if AD_SLIDE_UP and AD_SLIDE_UP_ID %}
+	{% set PHPBB_ADS_STYLE = '' %}
+	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_SLIDE_UP, AD_SLIDE_UP_ID %}
+	{% include '@phpbb_ads/includes/phpbb_ads_slide_up.html' %}
+{% endif %}
