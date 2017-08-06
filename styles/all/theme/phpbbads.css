@@ -16,6 +16,7 @@
 }
 
 .phpbbad-slide-up-icon {
+	cursor: pointer;
 	width: 30px;
 	background-color: white;
 }
