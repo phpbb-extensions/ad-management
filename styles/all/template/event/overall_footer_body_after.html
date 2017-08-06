@@ -1,41 +1,11 @@
 {% if AD_POP_UP and AD_POP_UP_ID %}
 	{% set PHPBB_ADS_STYLE = '' %}
 	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_POP_UP, AD_POP_UP_ID %}
-	<script>
-		(function($) {
-			'use strict';
-
-			$(window).on('load', function() {
-				document.cookie = '{{ POP_UP_COOKIE_NAME }}=true; expires={{ POP_UP_COOKIE_EXPIRES }}; path={{ POP_UP_COOKIE_PATH }}';
-				phpbb.alert('{{ lang('ADVERTISEMENT')|upper }}', `{% include '@phpbb_ads/phpbb_ads_default.html' %}`);
-			});
-		})(jQuery);
-	</script>
+	{% include '@phpbb_ads/includes/phpbb_ads_pop_up.html' %}
 {% endif %}
 
 {% if AD_SLIDE_UP and AD_SLIDE_UP_ID %}
 	{% set PHPBB_ADS_STYLE = '' %}
 	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_SLIDE_UP, AD_SLIDE_UP_ID %}
-	<div id="phpbbad-slide-up">
-		{% include '@phpbb_ads/phpbb_ads_default.html' %}
-	</div>
-
-	<script>
-		(function($) {
-			'use strict';
-
-			$(window).on('scroll', function() {
-				var $pageFooter = $('#page-footer'),
-					$slider = $('#phpbbad-slide-up'),
-					position = $pageFooter.offset().top - $(window).scrollTop(),
-					isHighEnough = $('body').height() > $(window).height() + $slider.height();
-				if (isHighEnough && position < $(window).height()) {
-					$slider.css({transform: 'translateY(0)'});
-				}
-				if (position > $(window).height()) {
-					$slider.css({transform: 'translateY(100%)'});
-				}
-			});
-		})(jQuery);
-	</script>
+	{% include '@phpbb_ads/includes/phpbb_ads_slide_up.html' %}
 {% endif %}

@@ -1,0 +1,22 @@
+<div id="phpbbad-slide-up">
+	{% include '@phpbb_ads/phpbb_ads_default.html' %}
+</div>
+
+<script>
+	(function($) {
+		'use strict';
+
+		$(window).on('scroll', function() {
+			var $pageFooter = $('#page-footer'),
+				$slider = $('#phpbbad-slide-up'),
+				position = $pageFooter.offset().top - $(window).scrollTop(),
+				isHighEnough = $('body').height() > $(window).height() + $slider.height();
+			if (isHighEnough && position < $(window).height()) {
+				$slider.css({transform: 'translateY(0)'});
+			}
+			if (position > $(window).height()) {
+				$slider.css({transform: 'translateY(100%)'});
+			}
+		});
+	})(jQuery);
+</script>
