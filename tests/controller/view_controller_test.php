@@ -89,7 +89,7 @@ class view_controller_test extends \phpbb_database_test_case
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
-		$this->manager->expects(($is_ajax && $ad_ids != '') ? $this->once() : $this->never())
+		$this->manager->expects(($is_ajax && $ad_ids !== '') ? $this->once() : $this->never())
 			->method('increment_ads_views')
 			->with(explode('-', $ad_ids));
 

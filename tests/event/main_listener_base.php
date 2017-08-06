@@ -93,7 +93,7 @@ class main_listener_base extends \phpbb_database_test_case
 		foreach ($locations as $type)
 		{
 			$class = "\\phpbb\\ads\\location\\type\\$type";
-			if ($type == 'pop_up')
+			if ($type === 'pop_up')
 			{
 				$location_types['phpbb.ads.location.type.' . $type] = new $class($user, $lang, $request, $config, $template);
 			}
