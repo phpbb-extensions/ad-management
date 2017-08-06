@@ -7,23 +7,15 @@
 	(function($) {
 		'use strict';
 
-		var $slider = $('#phpbbad-slide-up'),
-			lastScrollTop = 0;
+		var $slider = $('#phpbbad-slide-up');
 
 		$(window).on('scroll', function() {
-			var windowScrollTop = $(window).scrollTop();
-			// Only show ad when we are at the bottom of the page and scrolling down.
-			// Second part of the condition solves issue when user scrolls to the very
-			// bottom of the page, hides the ad with the icon, but then scrolls up.
-			// In this case, an ad is slided up for a short while, looking like it is
-			// a bug.
-			if (windowScrollTop + $(window).height() > $(document).height() - 10 && windowScrollTop > lastScrollTop) {
+			if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
 				$slider.css({transform: 'translateY(0)'});
 			}
 			else {
 				$slider.css({transform: 'translateY(100%)'});
 			}
-			lastScrollTop = windowScrollTop;
 		});
 
 		$('.phpbbad-slide-up-icon').on('click', function() {
