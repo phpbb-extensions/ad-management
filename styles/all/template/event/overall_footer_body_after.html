@@ -28,8 +28,8 @@
 				var $pageFooter = $('#page-footer'),
 					$slider = $('#phpbbad-slide-up'),
 					position = $pageFooter.offset().top - $(window).scrollTop(),
-					is_high_enough = $('body').height() > $(window).height() + $slider.height();
-				if (is_high_enough && position < $(window).height()) {
+					isHighEnough = $('body').height() > $(window).height() + $slider.height();
+				if (isHighEnough && position < $(window).height()) {
 					$slider.css({transform: 'translateY(0)'});
 				}
 				if (position > $(window).height()) {
