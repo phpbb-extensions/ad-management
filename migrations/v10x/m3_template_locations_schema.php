@@ -13,30 +13,30 @@ namespace phpbb\ads\migrations\v10x;
 class m3_template_locations_schema extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		return $this->db_tools->sql_table_exists($this->table_prefix . 'ad_locations');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
-	* Add the ad_locations table schema to the database:
-	*	ad_locations:
-	*		ad_id
-	*		location_id
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Add the ad_locations table schema to the database:
+	 *	ad_locations:
+	 *		ad_id
+	 *		location_id
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function update_schema()
 	{
 		return array(
@@ -53,11 +53,11 @@ class m3_template_locations_schema extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* Drop the ad_locations table schema from the database
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Drop the ad_locations table schema from the database
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function revert_schema()
 	{
 		return array(

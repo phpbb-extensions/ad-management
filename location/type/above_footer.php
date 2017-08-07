@@ -13,8 +13,8 @@ namespace phpbb\ads\location\type;
 class above_footer extends base
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_id()
 	{
 		return 'above_footer';

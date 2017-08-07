@@ -13,27 +13,27 @@ namespace phpbb\ads\migrations\v10x;
 class m8_priority extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		return $this->db_tools->sql_column_exists($this->table_prefix . 'ads', 'ad_priority');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
-	* Add the priority to ads table
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Add the priority to ads table
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function update_schema()
 	{
 		return array(
@@ -46,11 +46,11 @@ class m8_priority extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* Drop the priority from ads table
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Drop the priority from ads table
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function revert_schema()
 	{
 		return array(

@@ -13,16 +13,16 @@ namespace phpbb\ads\location\type;
 class after_profile extends base
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_id()
 	{
 		return 'after_profile';
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function will_display()
 	{
 		return strpos($this->user->page['page_name'], 'memberlist') !== false && strpos($this->user->page['query_string'], 'viewprofile') !== false;

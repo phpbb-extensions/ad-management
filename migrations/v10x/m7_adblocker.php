@@ -13,26 +13,26 @@ namespace phpbb\ads\migrations\v10x;
 class m7_adblocker extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		return $this->config->offsetExists('phpbb_ads_adblocker_message');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
-	* Add phpbb_ads_adblocker_message config
-	*
-	* @return array Array of data update instructions
-	*/
+	 * Add phpbb_ads_adblocker_message config
+	 *
+	 * @return array Array of data update instructions
+	 */
 	public function update_data()
 	{
 		return array(

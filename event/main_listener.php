@@ -42,8 +42,8 @@ class main_listener implements EventSubscriberInterface
 	protected $controller_helper;
 
 	/**
-	* {@inheritdoc}
-	*/
+	 * {@inheritdoc}
+	 */
 	public static function getSubscribedEvents()
 	{
 		return array(
@@ -54,16 +54,16 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template				$template			Template object
-	* @param \phpbb\user							$user				User object
-	* @param \phpbb\config\db_text					$config_text		Config text object
-	* @param \phpbb\config\config					$config				Config object
-	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
-	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
-	* @param \phpbb\controller\helper				$controller_helper	Controller helper object
-	*/
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template				$template			Template object
+	 * @param \phpbb\user							$user				User object
+	 * @param \phpbb\config\db_text					$config_text		Config text object
+	 * @param \phpbb\config\config					$config				Config object
+	 * @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
+	 * @param \phpbb\ads\location\manager			$location_manager	Template location manager object
+	 * @param \phpbb\controller\helper				$controller_helper	Controller helper object
+	 */
 	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper)
 	{
 		$this->template = $template;
@@ -76,11 +76,11 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	* Load common language file during user setup
-	*
-	* @param	\phpbb\event\data	$event	The event object
-	* @return	void
-	*/
+	 * Load common language file during user setup
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
 	public function load_language_on_setup($event)
 	{
 		$lang_set_ext = $event['lang_set_ext'];

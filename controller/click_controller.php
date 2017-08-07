@@ -34,12 +34,12 @@ class click_controller
 	}
 
 	/**
-	* Increment clicks for an ad
-	*
-	* @param	int	$ad_id	Advertisement ID
-	* @throws	\phpbb\exception\http_exception
-	* @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
-	*/
+	 * Increment clicks for an ad
+	 *
+	 * @param	int	$ad_id	Advertisement ID
+	 * @throws	\phpbb\exception\http_exception
+	 * @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
+	 */
 	public function increment_clicks($ad_id)
 	{
 		if (!empty($ad_id) && $this->request->is_ajax())
