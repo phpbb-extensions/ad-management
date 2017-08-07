@@ -19,7 +19,7 @@ class location_slide_up_test extends functional_base
 	{
 		$ad_code = $this->create_ad('slide_up');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm pop-up ad is present
 		$this->assertContains($ad_code, $crawler->filter('#phpbbad-slide-up')->html());

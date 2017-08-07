@@ -39,6 +39,6 @@ class delete_ad_test extends ad_base
 
 		$manager->delete_ad_locations(0);
 
-		$this->assertEquals(count($manager->get_all_ads()), $total_ads);
+		$this->assertCount($total_ads, $manager->get_all_ads());
 	}
 }

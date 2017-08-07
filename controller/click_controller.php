@@ -42,7 +42,7 @@ class click_controller
 	*/
 	public function increment_clicks($ad_id)
 	{
-		if ($this->request->is_ajax() && !empty($ad_id))
+		if (!empty($ad_id) && $this->request->is_ajax())
 		{
 			$this->manager->increment_ad_clicks($ad_id);
 

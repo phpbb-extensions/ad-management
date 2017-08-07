@@ -19,7 +19,7 @@ class location_below_header_test extends functional_base
 	{
 		$ad_code = $this->create_ad('below_header');
 
-		$crawler = self::request('GET', "index.php");
+		$crawler = self::request('GET', 'index.php');
 
 		// Confirm below header ad is directly after header
 		$this->assertContains($ad_code, $crawler->filter('.headerbar')->nextAll()->html());
