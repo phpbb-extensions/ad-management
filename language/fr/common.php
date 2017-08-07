@@ -41,4 +41,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ADBLOCKER_TITLE'	=> 'Bloqueur de publicités détecté',
 	'ADBLOCKER_MESSAGE'	=> 'Notre site Web est conçu pour afficher des publicités en ligne aux visiteurs. Merci de considérer l’importance de l’affichage des publicités sur notre site Web en désactivant votre logiciel antipublicitaire sur notre forum.',
+
+	'ADVERTISEMENT'		=> 'Publicité',
+	'HIDE_AD'			=> 'Masquer la publicité',
 ));

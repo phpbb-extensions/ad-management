@@ -121,6 +121,14 @@ $lang = array_merge($lang, array(
 	'AD_BEFORE_PROFILE_DESC'		=> 'Permet d’afficher la publicité sur la page du profil du membre au-dessus du contenu.',
 	'AD_AFTER_PROFILE'				=> 'En dessous du profil',
 	'AD_AFTER_PROFILE_DESC'			=> 'Permet d’afficher la publicité sur la page du profil du membre en dessous du contenu.',
+	'AD_AFTER_HEADER_NAVBAR'		=> 'En dessous de la barre de navigation de l’entête',
+	'AD_AFTER_HEADER_NAVBAR_DESC'	=> 'Permet d’afficher la publicité sur chaque page en dessous de la barre de navigation de l’entête du forum.',
+	'AD_AFTER_FOOTER_NAVBAR'		=> 'En dessous de la barre de navigation du pied de page',
+	'AD_AFTER_FOOTER_NAVBAR_DESC'	=> 'Permet d’afficher la publicité sur chaque page en dessous de la barre de navigation du pied de page du forum.',
+	'AD_POP_UP'						=> 'Pop-up',
+	'AD_POP_UP_DESC'				=> 'Permet d’afficher la publicité un fois page jour en superposition du forum. L’utilisateur devra ferme la fenêtre pour continuer sa visite du forum. Merci de considérer que ce type d’affichage est intrusif pour l’utilisateur !',
+	'AD_SLIDE_UP'					=> 'Défilement vers le haut',
+	'AD_SLIDE_UP_DESC'				=> 'Permet d’afficher la publicité sur chaque page lorsque l’utilisateur fait défiler la page vers le page. La publicité défiles vers le haut en partant du coin inférieur droit de la fenêtre.',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Bloqueurs de publicités',
