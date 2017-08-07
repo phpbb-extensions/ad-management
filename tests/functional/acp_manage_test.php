@@ -280,7 +280,7 @@ class acp_manage_test extends acp_base
 		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
-	static public function click($link)
+	public static function click($link)
 	{
 		return self::$client->click($link);
 	}

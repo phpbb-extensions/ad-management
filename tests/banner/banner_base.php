@@ -27,7 +27,7 @@ class banner_base extends \phpbb_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');
 	}

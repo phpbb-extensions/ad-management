@@ -407,7 +407,7 @@ class admin_controller
 	{
 		if (!function_exists('user_get_id_name'))
 		{
-			include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+			include $this->root_path . 'includes/functions_user.' . $this->php_ext;
 		}
 
 		$this->language->add_lang('posting'); // Used by banner_upload() file errors

@@ -32,7 +32,7 @@ class admin_input_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');
 	}

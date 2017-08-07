@@ -73,11 +73,11 @@ class manager
 			FROM (
 				SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
-				LEFT JOIN ' . $this->ads_table . " a
+				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
 					AND (a.ad_end_date = 0
-						OR a.ad_end_date > " . time() . ")
+						OR a.ad_end_date > ' . time() . ")
 					$sql_where_views
 					$sql_where_clicks
 					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '

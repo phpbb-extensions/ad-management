@@ -58,7 +58,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	/**
 	* {@inheritDoc}
 	*/
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');
 	}
@@ -1100,4 +1100,3 @@ function confirm_box()
 function add_form_key()
 {
 }
-
