@@ -13,7 +13,7 @@ namespace phpbb\ads\location\type;
 /**
 * Base class for template location types
 */
-abstract class base implements \phpbb\ads\location\type\type_interface
+abstract class base implements type_interface
 {
 	/**
 	 * User object
