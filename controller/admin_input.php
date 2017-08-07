@@ -120,7 +120,7 @@ class admin_input
 	 * Upload image and return updated ad code or <img> of new banner when using ajax.
 	 *
 	 * @param	 string	 $ad_code	 Current ad code
-	 * @return	 mixed	 \phpbb\json_response when request is ajax or updated ad code otherwise.
+	 * @return	 string	 \phpbb\json_response when request is ajax or updated ad code otherwise.
 	 */
 	public function banner_upload($ad_code)
 	{

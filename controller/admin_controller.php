@@ -54,20 +54,20 @@ class admin_controller
 	protected $u_action;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template		    $template		  Template object
-	* @param \phpbb\language\language           $language         Language object
-	* @param \phpbb\request\request             $request          Request object
-	* @param \phpbb\ads\ad\manager              $manager          Advertisement manager object
-	* @param \phpbb\config\db_text              $config_text      Config text object
-	* @param \phpbb\config\config               $config           Config object
-	* @param \phpbb\group\helper                $group_helper     Group helper object
-	* @param \phpbb\ads\controller\admin_input 	$input			  Admin input object
-	* @param \phpbb\ads\controller\admin_helper $helper			  Admin helper object
-	* @param string								$root_path		  phpBB root path
-	* @param string								$php_ext		  PHP extension
-	*/
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template				$template		Template object
+	 * @param \phpbb\language\language				$language		Language object
+	 * @param \phpbb\request\request				$request		Request object
+	 * @param \phpbb\ads\ad\manager					$manager		Advertisement manager object
+	 * @param \phpbb\config\db_text					$config_text 	Config text object
+	 * @param \phpbb\config\config					$config			Config object
+	 * @param \phpbb\group\helper					$group_helper	Group helper object
+	 * @param \phpbb\ads\controller\admin_input 	$input			Admin input object
+	 * @param \phpbb\ads\controller\admin_helper	$helper			Admin helper object
+	 * @param string								$root_path		phpBB root path
+	 * @param string								$php_ext		PHP extension
+	 */
 	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
