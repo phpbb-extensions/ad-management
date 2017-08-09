@@ -53,8 +53,8 @@ services:
             - '@request'
             - '@phpbb.ads.banner.banner'
 
-    phpbb.ads.click.controller:
-        class: phpbb\ads\controller\click_controller
+    phpbb.ads.increment.controller:
+        class: phpbb\ads\controller\increment_controller
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@request'
@@ -67,12 +67,6 @@ services:
             - '@language'
             - '@template'
             - '@config'
-
-    phpbb.ads.view.controller:
-        class: phpbb\ads\controller\view_controller
-        arguments:
-            - '@phpbb.ads.ad.manager'
-            - '@request'
 
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
