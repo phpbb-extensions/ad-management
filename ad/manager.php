@@ -43,8 +43,8 @@ class manager
 	/**
 	 * Get specific ad
 	 *
-	 * @param	int		$ad_id	Advertisement ID
-	 * @return	mixed	Array with advertisement data, false if ad doesn't exist
+	 * @param    int $ad_id Advertisement ID
+	 * @return    mixed    Array with advertisement data, false if ad doesn't exist
 	 */
 	public function get_ad($ad_id)
 	{
@@ -61,8 +61,8 @@ class manager
 	/**
 	 * Get one ad per every location
 	 *
-	 * @param	array	$ad_locations	List of ad locations to fetch ads for
-	 * @return	array	List of ad codes for each location
+	 * @param    array $ad_locations List of ad locations to fetch ads for
+	 * @return    array    List of ad codes for each location
 	 */
 	public function get_ads($ad_locations)
 	{
@@ -101,11 +101,11 @@ class manager
 	/**
 	 * Get all advertisements.
 	 *
-	 * @return	array	List of all ads
+	 * @return    array    List of all ads
 	 */
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
+		$sql = 'SELECT ad_id, ad_priority, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
@@ -117,8 +117,8 @@ class manager
 	/**
 	 * Get all owner's ads
 	 *
-	 * @param	int	$user_id	Ad owner
-	 * @return	array	List of owner's ads
+	 * @param    int $user_id Ad owner
+	 * @return    array    List of owner's ads
 	 */
 	public function get_ads_by_owner($user_id)
 	{
@@ -138,8 +138,8 @@ class manager
 	 * Note, that views are incremented only by one even when
 	 * an ad is displayed multiple times on the same page.
 	 *
-	 * @param	array	$ad_ids	IDs of ads to increment views
-	 * @return	void
+	 * @param    array $ad_ids IDs of ads to increment views
+	 * @return    void
 	 */
 	public function increment_ads_views($ad_ids)
 	{
@@ -155,8 +155,8 @@ class manager
 	/**
 	 * Increment clicks for specified ad
 	 *
-	 * @param	int	$ad_id	ID of an ad to increment clicks
-	 * @return	void
+	 * @param    int $ad_id ID of an ad to increment clicks
+	 * @return    void
 	 */
 	public function increment_ad_clicks($ad_id)
 	{
@@ -169,8 +169,8 @@ class manager
 	/**
 	 * Insert new advertisement to the database
 	 *
-	 * @param	array	$data	New ad data
-	 * @return	int		New advertisement ID
+	 * @param    array $data New ad data
+	 * @return    int        New advertisement ID
 	 */
 	public function insert_ad($data)
 	{
@@ -185,9 +185,9 @@ class manager
 	/**
 	 * Update advertisement
 	 *
-	 * @param	int		$ad_id	Advertisement ID
-	 * @param	array	$data	List of data to update in the database
-	 * @return	int		Number of affected rows. Can be used to determine if any ad has been updated.
+	 * @param    int   $ad_id Advertisement ID
+	 * @param    array $data  List of data to update in the database
+	 * @return    int        Number of affected rows. Can be used to determine if any ad has been updated.
 	 */
 	public function update_ad($ad_id, $data)
 	{
@@ -204,8 +204,8 @@ class manager
 	/**
 	 * Delete advertisement
 	 *
-	 * @param	int		$ad_id	Advertisement ID
-	 * @return	int		Number of affected rows. Can be used to determine if any ad has been deleted.
+	 * @param    int $ad_id Advertisement ID
+	 * @return    int        Number of affected rows. Can be used to determine if any ad has been deleted.
 	 */
 	public function delete_ad($ad_id)
 	{
@@ -219,8 +219,8 @@ class manager
 	/**
 	 * Remove ad owner
 	 *
-	 * @param	array	$user_ids	User IDs
-	 * @return	void
+	 * @param    array $user_ids User IDs
+	 * @return    void
 	 */
 	public function remove_ad_owner(array $user_ids)
 	{

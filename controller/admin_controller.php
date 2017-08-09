@@ -392,6 +392,7 @@ class admin_controller
 
 			$this->template->assign_block_vars('ads', array(
 				'NAME'               => $row['ad_name'],
+				'PRIORITY'			 => $row['ad_priority'],
 				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
 				'VIEWS'              => $row['ad_views'],
 				'CLICKS'             => $row['ad_clicks'],

@@ -1174,6 +1174,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->template->expects($this->atLeastOnce())
 			->method('assign_block_vars');
+
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(

@@ -133,9 +133,10 @@
 		<thead>
 			<tr>
 				<th>{{ lang('AD_NAME') }}</th>
-				<th style="width: 15%;">{{ lang('AD_END_DATE') }}</th>
-				{% if S_VIEWS_ENABLED %}<th style="width: 10%;">{{ lang('AD_VIEWS') }}</th>{% endif %}
-				{% if S_CLICKS_ENABLED %}<th style="width: 10%;">{{ lang('AD_CLICKS') }}</th>{% endif %}
+				<th style="width: 7%">{{ lang('AD_PRIORITY') }}</th>
+				<th style="width: 10%;">{{ lang('AD_END_DATE') }}</th>
+				{% if S_VIEWS_ENABLED %}<th style="width: 7%;">{{ lang('AD_VIEWS') }}</th>{% endif %}
+				{% if S_CLICKS_ENABLED %}<th style="width: 7%;">{{ lang('AD_CLICKS') }}</th>{% endif %}
 				<th style="width: 10%;">{{ lang('ENABLED') }}</th>
 				<th style="width: 10%;">{{ lang('ACTION') }}</th>
 			</tr>
@@ -144,6 +145,7 @@
 			{% for ad in loops.ads %}
 				<tr>
 					<td><strong>{{ ad.NAME }}</strong></td>
+					<td>{{ ad.PRIORITY }}</td>
 					<td>
 						{% if ad.S_END_DATE_EXPIRED %}<strong title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error">{% endif %}
 							{{ ad.END_DATE }}
