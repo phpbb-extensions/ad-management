@@ -42,7 +42,27 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
-				<dd><textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea></dd>
+				<dd>
+					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
+					<input type="submit" class="button2" id="analyse_ad_code" name="analyse_ad_code" value="{{ lang('ANALYSE_AD_CODE') }}">
+					<div class="analyser-results">
+						{% if loops.analyser_results_notice or loops.analyser_results_warning %}
+							{% if loops.analyser_results_notice %}
+								{% for notice in loops.analyser_results_notice %}
+									<p class="warningbox">{{ notice.MESSAGE }}</p>
+								{% endfor %}
+							{% endif %}
+
+							{% if loops.analyser_results_warning %}
+								{% for warning in loops.analyser_results_warning %}
+									<p class="errorbox">{{ warning.MESSAGE }}</p>
+								{% endfor %}
+							{% endif %}
+						{% elseif CODE_ANALYSED %}
+							<p class="successbox">{{ lang('EVERYTHING_OK') }}</p>
+						{% endif %}
+					</div>
+				</dd>
 			</dl>
 		</fieldset>
 		<fieldset>
