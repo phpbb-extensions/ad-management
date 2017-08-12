@@ -48,7 +48,7 @@ class main_listener implements EventSubscriberInterface
 	{
 		return array(
 			'core.user_setup'				=> 'load_language_on_setup',
-			'core.page_header_after'		=> 'setup_ads',
+			'core.page_header_after'		=> array(array('setup_ads'), array('adblocker'), array('clicks')),
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
 		);
@@ -116,26 +116,37 @@ class main_listener implements EventSubscriberInterface
 				));
 			}
 
-			if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
-			{
-				$this->template->assign_vars(array(
-					'S_INCREMENT_VIEWS'		=> true,
-					// Obfuscate URL to prevent crawlers increasing view counters.
-					// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
-					'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
-				));
-			}
+			$this->views($ad_ids);
 		}
+	}
 
+	public function adblocker()
+	{
 		// Display Ad blocker friendly message if allowed
 		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+	}
 
+	public function clicks()
+	{
 		// Add click tracking template variables
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
 				'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0)),
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
+			));
+		}
+	}
+
+	protected function views($ad_ids)
+	{
+		if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
+		{
+			$this->template->assign_vars(array(
+				'S_INCREMENT_VIEWS'		=> true,
+				// Obfuscate URL to prevent crawlers increasing view counters.
+				// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
+				'UA_PHPBB_ADS_VIEWS'	=> str_replace('adsview', "' + (![]+[])[+!+[]] + 'dsview", $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids)))),
 			));
 		}
 	}
@@ -150,7 +161,7 @@ class main_listener implements EventSubscriberInterface
 	{
 		$this->manager->remove_ad_owner($event['user_ids']);
 	}
-
+	
 	/**
 	 * Disable XSS Protection
 	 * In Chrome browsers, previewing an Ad Code with javascript can
