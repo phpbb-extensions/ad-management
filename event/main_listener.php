@@ -121,7 +121,7 @@ class main_listener implements EventSubscriberInterface
 					'S_INCREMENT_VIEWS'		=> true,
 					// Obfuscate URL to prevent crawlers increasing view counters.
 					// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
-					'UA_PHPBB_ADS_VIEWS'	=> str_replace('adsview', "' + (![]+[])[+!+[]] + 'dsview", $this->controller_helper->route('phpbb_ads_view', array('ad_ids' => implode('-', $ad_ids)))),
+					'UA_PHPBB_ADS_VIEWS'	=> str_replace('adsview', "' + (![]+[])[+!+[]] + 'dsview", $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids)))),
 				));
 			}
 		}
@@ -133,7 +133,7 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
-				'UA_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+				'UA_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0)),
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 		}
