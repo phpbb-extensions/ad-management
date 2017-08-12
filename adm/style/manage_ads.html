@@ -150,18 +150,18 @@
 				},
 				{
 					'heading': lang('EXPIRED_ADS'),
-					'loop': loops.force_disabled,
+					'loop': loops.expired,
 					'allow_enable': false
 				}
 			] %}
-				{% if list['loop'] %}
-					<td class="row3" colspan="7"><strong>{{ list['heading'] }}</strong></td>
-					{% for ad in list['loop'] %}
-						<tr>
+				{% if list.loop %}
+					<td class="row3" colspan="7"><strong>{{ list.heading }}</strong></td>
+					{% for ad in list.loop %}
+						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
 							<td><strong>{{ ad.NAME }}</strong></td>
 							<td>{{ ad.PRIORITY }}</td>
 							<td>
-								{% if ad.S_END_DATE_EXPIRED %}<strong title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error">{% endif %}
+								{% if ad.S_END_DATE_EXPIRED %}<strong class="error">{% endif %}
 									{{ ad.END_DATE }}
 								{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
 							</td>
@@ -189,13 +189,12 @@
 							<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
 						</tr>
 					{% endfor %}
+				{% elseif loop.index0 %}
+					<tr>
+						<td colspan="7" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+					</tr>
 				{% endif %}
 			{% endfor %}
-			{% if S_NO_ADS %}
-			<tr>
-				<td colspan="7" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
-			</tr>
-			{% endif %}
 		</tbody>
 	</table>
 

@@ -385,15 +385,15 @@ class admin_controller
 			$no_ads = false;
 			$ad_enabled = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
-			$ad_expired = $ad_end_date > 0 && $ad_end_date < time();
+			$ad_end_date_expired = $ad_end_date > 0 && $ad_end_date < time();
+			$ad_expired = $ad_end_date_expired || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
 			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
-			$ad_force_disabled = $ad_expired || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
 
-			$this->template->assign_block_vars($ad_force_disabled ? 'force_disabled' : 'ads', array(
+			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
 				'NAME'               => $row['ad_name'],
 				'PRIORITY'			 => $row['ad_priority'],
 				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
@@ -401,7 +401,8 @@ class admin_controller
 				'CLICKS'             => $row['ad_clicks'],
 				'VIEWS_LIMIT'        => $row['ad_views_limit'],
 				'CLICKS_LIMIT'       => $row['ad_clicks_limit'],
-				'S_END_DATE_EXPIRED' => $ad_expired,
+				'S_EXPIRED' 		 => $ad_expired,
+				'S_END_DATE_EXPIRED' => $ad_end_date_expired,
 				'S_ENABLED'          => $ad_enabled,
 				'U_ENABLE'           => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
 				'U_EDIT'             => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
@@ -411,7 +412,6 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_NO_ADS'		   => $no_ads,
 			'U_ACTION_ADD'     => $this->u_action . '&amp;action=add',
 			'S_VIEWS_ENABLED'  => $this->config['phpbb_ads_enable_views'],
 			'S_CLICKS_ENABLED' => $this->config['phpbb_ads_enable_clicks'],

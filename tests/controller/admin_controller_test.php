@@ -1178,7 +1178,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template->expects($this->once())
 			->method('assign_vars')
 			->with(array(
-				'S_NO_ADS'			=> false,
 				'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
 				'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
 				'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
