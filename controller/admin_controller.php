@@ -383,21 +383,22 @@ class admin_controller
 		{
 			$ad_enabled = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
-			$ad_expired = $ad_end_date > 0 && $ad_end_date < time();
+			$ad_expired = ($ad_end_date > 0 && $ad_end_date < time()) || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
 			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
 
-			$this->template->assign_block_vars('ads', array(
+			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
 				'NAME'               => $row['ad_name'],
+				'PRIORITY'			 => $row['ad_priority'],
 				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
 				'VIEWS'              => $row['ad_views'],
 				'CLICKS'             => $row['ad_clicks'],
 				'VIEWS_LIMIT'        => $row['ad_views_limit'],
 				'CLICKS_LIMIT'       => $row['ad_clicks_limit'],
-				'S_END_DATE_EXPIRED' => $ad_expired,
+				'S_EXPIRED' 		 => $ad_expired,
 				'S_ENABLED'          => $ad_enabled,
 				'U_ENABLE'           => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
 				'U_EDIT'             => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
