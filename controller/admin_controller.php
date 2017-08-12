@@ -312,9 +312,10 @@ class admin_controller
 	{
 		foreach ($this->manager->get_all_ads() as $row)
 		{
-			$ad_enabled = (int) $row['ad_enabled'];
+			$ad_enabled  = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
-			$ad_expired = ($ad_end_date > 0 && $ad_end_date < time()) || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
+			$ad_expired  = $this->is_expired($row);
+
 			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
@@ -515,6 +516,32 @@ class admin_controller
 	protected function ad_preview($code)
 	{
 		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($code));
+	}
+
+	/**
+	 * Is an ad expired?
+	 *
+	 * @param array $row Advertisement data
+	 * @return bool True if expired, false otherwise
+	 */
+	protected function is_expired($row)
+	{
+		if ((int) $row['ad_end_date'] > 0 && (int) $row['ad_end_date'] < time())
+		{
+			return true;
+		}
+
+		if ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit'])
+		{
+			return true;
+		}
+
+		if ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit'])
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
