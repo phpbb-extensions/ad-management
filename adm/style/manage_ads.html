@@ -189,7 +189,7 @@
 							<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
 						</tr>
 					{% endfor %}
-				{% elseif loop.index0 %}
+				{% elseif not loops.ads and not loops.expired and loop.last %}
 					<tr>
 						<td colspan="7" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
 					</tr>
