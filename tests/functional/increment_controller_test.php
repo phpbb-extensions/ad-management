@@ -13,11 +13,21 @@ namespace phpbb\ads\tests\functional;
 /**
  * @group functional
  */
-class increment_views_test extends functional_base
+class increment_controller_test extends functional_base
 {
 	public function test_click_without_ajax()
 	{
-		$crawler = self::request('GET', 'app.php/adsview/1', [], false);
+		$this->test_increment_controller('app.php/adsclick/1');
+	}
+
+	public function test_views_without_ajax()
+	{
+		$this->test_increment_controller('app.php/adsview/1');
+	}
+
+	protected function test_increment_controller($url)
+	{
+		$crawler = self::request('GET', $url, [], false);
 		$this->assertContainsLang('NOT_AUTHORISED', $crawler->text());
 	}
 }
