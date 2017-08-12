@@ -114,7 +114,18 @@ class setup_ads_test extends main_listener_base
 
 		$this->controller_helper->expects(($is_bot ? $this->never() : $this->once()))
 			->method('route')
-			->with('phpbb_ads_view', array('ad_ids' => '1'));
+			->with('phpbb_ads_view', array('data' => '1'))
+			->willReturn('app.php/adsview/1');
+
+		if (!$is_bot)
+		{
+			$this->template->expects($this->at(1))
+				->method('assign_vars')
+				->with(array(
+					'S_INCREMENT_VIEWS'		=> true,
+					'UA_PHPBB_ADS_VIEWS'	=> "app.php/' + (![]+[])[+!+[]] + 'dsview/1",
+				));
+		}
 
 		$listener = $this->get_listener();
 		$listener->setup_ads();
