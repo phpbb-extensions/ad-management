@@ -15,17 +15,25 @@ namespace phpbb\ads\tests\functional;
  */
 class increment_controller_test extends functional_base
 {
-	public function test_click_without_ajax()
+	/**
+	 * Data for test_increment_controller
+	 *
+	 * @return array Array of test data
+	 */
+	public function increment_controller_data()
 	{
-		$this->test_increment_controller('app.php/adsclick/1');
+		return array(
+			array('app.php/adsclick/1'),
+			array('app.php/adsview/1')
+		);
 	}
 
-	public function test_views_without_ajax()
-	{
-		$this->test_increment_controller('app.php/adsview/1');
-	}
-
-	protected function test_increment_controller($url)
+	/**
+	 * Test increment controller
+	 *
+	 * @dataProvider increment_controller_data
+	 */
+	public function test_increment_controller($url)
 	{
 		$crawler = self::request('GET', $url, [], false);
 		$this->assertContainsLang('NOT_AUTHORISED', $crawler->text());
