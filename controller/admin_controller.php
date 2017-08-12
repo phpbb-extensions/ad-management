@@ -379,14 +379,11 @@ class admin_controller
 	 */
 	public function list_ads()
 	{
-		$no_ads = true;
 		foreach ($this->manager->get_all_ads() as $row)
 		{
-			$no_ads = false;
 			$ad_enabled = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
-			$ad_end_date_expired = $ad_end_date > 0 && $ad_end_date < time();
-			$ad_expired = $ad_end_date_expired || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
+			$ad_expired = ($ad_end_date > 0 && $ad_end_date < time()) || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
 			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
@@ -402,7 +399,6 @@ class admin_controller
 				'VIEWS_LIMIT'        => $row['ad_views_limit'],
 				'CLICKS_LIMIT'       => $row['ad_clicks_limit'],
 				'S_EXPIRED' 		 => $ad_expired,
-				'S_END_DATE_EXPIRED' => $ad_end_date_expired,
 				'S_ENABLED'          => $ad_enabled,
 				'U_ENABLE'           => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
 				'U_EDIT'             => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],

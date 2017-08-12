@@ -142,6 +142,7 @@
 			</tr>
 		</thead>
 		<tbody>
+			{% set NOW = "now"|date("Y-m-d") %}
 			{% for list in [
 				{
 					'heading': lang('ACTIVE_ADS'),
@@ -161,9 +162,9 @@
 							<td><strong>{{ ad.NAME }}</strong></td>
 							<td>{{ ad.PRIORITY }}</td>
 							<td>
-								{% if ad.S_END_DATE_EXPIRED %}<strong class="error">{% endif %}
+								{% if ad.END_DATE < NOW %}<strong class="error">{% endif %}
 									{{ ad.END_DATE }}
-								{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
+								{% if ad.END_DATE < NOW %}</strong>{% endif %}
 							</td>
 							{% if S_VIEWS_ENABLED %}
 								<td>
@@ -180,10 +181,12 @@
 								</td>
 							{% endif %}
 							<td>
-								{% if list['allow_enable'] %}
-									{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
+								{% if list.allow_enable %}
+									{% if not ad.S_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
 										{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
-									{% if not ad.S_END_DATE_EXPIRED %}</a>{% endif %}
+									{% if not ad.S_EXPIRED %}</a>{% endif %}
+								{% else %}
+									{{ lang('DISABLED') }}
 								{% endif %}
 							</td>
 							<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
