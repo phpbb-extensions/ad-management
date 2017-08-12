@@ -1,11 +1,11 @@
 phpbb_ads_click:
-    path: /adsclick/{ad_id}
-    defaults: { _controller: phpbb.ads.click.controller:increment_clicks }
+    path: /adsclick/{data}
+    defaults: { _controller: phpbb.ads.increment.controller:handle, mode: clicks }
     requirements:
-        ad_id: '\d+'
+        data: \d+
 
 phpbb_ads_view:
-    path: /adsview/{ad_ids}
-    defaults: { _controller: phpbb.ads.view.controller:increment_views }
+    path: /adsview/{data}
+    defaults: { _controller: phpbb.ads.increment.controller:handle, mode: views }
     requirements:
-        ad_ids: '(\d+-)*\d+'
+        data: (\d+-)*\d+
