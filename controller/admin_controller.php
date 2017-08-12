@@ -379,8 +379,10 @@ class admin_controller
 	 */
 	public function list_ads()
 	{
+		$no_ads = true;
 		foreach ($this->manager->get_all_ads() as $row)
 		{
+			$no_ads = false;
 			$ad_enabled = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
 			$ad_expired = $ad_end_date > 0 && $ad_end_date < time();
@@ -389,8 +391,9 @@ class admin_controller
 				$ad_enabled = 0;
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
+			$ad_force_disabled = $ad_expired || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
 
-			$this->template->assign_block_vars('ads', array(
+			$this->template->assign_block_vars($ad_force_disabled ? 'force_disabled' : 'ads', array(
 				'NAME'               => $row['ad_name'],
 				'PRIORITY'			 => $row['ad_priority'],
 				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
@@ -408,6 +411,7 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
+			'S_NO_ADS'		   => $no_ads,
 			'U_ACTION_ADD'     => $this->u_action . '&amp;action=add',
 			'S_VIEWS_ENABLED'  => $this->config['phpbb_ads_enable_views'],
 			'S_CLICKS_ENABLED' => $this->config['phpbb_ads_enable_clicks'],

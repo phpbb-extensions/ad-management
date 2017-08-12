@@ -142,41 +142,60 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for ad in loops.ads %}
-				<tr>
-					<td><strong>{{ ad.NAME }}</strong></td>
-					<td>{{ ad.PRIORITY }}</td>
-					<td>
-						{% if ad.S_END_DATE_EXPIRED %}<strong title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error">{% endif %}
-							{{ ad.END_DATE }}
-						{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
-					</td>
-					{% if S_VIEWS_ENABLED %}
-						<td>
-							{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
-								{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
-							{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
-						</td>
-					{% endif %}
-					{% if S_CLICKS_ENABLED %}
-						<td>
-							{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
-								{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
-							{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
-						</td>
-					{% endif %}
-					<td>
-						{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
-							{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
-						{% if not ad.S_END_DATE_EXPIRED %}</a>{% endif %}
-					</td>
-					<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="4" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
-				</tr>
+			{% for list in [
+				{
+					'heading': lang('ACTIVE_ADS'),
+					'loop': loops.ads,
+					'allow_enable': true
+				},
+				{
+					'heading': lang('EXPIRED_ADS'),
+					'loop': loops.force_disabled,
+					'allow_enable': false
+				}
+			] %}
+				{% if list['loop'] %}
+					<td class="row3" colspan="7"><strong>{{ list['heading'] }}</strong></td>
+					{% for ad in list['loop'] %}
+						<tr>
+							<td><strong>{{ ad.NAME }}</strong></td>
+							<td>{{ ad.PRIORITY }}</td>
+							<td>
+								{% if ad.S_END_DATE_EXPIRED %}<strong title="{{ lang('AD_EXPIRED_EXPLAIN') }}" class="error">{% endif %}
+									{{ ad.END_DATE }}
+								{% if ad.S_END_DATE_EXPIRED %}</strong>{% endif %}
+							</td>
+							{% if S_VIEWS_ENABLED %}
+								<td>
+									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
+										{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
+									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
+								</td>
+							{% endif %}
+							{% if S_CLICKS_ENABLED %}
+								<td>
+									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
+										{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
+									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
+								</td>
+							{% endif %}
+							<td>
+								{% if list['allow_enable'] %}
+									{% if not ad.S_END_DATE_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
+										{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
+									{% if not ad.S_END_DATE_EXPIRED %}</a>{% endif %}
+								{% endif %}
+							</td>
+							<td><a href="{{ ad.U_EDIT }}">{{ ICON_EDIT }}</a> <a href="{{ ad.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a></td>
+						</tr>
+					{% endfor %}
+				{% endif %}
 			{% endfor %}
+			{% if S_NO_ADS %}
+			<tr>
+				<td colspan="7" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+			</tr>
+			{% endif %}
 		</tbody>
 	</table>
 

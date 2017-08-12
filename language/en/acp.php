@@ -21,6 +21,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	// Manage ads
 	'AD_SETTINGS'				=> 'Advertisement settings',
+	'ACTIVE_ADS'				=> 'Active ads',
+	'EXPIRED_ADS'				=> 'Expired ads',
 	'AD_NAME'					=> 'Name',
 	'AD_NAME_EXPLAIN'			=> 'The name is only used to help you identify this advertisement.',
 	'AD_ENABLED'				=> 'Enabled',
