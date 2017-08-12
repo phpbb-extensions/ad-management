@@ -182,9 +182,9 @@
 							{% endif %}
 							<td>
 								{% if list.allow_enable %}
-									{% if not ad.S_EXPIRED %}<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">{% endif %}
+									<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">
 										{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
-									{% if not ad.S_EXPIRED %}</a>{% endif %}
+									</a>
 								{% else %}
 									{{ lang('DISABLED') }}
 								{% endif %}
