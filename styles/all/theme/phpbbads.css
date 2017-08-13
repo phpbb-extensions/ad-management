@@ -5,10 +5,10 @@
 
 #phpbbad-slide-up {
 	position: fixed;
-	width: 100%;
 	bottom: 0;
-	transform: translateY(100%);
+	width: 100%;
 	transition: transform 0.3s;
+	transform: translateY(100%);
 }
 
 .phpbbad-slide-up-hide {
@@ -16,7 +16,31 @@
 }
 
 .phpbbad-slide-up-close {
-	cursor: pointer;
+	background-color: #ffffff;
 	width: 30px;
-	background-color: white;
+	cursor: pointer;
+}
+
+.phpbb-ads-button {
+	font-size: 13px;
+	vertical-align: middle;
+	background: #e3e3e3;
+	background: -moz-linear-gradient(top, #e3e3e3 0%, #f7f7f7 100%);
+	background: -webkit-linear-gradient(top, #e3e3e3 0%, #f7f7f7 100%);
+	background: linear-gradient(to bottom, #e3e3e3 0%, #f7f7f7 100%);
+	filter: progid:dximagetransform.microsoft.gradient(startColorstr="#e3e3e3", endColorstr="#f7f7f7", GradientType=0);
+	border: solid 1px #afafaf;
+	box-shadow: inset 1px 1px 2px #ffffff;
+	margin: 2px 0;
+	padding: 3px 8px;
+}
+
+.phpbb-ads-button:hover {
+	border-color: #bc2a4d;
+	color: #bc2a4d;
+	cursor: pointer;
+}
+
+.phpbb-ads-button:active {
+	background: #c3c3c3;
 }
