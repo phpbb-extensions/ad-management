@@ -94,14 +94,12 @@ class main_listener implements EventSubscriberInterface
 
 	/**
 	 * Displays advertisements
+	 *
+	 * @return	void
 	 */
 	public function setup_ads()
 	{
-		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
-
-		// If user is not in any groups that have ads hidden, display them then
-		if (!array_intersect($user_groups, $hide_groups))
+		if ($this->can_view_ads())
 		{
 			$location_ids = $this->location_manager->get_all_location_ids();
 			$ad_ids = array();
@@ -120,12 +118,22 @@ class main_listener implements EventSubscriberInterface
 		}
 	}
 
+	/**
+	 * Prepare adblocker template
+	 *
+	 * @return	void
+	 */
 	public function adblocker()
 	{
 		// Display Ad blocker friendly message if allowed
 		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
 	}
 
+	/**
+	 * Prepare click counter template
+	 *
+	 * @return	void
+	 */
 	public function clicks()
 	{
 		// Add click tracking template variables
@@ -138,6 +146,12 @@ class main_listener implements EventSubscriberInterface
 		}
 	}
 
+	/**
+	 * Prepare views counter template
+	 *
+	 * @param	array	$ad_ids	List of ads that will be displayed on current request's page
+	 * @return	void
+	 */
 	protected function views($ad_ids)
 	{
 		if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
@@ -151,17 +165,6 @@ class main_listener implements EventSubscriberInterface
 		}
 	}
 
-	/**
-	 * Remove ad owner when deleting user(s)
-	 *
-	 * @param	\phpbb\event\data	$event	The event object
-	 * @return	void
-	 */
-	public function remove_ad_owner($event)
-	{
-		$this->manager->remove_ad_owner($event['user_ids']);
-	}
-	
 	/**
 	 * Disable XSS Protection
 	 * In Chrome browsers, previewing an Ad Code with javascript can
@@ -178,5 +181,29 @@ class main_listener implements EventSubscriberInterface
 		{
 			$event['http_headers'] = array_merge($event['http_headers'], ['X-XSS-Protection' => '0']);
 		}
+	}
+
+	/**
+	 * Remove ad owner when deleting user(s)
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
+	public function remove_ad_owner($event)
+	{
+		$this->manager->remove_ad_owner($event['user_ids']);
+	}
+
+	/**
+	 * User can view ads only if they are not in a group that has ads hidden
+	 *
+	 * @return	bool	true if the user is not in a group with ads hidden, false if they are
+	 */
+	protected function can_view_ads()
+	{
+		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
+		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
+
+		return !array_intersect($user_groups, $hide_groups);
 	}
 }
