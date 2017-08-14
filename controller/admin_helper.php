@@ -150,30 +150,6 @@ class admin_helper
 	}
 
 	/**
-	 * Prepare ad owner for display. Method takes user_id
-	 * of the ad owner and returns his/her username.
-	 *
-	 * @param	int		$ad_owner	User ID
-	 * @return	string	Username belonging to $ad_owner.
-	 */
-	protected function prepare_ad_owner($ad_owner)
-	{
-		$user_id = array($ad_owner);
-		$user_name = array();
-
-		// Returns false when no errors occur trying to find the user
-		if (false === user_get_id_name($user_id, $user_name))
-		{
-			if (empty($user_name))
-			{
-				return $user_id[0];
-			}
-			return $user_name[(int) $user_id[0]];
-		}
-		return '';
-	}
-
-	/**
 	 * Is an ad expired?
 	 *
 	 * @param	array	$row	Advertisement data
@@ -197,5 +173,29 @@ class admin_helper
 		}
 
 		return false;
+	}
+
+	/**
+	 * Prepare ad owner for display. Method takes user_id
+	 * of the ad owner and returns his/her username.
+	 *
+	 * @param	int		$ad_owner	User ID
+	 * @return	string	Username belonging to $ad_owner.
+	 */
+	protected function prepare_ad_owner($ad_owner)
+	{
+		$user_id = array($ad_owner);
+		$user_name = array();
+
+		// Returns false when no errors occur trying to find the user
+		if (false === user_get_id_name($user_id, $user_name))
+		{
+			if (empty($user_name))
+			{
+				return $user_id[0];
+			}
+			return $user_name[(int) $user_id[0]];
+		}
+		return '';
 	}
 }

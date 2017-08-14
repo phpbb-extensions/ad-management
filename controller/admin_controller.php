@@ -172,9 +172,11 @@ class admin_controller
 		{
 			$this->{'action_' . $action}();
 		}
-
-		// Otherwise default to this
-		$this->list_ads();
+		else
+		{
+			// Otherwise default to this
+			$this->list_ads();
+		}
 	}
 
 	/**
