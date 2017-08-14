@@ -317,7 +317,6 @@ class admin_controller
 		foreach ($this->manager->get_all_ads() as $row)
 		{
 			$ad_enabled  = (int) $row['ad_enabled'];
-			$ad_end_date = (int) $row['ad_end_date'];
 			$ad_expired  = $this->is_expired($row);
 
 			if ($ad_expired && $ad_enabled)
@@ -326,7 +325,7 @@ class admin_controller
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
 
-			$this->assign_ad_template_vars($row, $ad_expired, $ad_end_date, $ad_enabled);
+			$this->assign_ad_template_vars($row, $ad_expired, $ad_enabled);
 		}
 
 		// Set output vars for display in the template
@@ -337,12 +336,12 @@ class admin_controller
 		));
 	}
 
-	protected function assign_ad_template_vars($row, $ad_expired, $ad_end_date, $ad_enabled)
+	protected function assign_ad_template_vars($row, $ad_expired, $ad_enabled)
 	{
 		$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
 			'NAME'         => $row['ad_name'],
 			'PRIORITY'     => $row['ad_priority'],
-			'END_DATE'     => $this->helper->prepare_end_date($ad_end_date),
+			'END_DATE'     => $this->helper->prepare_end_date($row['ad_end_date']),
 			'VIEWS'        => $row['ad_views'],
 			'CLICKS'       => $row['ad_clicks'],
 			'VIEWS_LIMIT'  => $row['ad_views_limit'],
