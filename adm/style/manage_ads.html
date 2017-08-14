@@ -29,12 +29,12 @@
 			<legend>{{ lang('AD_SETTINGS') }}</legend>
 			<dl>
 				<dt><label for="ad_name">{{ lang('AD_NAME') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
-				<dd><input class="text medium" type="text" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
+				<dd><input class="text medium" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
-					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label></dd>
+				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked{% endif %} /> {{ lang('ENABLED') }}</label>
+					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked{% endif %} /> {{ lang('DISABLED') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
@@ -79,9 +79,9 @@
 			<legend>{{ lang('AD_PLACEMENT') }}</legend>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
-				<dd><select id="ad_locations" name="ad_locations[]" multiple="multiple" size="8">
+				<dd><select id="ad_locations" name="ad_locations[]" multiple size="8">
 					{% for location in loops.ad_locations %}
-						<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected="selected"{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
+						<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
 					{% endfor %}
 					</select>
 				</dd>
@@ -95,7 +95,7 @@
 			<legend>{{ lang('AD_OPTIONS') }}</legend>
 			<dl>
 				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
-				<dd><input class="text medium" type="text" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
+				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
 				<dd>[ <a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd>
 			</dl>
 			<dl>
@@ -108,7 +108,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
+				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
