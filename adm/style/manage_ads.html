@@ -113,7 +113,7 @@
 		</fieldset>
 		<fieldset class="submit-buttons">
 			<input class="button1" type="submit" id="preview" name="preview" value="{{ lang('PREVIEW') }}" />&nbsp;
-			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button1" type="submit" id="submit" name="submit_{% if S_EDIT_AD %}edit{% else %}add{% endif %}" value="{{ lang('SUBMIT') }}" />&nbsp;
 			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
 			{% if S_EDIT_AD %}
 				<input type="hidden" name="id" value="{{ EDIT_ID }}" />
