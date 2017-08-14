@@ -325,7 +325,20 @@ class admin_controller
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
 
-			$this->assign_ad_template_vars($row, $ad_expired, $ad_enabled);
+			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
+				'NAME'         => $row['ad_name'],
+				'PRIORITY'     => $row['ad_priority'],
+				'END_DATE'     => $this->helper->prepare_end_date($row['ad_end_date']),
+				'VIEWS'        => $row['ad_views'],
+				'CLICKS'       => $row['ad_clicks'],
+				'VIEWS_LIMIT'  => $row['ad_views_limit'],
+				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
+				'S_EXPIRED'    => $ad_expired,
+				'S_ENABLED'    => $ad_enabled,
+				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_EDIT'       => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
+				'U_DELETE'     => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
+			));
 		}
 
 		// Set output vars for display in the template
@@ -333,24 +346,6 @@ class admin_controller
 			'U_ACTION_ADD'     => $this->u_action . '&amp;action=add',
 			'S_VIEWS_ENABLED'  => $this->config['phpbb_ads_enable_views'],
 			'S_CLICKS_ENABLED' => $this->config['phpbb_ads_enable_clicks'],
-		));
-	}
-
-	protected function assign_ad_template_vars($row, $ad_expired, $ad_enabled)
-	{
-		$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
-			'NAME'         => $row['ad_name'],
-			'PRIORITY'     => $row['ad_priority'],
-			'END_DATE'     => $this->helper->prepare_end_date($row['ad_end_date']),
-			'VIEWS'        => $row['ad_views'],
-			'CLICKS'       => $row['ad_clicks'],
-			'VIEWS_LIMIT'  => $row['ad_views_limit'],
-			'CLICKS_LIMIT' => $row['ad_clicks_limit'],
-			'S_EXPIRED'    => $ad_expired,
-			'S_ENABLED'    => $ad_enabled,
-			'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
-			'U_EDIT'       => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
-			'U_DELETE'     => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 		));
 	}
 
