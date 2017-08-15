@@ -71,6 +71,17 @@ class admin_input
 	}
 
 	/**
+	 * Add CSRF form key.
+	 *
+	 * @param	string	$form_name	The form name.
+	 * @return	void
+	 */
+	public function add_form_key($form_name)
+	{
+		add_form_key($form_name);
+	}
+
+	/**
 	 * Get admin form data.
 	 *
 	 * @param	string	$form_name	The form name.

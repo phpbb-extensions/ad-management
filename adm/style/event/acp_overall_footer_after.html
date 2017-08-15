@@ -36,7 +36,7 @@
 			minDate: 0,
 			timepicker: false
 		});
-		$.datetimepicker.setLocale('{{ S_USER_LANG }}');
+		$.datetimepicker.setLocale('{{ S_USER_LANG|e('js') }}');
 
 		$('#upload_banner').click(function(e) {
 			e.preventDefault();
@@ -70,7 +70,7 @@
 				});
 			}
 			else {
-				phpbb.alert('{{ lang('INFORMATION') }}', '{{ lang('NO_FILE_SELECTED') }}');
+				phpbb.alert('{{ lang('INFORMATION')|e('js') }}', '{{ lang('NO_FILE_SELECTED')|e('js') }}');
 			}
 		});
 	});

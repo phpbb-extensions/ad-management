@@ -186,7 +186,7 @@ class admin_controller
 		$upload_banner = $this->request->is_set_post('upload_banner');
 		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
 
-		add_form_key('phpbb/ads/add');
+		$this->input->add_form_key('phpbb/ads/add');
 		if ($preview || $submit || $upload_banner || $analyse_ad_code)
 		{
 			$data = $this->input->get_form_data('phpbb/ads/add');
@@ -245,7 +245,7 @@ class admin_controller
 		$upload_banner = $this->request->is_set_post('upload_banner');
 		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
 
-		add_form_key('phpbb/ads/edit/' . $ad_id);
+		$this->input->add_form_key('phpbb/ads/edit/' . $ad_id);
 		if ($preview || $submit || $upload_banner || $analyse_ad_code)
 		{
 			$data = $this->input->get_form_data('phpbb/ads/edit/' . $ad_id);
