@@ -122,7 +122,7 @@ class main_listener implements EventSubscriberInterface
 					'S_INCREMENT_VIEWS'		=> true,
 					// Obfuscate URL to prevent crawlers increasing view counters.
 					// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
-					'U_PHPBB_ADS_VIEWS'	=> str_replace('adsview', "' + (![]+[])[+!+[]] + 'dsview", $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids)))),
+					'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
 				));
 			}
 		}
