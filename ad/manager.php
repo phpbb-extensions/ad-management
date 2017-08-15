@@ -43,8 +43,8 @@ class manager
 	/**
 	 * Get specific ad
 	 *
-	 * @param    int $ad_id Advertisement ID
-	 * @return    mixed    Array with advertisement data, false if ad doesn't exist
+	 * @param	int	$ad_id	Advertisement ID
+	 * @return	array|bool	Array with advertisement data, false if ad doesn't exist
 	 */
 	public function get_ad($ad_id)
 	{
