@@ -373,7 +373,6 @@ class manager
 			case 'sqlite3':
 				return '(0.5 - RANDOM() / CAST(-9223372036854775808 AS REAL) / 2)';
 
-			// All other cases
 			default:
 				return 'RAND()';
 		}
