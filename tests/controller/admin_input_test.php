@@ -242,3 +242,11 @@ function check_form_key()
 {
 	return \phpbb\ads\controller\admin_input_test::$valid_form;
 }
+
+/**
+ * Mock add_form_key()
+ * Note: use the same namespace as the admin_input
+ */
+function add_form_key()
+{
+}

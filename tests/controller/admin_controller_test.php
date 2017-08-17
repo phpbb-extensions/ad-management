@@ -443,7 +443,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->with('phpbb/ads/add')
 			->willReturn(array(
 				'ad_code'		=> '<!-- AD CODE SAMPLE -->',
 				'ad_locations'	=> array(),
@@ -504,7 +503,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->with('phpbb/ads/add')
 			->willReturn(array(
 				'ad_code'		=> 'Ad Code #1',
 				'ad_locations'	=> array(),
@@ -566,7 +564,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->with('phpbb/ads/add')
 			->willReturn(array(
 				'ad_code'		=> 'Ad Code #1',
 				'ad_locations'	=> array(),
@@ -642,7 +639,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->with('phpbb/ads/add')
 			->willReturn(array(
 				'ad_name'		=> 'Ad Name #1',
 				'ad_code'		=> 'Ad Code #1',
@@ -860,7 +856,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->with('phpbb/ads/edit/1')
 			->willReturn(array(
 				'ad_code'		=> 'Ad Code #1',
 				'ad_locations'	=> array(),
@@ -958,7 +953,6 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->with('phpbb/ads/edit/1')
 			->willReturn(array(
 				'ad_name'		=> 'Ad Name #1',
 				'ad_code'		=> 'Ad Code #1',
@@ -1196,12 +1190,4 @@ class admin_controller_test extends \phpbb_database_test_case
 function confirm_box()
 {
 	return \phpbb\ads\controller\admin_controller_test::$confirm;
-}
-
-/**
- * Mock add_form_key()
- * Note: use the same namespace as the admin_controller
- */
-function add_form_key()
-{
 }

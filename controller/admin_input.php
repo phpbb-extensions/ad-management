@@ -48,6 +48,8 @@ class admin_input
 		$this->language = $language;
 		$this->request = $request;
 		$this->banner = $banner;
+
+		add_form_key('phpbb_ads');
 	}
 
 	/**
@@ -73,10 +75,9 @@ class admin_input
 	/**
 	 * Get admin form data.
 	 *
-	 * @param	string	$form_name	The form name.
 	 * @return	array	Form data
 	 */
-	public function get_form_data($form_name)
+	public function get_form_data()
 	{
 		$data = array(
 			'ad_name'         => $this->request->variable('ad_name', '', true),
@@ -92,7 +93,7 @@ class admin_input
 		);
 
 		// Validate form key
-		if (!check_form_key($form_name))
+		if (!check_form_key('phpbb_ads'))
 		{
 			$this->errors[] = $this->language->lang('FORM_INVALID');
 		}
