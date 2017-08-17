@@ -1082,22 +1082,38 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$rows = array(
+			array(
+				'ad_id'			=> 1,
+				'ad_name'		=> '',
+				'ad_enabled'	=> 1,
+				'ad_end_date'	=> 0,
+			),
+			array(
+				'ad_id'			=> 2,
+				'ad_name'		=> '',
+				'ad_enabled'	=> 1,
+				'ad_end_date'	=> 1,
+			),
+		);
+
 		$this->manager->expects($this->once())
 			->method('get_all_ads')
-			->willReturn(array(
-				array(
-					'ad_id'			=> 1,
-					'ad_name'		=> '',
-					'ad_enabled'	=> 1,
-					'ad_end_date'	=> 0,
-				),
-				array(
-					'ad_id'			=> 1,
-					'ad_name'		=> '',
-					'ad_enabled'	=> 1,
-					'ad_end_date'	=> 1,
-				),
-			));
+			->willReturn($rows);
+
+		$this->helper->expects($this->at(0))
+			->method('is_expired')
+			->with($rows[0])
+			->willReturn(false);
+
+		$this->helper->expects($this->at(2))
+			->method('is_expired')
+			->with($rows[1])
+			->willReturn(true);
+
+		$this->manager->expects($this->once())
+			->method('update_ad')
+			->with(2, array('ad_enabled' => 0));
 
 		$this->template->expects($this->atLeastOnce())
 			->method('assign_block_vars');

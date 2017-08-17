@@ -82,9 +82,6 @@ class admin_controller
 		$this->helper = $helper;
 		$this->analyser = $analyser;
 
-		// VSE doesn't like this here, but it's really the best placement:
-		//    1. It is only called once
-		//    2. We need all this everywhere in ACP
 		if (!function_exists('user_get_id_name'))
 		{
 			include $root_path . 'includes/functions_user.' . $php_ext;
@@ -320,8 +317,8 @@ class admin_controller
 	{
 		foreach ($this->manager->get_all_ads() as $row)
 		{
-			$ad_enabled  = (int) $row['ad_enabled'];
-			$ad_expired  = $this->helper->is_expired($row);
+			$ad_enabled = (int) $row['ad_enabled'];
+			$ad_expired = $this->helper->is_expired($row);
 
 			if ($ad_expired && $ad_enabled)
 			{

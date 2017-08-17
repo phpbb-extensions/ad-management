@@ -119,24 +119,22 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Prepare adblocker template
+	 * Display Ad blocker friendly message if allowed
 	 *
 	 * @return	void
 	 */
 	public function adblocker()
 	{
-		// Display Ad blocker friendly message if allowed
 		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
 	}
 
 	/**
-	 * Prepare click counter template
+	 * Add click tracking template variables
 	 *
 	 * @return	void
 	 */
 	public function clicks()
 	{
-		// Add click tracking template variables
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
