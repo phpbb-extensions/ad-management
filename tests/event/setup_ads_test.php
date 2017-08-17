@@ -123,7 +123,7 @@ class setup_ads_test extends main_listener_base
 				->method('assign_vars')
 				->with(array(
 					'S_INCREMENT_VIEWS'		=> true,
-					'U_PHPBB_ADS_VIEWS'	=> "app.php/' + (![]+[])[+!+[]] + 'dsview/1",
+					'U_PHPBB_ADS_VIEWS'	=> "app.php/adsview/1",
 				));
 		}
 
