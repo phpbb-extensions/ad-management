@@ -25,7 +25,9 @@ class m7_adblocker extends \phpbb\db\migration\migration
 	 */
 	public static function depends_on()
 	{
-		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
+		return array(
+			'\phpbb\ads\migrations\v10x\m1_initial_schema',
+		);
 	}
 
 	/**

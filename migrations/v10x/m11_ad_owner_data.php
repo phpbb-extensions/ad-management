@@ -19,7 +19,6 @@ class m11_ad_owner_data extends \phpbb\db\migration\migration
 	{
 		return array(
 			'\phpbb\ads\migrations\v10x\m1_initial_schema',
-			'\phpbb\ads\migrations\v10x\m9_views_clicks',
 			'\phpbb\ads\migrations\v10x\m10_ad_owner_schema',
 		);
 	}
