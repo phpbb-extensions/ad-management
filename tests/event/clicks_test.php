@@ -45,7 +45,7 @@ class clicks_test extends main_listener_base
 				->expects($this->once())
 				->method('assign_vars')
 				->with(array(
-					'UA_PHPBB_ADS_CLICK'		=> 'app.php/adsclick/0',
+					'U_PHPBB_ADS_CLICK'		=> 'app.php/adsclick/0',
 					'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 				));
 		}

@@ -418,14 +418,8 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->willReturn(array(
-				'ad_code'		=> '<!-- AD CODE SAMPLE -->',
-				'ad_locations'	=> array(),
-			));
+			->willReturn($data);
 
-		$this->helper->expects($this->once())
-			->method('assign_locations')
-			->with(array());
 		$this->template->expects($this->at(0))
 			->method('assign_var')
 			->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
@@ -469,10 +463,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects($this->once())
 			->method('get_form_data')
-			->willReturn(array(
-				'ad_code'		=> 'Ad Code #1',
-				'ad_locations'	=> array(),
-			));
+			->willReturn($data);
 
 		$this->input->expects($this->once())
 			->method('banner_upload')
