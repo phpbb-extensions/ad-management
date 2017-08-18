@@ -194,7 +194,7 @@
 					{% endfor %}
 				{% elseif not loops.ads and not loops.expired and loop.last %}
 					<tr>
-						<td colspan="7" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+						<td colspan="{{ 5 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
 					</tr>
 				{% endif %}
 			{% endfor %}
