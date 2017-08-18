@@ -11,9 +11,9 @@
 namespace phpbb\ads\controller;
 
 /**
-* Click controller
+* Increment controller
 */
-class click_controller
+class increment_controller
 {
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
@@ -34,21 +34,42 @@ class click_controller
 	}
 
 	/**
-	* Increment clicks for an ad
-	*
-	* @param	int	$ad_id	Advertisement ID
-	* @throws	\phpbb\exception\http_exception
-	* @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
-	*/
-	public function increment_clicks($ad_id)
+	 * Handle request.
+	 *
+	 * @param	mixed	$data	Ad ID or ad IDs
+	 * @param	string	$mode	clicks or views
+	 * @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
+	 * @throws	\phpbb\exception\http_exception
+	 */
+	public function handle($data, $mode)
 	{
-		if (!empty($ad_id) && $this->request->is_ajax())
+		if (!empty($data) && $this->request->is_ajax())
 		{
-			$this->manager->increment_ad_clicks($ad_id);
+			$this->{$mode}($data);
 
 			return new \Symfony\Component\HttpFoundation\JsonResponse();
 		}
 
 		throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
+	}
+
+	/**
+	 * Increment clicks for an ad.
+	 *
+	 * @param	int	$ad_id	Advertisement ID
+	 */
+	protected function clicks($ad_id)
+	{
+		$this->manager->increment_ad_clicks($ad_id);
+	}
+
+	/**
+	 * Increment views for ads.
+	 *
+	 * @param	string	$ad_ids	Advertisement IDs
+	 */
+	protected function views($ad_ids)
+	{
+		$this->manager->increment_ads_views(explode('-', $ad_ids));
 	}
 }

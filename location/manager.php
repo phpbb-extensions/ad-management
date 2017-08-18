@@ -13,30 +13,30 @@ namespace phpbb\ads\location;
 class manager
 {
 	/**
-	* Array that contains all available template location types which are passed
-	* via the service container
-	* @var array
-	*/
+	 * Array that contains all available template location types which are passed
+	 * via the service container
+	 * @var array
+	 */
 	protected $template_locations;
 
 	/**
-	* Construct an template locations manager object
-	*
-	* @param	array	$template_locations	Template location types passed via the service container
-	*/
+	 * Construct an template locations manager object
+	 *
+	 * @param	array	$template_locations	Template location types passed via the service container
+	 */
 	public function __construct($template_locations)
 	{
 		$this->register_template_locations($template_locations);
 	}
 
 	/**
-	* Get a list of all template location types
-	*
-	* Returns an associated array where key is the location id
-	* and value is array of location name and location description.
-	*
-	* @return	array	Array containing a list of all template locations
-	*/
+	 * Get a list of all template location types
+	 *
+	 * Returns an associated array where key is the location id
+	 * and value is array of location name and location description.
+	 *
+	 * @return	array	Array containing a list of all template locations
+	 */
 	public function get_all_locations()
 	{
 		$location_types = array();
@@ -53,10 +53,10 @@ class manager
 	}
 
 	/**
-	* Get a list of all template location IDs for display
-	*
-	* @return	array	Array containing a list of all template location IDs
-	*/
+	 * Get a list of all template location IDs for display
+	 *
+	 * @return	array	Array containing a list of all template location IDs
+	 */
 	public function get_all_location_ids()
 	{
 		$template_locations = array();
@@ -73,10 +73,10 @@ class manager
 	}
 
 	/**
-	* Register template locations
-	*
-	* @param	array	$template_locations	Template location types passed via the service container
-	*/
+	 * Register template locations
+	 *
+	 * @param	array	$template_locations	Template location types passed via the service container
+	 */
 	protected function register_template_locations($template_locations)
 	{
 		if (!empty($template_locations))

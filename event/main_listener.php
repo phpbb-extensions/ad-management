@@ -42,28 +42,29 @@ class main_listener implements EventSubscriberInterface
 	protected $controller_helper;
 
 	/**
-	* {@inheritdoc}
-	*/
+	 * {@inheritdoc}
+	 */
 	public static function getSubscribedEvents()
 	{
 		return array(
-			'core.user_setup'			=> 'load_language_on_setup',
-			'core.page_header_after'	=> 'setup_ads',
-			'core.delete_user_after'	=> 'remove_ad_owner',
+			'core.user_setup'				=> 'load_language_on_setup',
+			'core.page_header_after'		=> 'setup_ads',
+			'core.delete_user_after'		=> 'remove_ad_owner',
+			'core.adm_page_header_after'	=> 'disable_xss_protection',
 		);
 	}
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template				$template			Template object
-	* @param \phpbb\user							$user				User object
-	* @param \phpbb\config\db_text					$config_text		Config text object
-	* @param \phpbb\config\config					$config				Config object
-	* @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
-	* @param \phpbb\ads\location\manager			$location_manager	Template location manager object
-	* @param \phpbb\controller\helper				$controller_helper	Controller helper object
-	*/
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template				$template			Template object
+	 * @param \phpbb\user							$user				User object
+	 * @param \phpbb\config\db_text					$config_text		Config text object
+	 * @param \phpbb\config\config					$config				Config object
+	 * @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
+	 * @param \phpbb\ads\location\manager			$location_manager	Template location manager object
+	 * @param \phpbb\controller\helper				$controller_helper	Controller helper object
+	 */
 	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper)
 	{
 		$this->template = $template;
@@ -76,11 +77,11 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	* Load common language file during user setup
-	*
-	* @param	\phpbb\event\data	$event	The event object
-	* @return	void
-	*/
+	 * Load common language file during user setup
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
 	public function load_language_on_setup($event)
 	{
 		$lang_set_ext = $event['lang_set_ext'];
@@ -121,7 +122,7 @@ class main_listener implements EventSubscriberInterface
 					'S_INCREMENT_VIEWS'		=> true,
 					// Obfuscate URL to prevent crawlers increasing view counters.
 					// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
-					'UA_PHPBB_ADS_VIEWS'	=> str_replace('adsview', "' + (![]+[])[+!+[]] + 'dsview", $this->controller_helper->route('phpbb_ads_view', array('ad_ids' => implode('-', $ad_ids)))),
+					'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
 				));
 			}
 		}
@@ -133,7 +134,7 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
-				'UA_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('ad_id' => 0)),
+				'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0)),
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 		}
@@ -148,5 +149,23 @@ class main_listener implements EventSubscriberInterface
 	public function remove_ad_owner($event)
 	{
 		$this->manager->remove_ad_owner($event['user_ids']);
+	}
+
+	/**
+	 * Disable XSS Protection
+	 * In Chrome browsers, previewing an Ad Code with javascript can
+	 * be blocked, due to a false positive where Chrome thinks the
+	 * javascript is an XSS injection. This will temporarily disable
+	 * XSS protection in chrome while managing ads in the ACP.
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 */
+	public function disable_xss_protection($event)
+	{
+		if (stripos($this->user->browser, 'chrome') !== false &&
+			stripos($this->user->page['page'], 'phpbb-ads') !== false)
+		{
+			$event['http_headers'] = array_merge($event['http_headers'], ['X-XSS-Protection' => '0']);
+		}
 	}
 }

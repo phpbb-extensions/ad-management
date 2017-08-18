@@ -44,6 +44,9 @@ class admin_controller
 	/** @var \phpbb\ads\controller\admin_helper */
 	protected $helper;
 
+	/** @var \phpbb\ads\analyser\manager */
+	protected $analyser;
+
 	/** @var string root_path */
 	protected $root_path;
 
@@ -54,21 +57,22 @@ class admin_controller
 	protected $u_action;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template		    $template		  Template object
-	* @param \phpbb\language\language           $language         Language object
-	* @param \phpbb\request\request             $request          Request object
-	* @param \phpbb\ads\ad\manager              $manager          Advertisement manager object
-	* @param \phpbb\config\db_text              $config_text      Config text object
-	* @param \phpbb\config\config               $config           Config object
-	* @param \phpbb\group\helper                $group_helper     Group helper object
-	* @param \phpbb\ads\controller\admin_input 	$input			  Admin input object
-	* @param \phpbb\ads\controller\admin_helper $helper			  Admin helper object
-	* @param string								$root_path		  phpBB root path
-	* @param string								$php_ext		  PHP extension
-	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, $root_path, $php_ext)
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template				$template		Template object
+	 * @param \phpbb\language\language				$language		Language object
+	 * @param \phpbb\request\request				$request		Request object
+	 * @param \phpbb\ads\ad\manager					$manager		Advertisement manager object
+	 * @param \phpbb\config\db_text					$config_text 	Config text object
+	 * @param \phpbb\config\config					$config			Config object
+	 * @param \phpbb\group\helper					$group_helper	Group helper object
+	 * @param \phpbb\ads\controller\admin_input 	$input			Admin input object
+	 * @param \phpbb\ads\controller\admin_helper	$helper			Admin helper object
+	 * @param \phpbb\ads\analyser\manager			$analyser		Ad code analyser object
+	 * @param string								$root_path		phpBB root path
+	 * @param string								$php_ext		PHP extension
+	 */
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -79,6 +83,7 @@ class admin_controller
 		$this->group_helper = $group_helper;
 		$this->input = $input;
 		$this->helper = $helper;
+		$this->analyser = $analyser;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -112,11 +117,10 @@ class admin_controller
 	{
 		$this->setup();
 
-		add_form_key('phpbb/ads/settings');
 		if ($this->request->is_set_post('submit'))
 		{
 			// Validate form key
-			if (check_form_key('phpbb/ads/settings'))
+			if (check_form_key('phpbb_ads'))
 			{
 				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
 				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
@@ -179,11 +183,11 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 		$upload_banner = $this->request->is_set_post('upload_banner');
+		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
 
-		add_form_key('phpbb/ads/add');
-		if ($preview || $submit || $upload_banner)
+		if ($preview || $submit || $upload_banner || $analyse_ad_code)
 		{
-			$data = $this->input->get_form_data('phpbb/ads/add');
+			$data = $this->input->get_form_data();
 
 			if ($preview)
 			{
@@ -192,6 +196,10 @@ class admin_controller
 			else if ($upload_banner)
 			{
 				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
+			}
+			else if ($analyse_ad_code)
+			{
+				$this->analyser->run($data['ad_code']);
 			}
 			else if (!$this->input->has_errors())
 			{
@@ -233,11 +241,11 @@ class admin_controller
 		$preview = $this->request->is_set_post('preview');
 		$submit = $this->request->is_set_post('submit');
 		$upload_banner = $this->request->is_set_post('upload_banner');
+		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
 
-		add_form_key('phpbb/ads/edit/' . $ad_id);
-		if ($preview || $submit || $upload_banner)
+		if ($preview || $submit || $upload_banner || $analyse_ad_code)
 		{
-			$data = $this->input->get_form_data('phpbb/ads/edit/' . $ad_id);
+			$data = $this->input->get_form_data();
 
 			if ($preview)
 			{
@@ -246,6 +254,10 @@ class admin_controller
 			else if ($upload_banner)
 			{
 				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
+			}
+			else if ($analyse_ad_code)
+			{
+				$this->analyser->run($data['ad_code']);
 			}
 			else if (!$this->input->has_errors())
 			{
@@ -368,21 +380,22 @@ class admin_controller
 		{
 			$ad_enabled = (int) $row['ad_enabled'];
 			$ad_end_date = (int) $row['ad_end_date'];
-			$ad_expired = $ad_end_date > 0 && $ad_end_date < time();
+			$ad_expired = ($ad_end_date > 0 && $ad_end_date < time()) || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
 			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
 				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
 
-			$this->template->assign_block_vars('ads', array(
+			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
 				'NAME'               => $row['ad_name'],
+				'PRIORITY'			 => $row['ad_priority'],
 				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
 				'VIEWS'              => $row['ad_views'],
 				'CLICKS'             => $row['ad_clicks'],
 				'VIEWS_LIMIT'        => $row['ad_views_limit'],
 				'CLICKS_LIMIT'       => $row['ad_clicks_limit'],
-				'S_END_DATE_EXPIRED' => $ad_expired,
+				'S_EXPIRED' 		 => $ad_expired,
 				'S_ENABLED'          => $ad_enabled,
 				'U_ENABLE'           => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
 				'U_EDIT'             => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],

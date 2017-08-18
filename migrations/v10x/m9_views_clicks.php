@@ -13,27 +13,27 @@ namespace phpbb\ads\migrations\v10x;
 class m9_views_clicks extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		return $this->db_tools->sql_column_exists($this->table_prefix . 'ads', 'ad_views');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
-	* Add the views and clicks to ads table
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Add the views and clicks to ads table
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function update_schema()
 	{
 		return array(
@@ -49,11 +49,11 @@ class m9_views_clicks extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* Drop the views and clicks from ads table
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Drop the views and clicks from ads table
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function revert_schema()
 	{
 		return array(

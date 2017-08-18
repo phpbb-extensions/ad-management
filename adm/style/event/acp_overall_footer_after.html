@@ -70,7 +70,7 @@
 				});
 			}
 			else {
-				phpbb.alert('{{ lang('INFORMATION') }}', '{{ lang('NO_FILE_SELECTED') }}');
+				phpbb.alert('{{ lang('INFORMATION')|e('js') }}', '{{ lang('NO_FILE_SELECTED')|e('js') }}');
 			}
 		});
 	});

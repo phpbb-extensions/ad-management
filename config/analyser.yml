@@ -1,0 +1,38 @@
+services:
+    phpbb.ads.analyser.manager:
+        class: phpbb\ads\analyser\manager
+        arguments:
+            - '@phpbb.ads.analyser.test_collection'
+            - '@request'
+            - '@template'
+            - '@language'
+
+# ----- Analyser tests -----
+    phpbb.ads.analyser.test_collection:
+        class: phpbb\di\service_collection
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: service_collection, tag: phpbb.ads.analyser.test }
+
+    phpbb.ads.analyser.test.alert:
+        class: phpbb\ads\analyser\test\alert
+        tags:
+            - { name: phpbb.ads.analyser.test }
+
+    phpbb.ads.analyser.test.location_href:
+        class: phpbb\ads\analyser\test\location_href
+        tags:
+            - { name: phpbb.ads.analyser.test }
+
+    phpbb.ads.analyser.test.script_without_async:
+        class: phpbb\ads\analyser\test\script_without_async
+        tags:
+            - { name: phpbb.ads.analyser.test }
+
+    phpbb.ads.analyser.test.untrusted_connection:
+        class: phpbb\ads\analyser\test\untrusted_connection
+        arguments:
+            - '@request'
+        tags:
+            - { name: phpbb.ads.analyser.test }

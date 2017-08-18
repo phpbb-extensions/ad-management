@@ -13,8 +13,8 @@ namespace phpbb\ads\migrations\v10x;
 class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		$config_text = $this->container->get('config_text');
@@ -23,18 +23,18 @@ class m6_hide_for_group extends \phpbb\db\migration\container_aware_migration
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m2_acp_module');
 	}
 
 	/**
-	* Add the ACP settings module
-	*
-	* @return array Array of data update instructions
-	*/
+	 * Add the ACP settings module
+	 *
+	 * @return array Array of data update instructions
+	 */
 	public function update_data()
 	{
 		return array(

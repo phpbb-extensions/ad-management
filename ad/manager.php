@@ -41,11 +41,11 @@ class manager
 	}
 
 	/**
-	* Get specific ad
-	*
-	* @param	int		$ad_id	Advertisement ID
-	* @return	mixed	Array with advertisement data, false if ad doesn't exist
-	*/
+	 * Get specific ad
+	 *
+	 * @param    int $ad_id Advertisement ID
+	 * @return    mixed    Array with advertisement data, false if ad doesn't exist
+	 */
 	public function get_ad($ad_id)
 	{
 		$sql = 'SELECT *
@@ -59,11 +59,11 @@ class manager
 	}
 
 	/**
-	* Get one ad per every location
-	*
-	* @param	array	$ad_locations	List of ad locations to fetch ads for
-	* @return	array	List of ad codes for each location
-	*/
+	 * Get one ad per every location
+	 *
+	 * @param    array $ad_locations List of ad locations to fetch ads for
+	 * @return    array    List of ad codes for each location
+	 */
 	public function get_ads($ad_locations)
 	{
 		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
@@ -89,7 +89,7 @@ class manager
 		$this->db->sql_freeresult($result);
 
 		$current_location_id = '';
-		$data = array_filter($data, function($row) use (&$current_location_id) {
+		$data = array_filter($data, function ($row) use (&$current_location_id) {
 			$return = $current_location_id != $row['location_id'];
 			$current_location_id = $row['location_id'];
 			return $return;
@@ -101,11 +101,11 @@ class manager
 	/**
 	 * Get all advertisements.
 	 *
-	 * @return	array	List of all ads
+	 * @return    array    List of all ads
 	 */
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
+		$sql = 'SELECT ad_id, ad_priority, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
@@ -117,8 +117,8 @@ class manager
 	/**
 	 * Get all owner's ads
 	 *
-	 * @param	int	$user_id	Ad owner
-	 * @return	array	List of owner's ads
+	 * @param    int $user_id Ad owner
+	 * @return    array    List of owner's ads
 	 */
 	public function get_ads_by_owner($user_id)
 	{
@@ -133,14 +133,14 @@ class manager
 	}
 
 	/**
-	* Increment views for specified ads
-	*
-	* Note, that views are incremented only by one even when
-	* an ad is displayed multiple times on the same page.
-	*
-	* @param	array	$ad_ids	IDs of ads to increment views
-	* @return	void
-	*/
+	 * Increment views for specified ads
+	 *
+	 * Note, that views are incremented only by one even when
+	 * an ad is displayed multiple times on the same page.
+	 *
+	 * @param    array $ad_ids IDs of ads to increment views
+	 * @return    void
+	 */
 	public function increment_ads_views($ad_ids)
 	{
 		if (!empty($ad_ids))
@@ -153,11 +153,11 @@ class manager
 	}
 
 	/**
-	* Increment clicks for specified ad
-	*
-	* @param	int	$ad_id	ID of an ad to increment clicks
-	* @return	void
-	*/
+	 * Increment clicks for specified ad
+	 *
+	 * @param    int $ad_id ID of an ad to increment clicks
+	 * @return    void
+	 */
 	public function increment_ad_clicks($ad_id)
 	{
 		$sql = 'UPDATE ' . $this->ads_table . '
@@ -167,11 +167,11 @@ class manager
 	}
 
 	/**
-	* Insert new advertisement to the database
-	*
-	* @param	array	$data	New ad data
-	* @return	int		New advertisement ID
-	*/
+	 * Insert new advertisement to the database
+	 *
+	 * @param    array $data New ad data
+	 * @return    int        New advertisement ID
+	 */
 	public function insert_ad($data)
 	{
 		$data = $this->intersect_ad_data($data);
@@ -183,12 +183,12 @@ class manager
 	}
 
 	/**
-	* Update advertisement
-	*
-	* @param	int		$ad_id	Advertisement ID
-	* @param	array	$data	List of data to update in the database
-	* @return	int		Number of affected rows. Can be used to determine if any ad has been updated.
-	*/
+	 * Update advertisement
+	 *
+	 * @param    int   $ad_id Advertisement ID
+	 * @param    array $data  List of data to update in the database
+	 * @return    int        Number of affected rows. Can be used to determine if any ad has been updated.
+	 */
 	public function update_ad($ad_id, $data)
 	{
 		$data = $this->intersect_ad_data($data);
@@ -202,11 +202,11 @@ class manager
 	}
 
 	/**
-	* Delete advertisement
-	*
-	* @param	int		$ad_id	Advertisement ID
-	* @return	int		Number of affected rows. Can be used to determine if any ad has been deleted.
-	*/
+	 * Delete advertisement
+	 *
+	 * @param    int $ad_id Advertisement ID
+	 * @return    int        Number of affected rows. Can be used to determine if any ad has been deleted.
+	 */
 	public function delete_ad($ad_id)
 	{
 		$sql = 'DELETE FROM ' . $this->ads_table . '
@@ -219,8 +219,8 @@ class manager
 	/**
 	 * Remove ad owner
 	 *
-	 * @param	array	$user_ids	User IDs
-	 * @return	void
+	 * @param    array $user_ids User IDs
+	 * @return    void
 	 */
 	public function remove_ad_owner(array $user_ids)
 	{
@@ -236,11 +236,11 @@ class manager
 	}
 
 	/**
-	* Get all locations for specified advertisement
-	*
-	* @param	int		$ad_id	Advertisement ID
-	* @return	array	List of template locations for specified ad
-	*/
+	 * Get all locations for specified advertisement
+	 *
+	 * @param	int		$ad_id	Advertisement ID
+	 * @return	array	List of template locations for specified ad
+	 */
 	public function get_ad_locations($ad_id)
 	{
 		$ad_locations = array();
@@ -259,12 +259,12 @@ class manager
 	}
 
 	/**
-	* Insert advertisement locations
-	*
-	* @param	int		$ad_id			Advertisement ID
-	* @param	array	$ad_locations	List of template locations for this ad
-	* @return	void
-	*/
+	 * Insert advertisement locations
+	 *
+	 * @param	int		$ad_id			Advertisement ID
+	 * @param	array	$ad_locations	List of template locations for this ad
+	 * @return	void
+	 */
 	public function insert_ad_locations($ad_id, $ad_locations)
 	{
 		$sql_ary = array();
@@ -279,11 +279,11 @@ class manager
 	}
 
 	/**
-	* Delete advertisement locations
-	*
-	* @param	int		$ad_id	Advertisement ID
-	* @return	void
-	*/
+	 * Delete advertisement locations
+	 *
+	 * @param	int		$ad_id	Advertisement ID
+	 * @return	void
+	 */
 	public function delete_ad_locations($ad_id)
 	{
 		$sql = 'DELETE FROM ' . $this->ad_locations_table . '
@@ -292,11 +292,11 @@ class manager
 	}
 
 	/**
-	* Load memberships of the user
-	*
-	* @param	int		$user_id	User ID to load memberships
-	* @return	array	List of group IDs user is member of
-	*/
+	 * Load memberships of the user
+	 *
+	 * @param	int		$user_id	User ID to load memberships
+	 * @return	array	List of group IDs user is member of
+	 */
 	public function load_memberships($user_id)
 	{
 		$memberships = array();
@@ -314,10 +314,10 @@ class manager
 	}
 
 	/**
-	* Load all board groups
-	*
-	* @return	array	List of groups
-	*/
+	 * Load all board groups
+	 *
+	 * @return	array	List of groups
+	 */
 	public function load_groups()
 	{
 		$sql = 'SELECT group_id, group_name, group_type
@@ -332,11 +332,11 @@ class manager
 	}
 
 	/**
-	* Make sure only necessary data make their way to SQL query
-	*
-	* @param	array	$data	List of data to query the database
-	* @return	array	Cleaned data that contain only valid keys
-	*/
+	 * Make sure only necessary data make their way to SQL query
+	 *
+	 * @param	array	$data	List of data to query the database
+	 * @return	array	Cleaned data that contain only valid keys
+	 */
 	protected function intersect_ad_data($data)
 	{
 		return array_intersect_key($data, array(
@@ -353,11 +353,11 @@ class manager
 	}
 
 	/**
-	* Get the random statement for this database layer
-	* Random function should generate a float value between 0 and 1
-	*
-	* @return	string	Random statement for current database layer
-	*/
+	 * Get the random statement for this database layer
+	 * Random function should generate a float value between 0 and 1
+	 *
+	 * @return	string	Random statement for current database layer
+	 */
 	protected function sql_random()
 	{
 		switch ($this->db->get_sql_layer())
@@ -373,12 +373,6 @@ class manager
 			case 'sqlite3':
 				return '(0.5 - RANDOM() / CAST(-9223372036854775808 AS REAL) / 2)';
 
-			/* All other cases should use the default
-			case 'mssql':
-			case 'mssql_odbc':
-			case 'mssqlnative':
-			case 'mysql':
-			case 'mysqli':*/
 			default:
 				return 'RAND()';
 		}
