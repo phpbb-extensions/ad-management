@@ -119,7 +119,7 @@ $lang = array_merge($lang, array(
 	'AD_POP_UP'						=> 'Pop-up',
 	'AD_POP_UP_DESC'				=> 'Displays once per day when user visits this board as overlaying box. User need to close this box to continue to the content. Please, be aware, that this kind of advertisement is very obtrusive to the user!',
 	'AD_SLIDE_UP'					=> 'Slide up',
-	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom-right corner.',
+	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom.',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',
