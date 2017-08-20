@@ -55,12 +55,7 @@ class manager
 		$data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		if ($data === false)
-		{
-			return array();
-		}
-
-		return $data;
+		return $data !== false ? $data : array();
 	}
 
 	/**
