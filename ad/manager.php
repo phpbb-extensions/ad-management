@@ -44,7 +44,7 @@ class manager
 	 * Get specific ad
 	 *
 	 * @param	int	$ad_id	Advertisement ID
-	 * @return	array|bool	Array with advertisement data, false if ad doesn't exist
+	 * @return	array	Array with advertisement data
 	 */
 	public function get_ad($ad_id)
 	{
@@ -54,6 +54,11 @@ class manager
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
+
+		if ($data === false)
+		{
+			return array();
+		}
 
 		return $data;
 	}

@@ -17,8 +17,8 @@ use phpbb\ads\controller\admin_input as input;
 */
 class admin_controller
 {
-	/** @var array|bool Form data */
-	protected $data = false;
+	/** @var array Form data */
+	protected $data = array();
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -222,7 +222,7 @@ class admin_controller
 		else
 		{
 			$this->data = $this->manager->get_ad($ad_id);
-			if ($this->data === false)
+			if (empty($this->data))
 			{
 				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
