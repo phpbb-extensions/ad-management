@@ -27,7 +27,7 @@ class m4_indexes extends \phpbb\db\migration\migration
 	{
 		return array(
 			'\phpbb\ads\migrations\v10x\m1_initial_schema',
-			'\phpbb\ads\migrations\v10x\m3_template_locations_schema'
+			'\phpbb\ads\migrations\v10x\m3_template_locations_schema',
 		);
 	}
 

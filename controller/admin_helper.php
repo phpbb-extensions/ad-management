@@ -61,6 +61,33 @@ class admin_helper
 	}
 
 	/**
+	 * Assign ad data for ACP form template.
+	 *
+	 * @param	array	$data	Ad data
+	 * @param	array	$errors	Validation errors
+	 */
+	public function assign_data($data, $errors)
+	{
+		$this->assign_locations($data['ad_locations']);
+
+		$errors = array_map(array($this->language, 'lang'), $errors);
+		$this->template->assign_vars(array(
+			'S_ERROR'   => (bool) count($errors),
+			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
+
+			'AD_NAME'         => $data['ad_name'],
+			'AD_NOTE'         => $data['ad_note'],
+			'AD_CODE'         => $data['ad_code'],
+			'AD_ENABLED'      => $data['ad_enabled'],
+			'AD_END_DATE'     => $this->prepare_end_date($data['ad_end_date']),
+			'AD_PRIORITY'     => $data['ad_priority'],
+			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
+			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
+			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
+		));
+	}
+
+	/**
 	 * Assign template locations data to the template.
 	 *
 	 * @param	mixed	$ad_locations	The form data or nothing.
@@ -80,37 +107,6 @@ class admin_helper
 	}
 
 	/**
-	 * Assign form data to the template.
-	 *
-	 * @param	array	$data	The form data.
-	 * @return	void
-	 */
-	public function assign_form_data($data)
-	{
-		$this->template->assign_vars(array(
-			'AD_NAME'         => $data['ad_name'],
-			'AD_NOTE'         => $data['ad_note'],
-			'AD_CODE'         => $data['ad_code'],
-			'AD_ENABLED'      => $data['ad_enabled'],
-			'AD_END_DATE'     => $this->prepare_end_date($data['ad_end_date']),
-			'AD_PRIORITY'     => $data['ad_priority'],
-			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
-			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
-		));
-	}
-
-	public function assign_errors(array $errors)
-	{
-		$errors = array_map(array($this->language, 'lang'), $errors);
-
-		$this->template->assign_vars(array(
-			'S_ERROR'   => (bool) count($errors),
-			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
-		));
-	}
-
-	/**
 	 * Log action
 	 *
 	 * @param	string	$action		Performed action in uppercase
@@ -122,11 +118,15 @@ class admin_helper
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
 	}
 
+	/**
+	 * Get "Find username" URL to easily look for ad owner.
+	 *
+	 * @return	string	Find username URL
+	 */
 	public function get_find_username_link()
 	{
 		return append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true');
 	}
-
 
 	/**
 	 * Prepare end date for display
@@ -147,6 +147,32 @@ class admin_helper
 		}
 
 		return (string) $end_date;
+	}
+
+	/**
+	 * Is an ad expired?
+	 *
+	 * @param	array	$row	Advertisement data
+	 * @return	bool	True if expired, false otherwise
+	 */
+	public function is_expired($row)
+	{
+		if ((int) $row['ad_end_date'] > 0 && (int) $row['ad_end_date'] < time())
+		{
+			return true;
+		}
+
+		if ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit'])
+		{
+			return true;
+		}
+
+		if ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit'])
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

@@ -48,7 +48,7 @@ class main_listener implements EventSubscriberInterface
 	{
 		return array(
 			'core.user_setup'				=> 'load_language_on_setup',
-			'core.page_header_after'		=> 'setup_ads',
+			'core.page_header_after'		=> array(array('setup_ads'), array('adblocker'), array('clicks')),
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
 		);
@@ -94,14 +94,12 @@ class main_listener implements EventSubscriberInterface
 
 	/**
 	 * Displays advertisements
+	 *
+	 * @return	void
 	 */
 	public function setup_ads()
 	{
-		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
-
-		// If user is not in any groups that have ads hidden, display them then
-		if (!array_intersect($user_groups, $hide_groups))
+		if ($this->can_view_ads())
 		{
 			$location_ids = $this->location_manager->get_all_location_ids();
 			$ad_ids = array();
@@ -116,21 +114,27 @@ class main_listener implements EventSubscriberInterface
 				));
 			}
 
-			if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
-			{
-				$this->template->assign_vars(array(
-					'S_INCREMENT_VIEWS'		=> true,
-					// Obfuscate URL to prevent crawlers increasing view counters.
-					// Uses http://www.jsfuck.com/ to make 'a' really complicated, yet executable.
-					'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
-				));
-			}
+			$this->views($ad_ids);
 		}
+	}
 
-		// Display Ad blocker friendly message if allowed
+	/**
+	 * Display Ad blocker friendly message if allowed
+	 *
+	 * @return	void
+	 */
+	public function adblocker()
+	{
 		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+	}
 
-		// Add click tracking template variables
+	/**
+	 * Add click tracking template variables
+	 *
+	 * @return	void
+	 */
+	public function clicks()
+	{
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
@@ -141,14 +145,20 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Remove ad owner when deleting user(s)
+	 * Prepare views counter template
 	 *
-	 * @param	\phpbb\event\data	$event	The event object
+	 * @param	array	$ad_ids	List of ads that will be displayed on current request's page
 	 * @return	void
 	 */
-	public function remove_ad_owner($event)
+	protected function views($ad_ids)
 	{
-		$this->manager->remove_ad_owner($event['user_ids']);
+		if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
+		{
+			$this->template->assign_vars(array(
+				'S_INCREMENT_VIEWS'		=> true,
+				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
+			));
+		}
 	}
 
 	/**
@@ -167,5 +177,29 @@ class main_listener implements EventSubscriberInterface
 		{
 			$event['http_headers'] = array_merge($event['http_headers'], ['X-XSS-Protection' => '0']);
 		}
+	}
+
+	/**
+	 * Remove ad owner when deleting user(s)
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
+	public function remove_ad_owner($event)
+	{
+		$this->manager->remove_ad_owner($event['user_ids']);
+	}
+
+	/**
+	 * User can view ads only if they are not in a group that has ads hidden
+	 *
+	 * @return	bool	true if the user is not in a group with ads hidden, false if they are
+	 */
+	protected function can_view_ads()
+	{
+		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
+		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
+
+		return !array_intersect($user_groups, $hide_groups);
 	}
 }
