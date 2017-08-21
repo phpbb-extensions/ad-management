@@ -13,30 +13,30 @@ namespace phpbb\ads\migrations\v10x;
 class m4_indexes extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		return $this->db_tools->sql_index_exists($this->table_prefix . 'ads', 'ad_enabled');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
-	static public function depends_on()
+	 * {@inheritDoc}
+	 */
+	public static function depends_on()
 	{
 		return array(
 			'\phpbb\ads\migrations\v10x\m1_initial_schema',
-			'\phpbb\ads\migrations\v10x\m3_template_locations_schema'
+			'\phpbb\ads\migrations\v10x\m3_template_locations_schema',
 		);
 	}
 
 	/**
-	* Add the indexes
-	*
-	* @return array Array of altered table schema
-	* @access public
-	*/
+	 * Add the indexes
+	 *
+	 * @return array Array of altered table schema
+	 * @access public
+	 */
 	public function update_schema()
 	{
 		return array(
@@ -52,11 +52,11 @@ class m4_indexes extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* Drop the indexes
-	*
-	* @return array Array of altered table schema
-	* @access public
-	*/
+	 * Drop the indexes
+	 *
+	 * @return array Array of altered table schema
+	 * @access public
+	 */
 	public function revert_schema()
 	{
 		return array(

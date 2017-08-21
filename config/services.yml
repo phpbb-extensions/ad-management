@@ -1,5 +1,6 @@
 imports:
     - { resource: tables.yml }
+    - { resource: analyser.yml }
     - { resource: location.yml }
 
 services:
@@ -31,6 +32,7 @@ services:
             - '@group_helper'
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.admin.helper'
+            - '@phpbb.ads.analyser.manager'
             - '%core.root_path%'
             - '%core.php_ext%'
 
@@ -53,8 +55,8 @@ services:
             - '@request'
             - '@phpbb.ads.banner.banner'
 
-    phpbb.ads.click.controller:
-        class: phpbb\ads\controller\click_controller
+    phpbb.ads.increment.controller:
+        class: phpbb\ads\controller\increment_controller
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@request'

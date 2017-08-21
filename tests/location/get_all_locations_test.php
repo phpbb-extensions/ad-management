@@ -34,6 +34,14 @@ class get_all_locations_test extends location_base
 				'name'	=> 'AD_AFTER_FIRST_POST',
 				'desc'	=> 'AD_AFTER_FIRST_POST_DESC',
 			),
+			'after_footer_navbar'	=> array(
+				'name'	=> 'AD_AFTER_FOOTER_NAVBAR',
+				'desc'	=> 'AD_AFTER_FOOTER_NAVBAR_DESC',
+			),
+			'after_header_navbar'	=> array(
+				'name'	=> 'AD_AFTER_HEADER_NAVBAR',
+				'desc'	=> 'AD_AFTER_HEADER_NAVBAR_DESC',
+			),
 			'after_not_first_post'	=> array(
 				'name'	=> 'AD_AFTER_NOT_FIRST_POST',
 				'desc'	=> 'AD_AFTER_NOT_FIRST_POST_DESC',
@@ -61,6 +69,14 @@ class get_all_locations_test extends location_base
 			'below_header'	=> array(
 				'name'	=> 'AD_BELOW_HEADER',
 				'desc'	=> 'AD_BELOW_HEADER_DESC',
+			),
+			'pop_up'	=> array(
+				'name'	=> 'AD_POP_UP',
+				'desc'	=> 'AD_POP_UP_DESC',
+			),
+			'slide_up'	=> array(
+				'name'	=> 'AD_SLIDE_UP',
+				'desc'	=> 'AD_SLIDE_UP_DESC',
 			),
 		), $locations);
 	}

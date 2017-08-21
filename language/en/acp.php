@@ -21,6 +21,9 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	// Manage ads
 	'AD_SETTINGS'				=> 'Advertisement settings',
+	'ACTIVE_ADS'				=> 'Active ads',
+	'EXPIRED_ADS'				=> 'Expired ads',
+	'STATUS'					=> 'Status',
 	'AD_NAME'					=> 'Name',
 	'AD_NAME_EXPLAIN'			=> 'The name is only used to help you identify this advertisement.',
 	'AD_ENABLED'				=> 'Enabled',
@@ -29,6 +32,8 @@ $lang = array_merge($lang, array(
 	'AD_NOTE_EXPLAIN'			=> 'Enter any notes for this advertisement. These notes are not shown anywhere except in the ACP and are optional.',
 	'AD_CODE'					=> 'Code',
 	'AD_CODE_EXPLAIN'			=> 'Enter the advertisement code here. All code must use HTML markup, BBCodes are not supported.',
+	'ANALYSE_AD_CODE'			=> 'Analyse advertisement code',
+	'EVERYTHING_OK'				=> 'The code appears OK.',
 	'AD_BANNER'					=> 'Advertisement banner',
 	'BANNER'					=> 'Upload a banner',
 	'BANNER_EXPLAIN'			=> 'You may upload an image in JPG, GIF or PNG format. The image will be stored in phpBB‘s <samp>images</samp> directory and an HTML IMG tag for the image will automatically be inserted into the ad code field.',
@@ -80,6 +85,12 @@ $lang = array_merge($lang, array(
 	'ACP_AD_DISABLE_SUCCESS'	=> 'Advertisement disabled successfully.',
 	'ACP_AD_DISABLE_ERRORED'	=> 'There was an error disabling the advertisement.',
 
+	// Analyser tests
+	'UNSECURE_CONNECTION'	=> '<strong>Mixed Content</strong><br />Your board runs on a secure HTTPS connection, however the ad code is attempting to load content from an insecure HTTP connection. This can cause browsers to generate a "Mixed Content" warning to let users know that the page contains insecure resources.',
+	'SCRIPT_WITHOUT_ASYNC'	=> '<strong>Non-asynchronous javascript</strong><br />This ad code loads JavaScript code in a non-asynchronous way. This means it will block any other Javascript from loading until it has completed loading, which can affect page load performance. Use of the <samp>async</samp> attribute can speed up the page load.',
+	'ALERT_USAGE'			=> '<strong>Usage of <samp>alert()</samp></strong><br />Your code uses the <samp>alert()</samp> function which is not a good practice and can distract users. Some browsers may also block page load and display additional warnings to the user.',
+	'LOCATION_CHANGE'		=> '<strong>Redirection</strong><br />Your code appears it can redirect user to another page or site. Redirects can sometimes send users to unintended, often malicious, destinations. Please verify the integrity of your ad code\'s redirection destination.',
+
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',
 	'AD_ABOVE_HEADER_DESC'			=> 'Displays on every page before the page header.',
@@ -101,6 +112,14 @@ $lang = array_merge($lang, array(
 	'AD_BEFORE_PROFILE_DESC'		=> 'Displays before member profile page content.',
 	'AD_AFTER_PROFILE'				=> 'After user profile',
 	'AD_AFTER_PROFILE_DESC'			=> 'Displays after member profile page content.',
+	'AD_AFTER_HEADER_NAVBAR'		=> 'After header navbar',
+	'AD_AFTER_HEADER_NAVBAR_DESC'	=> 'Displays on every page after header navigation bar.',
+	'AD_AFTER_FOOTER_NAVBAR'		=> 'After footer navbar',
+	'AD_AFTER_FOOTER_NAVBAR_DESC'	=> 'Displays on every page after footer navigation bar.',
+	'AD_POP_UP'						=> 'Pop-up',
+	'AD_POP_UP_DESC'				=> 'Displays once per day when user visits this board as overlaying box. User need to close this box to continue to the content. Please, be aware, that this kind of advertisement is very obtrusive to the user!',
+	'AD_SLIDE_UP'					=> 'Slide up',
+	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom.',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',

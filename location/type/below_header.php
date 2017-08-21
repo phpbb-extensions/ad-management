@@ -13,8 +13,8 @@ namespace phpbb\ads\location\type;
 class below_header extends base
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_id()
 	{
 		return 'below_header';

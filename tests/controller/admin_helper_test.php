@@ -36,7 +36,7 @@ class admin_helper_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');
 	}
@@ -105,6 +105,105 @@ class admin_helper_test extends \phpbb_database_test_case
 	}
 
 	/**
+	 * Data for test_assign_data
+	 *
+	 * @return array Array of test data
+	 */
+	public function assign_data_data()
+	{
+		return array(
+			array(array(
+					  'ad_name'			=> 'Ad Name #1',
+					  'ad_note'			=> 'Ad Note #1',
+					  'ad_code'			=> 'Ad Code #1',
+					  'ad_enabled'		=> '1',
+					  'ad_end_date'		=> '',
+					  'ad_priority'		=> '5',
+					  'ad_views_limit'	=> '0',
+					  'ad_clicks_limit'	=> '0',
+					  'ad_owner'			=> '0',
+				  ), '', '', array('AD_PRIORITY_INVALID'), true, 'AD_PRIORITY_INVALID'),
+			array(array(
+					  'ad_name'			=> 'Ad Name #1',
+					  'ad_note'			=> 'Ad Note #1',
+					  'ad_code'			=> 'Ad Code #1',
+					  'ad_enabled'		=> '1',
+					  'ad_end_date'		=> '0',
+					  'ad_priority'		=> '5',
+					  'ad_views_limit'	=> '0',
+					  'ad_clicks_limit'	=> '0',
+					  'ad_owner'			=> '0',
+				  ), '', '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br />AD_NAME_REQUIRED'),
+			array(array(
+					  'ad_name'			=> 'Ad Name #2',
+					  'ad_note'			=> 'Ad Note #2',
+					  'ad_code'			=> 'Ad Code #2',
+					  'ad_enabled'		=> '0',
+					  'ad_end_date'		=> '1',
+					  'ad_priority'		=> '5',
+					  'ad_views_limit'	=> '0',
+					  'ad_clicks_limit'	=> '0',
+					  'ad_owner'			=> '99',
+				  ), '1970-01-01', '', array(), false, ''),
+			array(array(
+					  'ad_name'			=> 'Ad Name #2',
+					  'ad_note'			=> 'Ad Note #2',
+					  'ad_code'			=> 'Ad Code #2',
+					  'ad_enabled'		=> '0',
+					  'ad_end_date'		=> '1970-01-01',
+					  'ad_priority'		=> '5',
+					  'ad_views_limit'	=> '0',
+					  'ad_clicks_limit'	=> '0',
+					  'ad_owner'			=> '99',
+				  ), '1970-01-01', '', array(), false, ''),
+			array(array(
+					  'ad_name'			=> 'Ad Name #3',
+					  'ad_note'			=> 'Ad Note #3',
+					  'ad_code'			=> 'Ad Code #3',
+					  'ad_enabled'		=> '0',
+					  'ad_end_date'		=> '1483228800',
+					  'ad_priority'		=> '5',
+					  'ad_views_limit'	=> '0',
+					  'ad_clicks_limit'	=> '0',
+					  'ad_owner'			=> '2',
+				  ), '2017-01-01', 'admin', array(), false, ''),
+		);
+	}
+
+	/**
+	 * Test assign_data()
+	 *
+	 * @dataProvider assign_data_data
+	 */
+	public function test_assign_data($data, $end_date, $owner, $errors, $s_errors, $error_msg)
+	{
+		$helper = $this->get_helper();
+
+		$this->location_manager->expects($this->once())
+			->method('get_all_locations')
+			->willReturn(array());
+
+		$this->template->expects($this->once())
+			->method('assign_vars')
+			->with(array(
+				'S_ERROR'   => $s_errors,
+				'ERROR_MSG' => $error_msg,
+
+				'AD_NAME'         => $data['ad_name'],
+				'AD_NOTE'         => $data['ad_note'],
+				'AD_CODE'         => $data['ad_code'],
+				'AD_ENABLED'      => $data['ad_enabled'],
+				'AD_END_DATE'     => $end_date,
+				'AD_PRIORITY'     => $data['ad_priority'],
+				'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
+				'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
+				'AD_OWNER'        => $owner,
+			));
+
+		$helper->assign_data($data, $errors);
+	}
+
+	/**
 	 * Data for test_assign_locations
 	 *
 	 * @return array Array of test data
@@ -161,131 +260,6 @@ class admin_helper_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * Data for test_assign_form_data
-	 *
-	 * @return array Array of test data
-	 */
-	public function assign_form_data_data()
-	{
-		return array(
-			array(array(
-				'ad_name'			=> 'Ad Name #1',
-				'ad_note'			=> 'Ad Note #1',
-				'ad_code'			=> 'Ad Code #1',
-				'ad_enabled'		=> '1',
-				'ad_end_date'		=> '',
-				'ad_priority'		=> '5',
-				'ad_views_limit'	=> '0',
-				'ad_clicks_limit'	=> '0',
-				'ad_owner'			=> '0',
-			), '', ''),
-			array(array(
-				'ad_name'			=> 'Ad Name #1',
-				'ad_note'			=> 'Ad Note #1',
-				'ad_code'			=> 'Ad Code #1',
-				'ad_enabled'		=> '1',
-				'ad_end_date'		=> '0',
-				'ad_priority'		=> '5',
-				'ad_views_limit'	=> '0',
-				'ad_clicks_limit'	=> '0',
-				'ad_owner'			=> '0',
-			), '', ''),
-			array(array(
-				'ad_name'			=> 'Ad Name #2',
-				'ad_note'			=> 'Ad Note #2',
-				'ad_code'			=> 'Ad Code #2',
-				'ad_enabled'		=> '0',
-				'ad_end_date'		=> '1',
-				'ad_priority'		=> '5',
-				'ad_views_limit'	=> '0',
-				'ad_clicks_limit'	=> '0',
-				'ad_owner'			=> '99',
-			), '1970-01-01', ''),
-			array(array(
-				'ad_name'			=> 'Ad Name #2',
-				'ad_note'			=> 'Ad Note #2',
-				'ad_code'			=> 'Ad Code #2',
-				'ad_enabled'		=> '0',
-				'ad_end_date'		=> '1970-01-01',
-				'ad_priority'		=> '5',
-				'ad_views_limit'	=> '0',
-				'ad_clicks_limit'	=> '0',
-				'ad_owner'			=> '99',
-			), '1970-01-01', ''),
-			array(array(
-				'ad_name'			=> 'Ad Name #3',
-				'ad_note'			=> 'Ad Note #3',
-				'ad_code'			=> 'Ad Code #3',
-				'ad_enabled'		=> '0',
-				'ad_end_date'		=> '1483228800',
-				'ad_priority'		=> '5',
-				'ad_views_limit'	=> '0',
-				'ad_clicks_limit'	=> '0',
-				'ad_owner'			=> '2',
-			), '2017-01-01', 'admin'),
-		);
-	}
-
-	/**
-	 * Test assign_form_data()
-	 *
-	 * @dataProvider assign_form_data_data
-	 */
-	public function test_assign_form_data($data, $end_date, $owner)
-	{
-		$helper = $this->get_helper();
-
-		$this->template->expects($this->once())
-			->method('assign_vars')
-			->with(array(
-				'AD_NAME'         => $data['ad_name'],
-				'AD_NOTE'         => $data['ad_note'],
-				'AD_CODE'         => $data['ad_code'],
-				'AD_ENABLED'      => $data['ad_enabled'],
-				'AD_END_DATE'     => $end_date,
-				'AD_PRIORITY'     => $data['ad_priority'],
-				'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
-				'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-				'AD_OWNER'        => $owner,
-			));
-
-		$helper->assign_form_data($data);
-	}
-
-	/**
-	 * Data for test_assign_errors
-	 *
-	 * @return array Array of test data
-	 */
-	public function assign_errors_data()
-	{
-		return array(
-			array(array(), false, ''),
-			array(array('ERROR_1'), true, 'ERROR_1'),
-			array(array('ERROR_1', 'ERROR_2'), true, 'ERROR_1<br />ERROR_2'),
-		);
-	}
-
-	/**
-	 * Test assign_errors()
-	 *
-	 * @dataProvider assign_errors_data
-	 */
-	public function test_assign_errors($errors, $s_error, $error_msg)
-	{
-		$helper = $this->get_helper();
-
-		$this->template->expects($this->once())
-			->method('assign_vars')
-			->with(array(
-				'S_ERROR'   => $s_error,
-				'ERROR_MSG' => $error_msg,
-			));
-
-		$helper->assign_errors($errors);
-	}
-
-	/**
 	 * Test log()
 	 */
 	public function test_log()
@@ -309,5 +283,104 @@ class admin_helper_test extends \phpbb_database_test_case
 		$helper = $this->get_helper();
 		$result = $helper->get_find_username_link();
 		$this->assertEquals("{$this->root_path}memberlist.{$this->php_ext}?mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true", $result);
+	}
+
+	/**
+	 * Data for test_prepare_end_date
+	 *
+	 * @return array Array of test data
+	 */
+	public function prepare_end_date_data()
+	{
+		return array(
+			array('', ''),
+			array(1, '1970-01-01'),
+			array('1', '1970-01-01'),
+			array('a', 'a'),
+		);
+	}
+
+	/**
+	 * Test prepare_end_date()
+	 *
+	 * @dataProvider prepare_end_date_data
+	 */
+	public function test_prepare_end_date($end_date, $expected)
+	{
+		$helper = $this->get_helper();
+		$result = $helper->prepare_end_date($end_date);
+		$this->assertEquals($expected, $result);
+	}
+
+	/**
+	 * Data for test_is_expired
+	 *
+	 * @return array Array of test data
+	 */
+	public function is_expired_data()
+	{
+		return array(
+			array(array(
+				'ad_end_date'		=> '1',
+				'ad_views_limit'	=> '',
+				'ad_views'			=> '',
+				'ad_clicks_limit'	=> '',
+				'ad_clicks'			=> '',
+			), true),
+			array(array(
+				'ad_end_date'		=> '0',
+				'ad_views_limit'	=> '1',
+				'ad_views'			=> '2',
+				'ad_clicks_limit'	=> '',
+				'ad_clicks'			=> '',
+			), true),
+			array(array(
+				'ad_end_date'		=> '0',
+				'ad_views_limit'	=> '0',
+				'ad_views'			=> '0',
+				'ad_clicks_limit'	=> '1',
+				'ad_clicks'			=> '2',
+			), true),
+			array(array(
+				'ad_end_date'		=> '9999999999',
+				'ad_views_limit'	=> '0',
+				'ad_views'			=> '0',
+				'ad_clicks_limit'	=> '0',
+				'ad_clicks'			=> '0',
+			), false),
+			array(array(
+				'ad_end_date'		=> '0',
+				'ad_views_limit'	=> '0',
+				'ad_views'			=> '1',
+				'ad_clicks_limit'	=> '0',
+				'ad_clicks'			=> '0',
+			), false),
+			array(array(
+				'ad_end_date'		=> '0',
+				'ad_views_limit'	=> '0',
+				'ad_views'			=> '0',
+				'ad_clicks_limit'	=> '0',
+				'ad_clicks'			=> '1',
+			), false),
+			array(array(
+				'ad_end_date'		=> '0',
+				'ad_views_limit'	=> '0',
+				'ad_views'			=> '0',
+				'ad_clicks_limit'	=> '0',
+				'ad_clicks'			=> '0',
+			), false),
+		);
+	}
+
+	/**
+	 * Test is_expired()
+	 *
+	 * @dataProvider is_expired_data
+	 */
+	public function test_is_expired($row, $expected)
+	{
+		$helper = $this->get_helper();
+		$result = $helper->is_expired($row);
+		$this->assertEquals($expected, $result);
 	}
 }

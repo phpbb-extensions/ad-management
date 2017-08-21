@@ -1,0 +1,10 @@
+<script>
+	(function($, window, document, phpbb) {
+		'use strict';
+
+		$(window).on('load', function() {
+			document.cookie = '{{ POP_UP_COOKIE_NAME }}=true; expires={{ POP_UP_COOKIE_EXPIRES }}; path={{ POP_UP_COOKIE_PATH }}';
+			phpbb.alert('{{ lang('ADVERTISEMENT')|e('js')|upper }}', `{% include '@phpbb_ads/phpbb_ads_default.html' %}`);
+		});
+	})(jQuery, window, document, phpbb);
+</script>

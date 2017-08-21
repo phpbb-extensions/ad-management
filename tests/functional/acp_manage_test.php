@@ -46,6 +46,15 @@ class acp_manage_test extends acp_base
 		$crawler = self::submit($form);
 		$this->assertContainsLang('ACP_ADS_ADD', $crawler->filter('#main h1')->text());
 
+		// Confirm ad code analysis
+		$form = $crawler->selectButton($this->lang('ANALYSE_AD_CODE'))->form();
+		$crawler = self::submit($form, array(
+			'ad_code'	=> '<script src="">alert();window.location.href=""</script>',
+		));
+		$this->assertContains('Non-asynchronous javascript', $crawler->filter('.analyser-results')->html());
+		$this->assertContains('Usage of <samp>alert()</samp>', $crawler->filter('.analyser-results')->html());
+		$this->assertContains('Redirection', $crawler->filter('.analyser-results')->html());
+
 		// Confirm error when submitting without required field data
 		$this->submit_with_error($crawler, array(), $this->lang('AD_NAME_REQUIRED'));
 
@@ -280,7 +289,7 @@ class acp_manage_test extends acp_base
 		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
-	static public function click($link)
+	public static function click($link)
 	{
 		return self::$client->click($link);
 	}

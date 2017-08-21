@@ -13,12 +13,12 @@ namespace phpbb\ads\location\type;
 /**
 * Base class for template location types
 */
-abstract class base implements \phpbb\ads\location\type\type_interface
+abstract class base implements type_interface
 {
 	/**
-	* User object
-	* @var \phpbb\user
-	*/
+	 * User object
+	 * @var \phpbb\user
+	 */
 	protected $user;
 
 	/**
@@ -28,11 +28,11 @@ abstract class base implements \phpbb\ads\location\type\type_interface
 	protected $language;
 
 	/**
-	* Construct a template location object
-	*
-	* @param	\phpbb\user					$user		User object
-	* @param	\phpbb\language\language	$language	Language object
-	*/
+	 * Construct a template location object
+	 *
+	 * @param	\phpbb\user					$user		User object
+	 * @param	\phpbb\language\language	$language	Language object
+	 */
 	public function __construct(\phpbb\user $user, \phpbb\language\language $language)
 	{
 		$this->user = $user;
@@ -40,24 +40,24 @@ abstract class base implements \phpbb\ads\location\type\type_interface
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_name()
 	{
 		return $this->language->lang('AD_' . strtoupper($this->get_id()));
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_desc()
 	{
 		return $this->language->lang('AD_' . strtoupper($this->get_id()) . '_DESC');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function will_display()
 	{
 		return true;

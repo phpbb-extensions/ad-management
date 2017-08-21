@@ -16,33 +16,33 @@ namespace phpbb\ads\migrations\v10x;
 class m1_initial_schema extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		return $this->db_tools->sql_table_exists($this->table_prefix . 'ads');
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
-	static public function depends_on()
+	 * {@inheritDoc}
+	 */
+	public static function depends_on()
 	{
 		return array('\phpbb\db\migration\data\v31x\v316');
 	}
 
 	/**
-	* Add the ads table schema to the database:
-	*	ads:
-	*		ad_id
-	*		ad_name
-	*		ad_note
-	*		ad_code
-	*		ad_enabled
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Add the ads table schema to the database:
+	 *	ads:
+	 *		ad_id
+	 *		ad_name
+	 *		ad_note
+	 *		ad_code
+	 *		ad_enabled
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function update_schema()
 	{
 		return array(
@@ -62,11 +62,11 @@ class m1_initial_schema extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* Drop the ads table schema from the database
-	*
-	* @return array Array of table schema
-	* @access public
-	*/
+	 * Drop the ads table schema from the database
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
 	public function revert_schema()
 	{
 		return array(

@@ -13,16 +13,16 @@ namespace phpbb\ads\location\type;
 class after_first_post extends base
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_id()
 	{
 		return 'after_first_post';
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function will_display()
 	{
 		return strpos($this->user->page['page_name'], 'viewtopic') !== false;

@@ -13,8 +13,8 @@ namespace phpbb\ads\migrations\v10x;
 class m2_acp_module extends \phpbb\db\migration\migration
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function effectively_installed()
 	{
 		$sql = 'SELECT module_id
@@ -29,18 +29,18 @@ class m2_acp_module extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
-	static public function depends_on()
+	 * {@inheritDoc}
+	 */
+	public static function depends_on()
 	{
 		return array('\phpbb\ads\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
-	* Add the ACP module
-	*
-	* @return array Array of data update instructions
-	*/
+	 * Add the ACP module
+	 *
+	 * @return array Array of data update instructions
+	 */
 	public function update_data()
 	{
 		return array(

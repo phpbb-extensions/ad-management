@@ -1,0 +1,6 @@
+{% if S_PHPBB_ADS_ENABLE_CLICKS %}
+	<script>
+		var u_phpbb_ads_click = '{{ U_PHPBB_ADS_CLICK|e('js') }}';
+	</script>
+	{% INCLUDEJS '@phpbb_ads/js/clicks.js' %}
+{% endif %}

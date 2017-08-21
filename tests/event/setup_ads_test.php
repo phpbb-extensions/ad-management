@@ -20,12 +20,10 @@ class setup_ads_test extends main_listener_base
 	public function data_setup_ads()
 	{
 		return array(
-			array(array(1), '0', '0'),
-			array(array(2), '1', '0'),
-			array(array(1, 2), '0', '0'),
-			array(array(2, 3), '1', '0'),
-			array(array(1, 2), '0', '1'),
-			array(array(2, 3), '1', '1'),
+			array(array(1)),
+			array(array(2)),
+			array(array(1, 2)),
+			array(array(2, 3)),
 		);
 	}
 
@@ -34,7 +32,7 @@ class setup_ads_test extends main_listener_base
 	*
 	* @dataProvider data_setup_ads
 	*/
-	public function test_setup_ads($hide_groups, $allow_adblocker, $enable_clicks)
+	public function test_setup_ads($hide_groups)
 	{
 		$this->user->data['user_id'] = 1;
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
@@ -52,66 +50,11 @@ class setup_ads_test extends main_listener_base
 		}
 
 		$this->template
-			->expects($this->exactly(count($ads) + $enable_clicks))
+			->expects($this->exactly(count($ads)))
 			->method('assign_vars');
-
-		$this->config['phpbb_ads_adblocker_message'] = $allow_adblocker;
-		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
-		$this->template
-			->expects($this->once())
-			->method('assign_var')
-			->with('S_DISPLAY_ADBLOCKER', $allow_adblocker);
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));
 		$dispatcher->dispatch('core.page_header_after');
-	}
-
-	/**
-	 * Data for test_views_with_bots
-	 *
-	 * @return array Array of test data
-	 */
-	public function views_with_bots_data()
-	{
-		return array(
-			array(true),
-			array(false),
-		);
-	}
-
-	/**
-	 * Test that ad views are not being counted for BOT users
-	 *
-	 * @dataProvider views_with_bots_data
-	 */
-	public function test_views_with_bots($is_bot)
-	{
-		$this->user->data['user_id'] = 10;
-		$this->user->data['is_bot'] = $is_bot;
-		$this->config['phpbb_ads_enable_views'] = true;
-
-		$this->config_text->expects($this->any())
-			->method('get')
-			->with('phpbb_ads_hide_groups')
-			->willReturn(json_encode(array()));
-
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
-			->disableOriginalConstructor()
-			->getMock();
-
-		$this->manager->expects($this->any())
-			->method('load_memberships')
-			->willReturn(array());
-
-		$this->manager->expects($this->any())
-			->method('get_ads')
-			->willReturn(array());
-
-		$this->manager->expects(($is_bot ? $this->never() : $this->once()))
-			->method('increment_ads_views');
-
-		$listener = $this->get_listener();
-		$listener->setup_ads();
 	}
 }

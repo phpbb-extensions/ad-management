@@ -13,16 +13,16 @@ namespace phpbb\ads\location\type;
 class before_posts extends base
 {
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function get_id()
 	{
 		return 'before_posts';
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	public function will_display()
 	{
 		return strpos($this->user->page['page_name'], 'viewtopic') !== false;
