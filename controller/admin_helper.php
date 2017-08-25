@@ -10,8 +10,6 @@
 
 namespace phpbb\ads\controller;
 
-use phpbb\ads\controller\admin_input as input;
-
 /**
  * Admin helper
  */
