@@ -1097,7 +1097,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with($rows[0])
 			->willReturn(false);
 
-		$this->helper->expects($this->at(2))
+		$this->helper->expects($this->at(1))
 			->method('is_expired')
 			->with($rows[1])
 			->willReturn(true);
