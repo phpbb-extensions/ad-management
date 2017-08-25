@@ -108,7 +108,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE }}" size="20" maxlength="20" /></dd>
+				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\controller\\admin_input::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
@@ -142,7 +142,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% set NOW = "now"|date("Y-m-d") %}
+			{% set NOW = "now"|date("U") %}
 			{% for list in [
 				{
 					'heading': lang('ACTIVE_ADS'),
@@ -163,7 +163,7 @@
 							<td>{{ ad.PRIORITY }}</td>
 							<td>
 								{% if ad.END_DATE < NOW %}<strong class="error">{% endif %}
-									{{ ad.END_DATE }}
+									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\controller\\admin_input::DATE_FORMAT')) }}
 								{% if ad.END_DATE < NOW %}</strong>{% endif %}
 							</td>
 							{% if S_VIEWS_ENABLED %}

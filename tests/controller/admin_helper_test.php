@@ -122,7 +122,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '0',
-				  ), '', '', array('AD_PRIORITY_INVALID'), true, 'AD_PRIORITY_INVALID'),
+				  ), '', array('AD_PRIORITY_INVALID'), true, 'AD_PRIORITY_INVALID'),
 			array(array(
 					  'ad_name'			=> 'Ad Name #1',
 					  'ad_note'			=> 'Ad Note #1',
@@ -133,7 +133,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '0',
-				  ), '', '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br />AD_NAME_REQUIRED'),
+				  ), '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br />AD_NAME_REQUIRED'),
 			array(array(
 					  'ad_name'			=> 'Ad Name #2',
 					  'ad_note'			=> 'Ad Note #2',
@@ -144,7 +144,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '99',
-				  ), '1970-01-01', '', array(), false, ''),
+				  ), '', array(), false, ''),
 			array(array(
 					  'ad_name'			=> 'Ad Name #2',
 					  'ad_note'			=> 'Ad Note #2',
@@ -155,7 +155,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '99',
-				  ), '1970-01-01', '', array(), false, ''),
+				  ), '', array(), false, ''),
 			array(array(
 					  'ad_name'			=> 'Ad Name #3',
 					  'ad_note'			=> 'Ad Note #3',
@@ -166,7 +166,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '2',
-				  ), '2017-01-01', 'admin', array(), false, ''),
+				  ), 'admin', array(), false, ''),
 		);
 	}
 
@@ -175,7 +175,7 @@ class admin_helper_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider assign_data_data
 	 */
-	public function test_assign_data($data, $end_date, $owner, $errors, $s_errors, $error_msg)
+	public function test_assign_data($data, $owner, $errors, $s_errors, $error_msg)
 	{
 		$helper = $this->get_helper();
 
@@ -193,7 +193,7 @@ class admin_helper_test extends \phpbb_database_test_case
 				'AD_NOTE'         => $data['ad_note'],
 				'AD_CODE'         => $data['ad_code'],
 				'AD_ENABLED'      => $data['ad_enabled'],
-				'AD_END_DATE'     => $end_date,
+				'AD_END_DATE'     => $data['ad_end_date'],
 				'AD_PRIORITY'     => $data['ad_priority'],
 				'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 				'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
@@ -298,18 +298,6 @@ class admin_helper_test extends \phpbb_database_test_case
 			array('1', '1970-01-01'),
 			array('a', 'a'),
 		);
-	}
-
-	/**
-	 * Test prepare_end_date()
-	 *
-	 * @dataProvider prepare_end_date_data
-	 */
-	public function test_prepare_end_date($end_date, $expected)
-	{
-		$helper = $this->get_helper();
-		$result = $helper->prepare_end_date($end_date);
-		$this->assertEquals($expected, $result);
 	}
 
 	/**

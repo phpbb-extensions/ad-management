@@ -79,7 +79,7 @@ class admin_helper
 			'AD_NOTE'         => $data['ad_note'],
 			'AD_CODE'         => $data['ad_code'],
 			'AD_ENABLED'      => $data['ad_enabled'],
-			'AD_END_DATE'     => $this->prepare_end_date($data['ad_end_date']),
+			'AD_END_DATE'     => $data['ad_end_date'],
 			'AD_PRIORITY'     => $data['ad_priority'],
 			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
@@ -126,27 +126,6 @@ class admin_helper
 	public function get_find_username_link()
 	{
 		return append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true');
-	}
-
-	/**
-	 * Prepare end date for display
-	 *
-	 * @param	mixed	$end_date	End date.
-	 * @return	string	End date prepared for display.
-	 */
-	public function prepare_end_date($end_date)
-	{
-		if (empty($end_date))
-		{
-			return '';
-		}
-
-		if (is_numeric($end_date))
-		{
-			return $this->user->format_date($end_date, input::DATE_FORMAT);
-		}
-
-		return (string) $end_date;
 	}
 
 	/**
