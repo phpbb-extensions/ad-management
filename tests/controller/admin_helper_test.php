@@ -286,21 +286,6 @@ class admin_helper_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * Data for test_prepare_end_date
-	 *
-	 * @return array Array of test data
-	 */
-	public function prepare_end_date_data()
-	{
-		return array(
-			array('', ''),
-			array(1, '1970-01-01'),
-			array('1', '1970-01-01'),
-			array('a', 'a'),
-		);
-	}
-
-	/**
 	 * Data for test_is_expired
 	 *
 	 * @return array Array of test data
