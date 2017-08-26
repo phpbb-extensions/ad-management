@@ -10,7 +10,7 @@
 
 namespace phpbb\ads\controller;
 
-use phpbb\ads\controller\admin_input as input;
+use phpbb\ads\ext;
 
 /**
 * Admin controller
@@ -200,7 +200,7 @@ class admin_controller
 			'S_ADD_AD'				=> true,
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
-			'PICKER_DATE_FORMAT'	=> input::DATE_FORMAT,
+			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 		));
 	}
@@ -236,7 +236,7 @@ class admin_controller
 			'EDIT_ID'				=> $ad_id,
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
-			'PICKER_DATE_FORMAT'	=> input::DATE_FORMAT,
+			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 		));
 		$this->helper->assign_data($this->data, $this->input->get_errors());
