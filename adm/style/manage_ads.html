@@ -88,7 +88,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{% if AD_PRIORITY %}{{ AD_PRIORITY }}{% else %}{{ constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}{% endif %}" min="1" max="10" /></dd>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10" /></dd>
 			</dl>
 		</fieldset>
 		<fieldset>
