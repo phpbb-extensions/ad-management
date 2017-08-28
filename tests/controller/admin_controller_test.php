@@ -12,7 +12,8 @@ namespace phpbb\ads\controller;
 
 require_once __DIR__ . '/../../../../../includes/functions_acp.php';
 
-use \phpbb\ads\controller\admin_input_test as input;
+use phpbb\ads\controller\admin_input_test as input;
+use phpbb\ads\ext;
 
 class admin_controller_test extends \phpbb_database_test_case
 {
@@ -388,7 +389,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'S_ADD_AD'				=> true,
 				'U_BACK'				=> $this->u_action,
 				'U_ACTION'				=> "{$this->u_action}&amp;action=add",
-				'PICKER_DATE_FORMAT'	=> \phpbb\ads\controller\admin_input::DATE_FORMAT,
+				'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 				'U_FIND_USERNAME'		=> 'u_find_username',
 			));
 
@@ -722,7 +723,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'EDIT_ID'				=> $ad_id,
 					'U_BACK'				=> $this->u_action,
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
-					'PICKER_DATE_FORMAT'	=> \phpbb\ads\controller\admin_input::DATE_FORMAT,
+					'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 					'U_FIND_USERNAME'		=> 'u_find_username',
 				));
 
@@ -783,7 +784,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'EDIT_ID'				=> 1,
 				'U_BACK'				=> $this->u_action,
 				'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
-				'PICKER_DATE_FORMAT'	=> \phpbb\ads\controller\admin_input::DATE_FORMAT,
+				'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 				'U_FIND_USERNAME'		=> 'u_find_username',
 			));
 
@@ -888,7 +889,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'EDIT_ID'				=> 1,
 					'U_BACK'				=> $this->u_action,
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
-					'PICKER_DATE_FORMAT'	=> \phpbb\ads\controller\admin_input::DATE_FORMAT,
+					'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 					'U_FIND_USERNAME'		=> 'u_find_username',
 				));
 
@@ -1097,7 +1098,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with($rows[0])
 			->willReturn(false);
 
-		$this->helper->expects($this->at(2))
+		$this->helper->expects($this->at(1))
 			->method('is_expired')
 			->with($rows[1])
 			->willReturn(true);

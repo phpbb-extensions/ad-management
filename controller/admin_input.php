@@ -10,15 +10,13 @@
 
 namespace phpbb\ads\controller;
 
+use phpbb\ads\ext;
+
 /**
  * Admin input
  */
 class admin_input
 {
-	const MAX_NAME_LENGTH = 255;
-	const DATE_FORMAT = 'Y-m-d';
-	const DEFAULT_PRIORITY = 5;
-
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -86,7 +84,7 @@ class admin_input
 			'ad_enabled'      => $this->request->variable('ad_enabled', 0),
 			'ad_locations'    => $this->request->variable('ad_locations', array('')),
 			'ad_end_date'     => $this->request->variable('ad_end_date', ''),
-			'ad_priority'     => $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_priority'     => $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
 			'ad_views_limit'  => $this->request->variable('ad_views_limit', 0),
 			'ad_clicks_limit' => $this->request->variable('ad_clicks_limit', 0),
 			'ad_owner'        => $this->request->variable('ad_owner', '', true),
@@ -165,9 +163,9 @@ class admin_input
 		{
 			$this->errors[] = 'AD_NAME_REQUIRED';
 		}
-		if (truncate_string($ad_name, self::MAX_NAME_LENGTH) !== $ad_name)
+		if (truncate_string($ad_name, ext::MAX_NAME_LENGTH) !== $ad_name)
 		{
-			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
+			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', ext::MAX_NAME_LENGTH);
 		}
 	}
 
@@ -254,7 +252,7 @@ class admin_input
 	 */
 	protected function end_date_to_timestamp($end_date)
 	{
-		return (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $end_date);
+		return (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $end_date);
 	}
 
 	/**
