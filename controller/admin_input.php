@@ -101,20 +101,16 @@ class admin_input
 			$this->errors[] = $this->language->lang('FORM_INVALID');
 		}
 
-		// Validate each property. Every method adds errors directly to $this->errors.
+		// Validate each property. Some validators update the property value. Errors are added to $this->errors.
 		foreach ($data as $prop_name => &$prop_val)
 		{
 			if (method_exists($this, 'validate_' . $prop_name))
 			{
-				$this->{'validate_' . $prop_name}($prop_val);
+				$prop_val = $this->{'validate_' . $prop_name}($prop_val);
 			}
 		}
 
 		unset($prop_val);
-
-		// Replace end date and owner with IDs that will be stored in the DB
-		$data['ad_end_date'] = $this->end_date_to_timestamp($data['ad_end_date']);
-		$data['ad_owner'] = $data['ad_owner'] === ANONYMOUS ? 0 : (int) $data['ad_owner'];
 
 		return $data;
 	}
@@ -160,6 +156,7 @@ class admin_input
 	 * Validate advertisement name
 	 *
 	 * @param string $ad_name Advertisement name
+	 * @return string Advertisement name
 	 */
 	protected function validate_ad_name($ad_name)
 	{
@@ -167,24 +164,29 @@ class admin_input
 		{
 			$this->errors[] = 'AD_NAME_REQUIRED';
 		}
+
 		if (truncate_string($ad_name, ext::MAX_NAME_LENGTH) !== $ad_name)
 		{
 			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', ext::MAX_NAME_LENGTH);
 		}
+
+		return $ad_name;
 	}
 
 	/**
 	 * Validate advertisement end date
 	 *
 	 * @param string $end_date Advertisement end date
+	 * @return int The end date converted to timestamp if valid, otherwise 0.
 	 */
 	protected function validate_ad_end_date($end_date)
 	{
+		$timestamp = 0;
 		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $end_date))
 		{
-			$end_date = (int) $this->end_date_to_timestamp($end_date);
+			$timestamp = (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $end_date);
 
-			if ($end_date < time())
+			if ($timestamp < time())
 			{
 				$this->errors[] = 'AD_END_DATE_INVALID';
 			}
@@ -193,12 +195,15 @@ class admin_input
 		{
 			$this->errors[] = 'AD_END_DATE_INVALID';
 		}
+
+		return $timestamp;
 	}
 
 	/**
 	 * Validate advertisement priority
 	 *
 	 * @param int $ad_priority Advertisement priority
+	 * @return int Advertisement priority
 	 */
 	protected function validate_ad_priority($ad_priority)
 	{
@@ -206,12 +211,15 @@ class admin_input
 		{
 			$this->errors[] = 'AD_PRIORITY_INVALID';
 		}
+
+		return $ad_priority;
 	}
 
 	/**
 	 * Validate advertisement views limit
 	 *
 	 * @param int $ad_views_limit Advertisement views limit
+	 * @return int Advertisement views limit
 	 */
 	protected function validate_ad_views_limit($ad_views_limit)
 	{
@@ -219,12 +227,15 @@ class admin_input
 		{
 			$this->errors[] = 'AD_VIEWS_LIMIT_INVALID';
 		}
+
+		return $ad_views_limit;
 	}
 
 	/**
 	 * Validate advertisement clicks limit
 	 *
 	 * @param int $ad_clicks_limit Advertisement clicks limit
+	 * @return int Advertisement clicks limit
 	 */
 	protected function validate_ad_clicks_limit($ad_clicks_limit)
 	{
@@ -232,31 +243,24 @@ class admin_input
 		{
 			$this->errors[] = 'AD_CLICKS_LIMIT_INVALID';
 		}
+
+		return $ad_clicks_limit;
 	}
 
 	/**
 	 * Validate advertisement owner
 	 *
-	 * @param string $ad_owner User name (passed by reference so we can
-	 *                         update the ad owner to a user id)
+	 * @param string $ad_owner User name
+	 * @return int User id if user exists, otherwise 0.
 	 */
-	protected function validate_ad_owner(&$ad_owner)
+	protected function validate_ad_owner($ad_owner)
 	{
 		if (!empty($ad_owner) && ANONYMOUS === ($ad_owner = $this->user_loader->load_user_by_username($ad_owner)))
 		{
 			$this->errors[] = 'AD_OWNER_INVALID';
 		}
-	}
 
-	/**
-	 * Convert format of end date from string to unix timestamp
-	 *
-	 * @param string $end_date Advertisement end date in YYYY-MM-DD format
-	 * @return int Advertisement end date in unix timestamp
-	 */
-	protected function end_date_to_timestamp($end_date)
-	{
-		return (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $end_date);
+		return ANONYMOUS === $ad_owner ? 0 : (int) $ad_owner;
 	}
 
 	/**
