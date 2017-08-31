@@ -110,8 +110,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->root_path = $phpbb_root_path;
-		$this->php_ext = $phpEx;
 
 		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage';
 
@@ -136,9 +134,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->group_helper,
 			$this->input,
 			$this->helper,
-			$this->analyser,
-			$this->root_path,
-			$this->php_ext
+			$this->analyser
 		);
 		$controller->set_page_url($this->u_action);
 
@@ -328,9 +324,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->group_helper,
 				$this->input,
 				$this->helper,
-				$this->analyser,
-				$this->root_path,
-				$this->php_ext
+				$this->analyser
 			))
 			->getMock();
 

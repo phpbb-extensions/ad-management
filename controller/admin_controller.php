@@ -66,10 +66,8 @@ class admin_controller
 	 * @param \phpbb\ads\controller\admin_input  $input        Admin input object
 	 * @param \phpbb\ads\controller\admin_helper $helper       Admin helper object
 	 * @param \phpbb\ads\analyser\manager        $analyser     Ad code analyser object
-	 * @param string                             $root_path    phpBB root path
-	 * @param string                             $php_ext      PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -353,7 +351,7 @@ class admin_controller
 	 *  - analyse ad code
 	 *  - submit form (either add or edit an ad)
 	 *
-	 * @return	mixed	Action name or false when no action was submitted
+	 * @return	string|false	Action name or false when no action was submitted
 	 */
 	protected function get_submitted_action()
 	{

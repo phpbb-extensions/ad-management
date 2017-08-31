@@ -104,9 +104,10 @@ class admin_input
 		// Validate each property. Some validators update the property value. Errors are added to $this->errors.
 		foreach ($data as $prop_name => &$prop_val)
 		{
-			if (method_exists($this, 'validate_' . $prop_name))
+			$method = 'validate_' . $prop_name;
+			if (method_exists($this, $method))
 			{
-				$prop_val = $this->{'validate_' . $prop_name}($prop_val);
+				$prop_val = $this->{$method}($prop_val);
 			}
 		}
 

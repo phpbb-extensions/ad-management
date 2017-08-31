@@ -86,7 +86,7 @@ class admin_helper
 			'AD_PRIORITY'     => $data['ad_priority'],
 			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $this->get_username((int) $data['ad_owner']),
+			'AD_OWNER'        => $this->get_username($data['ad_owner']),
 		));
 	}
 
