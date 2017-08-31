@@ -82,11 +82,6 @@ class admin_controller
 		$this->helper = $helper;
 		$this->analyser = $analyser;
 
-		if (!function_exists('user_get_id_name'))
-		{
-			include $root_path . 'includes/functions_user.' . $php_ext;
-		}
-
 		$this->language->add_lang('posting'); // Used by banner_upload() file errors
 		$this->language->add_lang('acp', 'phpbb/ads');
 

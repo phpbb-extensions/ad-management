@@ -20,6 +20,9 @@ class admin_input
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
 	/** @var \phpbb\language\language */
 	protected $language;
 
@@ -35,14 +38,16 @@ class admin_input
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\user								$user			User object
-	 * @param \phpbb\language\language                  $language       Language object
-	 * @param \phpbb\request\request					$request		Request object
-	 * @param \phpbb\ads\banner\banner					$banner			Banner upload object
+	 * @param \phpbb\user              $user        User object
+	 * @param \phpbb\user_loader       $user_loader User loader object
+	 * @param \phpbb\language\language $language    Language object
+	 * @param \phpbb\request\request   $request     Request object
+	 * @param \phpbb\ads\banner\banner $banner      Banner upload object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
 	{
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->request = $request;
 		$this->banner = $banner;
@@ -97,7 +102,7 @@ class admin_input
 		}
 
 		// Validate each property. Every method adds errors directly to $this->errors.
-		foreach ($data as $prop_name => $prop_val)
+		foreach ($data as $prop_name => &$prop_val)
 		{
 			if (method_exists($this, 'validate_' . $prop_name))
 			{
@@ -105,12 +110,11 @@ class admin_input
 			}
 		}
 
+		unset($prop_val);
+
 		// Replace end date and owner with IDs that will be stored in the DB
 		$data['ad_end_date'] = $this->end_date_to_timestamp($data['ad_end_date']);
-		if (!in_array('AD_OWNER_INVALID', $this->errors))
-		{
-			$data['ad_owner'] = $this->owner_to_id($data['ad_owner']);
-		}
+		$data['ad_owner'] = $data['ad_owner'] === ANONYMOUS ? 0 : (int) $data['ad_owner'];
 
 		return $data;
 	}
@@ -233,12 +237,12 @@ class admin_input
 	/**
 	 * Validate advertisement owner
 	 *
-	 * @param string $ad_owner Advertisement owner
+	 * @param string $ad_owner User name (passed by reference so we can
+	 *                         update the ad owner to a user id)
 	 */
-	protected function validate_ad_owner($ad_owner)
+	protected function validate_ad_owner(&$ad_owner)
 	{
-		// user_get_id_name function returns false if everything is OK.
-		if (!empty($ad_owner) && user_get_id_name($ad_owner_id, $ad_owner))
+		if (!empty($ad_owner) && ANONYMOUS === ($ad_owner = $this->user_loader->load_user_by_username($ad_owner)))
 		{
 			$this->errors[] = 'AD_OWNER_INVALID';
 		}
@@ -253,23 +257,6 @@ class admin_input
 	protected function end_date_to_timestamp($end_date)
 	{
 		return (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $end_date);
-	}
-
-	/**
-	 * Convert advertisement owner username to ID
-	 *
-	 * @param string $ad_owner Advertisement owner username
-	 * @return int Advertisement owner ID
-	 */
-	protected function owner_to_id($ad_owner)
-	{
-		if (empty($ad_owner))
-		{
-			return 0;
-		}
-
-		user_get_id_name($ad_owner_id, $ad_owner);
-		return $ad_owner_id[0];
 	}
 
 	/**

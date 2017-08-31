@@ -40,6 +40,7 @@ services:
         class: phpbb\ads\controller\admin_helper
         arguments:
             - '@user'
+            - '@user_loader'
             - '@language'
             - '@template'
             - '@log'
@@ -51,6 +52,7 @@ services:
         class: phpbb\ads\controller\admin_input
         arguments:
             - '@user'
+            - '@user_loader'
             - '@language'
             - '@request'
             - '@phpbb.ads.banner.banner'

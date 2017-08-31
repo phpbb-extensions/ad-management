@@ -20,6 +20,9 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
 	protected $language;
 
@@ -52,24 +55,22 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path, $phpEx;
-		global $db;
+		global $db, $phpbb_root_path, $phpEx;
 
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		// Global variables
+		$db = $this->new_dbal();
 
 		// Load/Mock classes required by the controller class
-		$this->language = new \phpbb\language\language($lang_loader);
+		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
 		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
+		$this->user_loader = new \phpbb\user_loader($db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
 			->disableOriginalConstructor()
 			->getMock();
-
-		// Global variables
-		$db = $this->new_dbal();
 	}
 
 	/**
@@ -81,6 +82,7 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		$input = new \phpbb\ads\controller\admin_input(
 			$this->user,
+			$this->user_loader,
 			$this->language,
 			$this->request,
 			$this->banner
