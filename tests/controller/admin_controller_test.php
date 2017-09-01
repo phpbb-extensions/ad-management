@@ -23,7 +23,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	/** @var \phpbb\language\language */
 	protected $language;
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
@@ -456,6 +456,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_locations'	=> array(),
 		);
 
+		$banner_ad_code = '<!-- BANNER AD CODE -->';
+
 		$this->input->expects($this->once())
 			->method('get_form_data')
 			->willReturn($data);
@@ -463,9 +465,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->input->expects($this->once())
 			->method('banner_upload')
 			->with($data['ad_code'])
-			->willReturn($new_ad_code);
+			->willReturn($banner_ad_code);
 
-		$data['ad_code'] = $new_ad_code;
+		$data['ad_code'] = $banner_ad_code;
 
 		$this->input->expects($this->once())
 			->method('get_errors')

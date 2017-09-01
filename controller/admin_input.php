@@ -98,7 +98,7 @@ class admin_input
 		// Validate form key
 		if (!check_form_key('phpbb_ads'))
 		{
-			$this->errors[] = $this->language->lang('FORM_INVALID');
+			$this->errors[] = 'FORM_INVALID';
 		}
 
 		// Validate each property. Some validators update the property value. Errors are added to $this->errors.
