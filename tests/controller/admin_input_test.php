@@ -100,6 +100,7 @@ class admin_input_test extends \phpbb_database_test_case
 			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', ''], 0, ['FORM_INVALID']),
 			array(true, ['', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', ''], 0, ['AD_NAME_REQUIRED']),
 			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', ''], 0, ['AD_NAME_TOO_LONG']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', '', '', '', '5', '', '', ''], 0, ['AD_CODE_ILLEGAL_CHARS']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '5', '', '', ''], 0, ['AD_END_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '5', '', '', ''], 0, ['AD_END_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '0', '', '', ''], 0, ['AD_PRIORITY_INVALID']),

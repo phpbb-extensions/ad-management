@@ -175,6 +175,23 @@ class admin_input
 	}
 
 	/**
+	 * Validate advertisement code
+	 *
+	 * @param string $ad_code Advertisement code
+	 * @return string Advertisement code
+	 */
+	protected function validate_ad_code($ad_code)
+	{
+		if (preg_match_all('/[\x{10000}-\x{10FFFF}]/u', $ad_code, $matches))
+		{
+			$characters = implode(' ', $matches[0]);
+			$this->errors[] = $this->language->lang('AD_CODE_ILLEGAL_CHARS', $characters);
+		}
+
+		return $ad_code;
+	}
+
+	/**
 	 * Validate advertisement end date
 	 *
 	 * @param string $end_date Advertisement end date
