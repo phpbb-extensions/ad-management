@@ -273,12 +273,13 @@ class admin_input
 	 */
 	protected function validate_ad_owner($ad_owner)
 	{
-		if (!empty($ad_owner) && ANONYMOUS === ($ad_owner = (int) $this->user_loader->load_user_by_username($ad_owner)))
+		$user_id = 0;
+		if (!empty($ad_owner) && ANONYMOUS === ($user_id = (int) $this->user_loader->load_user_by_username($ad_owner)))
 		{
 			$this->errors[] = 'AD_OWNER_INVALID';
 		}
 
-		return ANONYMOUS === $ad_owner ? 0 : (int) $ad_owner;
+		return ANONYMOUS !== $user_id ? $user_id : 0;
 	}
 
 	/**
