@@ -3,7 +3,7 @@
 	justify-content: center;
 }
 
-#phpbbad-slide-up {
+.phpbbad-slide-up {
 	position: fixed;
 	bottom: 0;
 	width: 100%;
@@ -11,7 +11,7 @@
 	transform: translateY(100%);
 }
 
-.phpbbad-slide-up-hide {
+.phpbbad-slide-up-center {
 	text-align: center;
 }
 
