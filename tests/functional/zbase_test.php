@@ -11,6 +11,11 @@
 namespace phpbb\ads\tests\functional;
 
 /**
+ * This test class is named zbase to make sure it is the last functional
+ * test that runs, simply because it will disable and delete the extension.
+ * Running this last will prevent extra work having to re-enable the ext for
+ * subsequent tests.
+ *
  * @group functional
  */
 class zbase_test extends \phpbb_functional_test_case
