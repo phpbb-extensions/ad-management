@@ -41,6 +41,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\controller\helper */
 	protected $controller_helper;
 
+	/** @var bool Can the current user view ads? */
+	protected $can_view_ads;
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -125,7 +128,10 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function adblocker()
 	{
-		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+		$this->template->assign_var(
+			'S_DISPLAY_ADBLOCKER',
+			($this->config['phpbb_ads_adblocker_message'] && $this->can_view_ads())
+		);
 	}
 
 	/**
@@ -197,9 +203,14 @@ class main_listener implements EventSubscriberInterface
 	 */
 	protected function can_view_ads()
 	{
-		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
+		if ($this->can_view_ads === null)
+		{
+			$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
+			$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
 
-		return !array_intersect($user_groups, $hide_groups);
+			$this->can_view_ads = !array_intersect($user_groups, $hide_groups);
+		}
+
+		return $this->can_view_ads;
 	}
 }
