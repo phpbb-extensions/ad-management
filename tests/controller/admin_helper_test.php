@@ -15,6 +15,9 @@ class admin_helper_test extends \phpbb_database_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
 	protected $language;
 
@@ -56,20 +59,17 @@ class admin_helper_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path, $phpEx;
-		global $db, $phpbb_dispatcher;
+		global $db, $phpbb_dispatcher, $phpbb_root_path, $phpEx;
 
-		if (!function_exists('user_get_id_name'))
-		{
-			include($phpbb_root_path . 'includes/functions_user.' . $phpEx);
-		}
-
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		// Global variables
+		$db = $this->new_dbal();
+		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 
 		// Load/Mock classes required by the controller class
-		$this->language = new \phpbb\language\language($lang_loader);
+		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
 		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
+		$this->user_loader = new \phpbb\user_loader($db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$this->template = $this->getMock('\phpbb\template\template');
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
 			->disableOriginalConstructor()
@@ -79,9 +79,6 @@ class admin_helper_test extends \phpbb_database_test_case
 			->getMock();
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
-
-		$db = $this->new_dbal();
-		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 	}
 
 	/**
@@ -93,6 +90,7 @@ class admin_helper_test extends \phpbb_database_test_case
 	{
 		$helper = new \phpbb\ads\controller\admin_helper(
 			$this->user,
+			$this->user_loader,
 			$this->language,
 			$this->template,
 			$this->log,
@@ -144,7 +142,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '99',
-				  ), '', array(), false, ''),
+				  ), 'Anonymous', array(), false, ''),
 			array(array(
 					  'ad_name'			=> 'Ad Name #2',
 					  'ad_note'			=> 'Ad Note #2',
@@ -155,7 +153,7 @@ class admin_helper_test extends \phpbb_database_test_case
 					  'ad_views_limit'	=> '0',
 					  'ad_clicks_limit'	=> '0',
 					  'ad_owner'			=> '99',
-				  ), '', array(), false, ''),
+				  ), 'Anonymous', array(), false, ''),
 			array(array(
 					  'ad_name'			=> 'Ad Name #3',
 					  'ad_note'			=> 'Ad Note #3',
