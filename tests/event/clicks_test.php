@@ -26,7 +26,7 @@ class clicks_test extends main_listener_base
 	}
 
 	/**
-	 * Test the adblocker event
+	 * Test the clicks event
 	 *
 	 * @dataProvider data_clicks
 	 */

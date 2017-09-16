@@ -67,8 +67,8 @@ class views_test extends main_listener_base
 			$this->template->expects($this->at(1))
 				->method('assign_vars')
 				->with(array(
-					'S_INCREMENT_VIEWS'		=> true,
-					'U_PHPBB_ADS_VIEWS'	=> "app.php/adsview/1",
+					'S_INCREMENT_VIEWS'	=> true,
+					'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1',
 				));
 		}
 

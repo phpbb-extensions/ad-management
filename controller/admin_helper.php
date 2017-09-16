@@ -18,6 +18,9 @@ class admin_helper
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
 	/** @var \phpbb\language\language */
 	protected $language;
 
@@ -39,17 +42,19 @@ class admin_helper
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\user						$user				User object
-	 * @param \phpbb\language\language          $language           Language object
-	 * @param \phpbb\template\template			$template			Template object
-	 * @param \phpbb\log\log					$log				The phpBB log system
-	 * @param \phpbb\ads\location\manager		$location_manager	Template location manager object
-	 * @param string							$root_path			phpBB root path
-	 * @param string							$php_ext			PHP extension
+	 * @param \phpbb\user                 $user             User object
+	 * @param \phpbb\user_loader          $user_loader      User loader object
+	 * @param \phpbb\language\language    $language         Language object
+	 * @param \phpbb\template\template    $template         Template object
+	 * @param \phpbb\log\log              $log              The phpBB log system
+	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
+	 * @param string                      $root_path        phpBB root path
+	 * @param string                      $php_ext          PHP extension
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
 	{
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->template = $template;
 		$this->log = $log;
@@ -81,7 +86,7 @@ class admin_helper
 			'AD_PRIORITY'     => $data['ad_priority'],
 			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
+			'AD_OWNER'        => $this->get_username($data['ad_owner']),
 		));
 	}
 
@@ -154,25 +159,19 @@ class admin_helper
 
 	/**
 	 * Prepare ad owner for display. Method takes user_id
-	 * of the ad owner and returns his/her username.
+	 * of the ad owner and returns username.
 	 *
-	 * @param	int		$ad_owner	User ID
-	 * @return	string	Username belonging to $ad_owner.
+	 * @param	int		$user_id	User ID
+	 * @return	string	Username belonging to $user_id.
 	 */
-	protected function prepare_ad_owner($ad_owner)
+	protected function get_username($user_id)
 	{
-		$user_id = array($ad_owner);
-		$user_name = array();
-
-		// Returns false when no errors occur trying to find the user
-		if (false === user_get_id_name($user_id, $user_name))
+		if (!$user_id)
 		{
-			if (empty($user_name))
-			{
-				return $user_id[0];
-			}
-			return $user_name[(int) $user_id[0]];
+			return '';
 		}
-		return '';
+
+		$this->user_loader->load_users(array($user_id));
+		return $this->user_loader->get_username($user_id, 'username');
 	}
 }

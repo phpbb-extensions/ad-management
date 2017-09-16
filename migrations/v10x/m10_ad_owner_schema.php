@@ -28,6 +28,7 @@ class m10_ad_owner_schema extends \phpbb\db\migration\migration
 		return array(
 			'\phpbb\ads\migrations\v10x\m1_initial_schema',
 			'\phpbb\ads\migrations\v10x\m4_indexes',
+			'\phpbb\ads\migrations\v10x\m9_views_clicks',
 		);
 	}
 

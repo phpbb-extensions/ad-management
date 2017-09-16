@@ -10,8 +10,6 @@
 
 namespace phpbb\ads\controller;
 
-require_once __DIR__ . '/../../../../../includes/functions_user.php';
-
 class admin_input_test extends \phpbb_database_test_case
 {
 	/** @var bool A return value for check_form_key() */
@@ -20,7 +18,10 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
+	/** @var \phpbb\language\language */
 	protected $language;
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
@@ -52,24 +53,22 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path, $phpEx;
-		global $db;
+		global $db, $phpbb_root_path, $phpEx;
 
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		// Global variables
+		$db = $this->new_dbal();
 
 		// Load/Mock classes required by the controller class
-		$this->language = new \phpbb\language\language($lang_loader);
+		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
 		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
+		$this->user_loader = new \phpbb\user_loader($db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
 			->disableOriginalConstructor()
 			->getMock();
-
-		// Global variables
-		$db = $this->new_dbal();
 	}
 
 	/**
@@ -81,6 +80,7 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		$input = new \phpbb\ads\controller\admin_input(
 			$this->user,
+			$this->user_loader,
 			$this->language,
 			$this->request,
 			$this->banner
@@ -97,26 +97,27 @@ class admin_input_test extends \phpbb_database_test_case
 	public function get_form_data_data()
 	{
 		return array(
-			array(false, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', '', 0, array('The submitted form was invalid. Try submitting again.')),
-			array(true, '', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', '', 0, array('AD_NAME_REQUIRED')),
-			array(true, str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', '', 0, array('AD_NAME_TOO_LONG')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '5', '', '', '', 0, array('AD_END_DATE_INVALID')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '5', '', '', '', 0, array('AD_END_DATE_INVALID')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '0', '', '', '', 0, array('AD_PRIORITY_INVALID')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '11', '', '', '', 0, array('AD_PRIORITY_INVALID')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '-1', '', '', 0, array('AD_VIEWS_LIMIT_INVALID')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '-1', '', 0, array('AD_CLICKS_LIMIT_INVALID')),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', 'adm', 0, array('AD_OWNER_INVALID')),
-			array(false, '', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '0', '-1', '-1', 'adm', 0, array(
-				'The submitted form was invalid. Try submitting again.',
+			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', ''], 0, ['FORM_INVALID']),
+			array(true, ['', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', ''], 0, ['AD_NAME_REQUIRED']),
+			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', ''], 0, ['AD_NAME_TOO_LONG']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', '', '', '', '5', '', '', ''], 0, ['AD_CODE_ILLEGAL_CHARS']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '5', '', '', ''], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '5', '', '', ''], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '0', '', '', ''], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '11', '', '', ''], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '-1', '', ''], 0, ['AD_VIEWS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '-1', ''], 0, ['AD_CLICKS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '', '', 'adm'], 0, ['AD_OWNER_INVALID']),
+			array(false, ['', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '0', '-1', '-1', 'adm'], 0, [
+				'FORM_INVALID',
 				'AD_NAME_REQUIRED',
 				'AD_END_DATE_INVALID',
 				'AD_PRIORITY_INVALID',
 				'AD_VIEWS_LIMIT_INVALID',
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
-			)),
-			array(true, 'Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2033-01-01', '4', '50', '30', 'admin', '2', array()),
+			]),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2033-01-01', '4', '50', '30', 'admin'], 2, []),
 		);
 	}
 
@@ -125,8 +126,10 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider get_form_data_data
 	 */
-	public function test_get_form_data($valid_form, $ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_owner_expected, $errors)
+	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors)
 	{
+		list($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner) = $data;
+
 		self::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
@@ -134,7 +137,7 @@ class admin_input_test extends \phpbb_database_test_case
 			->method('variable')
 			->will($this->onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_views_limit, $ad_clicks_limit, $ad_owner));
 
-		$result = $input_controller->get_form_data('random string');
+		$result = $input_controller->get_form_data();
 
 		if (!empty($errors))
 		{
