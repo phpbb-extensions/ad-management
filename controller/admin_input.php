@@ -154,6 +154,9 @@ class admin_input
 	/**
 	 * Validate advertisement name
 	 *
+	 * Ad name is required and must not be empty. Ad name must
+	 * also be less than 255 characters.
+	 *
 	 * @param string $ad_name Advertisement name
 	 * @return string Advertisement name
 	 */
@@ -175,6 +178,8 @@ class admin_input
 	/**
 	 * Validate advertisement code
 	 *
+	 * Ad code should not contain 4-byte Emoji characters.
+	 *
 	 * @param string $ad_code Advertisement code
 	 * @return string Advertisement code
 	 */
@@ -191,6 +196,10 @@ class admin_input
 
 	/**
 	 * Validate advertisement end date
+	 *
+	 * End date must use the expected format of YYYY-MM-DD.
+	 * If the date is valid, convert it to a timestamp and then
+	 * make sure the timestamp is less than the current time.
 	 *
 	 * @param string $end_date Advertisement end date
 	 * @return int The end date converted to timestamp if valid, otherwise 0.
@@ -218,6 +227,8 @@ class admin_input
 	/**
 	 * Validate advertisement priority
 	 *
+	 * Ad priority must be an integer between 1 and 10.
+	 *
 	 * @param int $ad_priority Advertisement priority
 	 * @return int Advertisement priority
 	 */
@@ -233,6 +244,8 @@ class admin_input
 
 	/**
 	 * Validate advertisement views limit
+	 *
+	 * Clicks must be a positive integer.
 	 *
 	 * @param int $ad_views_limit Advertisement views limit
 	 * @return int Advertisement views limit
@@ -250,6 +263,8 @@ class admin_input
 	/**
 	 * Validate advertisement clicks limit
 	 *
+	 * Clicks must be a positive integer.
+	 *
 	 * @param int $ad_clicks_limit Advertisement clicks limit
 	 * @return int Advertisement clicks limit
 	 */
@@ -265,6 +280,9 @@ class admin_input
 
 	/**
 	 * Validate advertisement owner
+	 *
+	 * If ad owner name given, get their ID. If the ID returned is ANONYMOUS,
+	 * set an error because the user name given doesn't exist.
 	 *
 	 * @param string $ad_owner User name
 	 * @return int User id if user exists, otherwise 0.
