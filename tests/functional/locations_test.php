@@ -155,6 +155,6 @@ class locations_test extends functional_base
 		$crawler = self::request('GET', 'index.php');
 
 		// Confirm pop-up ad is present
-		$this->assertContains($ad_code, $crawler->filter('#phpbbad-slide-up')->html());
+		$this->assertContains($ad_code, $crawler->filter('.phpbbad-slide-up')->html());
 	}
 }
