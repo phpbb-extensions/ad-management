@@ -10,13 +10,16 @@
 
 namespace phpbb\ads\controller;
 
-use phpbb\ads\controller\admin_input as input;
+use phpbb\ads\ext;
 
 /**
 * Admin controller
 */
 class admin_controller
 {
+	/** @var array Form data */
+	protected $data = array();
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -47,32 +50,24 @@ class admin_controller
 	/** @var \phpbb\ads\analyser\manager */
 	protected $analyser;
 
-	/** @var string root_path */
-	protected $root_path;
-
-	/** @var string php_ext */
-	protected $php_ext;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\template\template				$template		Template object
-	 * @param \phpbb\language\language				$language		Language object
-	 * @param \phpbb\request\request				$request		Request object
-	 * @param \phpbb\ads\ad\manager					$manager		Advertisement manager object
-	 * @param \phpbb\config\db_text					$config_text 	Config text object
-	 * @param \phpbb\config\config					$config			Config object
-	 * @param \phpbb\group\helper					$group_helper	Group helper object
-	 * @param \phpbb\ads\controller\admin_input 	$input			Admin input object
-	 * @param \phpbb\ads\controller\admin_helper	$helper			Admin helper object
-	 * @param \phpbb\ads\analyser\manager			$analyser		Ad code analyser object
-	 * @param string								$root_path		phpBB root path
-	 * @param string								$php_ext		PHP extension
+	 * @param \phpbb\template\template           $template     Template object
+	 * @param \phpbb\language\language           $language     Language object
+	 * @param \phpbb\request\request             $request      Request object
+	 * @param \phpbb\ads\ad\manager              $manager      Advertisement manager object
+	 * @param \phpbb\config\db_text              $config_text  Config text object
+	 * @param \phpbb\config\config               $config       Config object
+	 * @param \phpbb\group\helper                $group_helper Group helper object
+	 * @param \phpbb\ads\controller\admin_input  $input        Admin input object
+	 * @param \phpbb\ads\controller\admin_helper $helper       Admin helper object
+	 * @param \phpbb\ads\analyser\manager        $analyser     Ad code analyser object
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -84,39 +79,41 @@ class admin_controller
 		$this->input = $input;
 		$this->helper = $helper;
 		$this->analyser = $analyser;
-		$this->root_path = $root_path;
-		$this->php_ext = $php_ext;
+
+		$this->language->add_lang('posting'); // Used by banner_upload() file errors
+		$this->language->add_lang('acp', 'phpbb/ads');
+
+		$this->template->assign_var('S_PHPBB_ADS', true);
 	}
 
 	/**
-	 * Process user request for manage mode
+	 * Set page url
 	 *
-	 * @return void
+	 * @param	string	$u_action	Custom form action
+	 * @return	void
 	 */
-	public function mode_manage()
+	public function set_page_url($u_action)
 	{
-		$this->setup();
+		$this->u_action = $u_action;
+	}
 
-		// Trigger specific action
-		$action = $this->request->variable('action', '');
-		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
-		{
-			$this->{'action_' . $action}();
-		}
-
-		// Otherwise default to this
-		$this->list_ads();
+	/**
+	 * Get ACP page title for Ads module
+	 *
+	 * @return	string	Language string for Ads ACP module
+	 */
+	public function get_page_title()
+	{
+		return $this->language->lang('ACP_PHPBB_ADS_TITLE');
 	}
 
 	/**
 	 * Process user request for settings mode
 	 *
-	 * @return void
+	 * @return	void
 	 */
 	public function mode_settings()
 	{
-		$this->setup();
-
 		if ($this->request->is_set_post('submit'))
 		{
 			// Validate form key
@@ -130,7 +127,7 @@ class admin_controller
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
 
-			$this->helper->assign_errors(array($this->language->lang('FORM_INVALID')));
+			$this->error('FORM_INVALID');
 		}
 
 		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
@@ -153,67 +150,38 @@ class admin_controller
 	}
 
 	/**
-	 * Set page url
+	 * Process user request for manage mode
 	 *
-	 * @param string $u_action Custom form action
-	 * @return void
+	 * @return	void
 	 */
-	public function set_page_url($u_action)
+	public function mode_manage()
 	{
-		$this->u_action = $u_action;
-	}
-
-	/**
-	 * Get ACP page title for Ads module
-	 *
-	 * @return string    Language string for Ads ACP module
-	 */
-	public function get_page_title()
-	{
-		return $this->language->lang('ACP_PHPBB_ADS_TITLE');
+		// Trigger specific action
+		$action = $this->request->variable('action', '');
+		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
+		{
+			$this->{'action_' . $action}();
+		}
+		else
+		{
+			// Otherwise default to this
+			$this->list_ads();
+		}
 	}
 
 	/**
 	 * Add an advertisement
 	 *
-	 * @return void
+	 * @return	void
 	 */
-	public function action_add()
+	protected function action_add()
 	{
-		$preview = $this->request->is_set_post('preview');
-		$submit = $this->request->is_set_post('submit');
-		$upload_banner = $this->request->is_set_post('upload_banner');
-		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
-
-		if ($preview || $submit || $upload_banner || $analyse_ad_code)
+		$action = $this->get_submitted_action();
+		if ($action !== false)
 		{
-			$data = $this->input->get_form_data();
-
-			if ($preview)
-			{
-				$this->ad_preview($data['ad_code']);
-			}
-			else if ($upload_banner)
-			{
-				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
-			}
-			else if ($analyse_ad_code)
-			{
-				$this->analyser->run($data['ad_code']);
-			}
-			else if (!$this->input->has_errors())
-			{
-				$ad_id = $this->manager->insert_ad($data);
-				$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
-
-				$this->helper->log('ADD', $data['ad_name']);
-
-				$this->success('ACP_AD_ADD_SUCCESS');
-			}
-
-			$this->helper->assign_locations($data['ad_locations']);
-			$this->helper->assign_form_data($data);
-			$this->helper->assign_errors($this->input->get_errors());
+			$this->data = $this->input->get_form_data();
+			$this->{$action}();
+			$this->helper->assign_data($this->data, $this->input->get_errors());
 		}
 		else
 		{
@@ -222,93 +190,57 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ADD_AD'           => true,
-			'U_BACK'             => $this->u_action,
-			'U_ACTION'           => "{$this->u_action}&amp;action=add",
-			'PICKER_DATE_FORMAT' => input::DATE_FORMAT,
-			'U_FIND_USERNAME'    => $this->helper->get_find_username_link(),
+			'S_ADD_AD'				=> true,
+			'U_BACK'				=> $this->u_action,
+			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
+			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
+			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 		));
 	}
 
 	/**
 	 * Edit an advertisement
 	 *
-	 * @return void
+	 * @return	void
 	 */
-	public function action_edit()
+	protected function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
-		$preview = $this->request->is_set_post('preview');
-		$submit = $this->request->is_set_post('submit');
-		$upload_banner = $this->request->is_set_post('upload_banner');
-		$analyse_ad_code = $this->request->is_set_post('analyse_ad_code');
-
-		if ($preview || $submit || $upload_banner || $analyse_ad_code)
+		$action = $this->get_submitted_action();
+		if ($action !== false)
 		{
-			$data = $this->input->get_form_data();
-
-			if ($preview)
-			{
-				$this->ad_preview($data['ad_code']);
-			}
-			else if ($upload_banner)
-			{
-				$data['ad_code'] = $this->input->banner_upload($data['ad_code']);
-			}
-			else if ($analyse_ad_code)
-			{
-				$this->analyser->run($data['ad_code']);
-			}
-			else if (!$this->input->has_errors())
-			{
-				$success = $this->manager->update_ad($ad_id, $data);
-
-				if ($success)
-				{
-					// Only insert new ad locations to DB when ad exists
-					$this->manager->delete_ad_locations($ad_id);
-					$this->manager->insert_ad_locations($ad_id, $data['ad_locations']);
-
-					$this->helper->log('EDIT', $data['ad_name']);
-
-					$this->success('ACP_AD_EDIT_SUCCESS');
-				}
-
-				$this->error('ACP_AD_DOES_NOT_EXIST');
-			}
+			$this->data = $this->input->get_form_data();
+			$this->{$action}();
 		}
 		else
 		{
-			$data = $this->manager->get_ad($ad_id);
-			if (empty($data))
+			$this->data = $this->manager->get_ad($ad_id);
+			if (empty($this->data))
 			{
 				$this->error('ACP_AD_DOES_NOT_EXIST');
 			}
-
 			// Load ad template locations
-			$data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
+			$this->data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
 		}
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_EDIT_AD'          => true,
-			'EDIT_ID'            => $ad_id,
-			'U_BACK'             => $this->u_action,
-			'U_ACTION'           => "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
-			'PICKER_DATE_FORMAT' => input::DATE_FORMAT,
-			'U_FIND_USERNAME'    => $this->helper->get_find_username_link(),
+			'S_EDIT_AD'				=> true,
+			'EDIT_ID'				=> $ad_id,
+			'U_BACK'				=> $this->u_action,
+			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
+			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
+			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 		));
-		$this->helper->assign_locations($data['ad_locations']);
-		$this->helper->assign_form_data($data);
-		$this->helper->assign_errors($this->input->get_errors());
+		$this->helper->assign_data($this->data, $this->input->get_errors());
 	}
 
 	/**
 	 * Enable an advertisement
 	 *
-	 * @return void
+	 * @return	void
 	 */
-	public function action_enable()
+	protected function action_enable()
 	{
 		$this->ad_enable(true);
 	}
@@ -316,9 +248,9 @@ class admin_controller
 	/**
 	 * Disable an advertisement
 	 *
-	 * @return void
+	 * @return	void
 	 */
-	public function action_disable()
+	protected function action_disable()
 	{
 		$this->ad_enable(false);
 	}
@@ -326,9 +258,9 @@ class admin_controller
 	/**
 	 * Delete an advertisement
 	 *
-	 * @return void
+	 * @return	void
 	 */
-	public function action_delete()
+	protected function action_delete()
 	{
 		$ad_id = $this->request->variable('id', 0);
 		if ($ad_id)
@@ -363,24 +295,24 @@ class admin_controller
 					'id'     => $ad_id,
 					'i'      => $this->request->variable('i', ''),
 					'mode'   => $this->request->variable('mode', ''),
-					'action' => 'delete'
+					'action' => 'delete',
 				)));
 			}
 		}
 	}
 
 	/**
-	 * Display the ads
+	 * Display the list of all ads
 	 *
-	 * @return void
+	 * @return	void
 	 */
-	public function list_ads()
+	protected function list_ads()
 	{
 		foreach ($this->manager->get_all_ads() as $row)
 		{
 			$ad_enabled = (int) $row['ad_enabled'];
-			$ad_end_date = (int) $row['ad_end_date'];
-			$ad_expired = ($ad_end_date > 0 && $ad_end_date < time()) || ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit']) || ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit']);
+			$ad_expired = $this->helper->is_expired($row);
+
 			if ($ad_expired && $ad_enabled)
 			{
 				$ad_enabled = 0;
@@ -388,18 +320,18 @@ class admin_controller
 			}
 
 			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
-				'NAME'               => $row['ad_name'],
-				'PRIORITY'			 => $row['ad_priority'],
-				'END_DATE'           => $this->helper->prepare_end_date($ad_end_date),
-				'VIEWS'              => $row['ad_views'],
-				'CLICKS'             => $row['ad_clicks'],
-				'VIEWS_LIMIT'        => $row['ad_views_limit'],
-				'CLICKS_LIMIT'       => $row['ad_clicks_limit'],
-				'S_EXPIRED' 		 => $ad_expired,
-				'S_ENABLED'          => $ad_enabled,
-				'U_ENABLE'           => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
-				'U_EDIT'             => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
-				'U_DELETE'           => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
+				'NAME'         => $row['ad_name'],
+				'PRIORITY'     => $row['ad_priority'],
+				'END_DATE'     => $row['ad_end_date'],
+				'VIEWS'        => $row['ad_views'],
+				'CLICKS'       => $row['ad_clicks'],
+				'VIEWS_LIMIT'  => $row['ad_views_limit'],
+				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
+				'S_EXPIRED'    => $ad_expired,
+				'S_ENABLED'    => $ad_enabled,
+				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_EDIT'       => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
+				'U_DELETE'     => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
 		}
 
@@ -412,28 +344,34 @@ class admin_controller
 	}
 
 	/**
-	 * Perform general tasks
+	 * Get what action user wants to do with the form.
+	 * Possible options are:
+	 *  - preview ad code
+	 *  - upload banner to display in an ad code
+	 *  - analyse ad code
+	 *  - submit form (either add or edit an ad)
 	 *
-	 * @return void
+	 * @return	string|false	Action name or false when no action was submitted
 	 */
-	protected function setup()
+	protected function get_submitted_action()
 	{
-		if (!function_exists('user_get_id_name'))
+		$actions = array('preview', 'upload_banner', 'analyse_ad_code', 'submit_add', 'submit_edit');
+		foreach ($actions as $action)
 		{
-			include $this->root_path . 'includes/functions_user.' . $this->php_ext;
+			if ($this->request->is_set_post($action))
+			{
+				return $action;
+			}
 		}
 
-		$this->language->add_lang('posting'); // Used by banner_upload() file errors
-		$this->language->add_lang('acp', 'phpbb/ads');
-
-		$this->template->assign_var('S_PHPBB_ADS', true);
+		return false;
 	}
 
 	/**
 	 * Enable/disable an advertisement
 	 *
-	 * @param    bool $enable Enable or disable the advertisement?
-	 * @return void
+	 * @param	bool	$enable	Enable or disable the advertisement?
+	 * @return	void
 	 */
 	protected function ad_enable($enable)
 	{
@@ -465,33 +403,101 @@ class admin_controller
 	}
 
 	/**
-	 * Prepare advertisement preview
+	 * Submit action "preview".
+	 * Prepare advertisement preview.
 	 *
-	 * @param    string $code Ad code to preview
-	 * @return    void
+	 * @return	void
 	 */
-	protected function ad_preview($code)
+	protected function preview()
 	{
-		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($code));
+		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($this->data['ad_code']));
+	}
+
+	/**
+	 * Submit action "upload_banner".
+	 * Upload banner and append it to the ad code.
+	 *
+	 * @return	void
+	 */
+	protected function upload_banner()
+	{
+		$this->data['ad_code'] = $this->input->banner_upload($this->data['ad_code']);
+	}
+
+	/**
+	 * Submit action "analyse_ad_code".
+	 * Upload banner and append it to the ad code.
+	 *
+	 * @return	void
+	 */
+	protected function analyse_ad_code()
+	{
+		$this->analyser->run($this->data['ad_code']);
+	}
+
+	/**
+	 * Submit action "submit_add".
+	 * Add new ad.
+	 *
+	 * @return	void
+	 */
+	protected function submit_add()
+	{
+		if (!$this->input->has_errors())
+		{
+			$ad_id = $this->manager->insert_ad($this->data);
+			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
+
+			$this->helper->log('ADD', $this->data['ad_name']);
+
+			$this->success('ACP_AD_ADD_SUCCESS');
+		}
+	}
+
+	/**
+	 * Submit action "submit_edit".
+	 * Edit ad.
+	 *
+	 * @return	void
+	 */
+	protected function submit_edit()
+	{
+		$ad_id = $this->request->variable('id', 0);
+		if ($ad_id && !$this->input->has_errors())
+		{
+			$success = $this->manager->update_ad($ad_id, $this->data);
+			if ($success)
+			{
+				// Only insert new ad locations to DB when ad exists
+				$this->manager->delete_ad_locations($ad_id);
+				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
+
+				$this->helper->log('EDIT', $this->data['ad_name']);
+
+				$this->success('ACP_AD_EDIT_SUCCESS');
+			}
+
+			$this->error('ACP_AD_DOES_NOT_EXIST');
+		}
 	}
 
 	/**
 	 * Print success message.
 	 *
-	 * It takes arguments in the form of a language key, followed by language substitution values.
+	 * @param	string	$msg	Message lang key
 	 */
-	protected function success()
+	protected function success($msg)
 	{
-		trigger_error(call_user_func_array(array($this->language, 'lang'), func_get_args()) . adm_back_link($this->u_action));
+		trigger_error($this->language->lang($msg) . adm_back_link($this->u_action));
 	}
 
 	/**
 	 * Print error message.
 	 *
-	 * It takes arguments in the form of a language key, followed by language substitution values.
+	 * @param	string	$msg	Message lang key
 	 */
-	protected function error()
+	protected function error($msg)
 	{
-		trigger_error(call_user_func_array(array($this->language, 'lang'), func_get_args()) . adm_back_link($this->u_action), E_USER_WARNING);
+		trigger_error($this->language->lang($msg) . adm_back_link($this->u_action), E_USER_WARNING);
 	}
 }

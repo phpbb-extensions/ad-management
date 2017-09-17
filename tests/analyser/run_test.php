@@ -132,7 +132,6 @@ class run_test extends analyser_base
 				->method('assign_block_vars');
 		}
 
-
 		$manager->run($ad_code);
 	}
 }

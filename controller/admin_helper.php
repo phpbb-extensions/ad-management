@@ -10,8 +10,6 @@
 
 namespace phpbb\ads\controller;
 
-use phpbb\ads\controller\admin_input as input;
-
 /**
  * Admin helper
  */
@@ -19,6 +17,9 @@ class admin_helper
 {
 	/** @var \phpbb\user */
 	protected $user;
+
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
 
 	/** @var \phpbb\language\language */
 	protected $language;
@@ -41,23 +42,52 @@ class admin_helper
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\user						$user				User object
-	 * @param \phpbb\language\language          $language           Language object
-	 * @param \phpbb\template\template			$template			Template object
-	 * @param \phpbb\log\log					$log				The phpBB log system
-	 * @param \phpbb\ads\location\manager		$location_manager	Template location manager object
-	 * @param string							$root_path			phpBB root path
-	 * @param string							$php_ext			PHP extension
+	 * @param \phpbb\user                 $user             User object
+	 * @param \phpbb\user_loader          $user_loader      User loader object
+	 * @param \phpbb\language\language    $language         Language object
+	 * @param \phpbb\template\template    $template         Template object
+	 * @param \phpbb\log\log              $log              The phpBB log system
+	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
+	 * @param string                      $root_path        phpBB root path
+	 * @param string                      $php_ext          PHP extension
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
 	{
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->template = $template;
 		$this->log = $log;
 		$this->location_manager = $location_manager;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
+	}
+
+	/**
+	 * Assign ad data for ACP form template.
+	 *
+	 * @param	array	$data	Ad data
+	 * @param	array	$errors	Validation errors
+	 */
+	public function assign_data($data, $errors)
+	{
+		$this->assign_locations($data['ad_locations']);
+
+		$errors = array_map(array($this->language, 'lang'), $errors);
+		$this->template->assign_vars(array(
+			'S_ERROR'   => (bool) count($errors),
+			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
+
+			'AD_NAME'         => $data['ad_name'],
+			'AD_NOTE'         => $data['ad_note'],
+			'AD_CODE'         => $data['ad_code'],
+			'AD_ENABLED'      => $data['ad_enabled'],
+			'AD_END_DATE'     => $data['ad_end_date'],
+			'AD_PRIORITY'     => $data['ad_priority'],
+			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
+			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
+			'AD_OWNER'        => $this->get_username($data['ad_owner']),
+		));
 	}
 
 	/**
@@ -80,37 +110,6 @@ class admin_helper
 	}
 
 	/**
-	 * Assign form data to the template.
-	 *
-	 * @param	array	$data	The form data.
-	 * @return	void
-	 */
-	public function assign_form_data($data)
-	{
-		$this->template->assign_vars(array(
-			'AD_NAME'         => $data['ad_name'],
-			'AD_NOTE'         => $data['ad_note'],
-			'AD_CODE'         => $data['ad_code'],
-			'AD_ENABLED'      => $data['ad_enabled'],
-			'AD_END_DATE'     => $this->prepare_end_date($data['ad_end_date']),
-			'AD_PRIORITY'     => $data['ad_priority'],
-			'AD_VIEWS_LIMIT'  => $data['ad_views_limit'],
-			'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
-			'AD_OWNER'        => $this->prepare_ad_owner($data['ad_owner']),
-		));
-	}
-
-	public function assign_errors(array $errors)
-	{
-		$errors = array_map(array($this->language, 'lang'), $errors);
-
-		$this->template->assign_vars(array(
-			'S_ERROR'   => (bool) count($errors),
-			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
-		));
-	}
-
-	/**
 	 * Log action
 	 *
 	 * @param	string	$action		Performed action in uppercase
@@ -122,54 +121,57 @@ class admin_helper
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'ACP_PHPBB_ADS_' . $action . '_LOG', time(), array($ad_name));
 	}
 
+	/**
+	 * Get "Find username" URL to easily look for ad owner.
+	 *
+	 * @return	string	Find username URL
+	 */
 	public function get_find_username_link()
 	{
 		return append_sid("{$this->root_path}memberlist.{$this->php_ext}", 'mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true');
 	}
 
-
 	/**
-	 * Prepare end date for display
+	 * Is an ad expired?
 	 *
-	 * @param	mixed	$end_date	End date.
-	 * @return	string	End date prepared for display.
+	 * @param	array	$row	Advertisement data
+	 * @return	bool	True if expired, false otherwise
 	 */
-	public function prepare_end_date($end_date)
+	public function is_expired($row)
 	{
-		if (empty($end_date))
+		if ((int) $row['ad_end_date'] > 0 && (int) $row['ad_end_date'] < time())
 		{
-			return '';
+			return true;
 		}
 
-		if (is_numeric($end_date))
+		if ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit'])
 		{
-			return $this->user->format_date($end_date, input::DATE_FORMAT);
+			return true;
 		}
 
-		return (string) $end_date;
+		if ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit'])
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
 	 * Prepare ad owner for display. Method takes user_id
-	 * of the ad owner and returns his/her username.
+	 * of the ad owner and returns username.
 	 *
-	 * @param	int		$ad_owner	User ID
-	 * @return	string	Username belonging to $ad_owner.
+	 * @param	int		$user_id	User ID
+	 * @return	string	Username belonging to $user_id.
 	 */
-	protected function prepare_ad_owner($ad_owner)
+	protected function get_username($user_id)
 	{
-		$user_id = array($ad_owner);
-		$user_name = array();
-
-		// Returns false when no errors occur trying to find the user
-		if (false === user_get_id_name($user_id, $user_name))
+		if (!$user_id)
 		{
-			if (empty($user_name))
-			{
-				return $user_id[0];
-			}
-			return $user_name[(int) $user_id[0]];
+			return '';
 		}
-		return '';
+
+		$this->user_loader->load_users(array($user_id));
+		return $this->user_loader->get_username($user_id, 'username');
 	}
 }

@@ -27,7 +27,7 @@ class analyser_base extends \phpbb_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	static protected function setup_extensions()
+	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');
 	}
@@ -58,7 +58,7 @@ class analyser_base extends \phpbb_test_case
 		foreach ($tests as $test)
 		{
 			$class = "\\phpbb\\ads\\analyser\\test\\$test";
-			if ($test == 'untrusted_connection')
+			if ($test === 'untrusted_connection')
 			{
 				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->request);
 			}

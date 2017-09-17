@@ -34,7 +34,7 @@ class get_ad_test extends ad_base
 				'ad_clicks_limit'	=> '0',
 				'ad_owner'	=> '2',
 			)),
-			array(0, false),
+			array(0, array()),
 		);
 	}
 

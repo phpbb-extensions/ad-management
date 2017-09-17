@@ -10,17 +10,18 @@
 
 namespace phpbb\ads\controller;
 
+use phpbb\ads\ext;
+
 /**
  * Admin input
  */
 class admin_input
 {
-	const MAX_NAME_LENGTH = 255;
-	const DATE_FORMAT = 'Y-m-d';
-	const DEFAULT_PRIORITY = 5;
-
 	/** @var \phpbb\user */
 	protected $user;
+
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
 
 	/** @var \phpbb\language\language */
 	protected $language;
@@ -37,14 +38,16 @@ class admin_input
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\user								$user			User object
-	 * @param \phpbb\language\language                  $language       Language object
-	 * @param \phpbb\request\request					$request		Request object
-	 * @param \phpbb\ads\banner\banner					$banner			Banner upload object
+	 * @param \phpbb\user              $user        User object
+	 * @param \phpbb\user_loader       $user_loader User loader object
+	 * @param \phpbb\language\language $language    Language object
+	 * @param \phpbb\request\request   $request     Request object
+	 * @param \phpbb\ads\banner\banner $banner      Banner upload object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
 	{
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->request = $request;
 		$this->banner = $banner;
@@ -86,7 +89,7 @@ class admin_input
 			'ad_enabled'      => $this->request->variable('ad_enabled', 0),
 			'ad_locations'    => $this->request->variable('ad_locations', array('')),
 			'ad_end_date'     => $this->request->variable('ad_end_date', ''),
-			'ad_priority'     => $this->request->variable('ad_priority', self::DEFAULT_PRIORITY),
+			'ad_priority'     => $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
 			'ad_views_limit'  => $this->request->variable('ad_views_limit', 0),
 			'ad_clicks_limit' => $this->request->variable('ad_clicks_limit', 0),
 			'ad_owner'        => $this->request->variable('ad_owner', '', true),
@@ -95,23 +98,17 @@ class admin_input
 		// Validate form key
 		if (!check_form_key('phpbb_ads'))
 		{
-			$this->errors[] = $this->language->lang('FORM_INVALID');
+			$this->errors[] = 'FORM_INVALID';
 		}
 
-		// Validate each property. Every method adds errors directly to $this->errors.
+		// Validate each property. Some validators update the property value. Errors are added to $this->errors.
 		foreach ($data as $prop_name => $prop_val)
 		{
-			if (method_exists($this, 'validate_' . $prop_name))
+			$method = 'validate_' . $prop_name;
+			if (method_exists($this, $method))
 			{
-				$this->{'validate_' . $prop_name}($prop_val);
+				$data[$prop_name] = $this->{$method}($prop_val);
 			}
-		}
-
-		// Replace end date and owner with IDs that will be stored in the DB
-		$data['ad_end_date'] = $this->end_date_to_timestamp($data['ad_end_date']);
-		if (!in_array('AD_OWNER_INVALID', $this->errors))
-		{
-			$data['ad_owner'] = $this->owner_to_id($data['ad_owner']);
 		}
 
 		return $data;
@@ -157,7 +154,11 @@ class admin_input
 	/**
 	 * Validate advertisement name
 	 *
+	 * Ad name is required and must not be empty. Ad name must
+	 * also be less than 255 characters.
+	 *
 	 * @param string $ad_name Advertisement name
+	 * @return string Advertisement name
 	 */
 	protected function validate_ad_name($ad_name)
 	{
@@ -165,24 +166,52 @@ class admin_input
 		{
 			$this->errors[] = 'AD_NAME_REQUIRED';
 		}
-		if (truncate_string($ad_name, self::MAX_NAME_LENGTH) !== $ad_name)
+
+		if (truncate_string($ad_name, ext::MAX_NAME_LENGTH) !== $ad_name)
 		{
-			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', self::MAX_NAME_LENGTH);
+			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', ext::MAX_NAME_LENGTH);
 		}
+
+		return $ad_name;
+	}
+
+	/**
+	 * Validate advertisement code
+	 *
+	 * Ad code should not contain 4-byte Emoji characters.
+	 *
+	 * @param string $ad_code Advertisement code
+	 * @return string Advertisement code
+	 */
+	protected function validate_ad_code($ad_code)
+	{
+		if (preg_match_all('/[\x{10000}-\x{10FFFF}]/u', $ad_code, $matches))
+		{
+			$characters = implode(' ', $matches[0]);
+			$this->errors[] = $this->language->lang('AD_CODE_ILLEGAL_CHARS', $characters);
+		}
+
+		return $ad_code;
 	}
 
 	/**
 	 * Validate advertisement end date
 	 *
+	 * End date must use the expected format of YYYY-MM-DD.
+	 * If the date is valid, convert it to a timestamp and then
+	 * make sure the timestamp is less than the current time.
+	 *
 	 * @param string $end_date Advertisement end date
+	 * @return int The end date converted to timestamp if valid, otherwise 0.
 	 */
 	protected function validate_ad_end_date($end_date)
 	{
+		$timestamp = 0;
 		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $end_date))
 		{
-			$end_date = (int) $this->end_date_to_timestamp($end_date);
+			$timestamp = (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $end_date);
 
-			if ($end_date < time())
+			if ($timestamp < time())
 			{
 				$this->errors[] = 'AD_END_DATE_INVALID';
 			}
@@ -191,12 +220,17 @@ class admin_input
 		{
 			$this->errors[] = 'AD_END_DATE_INVALID';
 		}
+
+		return $timestamp;
 	}
 
 	/**
 	 * Validate advertisement priority
 	 *
+	 * Ad priority must be an integer between 1 and 10.
+	 *
 	 * @param int $ad_priority Advertisement priority
+	 * @return int Advertisement priority
 	 */
 	protected function validate_ad_priority($ad_priority)
 	{
@@ -204,12 +238,17 @@ class admin_input
 		{
 			$this->errors[] = 'AD_PRIORITY_INVALID';
 		}
+
+		return $ad_priority;
 	}
 
 	/**
 	 * Validate advertisement views limit
 	 *
+	 * Clicks must be a positive integer.
+	 *
 	 * @param int $ad_views_limit Advertisement views limit
+	 * @return int Advertisement views limit
 	 */
 	protected function validate_ad_views_limit($ad_views_limit)
 	{
@@ -217,12 +256,17 @@ class admin_input
 		{
 			$this->errors[] = 'AD_VIEWS_LIMIT_INVALID';
 		}
+
+		return $ad_views_limit;
 	}
 
 	/**
 	 * Validate advertisement clicks limit
 	 *
+	 * Clicks must be a positive integer.
+	 *
 	 * @param int $ad_clicks_limit Advertisement clicks limit
+	 * @return int Advertisement clicks limit
 	 */
 	protected function validate_ad_clicks_limit($ad_clicks_limit)
 	{
@@ -230,48 +274,28 @@ class admin_input
 		{
 			$this->errors[] = 'AD_CLICKS_LIMIT_INVALID';
 		}
+
+		return $ad_clicks_limit;
 	}
 
 	/**
 	 * Validate advertisement owner
 	 *
-	 * @param string $ad_owner Advertisement owner
+	 * If ad owner name given, get their ID. If the ID returned is ANONYMOUS,
+	 * set an error because the user name given doesn't exist.
+	 *
+	 * @param string $ad_owner User name
+	 * @return int User id if user exists, otherwise 0.
 	 */
 	protected function validate_ad_owner($ad_owner)
 	{
-		// user_get_id_name function returns false if everything is OK.
-		if (!empty($ad_owner) && user_get_id_name($ad_owner_id, $ad_owner))
+		$user_id = 0;
+		if (!empty($ad_owner) && ANONYMOUS === ($user_id = (int) $this->user_loader->load_user_by_username($ad_owner)))
 		{
 			$this->errors[] = 'AD_OWNER_INVALID';
 		}
-	}
 
-	/**
-	 * Convert format of end date from string to unix timestamp
-	 *
-	 * @param string $end_date Advertisement end date in YYYY-MM-DD format
-	 * @return int Advertisement end date in unix timestamp
-	 */
-	protected function end_date_to_timestamp($end_date)
-	{
-		return (int) $this->user->get_timestamp_from_format(self::DATE_FORMAT, $end_date);
-	}
-
-	/**
-	 * Convert advertisement owner username to ID
-	 *
-	 * @param string $ad_owner Advertisement owner username
-	 * @return int Advertisement owner ID
-	 */
-	protected function owner_to_id($ad_owner)
-	{
-		if (empty($ad_owner))
-		{
-			return 0;
-		}
-
-		user_get_id_name($ad_owner_id, $ad_owner);
-		return $ad_owner_id[0];
+		return ANONYMOUS !== $user_id ? $user_id : 0;
 	}
 
 	/**

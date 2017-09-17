@@ -67,6 +67,7 @@ $lang = array_merge($lang, array(
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
 	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',
+	'AD_CODE_ILLEGAL_CHARS'		=> 'Ad code contains the following unsupported characters: %s',
 	'AD_END_DATE_INVALID'		=> 'The end date is invalid or has already expired.',
 	'AD_PRIORITY_INVALID'		=> 'The priority is invalid. Please set a number between 1 and 10.',
 	'AD_VIEWS_LIMIT_INVALID'	=> 'The views limit is invalid. Please set a non-negative number.',
@@ -119,7 +120,7 @@ $lang = array_merge($lang, array(
 	'AD_POP_UP'						=> 'Pop-up',
 	'AD_POP_UP_DESC'				=> 'Displays once per day when user visits this board as overlaying box. User need to close this box to continue to the content. Please, be aware, that this kind of advertisement is very obtrusive to the user!',
 	'AD_SLIDE_UP'					=> 'Slide up',
-	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom-right corner.',
+	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom.',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',

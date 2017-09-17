@@ -43,8 +43,8 @@ class manager
 	/**
 	 * Get specific ad
 	 *
-	 * @param    int $ad_id Advertisement ID
-	 * @return    mixed    Array with advertisement data, false if ad doesn't exist
+	 * @param	int	$ad_id	Advertisement ID
+	 * @return	array	Array with advertisement data
 	 */
 	public function get_ad($ad_id)
 	{
@@ -55,7 +55,7 @@ class manager
 		$data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		return $data;
+		return $data !== false ? $data : array();
 	}
 
 	/**
@@ -90,7 +90,7 @@ class manager
 
 		$current_location_id = '';
 		$data = array_filter($data, function ($row) use (&$current_location_id) {
-			$return = $current_location_id != $row['location_id'];
+			$return = $current_location_id !== $row['location_id'];
 			$current_location_id = $row['location_id'];
 			return $return;
 		});

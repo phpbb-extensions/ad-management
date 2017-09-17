@@ -139,6 +139,13 @@
 		<column>user_permissions</column>
 		<column>user_sig</column>
 		<row>
+			<value>1</value>
+			<value>Anonymous</value>
+			<value>Anonymous</value>
+			<value></value>
+			<value></value>
+		</row>
+		<row>
 			<value>2</value>
 			<value>admin</value>
 			<value>admin</value>
