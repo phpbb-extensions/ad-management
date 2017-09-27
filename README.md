@@ -18,6 +18,12 @@ The Advertisement Management extension allows phpBB board administrators to add 
 - Ad-Blocker detection option politely notifies users to disable ad blocking on the board.
 - Ad code analysis can check for troublesome code such as JS alert() or making HTTP requests from a secure server.
 
+📦 [Download](https://www.phpbb.com/customise/db/extension/ads/) the latest release of this extension.
+
+🐞 [Report bugs](https://github.com/phpbb-extensions/ad-management/issues) to our Issue Tracker.
+
+💬 [Support](https://www.phpbb.com/customise/db/extension/ads/support) can be requested and discussed in the Advertisement Management support forum at phpBB.com.
+
 ## License
 
 [GPLv2](license.txt)
