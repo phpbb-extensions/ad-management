@@ -51,7 +51,7 @@ $lang = array_merge($lang, array(
 	'AD_VIEWS_LIMIT_EXPLAIN'	=> 'Set the maximum number of times the ad will be displayed, after which the ad will no longer be displayed. Set 0 for unlimited views.',
 	'AD_CLICKS'					=> 'Clicks',
 	'AD_CLICKS_LIMIT'			=> 'Clicks Limit',
-	'AD_CLICKS_LIMIT_EXPLAIN'	=> 'Set the maximum number of times the ad will be clicked, after which the ad will no longer be displayed. Set 0 for unlimited views.',
+	'AD_CLICKS_LIMIT_EXPLAIN'	=> 'Set the maximum number of times the ad will be clicked, after which the ad will no longer be displayed. Set 0 for unlimited clicks.',
 	'AD_END_DATE'				=> 'End Date',
 	'AD_END_DATE_EXPLAIN'		=> 'Set the date the advertisement will expire and become disabled. Leave this field blank if you do not want the advertisement to expire. Please use <samp>YYYY-MM-DD</samp> format.',
 
