@@ -87,10 +87,10 @@ $lang = array_merge($lang, array(
 	'ACP_AD_DISABLE_ERRORED'	=> 'There was an error disabling the advertisement.',
 
 	// Analyser tests
-	'UNSECURE_CONNECTION'	=> '<strong>Mixed Content</strong><br />Your board runs on a secure HTTPS connection, however the ad code is attempting to load content from an insecure HTTP connection. This can cause browsers to generate a "Mixed Content" warning to let users know that the page contains insecure resources.',
+	'UNSECURE_CONNECTION'	=> '<strong>Mixed Content</strong><br />Your board runs on a secure HTTPS connection, however the ad code is attempting to load content from an insecure HTTP connection. This can cause browsers to generate a “Mixed Content” warning to let users know that the page contains insecure resources.',
 	'SCRIPT_WITHOUT_ASYNC'	=> '<strong>Non-asynchronous javascript</strong><br />This ad code loads JavaScript code in a non-asynchronous way. This means it will block any other Javascript from loading until it has completed loading, which can affect page load performance. Use of the <samp>async</samp> attribute can speed up the page load.',
 	'ALERT_USAGE'			=> '<strong>Usage of <samp>alert()</samp></strong><br />Your code uses the <samp>alert()</samp> function which is not a good practice and can distract users. Some browsers may also block page load and display additional warnings to the user.',
-	'LOCATION_CHANGE'		=> '<strong>Redirection</strong><br />Your code appears it can redirect user to another page or site. Redirects can sometimes send users to unintended, often malicious, destinations. Please verify the integrity of your ad code\'s redirection destination.',
+	'LOCATION_CHANGE'		=> '<strong>Redirection</strong><br />Your code appears it can redirect user to another page or site. Redirects can sometimes send users to unintended, often malicious, destinations. Please verify the integrity of your ad code’s redirection destination.',
 
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',
