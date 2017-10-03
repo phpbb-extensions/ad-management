@@ -1,7 +1,7 @@
-.phpbb-ads-banner {
+.phpbb-ads-center {
 	text-align: center;
 }
-.phpbb-ads-banner img {
+.phpbb-ads-center .phpbb-ads-banner {
 	max-width: 100%;
 }
 
