@@ -10,7 +10,7 @@
 
 namespace phpbb\ads\controller;
 
-class admin_helper_test extends \phpbb_database_test_case
+class helper_test extends \phpbb_database_test_case
 {
 	/** @var \phpbb\user */
 	protected $user;
@@ -84,11 +84,11 @@ class admin_helper_test extends \phpbb_database_test_case
 	/**
 	 * Returns fresh new helper.
 	 *
-	 * @return	\phpbb\ads\controller\admin_helper	Admin helper
+	 * @return	\phpbb\ads\controller\helper	Admin helper
 	 */
 	public function get_helper()
 	{
-		$helper = new \phpbb\ads\controller\admin_helper(
+		$helper = new \phpbb\ads\controller\helper(
 			$this->user,
 			$this->user_loader,
 			$this->language,

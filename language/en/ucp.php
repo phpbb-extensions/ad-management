@@ -19,8 +19,13 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'AD_NAME'	=> 'Name',
-	'AD_VIEWS'	=> 'Views',
-	'AD_CLICKS'	=> 'Clicks',
-	'NO_ADS'	=> '<strong>No advertisements to display. Users who own advertisements displayed on this board can view their statistics here.</strong>',
+	'AD_NAME'		=> 'Name',
+	'AD_END_DATE'	=> 'End Date',
+	'AD_VIEWS'		=> 'Views',
+	'AD_CLICKS'		=> 'Clicks',
+	'AD_STATUS'		=> 'Status',
+	'EXPIRED'		=> 'Expired',
+	'ACTIVE_ADS'	=> 'Active ads',
+	'EXPIRED_ADS'	=> 'Expired ads',
+	'NO_ADS'		=> '<strong>No advertisements to display. Users who own advertisements displayed on this board can view their statistics here.</strong>',
 ));

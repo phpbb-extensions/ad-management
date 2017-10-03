@@ -13,7 +13,7 @@ namespace phpbb\ads\controller;
 /**
  * Admin helper
  */
-class admin_helper
+class helper
 {
 	/** @var \phpbb\user */
 	protected $user;
