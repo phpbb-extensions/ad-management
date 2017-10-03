@@ -1,6 +1,8 @@
-.phpbb-ads-center {
-	display: flex;
-	justify-content: center;
+.phpbb-ads-banner {
+	text-align: center;
+}
+.phpbb-ads-banner img {
+	max-width: 100%;
 }
 
 .phpbbad-slide-up {

@@ -127,7 +127,7 @@ class admin_input
 			$this->banner->create_storage_dir();
 			$realname = $this->banner->upload();
 
-			$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $realname . '" />';
+			$banner_html = '<div class="phpbb-ads-banner"><img src="' . generate_board_url() . '/images/phpbb_ads/' . $realname . '" /></div>';
 
 			if ($this->request->is_ajax())
 			{
