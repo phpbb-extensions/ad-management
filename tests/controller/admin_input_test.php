@@ -173,9 +173,9 @@ class admin_input_test extends \phpbb_database_test_case
 			array(false, true, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(false, true, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
-			array(true, true, false, array(), '', '<img class="phpbb-ads-banner" src="http://images/phpbb_ads/abcdef.jpg" />'),
-			array(true, true, false, array(), 'abc', "abc\n\n<img class=\"phpbb-ads-banner\" src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
-			array(true, true, true, array(), 'abc', "abc\n\n<img class=\"phpbb-ads-banner\" src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
+			array(true, true, false, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
+			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
+			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
 		);
 	}
 
