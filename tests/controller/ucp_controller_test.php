@@ -15,6 +15,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\helper */
+	protected $helper;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\user */
 	protected $user;
 
@@ -60,6 +63,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->helper = $this->getMockBuilder('\phpbb\ads\controller\helper')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
@@ -82,6 +88,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	{
 		$controller = new \phpbb\ads\controller\ucp_controller(
 			$this->manager,
+			$this->helper,
 			$this->user,
 			$this->language,
 			$this->template,

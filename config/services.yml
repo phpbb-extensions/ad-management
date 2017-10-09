@@ -31,11 +31,11 @@ services:
             - '@config'
             - '@group_helper'
             - '@phpbb.ads.admin.input'
-            - '@phpbb.ads.admin.helper'
+            - '@phpbb.ads.helper'
             - '@phpbb.ads.analyser.manager'
 
-    phpbb.ads.admin.helper:
-        class: phpbb\ads\controller\admin_helper
+    phpbb.ads.helper:
+        class: phpbb\ads\controller\helper
         arguments:
             - '@user'
             - '@user_loader'
@@ -65,6 +65,7 @@ services:
         class: phpbb\ads\controller\ucp_controller
         arguments:
             - '@phpbb.ads.ad.manager'
+            - '@phpbb.ads.helper'
             - '@user'
             - '@language'
             - '@template'

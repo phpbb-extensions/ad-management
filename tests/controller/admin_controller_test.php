@@ -44,7 +44,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_input */
 	protected $input;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_helper */
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\helper */
 	protected $helper;
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\analyser\manager */
@@ -104,7 +104,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->input = $this->getMockBuilder('\phpbb\ads\controller\admin_input')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->helper = $this->getMockBuilder('\phpbb\ads\controller\admin_helper')
+		$this->helper = $this->getMockBuilder('\phpbb\ads\controller\helper')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')

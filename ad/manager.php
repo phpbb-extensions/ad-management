@@ -122,7 +122,7 @@ class manager
 	 */
 	public function get_ads_by_owner($user_id)
 	{
-		$sql = 'SELECT ad_name, ad_views, ad_clicks
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_views_limit, ad_clicks, ad_clicks_limit
 			FROM ' . $this->ads_table . '
 			WHERE ad_owner = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);

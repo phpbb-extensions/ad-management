@@ -19,6 +19,6 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'UCP_PHPBB_ADS_TITLE'	=> 'Advertisements',
+	'UCP_PHPBB_ADS_TITLE'	=> 'My advertisements',
 	'UCP_PHPBB_ADS_STATS'	=> 'Statistics',
 ));
