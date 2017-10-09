@@ -1,7 +1,10 @@
 .phpbb-ads-center {
 	text-align: center;
+
 }
-.phpbb-ads-center .phpbb-ads-banner {
+
+.phpbb-ads-center > :first-child {
+	display: inline-block;
 	max-width: 100%;
 }
 
