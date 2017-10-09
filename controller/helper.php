@@ -11,7 +11,7 @@
 namespace phpbb\ads\controller;
 
 /**
- * Admin helper
+ * Helper
  */
 class helper
 {

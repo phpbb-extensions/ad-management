@@ -27,5 +27,5 @@ $lang = array_merge($lang, array(
 	'EXPIRED'		=> 'Expired',
 	'ACTIVE_ADS'	=> 'Active ads',
 	'EXPIRED_ADS'	=> 'Expired ads',
-	'NO_ADS'		=> '<strong>No advertisements to display. Users who own advertisements displayed on this board can view their statistics here.</strong>',
+	'NO_ADS'		=> '<strong>You do not have any advertisements displayed on this board.</strong>',
 ));
