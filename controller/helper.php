@@ -11,9 +11,9 @@
 namespace phpbb\ads\controller;
 
 /**
- * Admin helper
+ * Helper
  */
-class admin_helper
+class helper
 {
 	/** @var \phpbb\user */
 	protected $user;

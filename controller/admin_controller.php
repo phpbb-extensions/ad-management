@@ -44,7 +44,7 @@ class admin_controller
 	/** @var \phpbb\ads\controller\admin_input */
 	protected $input;
 
-	/** @var \phpbb\ads\controller\admin_helper */
+	/** @var \phpbb\ads\controller\helper */
 	protected $helper;
 
 	/** @var \phpbb\ads\analyser\manager */
@@ -64,10 +64,10 @@ class admin_controller
 	 * @param \phpbb\config\config               $config       Config object
 	 * @param \phpbb\group\helper                $group_helper Group helper object
 	 * @param \phpbb\ads\controller\admin_input  $input        Admin input object
-	 * @param \phpbb\ads\controller\admin_helper $helper       Admin helper object
+	 * @param \phpbb\ads\controller\helper 		 $helper       Helper object
 	 * @param \phpbb\ads\analyser\manager        $analyser     Ad code analyser object
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\admin_helper $helper, \phpbb\ads\analyser\manager $analyser)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser)
 	{
 		$this->template = $template;
 		$this->language = $language;
