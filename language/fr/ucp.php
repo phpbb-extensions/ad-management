@@ -39,8 +39,13 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AD_NAME'	=> 'Nom',
-	'AD_VIEWS'	=> 'Vues',
-	'AD_CLICKS'	=> 'Clics',
-	'NO_ADS'	=> '<strong>Aucune publicité à afficher. Les membres qui sont propriétaires de publicités affichées sur ce forum peuvent consulter leurs statistiques sur cette page.</strong>',
+	'AD_NAME'		=> 'Nom',
+	'AD_END_DATE'	=> 'Date de désactivation de l’affichage',
+	'AD_VIEWS'		=> 'Vues',
+	'AD_CLICKS'		=> 'Clics',
+	'AD_STATUS'		=> 'Statut',
+	'EXPIRED'		=> 'Désactivée',
+	'ACTIVE_ADS'	=> 'Publicités activées',
+	'EXPIRED_ADS'	=> 'Publicités désactivées',
+	'NO_ADS'		=> '<strong>Aucune publicité n’est actuellement affichées sur le forum. Les membres qui sont propriétaires de publicités affichées sur le forum peuvent consulter leurs statistiques sur cette page.</strong>',
 ));
