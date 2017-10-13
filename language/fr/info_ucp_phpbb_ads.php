@@ -40,5 +40,5 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'UCP_PHPBB_ADS_TITLE'	=> 'Mes publicités',
-	'UCP_PHPBB_ADS_STATS'	=> 'Statistiques',
+	'UCP_PHPBB_ADS_STATS'	=> 'Statistiques de mes publicités',
 ));
