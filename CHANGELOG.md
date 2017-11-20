@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.0.3 - 2017-11-19
+
+- Update: UCP Advertisements page shows more information about your ads including click/view limits, expiration date and active status of the ad.
+- Fix: Improve handling of Google's responsive ads and possibly other responsive ad content. 
+
 ### 1.0.2 - 2017-08-20
 
 - Feature: Added more advertisement placement locations, including interactive Pop-Up and Slide-Up types.
