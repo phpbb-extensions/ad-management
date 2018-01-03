@@ -53,6 +53,9 @@ class admin_controller
 	/** @var string Custom form action */
 	protected $u_action;
 
+	/** @var \auth_admin Auth admin */
+	protected $auth_admin;
+
 	/**
 	 * Constructor
 	 *
@@ -66,8 +69,10 @@ class admin_controller
 	 * @param \phpbb\ads\controller\admin_input  $input        Admin input object
 	 * @param \phpbb\ads\controller\helper 		 $helper       Helper object
 	 * @param \phpbb\ads\analyser\manager        $analyser     Ad code analyser object
+	 * @param string                      		$root_path     phpBB root path
+	 * @param string                      		$php_ext       PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -84,6 +89,12 @@ class admin_controller
 		$this->language->add_lang('acp', 'phpbb/ads');
 
 		$this->template->assign_var('S_PHPBB_ADS', true);
+
+		if (!class_exists('\auth_admin'))
+		{
+			include($root_path . 'includes/acp/auth.' . $php_ext);
+		}
+		$this->auth_admin = new \auth_admin();
 	}
 
 	/**
@@ -274,6 +285,12 @@ class admin_controller
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
 
+				// Remove permission from the old user only if he has no more ads
+				if (count($this->manager->get_ads_by_owner($ad_data['ad_owner'])) === 0)
+				{
+					$this->auth_admin->acl_set('user', 0, (int) $ad_data['ad_owner'], array('u_phpbb_ads' => 0));
+				}
+
 				// Only notify user on error or if not ajax
 				if (!$success)
 				{
@@ -446,6 +463,7 @@ class admin_controller
 		if (!$this->input->has_errors())
 		{
 			$ad_id = $this->manager->insert_ad($this->data);
+			$this->auth_admin->acl_set('user', 0, $this->data['ad_owner'], array('u_phpbb_ads' => 1));
 			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 
 			$this->helper->log('ADD', $this->data['ad_name']);
@@ -465,9 +483,18 @@ class admin_controller
 		$ad_id = $this->request->variable('id', 0);
 		if ($ad_id && !$this->input->has_errors())
 		{
+			$old_data = $this->manager->get_ad($ad_id);
 			$success = $this->manager->update_ad($ad_id, $this->data);
 			if ($success)
 			{
+				// Only update permissions when update was successful
+				// Remove permission from the old user only if he has no more ads
+				if (count($this->manager->get_ads_by_owner($old_data['ad_owner'])) === 0)
+				{
+					$this->auth_admin->acl_set('user', 0, $old_data['ad_owner'], array('u_phpbb_ads' => 0));
+				}
+				$this->auth_admin->acl_set('user', 0, $this->data['ad_owner'], array('u_phpbb_ads' => 1));
+
 				// Only insert new ad locations to DB when ad exists
 				$this->manager->delete_ad_locations($ad_id);
 				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);

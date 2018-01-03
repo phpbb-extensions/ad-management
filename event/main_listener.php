@@ -50,6 +50,7 @@ class main_listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return array(
+			'core.permissions'				=> 'set_permissions',
 			'core.user_setup'				=> 'load_language_on_setup',
 			'core.page_header_after'		=> array(array('setup_ads'), array('adblocker'), array('clicks')),
 			'core.delete_user_after'		=> 'remove_ad_owner',
@@ -77,6 +78,19 @@ class main_listener implements EventSubscriberInterface
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
 		$this->controller_helper = $controller_helper;
+	}
+
+	/**
+	 * Wire up u_phpbb_ads permission
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
+	public function set_permissions($event)
+	{
+		$permissions = $event['permissions'];
+		$permissions['u_phpbb_ads'] = array('lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc');
+		$event['permissions'] = $permissions;
 	}
 
 	/**

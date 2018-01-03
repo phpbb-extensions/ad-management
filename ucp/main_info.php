@@ -23,7 +23,7 @@ class main_info
 			'modes'		=> array(
 				'stats'	=> array(
 					'title'	=> 'UCP_PHPBB_ADS_STATS',
-					'auth'	=> 'ext_phpbb/ads',
+					'auth'	=> 'ext_phpbb/ads && acl_u_phpbb_ads',
 					'cat'	=> array('UCP_PHPBB_ADS_TITLE')
 				),
 			),
