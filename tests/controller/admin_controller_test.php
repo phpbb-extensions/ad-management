@@ -915,6 +915,10 @@ class admin_controller_test extends \phpbb_database_test_case
 			if ($success)
 			{
 				$this->manager->expects($this->once())
+					->method('get_ads_by_owner')
+					->with(0);
+
+				$this->manager->expects($this->once())
 					->method('delete_ad_locations')
 					->with(1);
 
@@ -1059,6 +1063,9 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->manager->expects($this->once())
 					->method('delete_ad')
 					->willReturn($ad_id ? true : false);
+				$this->manager->expects($this->once())
+					->method('get_ads_by_owner')
+					->with(0);
 
 				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 			}
