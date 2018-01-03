@@ -285,11 +285,7 @@ class admin_controller
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
 
-				// Remove permission from the old user only if he has no more ads
-				if (count($this->manager->get_ads_by_owner($ad_data['ad_owner'])) === 0)
-				{
-					$this->auth_admin->acl_set('user', 0, (int) $ad_data['ad_owner'], array('u_phpbb_ads' => 0));
-				}
+				$this->try_remove_permission($ad_data['ad_owner']);
 
 				// Only notify user on error or if not ajax
 				if (!$success)
@@ -488,11 +484,7 @@ class admin_controller
 			if ($success)
 			{
 				// Only update permissions when update was successful
-				// Remove permission from the old user only if he has no more ads
-				if (count($this->manager->get_ads_by_owner($old_data['ad_owner'])) === 0)
-				{
-					$this->auth_admin->acl_set('user', 0, $old_data['ad_owner'], array('u_phpbb_ads' => 0));
-				}
+				$this->try_remove_permission($old_data['ad_owner']);
 				$this->auth_admin->acl_set('user', 0, $this->data['ad_owner'], array('u_phpbb_ads' => 1));
 
 				// Only insert new ad locations to DB when ad exists
@@ -526,5 +518,21 @@ class admin_controller
 	protected function error($msg)
 	{
 		trigger_error($this->language->lang($msg) . adm_back_link($this->u_action), E_USER_WARNING);
+	}
+
+	/**
+	 * Try to remove permission to see UCP module.
+	 * Permission is only removed when user has no more ads.
+	 *
+	 * @param	int	$user_id	User ID to try to remove permission
+	 *
+	 * @return	void
+	 */
+	protected function try_remove_permission($user_id)
+	{
+		if (count($this->manager->get_ads_by_owner($user_id)) === 0)
+		{
+			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => 0));
+		}
 	}
 }
