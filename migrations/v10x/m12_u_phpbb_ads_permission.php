@@ -34,25 +34,8 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 		return array(
 			array('permission.add', array('u_phpbb_ads')),
 			array('custom', array(
-				array($this, 'set_u_phpbb_ads_permission')
-			)),
-
-			// we need to reset UCP module to update it's auth settings
-			array('module.remove', array(
-				'ucp',
-				'UCP_PHPBB_ADS_TITLE',
-				array(
-					'module_basename' => '\phpbb\ads\ucp\main_module',
-					'modes'           => array('stats'),
-				),
-			)),
-			array('module.add', array(
-				'ucp',
-				'UCP_PHPBB_ADS_TITLE',
-				array(
-					'module_basename' => '\phpbb\ads\ucp\main_module',
-					'modes'           => array('stats'),
-				),
+				array($this, 'set_u_phpbb_ads_permission'),
+				array($this, 'update_ucp_module_permission'),
 			)),
 		);
 	}
@@ -86,5 +69,16 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 
 		$this->db->sql_multi_insert($this->container->getParameter('tables.acl_users'), $sql_ary);
 		$this->container->get('auth')->acl_clear_prefetch();
+	}
+
+	/**
+	 * Update module auth manually, because "module.remove" tool causes problems when deleting extension.
+	 */
+	public function update_ucp_module_permission()
+	{
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.modules') . '
+				SET module_auth = "ext_phpbb/ads && acl_u_phpbb_ads"
+				WHERE module_langname = "UCP_PHPBB_ADS_STATS"';
+		$this->db->sql_query($sql);
 	}
 }

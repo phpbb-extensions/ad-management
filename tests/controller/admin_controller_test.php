@@ -83,7 +83,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		parent::setUp();
 
 		global $phpbb_root_path, $phpEx;
-		global $phpbb_dispatcher;
+		global $phpbb_dispatcher, $cache, $db;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 
@@ -110,11 +110,15 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->root_path = $phpbb_root_path;
+		$this->php_ext = $phpEx;
 
 		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage';
 
 		// Global variables
 		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
+		$cache = new \phpbb_mock_cache();
+		$db = $this->new_dbal();
 	}
 
 	/**
@@ -134,7 +138,9 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->group_helper,
 			$this->input,
 			$this->helper,
-			$this->analyser
+			$this->analyser,
+			$this->root_path,
+			$this->php_ext
 		);
 		$controller->set_page_url($this->u_action);
 
@@ -324,7 +330,9 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->group_helper,
 				$this->input,
 				$this->helper,
-				$this->analyser
+				$this->analyser,
+				$this->root_path,
+				$this->php_ext
 			))
 			->getMock();
 
