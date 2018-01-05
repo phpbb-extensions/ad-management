@@ -35,7 +35,7 @@ class acp_module_test extends \phpbb_test_case
 
 		$this->module_manager = new \phpbb\module\module_manager(
 			new \phpbb\cache\driver\dummy(),
-			$this->getMock('\phpbb\db\driver\driver_interface'),
+			$this->getMockBuilder('\phpbb\db\driver\driver_interface')->getMock(),
 			$this->extension_manager,
 			MODULES_TABLE,
 			$phpbb_root_path,
