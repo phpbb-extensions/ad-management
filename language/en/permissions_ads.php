@@ -19,5 +19,5 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACL_U_PHPBB_ADS' => 'Can see My advertisements UCP module',
+	'ACL_U_PHPBB_ADS' => 'Can view own advertisement management statistics',
 ));
