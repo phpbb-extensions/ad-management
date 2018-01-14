@@ -49,9 +49,9 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 		$auth_admin = new \auth_admin();
 
 		$sql = 'SELECT ad_owner
-				FROM ' . $this->table_prefix . 'ads
-				WHERE ad_owner != 0
-				GROUP BY ad_owner';
+			FROM ' . $this->table_prefix . 'ads
+			WHERE ad_owner != 0
+			GROUP BY ad_owner';
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -66,8 +66,8 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 	public function update_ucp_module_permission()
 	{
 		$sql = 'UPDATE ' . $this->container->getParameter('tables.modules') . '
-				SET module_auth = "ext_phpbb/ads && acl_u_phpbb_ads"
-				WHERE module_langname = "UCP_PHPBB_ADS_STATS"';
+			SET module_auth = "ext_phpbb/ads && acl_u_phpbb_ads"
+			WHERE module_langname = "UCP_PHPBB_ADS_STATS"';
 		$this->db->sql_query($sql);
 	}
 }
