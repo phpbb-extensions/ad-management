@@ -297,6 +297,9 @@ class admin_controller
 					'mode'   => $this->request->variable('mode', ''),
 					'action' => 'delete',
 				)));
+
+				// When you don't confirm deleting ad
+				$this->list_ads();
 			}
 		}
 	}
