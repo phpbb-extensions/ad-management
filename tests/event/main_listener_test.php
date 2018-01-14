@@ -27,6 +27,7 @@ class main_listener_test extends main_listener_base
 	public function test_getSubscribedEvents()
 	{
 		$this->assertEquals(array(
+			'core.permissions',
 			'core.user_setup',
 			'core.page_header_after',
 			'core.delete_user_after',

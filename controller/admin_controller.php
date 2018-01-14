@@ -53,6 +53,9 @@ class admin_controller
 	/** @var string Custom form action */
 	protected $u_action;
 
+	/** @var \auth_admin Auth admin */
+	protected $auth_admin;
+
 	/**
 	 * Constructor
 	 *
@@ -66,8 +69,10 @@ class admin_controller
 	 * @param \phpbb\ads\controller\admin_input  $input        Admin input object
 	 * @param \phpbb\ads\controller\helper 		 $helper       Helper object
 	 * @param \phpbb\ads\analyser\manager        $analyser     Ad code analyser object
+	 * @param string                      		$root_path     phpBB root path
+	 * @param string                      		$php_ext       PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -84,6 +89,12 @@ class admin_controller
 		$this->language->add_lang('acp', 'phpbb/ads');
 
 		$this->template->assign_var('S_PHPBB_ADS', true);
+
+		if (!class_exists('auth_admin'))
+		{
+			include($root_path . 'includes/acp/auth.' . $php_ext);
+		}
+		$this->auth_admin = new \auth_admin();
 	}
 
 	/**
@@ -274,6 +285,8 @@ class admin_controller
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
 
+				$this->toggle_permission($ad_data['ad_owner']);
+
 				// Only notify user on error or if not ajax
 				if (!$success)
 				{
@@ -446,6 +459,7 @@ class admin_controller
 		if (!$this->input->has_errors())
 		{
 			$ad_id = $this->manager->insert_ad($this->data);
+			$this->toggle_permission($this->data['ad_owner']);
 			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 
 			$this->helper->log('ADD', $this->data['ad_name']);
@@ -465,9 +479,14 @@ class admin_controller
 		$ad_id = $this->request->variable('id', 0);
 		if ($ad_id && !$this->input->has_errors())
 		{
+			$old_data = $this->manager->get_ad($ad_id);
 			$success = $this->manager->update_ad($ad_id, $this->data);
 			if ($success)
 			{
+				// Only update permissions when update was successful
+				$this->toggle_permission($old_data['ad_owner']);
+				$this->toggle_permission($this->data['ad_owner']);
+
 				// Only insert new ad locations to DB when ad exists
 				$this->manager->delete_ad_locations($ad_id);
 				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
@@ -499,5 +518,21 @@ class admin_controller
 	protected function error($msg)
 	{
 		trigger_error($this->language->lang($msg) . adm_back_link($this->u_action), E_USER_WARNING);
+	}
+
+	/**
+	 * Try to remove or add permission to see UCP module.
+	 * Permission is only removed when user has no more ads.
+	 * Permission is only added when user has at least one ad.
+	 *
+	 * @param	int	$user_id	User ID to try to remove permission
+	 *
+	 * @return	void
+	 */
+	protected function toggle_permission($user_id)
+	{
+		$has_ads = count($this->manager->get_ads_by_owner($user_id)) !== 0;
+
+		$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => (int) $has_ads));
 	}
 }

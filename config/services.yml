@@ -33,6 +33,8 @@ services:
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.helper'
             - '@phpbb.ads.analyser.manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     phpbb.ads.helper:
         class: phpbb\ads\controller\helper
