@@ -531,13 +531,8 @@ class admin_controller
 	 */
 	protected function toggle_permission($user_id)
 	{
-		if (count($this->manager->get_ads_by_owner($user_id)) === 0)
-		{
-			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => 0));
-		}
-		else
-		{
-			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => 1));
-		}
+		$has_ads = count($this->manager->get_ads_by_owner($user_id)) !== 0;
+
+		$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => (int) $has_ads));
 	}
 }
