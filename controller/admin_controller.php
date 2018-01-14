@@ -90,7 +90,7 @@ class admin_controller
 
 		$this->template->assign_var('S_PHPBB_ADS', true);
 
-		if (!class_exists('\auth_admin'))
+		if (!class_exists('auth_admin'))
 		{
 			include($root_path . 'includes/acp/auth.' . $php_ext);
 		}
@@ -285,7 +285,7 @@ class admin_controller
 				$this->manager->delete_ad_locations($ad_id);
 				$success = $this->manager->delete_ad($ad_id);
 
-				$this->try_remove_permission($ad_data['ad_owner']);
+				$this->toggle_permission($ad_data['ad_owner']);
 
 				// Only notify user on error or if not ajax
 				if (!$success)
@@ -459,7 +459,7 @@ class admin_controller
 		if (!$this->input->has_errors())
 		{
 			$ad_id = $this->manager->insert_ad($this->data);
-			$this->auth_admin->acl_set('user', 0, $this->data['ad_owner'], array('u_phpbb_ads' => 1));
+			$this->toggle_permission($this->data['ad_owner']);
 			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 
 			$this->helper->log('ADD', $this->data['ad_name']);
@@ -484,8 +484,8 @@ class admin_controller
 			if ($success)
 			{
 				// Only update permissions when update was successful
-				$this->try_remove_permission($old_data['ad_owner']);
-				$this->auth_admin->acl_set('user', 0, $this->data['ad_owner'], array('u_phpbb_ads' => 1));
+				$this->toggle_permission($old_data['ad_owner']);
+				$this->toggle_permission($this->data['ad_owner']);
 
 				// Only insert new ad locations to DB when ad exists
 				$this->manager->delete_ad_locations($ad_id);
@@ -521,18 +521,23 @@ class admin_controller
 	}
 
 	/**
-	 * Try to remove permission to see UCP module.
+	 * Try to remove or add permission to see UCP module.
 	 * Permission is only removed when user has no more ads.
+	 * Permission is only added when user has at least one ad.
 	 *
 	 * @param	int	$user_id	User ID to try to remove permission
 	 *
 	 * @return	void
 	 */
-	protected function try_remove_permission($user_id)
+	protected function toggle_permission($user_id)
 	{
 		if (count($this->manager->get_ads_by_owner($user_id)) === 0)
 		{
 			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => 0));
+		}
+		else
+		{
+			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => 1));
 		}
 	}
 }
