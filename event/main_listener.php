@@ -88,9 +88,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function set_permissions($event)
 	{
-		$permissions = $event['permissions'];
-		$permissions['u_phpbb_ads'] = array('lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc');
-		$event['permissions'] = $permissions;
+		$event->update_subarray('permissions', 'u_phpbb_ads', ['lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc']);
 	}
 
 	/**
