@@ -41,7 +41,15 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
-		// Confirm after first post ad is after first post
+		// Confirm after first post ad is NOT after first post when it's the only post
+		$this->assertNotContains($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());
+
+		// Create a reply
+		$this->create_post(2, 1, 'Re: Welcome to phpBB3', 'This is a test post.');
+
+		$crawler = self::request('GET', 'viewtopic.php?t=1');
+
+		// Confirm after first post ad is after first post when it's the only post
 		$this->assertContains($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());
 	}
 
@@ -68,9 +76,6 @@ class locations_test extends functional_base
 	public function test_location_after_not_first_post()
 	{
 		$ad_code = $this->create_ad('after_not_first_post');
-
-		// Create a reply
-		$this->create_post(2, 1, 'Re: Welcome to phpBB3', 'This is a test post.');
 
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
