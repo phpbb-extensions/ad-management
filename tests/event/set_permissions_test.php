@@ -28,9 +28,7 @@ class set_permissions_test extends main_listener_base
 		$event_data_after = $event->get_data_filtered($event_data);
 		$this->assertEquals(array(
 			'permissions'	=> array(
-				array(
-					'u_phpbb_ads'	=> array('lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc'),
-				)
+				'u_phpbb_ads'	=> array('lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc'),
 			),
 		), $event_data_after);
 	}

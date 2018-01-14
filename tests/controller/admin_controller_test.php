@@ -914,7 +914,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			if ($success)
 			{
-				$this->manager->expects($this->once())
+				$this->manager->expects($this->exactly(2))
 					->method('get_ads_by_owner')
 					->with(0);
 
