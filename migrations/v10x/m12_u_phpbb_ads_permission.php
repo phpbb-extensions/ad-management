@@ -42,15 +42,12 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 
 	public function set_u_phpbb_ads_permission()
 	{
-		// get u_phpbb_ads ID
-		$sql = 'SELECT auth_option_id
-				FROM ' . $this->container->getParameter('tables.acl_options') . '
-				WHERE auth_option = "u_phpbb_ads"';
-		$this->db->sql_query($sql);
-		$auth_option_id = $this->db->sql_fetchfield('auth_option_id');
+		if (!class_exists('auth_admin'))
+		{
+			include($this->phpbb_root_path . 'includes/acp/auth.' . $this->php_ext);
+		}
+		$auth_admin = new \auth_admin();
 
-		// set u_phpbb_ads to true for ad owners
-		$sql_ary = array();
 		$sql = 'SELECT ad_owner
 				FROM ' . $this->table_prefix . 'ads
 				WHERE ad_owner != 0
@@ -58,17 +55,9 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$sql_ary[] = array(
-				'user_id'			=> (int) $row['ad_owner'],
-				'forum_id'			=> 0,
-				'auth_option_id'	=> (int) $auth_option_id,
-				'auth_setting'		=> 1,
-			);
+			$auth_admin->acl_set('user', 0, $row['ad_owner'], array('u_phpbb_ads' => 1));
 		}
 		$this->db->sql_freeresult($result);
-
-		$this->db->sql_multi_insert($this->container->getParameter('tables.acl_users'), $sql_ary);
-		$this->container->get('auth')->acl_clear_prefetch();
 	}
 
 	/**
