@@ -69,9 +69,7 @@ class manager
 		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
 		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
 
-		$sql = 'SELECT location_id, ad_id, ad_code
-			FROM (
-				SELECT al.location_id, a.ad_id, a.ad_code
+		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
@@ -81,9 +79,7 @@ class manager
 					$sql_where_views
 					$sql_where_clicks
 					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
-				ORDER BY (' . $this->sql_random() . ' * a.ad_priority) DESC
-			) z
-			ORDER BY z.location_id';
+				ORDER BY al.location_id, (' . $this->sql_random() . ' * a.ad_priority) DESC';
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
