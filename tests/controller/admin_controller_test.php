@@ -1051,6 +1051,11 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('variable')
 				->with('mode', '')
 				->willReturn('');
+
+			// called in list_ads()
+			$this->manager->expects($this->atMost(1))
+				->method('get_all_ads')
+				->willReturn(array());
 		}
 		else
 		{
