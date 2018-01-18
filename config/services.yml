@@ -84,6 +84,8 @@ services:
             - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'
             - '@controller.helper'
+            - '@request'
+            - '%core.root_path%'
             - '%core.php_ext%'
         tags:
             - { name: event.listener }

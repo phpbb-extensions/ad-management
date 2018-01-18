@@ -140,6 +140,16 @@ class helper
 	}
 
 	/**
+	 * Generate URL to enable visual demo of ad locations.
+	 *
+	 * @return	string	Enable visual demo URL
+	 */
+	public function get_enable_visual_demo_link()
+	{
+		return append_sid("{$this->root_path}index.{$this->php_ext}", 'enable_visual_demo=true');
+	}
+
+	/**
 	 * Is an ad expired?
 	 *
 	 * @param	array	$row	Advertisement data

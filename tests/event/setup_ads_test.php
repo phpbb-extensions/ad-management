@@ -20,10 +20,11 @@ class setup_ads_test extends main_listener_base
 	public function data_setup_ads()
 	{
 		return array(
-			array(array(1)),
-			array(array(2)),
-			array(array(1, 2)),
-			array(array(2, 3)),
+			array(array(1), false),
+			array(array(2), false),
+			array(array(1, 2), false),
+			array(array(2, 3), false),
+			array(array(1), true),
 		);
 	}
 
@@ -32,26 +33,41 @@ class setup_ads_test extends main_listener_base
 	*
 	* @dataProvider data_setup_ads
 	*/
-	public function test_setup_ads($hide_groups)
+	public function test_setup_ads($hide_groups, $in_visual_demo)
 	{
-		$this->user->data['user_id'] = 1;
-		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-
-		$this->config_text->expects($this->once())
-			->method('get')
-			->with('phpbb_ads_hide_groups')
-			->willReturn(json_encode($hide_groups));
-
-		$ads = array();
-		if (count(array_intersect($hide_groups, $user_groups)) === 0)
+		if ($in_visual_demo)
 		{
-			$location_ids = $this->location_manager->get_all_location_ids();
-			$ads = $this->manager->get_ads($location_ids, false);
-		}
+			$this->request
+				->expects($this->once())
+				->method('is_set')
+				->with($this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE)
+				->willReturn(true);
 
-		$this->template
-			->expects($this->exactly(count($ads)))
-			->method('assign_vars');
+			$this->template
+				->expects($this->exactly(8))
+				->method('assign_vars');
+		}
+		else
+		{
+			$this->user->data['user_id'] = 1;
+			$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
+
+			$this->config_text->expects($this->once())
+				->method('get')
+				->with('phpbb_ads_hide_groups')
+				->willReturn(json_encode($hide_groups));
+
+			$ads = array();
+			if (count(array_intersect($hide_groups, $user_groups)) === 0)
+			{
+				$location_ids = $this->location_manager->get_all_location_ids();
+				$ads = $this->manager->get_ads($location_ids, false);
+			}
+
+			$this->template
+				->expects($this->exactly(count($ads)))
+				->method('assign_vars');
+		}
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));

@@ -32,7 +32,8 @@ class manager
 	/**
 	 * Get a list of all template location types
 	 *
-	 * Returns a composite associated array of location category, ID, name and desc:
+	 * If $with_categories is true, returns a composite associated array
+	 * of location category, ID, name and desc:
 	 * array(
 	 *    location_category => array(
 	 *       location_id => array(
@@ -44,9 +45,20 @@ class manager
 	 *    ...
 	 * )
 	 *
+	 * Otherwise returns only location ID, name and desc:
+	 * array(
+	 *    location_id => array(
+	 *       'name' => location_name
+	 *       'desc' => location_description
+	 *    ),
+	 *    ...
+	 * )
+	 *
+	 * @param	bool	$with_categories	Should we organize locations into categories?
+	 *
 	 * @return	array	Array containing a list of all template locations sorted by categories
 	 */
-	public function get_all_locations()
+	public function get_all_locations($with_categories = true)
 	{
 		$location_types = array();
 
@@ -54,10 +66,19 @@ class manager
 		{
 			foreach ($location_category as $id => $location_type)
 			{
-				$location_types[$location_category_id][$id] = array(
+				$body = array(
 					'name'	=> $location_type->get_name(),
 					'desc'	=> $location_type->get_desc(),
 				);
+
+				if ($with_categories)
+				{
+					$location_types[$location_category_id][$id] = $body;
+				}
+				else
+				{
+					$location_types[$id] = $body;
+				}
 			}
 		}
 
