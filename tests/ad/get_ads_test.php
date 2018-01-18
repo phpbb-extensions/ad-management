@@ -40,7 +40,7 @@ class get_ads_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
-		$ads = $manager->get_ads($locations);
+		$ads = $manager->get_ads($locations, false);
 
 		$this->assertEquals($expected, $ads);
 	}
@@ -57,7 +57,7 @@ class get_ads_test extends ad_base
 
 		for ($i = 0; $i < 100; $i++)
 		{
-			$test = $manager->get_ads(array('above_header'));
+			$test = $manager->get_ads(array('above_header'), false);
 
 			$ad = end($test);
 
