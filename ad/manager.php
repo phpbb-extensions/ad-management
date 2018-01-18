@@ -62,12 +62,14 @@ class manager
 	 * Get one ad per every location
 	 *
 	 * @param    array $ad_locations List of ad locations to fetch ads for
+	 * @param    bool  $non_content_page Is current page without content?
 	 * @return    array    List of ad codes for each location
 	 */
-	public function get_ads($ad_locations)
+	public function get_ads($ad_locations, $non_content_page)
 	{
 		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
 		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
+		$sql_where_non_content = $non_content_page ? 'AND a.ad_hide_on_noncontent = 0' : '';
 
 		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
@@ -78,6 +80,7 @@ class manager
 						OR a.ad_end_date > ' . time() . ")
 					$sql_where_views
 					$sql_where_clicks
+					$sql_where_non_content
 					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY al.location_id, (' . $this->sql_random() . ' * a.ad_priority) DESC';
 		$result = $this->db->sql_query($sql);
@@ -336,15 +339,16 @@ class manager
 	protected function intersect_ad_data($data)
 	{
 		return array_intersect_key($data, array(
-			'ad_name'			=> '',
-			'ad_note'			=> '',
-			'ad_code'			=> '',
-			'ad_enabled'		=> '',
-			'ad_end_date'		=> '',
-			'ad_priority'		=> '',
-			'ad_views_limit'	=> '',
-			'ad_clicks_limit'	=> '',
-			'ad_owner'			=> '',
+			'ad_name'				=> '',
+			'ad_note'				=> '',
+			'ad_code'				=> '',
+			'ad_enabled'			=> '',
+			'ad_end_date'			=> '',
+			'ad_priority'			=> '',
+			'ad_hide_on_noncontent'	=> '',
+			'ad_views_limit'		=> '',
+			'ad_clicks_limit'		=> '',
+			'ad_owner'				=> '',
 		));
 	}
 

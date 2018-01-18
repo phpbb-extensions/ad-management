@@ -90,6 +90,11 @@
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
 				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10" /></dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_hide_on_noncontent">{{ lang('AD_HIDE_ON_NONCONTENT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_HIDE_ON_NONCONTENT_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" name="ad_hide_on_noncontent" value="1"{% if AD_HIDE_ON_NONCONTENT %} checked{% endif %} /> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" id="ad_hide_on_noncontent" name="ad_hide_on_noncontent" value="0"{% if not AD_HIDE_ON_NONCONTENT %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
 		</fieldset>
 		<fieldset>
 			<legend>{{ lang('AD_OPTIONS') }}</legend>
