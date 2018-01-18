@@ -108,6 +108,7 @@ class admin_input_test extends \phpbb_database_test_case
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '-1', '', ''], 0, ['AD_VIEWS_LIMIT_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '-1', ''], 0, ['AD_CLICKS_LIMIT_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', 'adm'], 0, ['AD_OWNER_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', 'adm'], 0, ['AD_OWNER_INVALID']),
 			array(false, ['', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '0', '0', '-1', '-1', 'adm'], 0, [
 				'FORM_INVALID',
 				'AD_NAME_REQUIRED',
@@ -117,7 +118,7 @@ class admin_input_test extends \phpbb_database_test_case
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
 			]),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2033-01-01', '4', '0', '50', '30', 'admin'], 2, []),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2033-01-01', '4', '1', '50', '30', 'admin'], 2, []),
 		);
 	}
 

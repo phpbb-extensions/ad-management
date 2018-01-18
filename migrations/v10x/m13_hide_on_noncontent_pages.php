@@ -45,6 +45,11 @@ class m13_hide_on_noncontent_pages extends \phpbb\db\migration\migration
 					'ad_hide_on_noncontent' => array('BOOL', 0),
 				),
 			),
+			'add_index'	=> array(
+				$this->table_prefix . 'ads'	=> array(
+					'ad_hon'	=> array('ad_hide_on_noncontent'), // index used in ad\manager::get_ads
+				),
+			),
 		);
 	}
 
@@ -57,6 +62,11 @@ class m13_hide_on_noncontent_pages extends \phpbb\db\migration\migration
 	public function revert_schema()
 	{
 		return array(
+			'drop_keys'	=> array(
+				$this->table_prefix . 'ads' => array(
+					'ad_hon',
+				),
+			),
 			'drop_columns' => array(
 				$this->table_prefix . 'ads' => array(
 					'ad_hide_on_noncontent',

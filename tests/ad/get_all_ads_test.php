@@ -21,6 +21,6 @@ class get_all_ads_test extends ad_base
 
 		$ads = $manager->get_all_ads();
 		$ad_ids = array_column($ads, 'ad_id');
-		$this->assertEquals(array(1,2,3,4,5,6), $ad_ids);
+		$this->assertEquals(array(1,2,3,4,5,6,7), $ad_ids);
 	}
 }

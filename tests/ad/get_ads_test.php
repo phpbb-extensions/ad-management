@@ -22,12 +22,16 @@ class get_ads_test extends ad_base
 		return array(
 			array(array('after_profile'), array(
 				array('location_id' => 'after_profile', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
-			)),
+			), false),
 			array(array('before_profile'), array(
 				array('location_id' => 'before_profile', 'ad_code' => 'Ad Code #4', 'ad_id' => '4'),
-			)),
-			array(array('foo_bar'), array()),
-			array(array(null), array()),
+			), false),
+			array(array('below_footer'), array(
+				array('location_id' => 'below_footer', 'ad_code' => 'Ad Code #7', 'ad_id' => '7'),
+			), false),
+			array(array('below_footer'), array(), true),
+			array(array('foo_bar'), array(), false),
+			array(array(null), array(), false),
 		);
 	}
 
@@ -36,11 +40,11 @@ class get_ads_test extends ad_base
 	 *
 	 * @dataProvider get_ads_data
 	 */
-	public function test_get_ads($locations, $expected)
+	public function test_get_ads($locations, $expected, $non_content_page)
 	{
 		$manager = $this->get_manager();
 
-		$ads = $manager->get_ads($locations, false);
+		$ads = $manager->get_ads($locations, $non_content_page);
 
 		$this->assertEquals($expected, $ads);
 	}
