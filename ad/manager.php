@@ -65,7 +65,7 @@ class manager
 	 * @param    bool  $non_content_page Is current page without content?
 	 * @return    array    List of ad codes for each location
 	 */
-	public function get_ads($ad_locations, $non_content_page)
+	public function get_ads($ad_locations, $non_content_page = false)
 	{
 		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
 		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
