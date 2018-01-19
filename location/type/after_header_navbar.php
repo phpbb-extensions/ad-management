@@ -19,4 +19,12 @@ class after_header_navbar extends base
 	{
 		return 'after_header_navbar';
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_category()
+	{
+		return self::CAT_TOP_OF_PAGE;
+	}
 }

@@ -23,6 +23,14 @@ class before_posts extends base
 	/**
 	 * {@inheritDoc}
 	 */
+	public function get_category()
+	{
+		return self::CAT_IN_POSTS;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public function will_display()
 	{
 		return strpos($this->user->page['page_name'], 'viewtopic') !== false;

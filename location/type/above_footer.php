@@ -19,4 +19,12 @@ class above_footer extends base
 	{
 		return 'above_footer';
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_category()
+	{
+		return self::CAT_BOTTOM_OF_PAGE;
+	}
 }

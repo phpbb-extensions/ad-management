@@ -79,9 +79,15 @@
 			<legend>{{ lang('AD_PLACEMENT') }}</legend>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN') }}</span></dt>
-				<dd><select id="ad_locations" name="ad_locations[]" multiple size="8">
+				<dd><select id="ad_locations" name="ad_locations[]" multiple size="10">
 					{% for location in loops.ad_locations %}
-						<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
+						{% if location.IS_CATEGORY %}
+							{% if not loop.first %}</optgroup>{% endif %}
+							<optgroup label="{{ location.LOCATION_NAME }}">
+						{% else %}
+							<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
+						{% endif %}
+						</optgroup>
 					{% endfor %}
 					</select>
 				</dd>

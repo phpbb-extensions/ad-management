@@ -92,6 +92,12 @@ $lang = array_merge($lang, array(
 	'ALERT_USAGE'			=> '<strong>Usage of <samp>alert()</samp></strong><br />Your code uses the <samp>alert()</samp> function which is not a good practice and can distract users. Some browsers may also block page load and display additional warnings to the user.',
 	'LOCATION_CHANGE'		=> '<strong>Redirection</strong><br />Your code appears it can redirect user to another page or site. Redirects can sometimes send users to unintended, often malicious, destinations. Please verify the integrity of your ad code’s redirection destination.',
 
+	// Template location categories
+	'CAT_TOP_OF_PAGE'		=> 'Top of page',
+	'CAT_BOTTOM_OF_PAGE'	=> 'Bottom of page',
+	'CAT_IN_POSTS'			=> 'In posts',
+	'CAT_OTHER'				=> 'Other',
+
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',
 	'AD_ABOVE_HEADER_DESC'			=> 'Displays on every page before the page header.',
