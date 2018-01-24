@@ -13,7 +13,7 @@ namespace phpbb\ads\tests\functional;
 /**
  * @group functional
  */
-class hide_on_noncontent_test extends functional_base
+class content_only_test extends functional_base
 {
 	/**
 	 * {@inheritDoc}
@@ -25,7 +25,7 @@ class hide_on_noncontent_test extends functional_base
 		$this->disable_all_ads();
 	}
 
-	public function test_noncontent_ad_displays()
+	public function test_content_only_ad_displays()
 	{
 		$ad_code = $this->create_ad('above_header', '', true);
 
@@ -35,7 +35,7 @@ class hide_on_noncontent_test extends functional_base
 		$this->assertContains($ad_code, $crawler->html());
 	}
 
-	public function test_noncontent_ad_hides()
+	public function test_content_only_ad_hides()
 	{
 		$ad_code = $this->create_ad('above_header', '', true);
 

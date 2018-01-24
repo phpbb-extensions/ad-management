@@ -33,7 +33,7 @@ class get_ad_test extends ad_base
 				'ad_views_limit'	=> '0',
 				'ad_clicks_limit'	=> '0',
 				'ad_owner'	=> '2',
-				'ad_hide_on_noncontent' => '0',
+				'ad_content_only' => '0',
 			)),
 			array(0, array()),
 		);

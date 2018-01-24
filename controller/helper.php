@@ -78,16 +78,16 @@ class helper
 			'S_ERROR'   => (bool) count($errors),
 			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
 
-			'AD_NAME'         		=> $data['ad_name'],
-			'AD_NOTE'         		=> $data['ad_note'],
-			'AD_CODE'         		=> $data['ad_code'],
-			'AD_ENABLED'      		=> $data['ad_enabled'],
-			'AD_END_DATE'     		=> $data['ad_end_date'],
-			'AD_PRIORITY'     		=> $data['ad_priority'],
-			'AD_HIDE_ON_NONCONTENT'	=> $data['ad_hide_on_noncontent'],
-			'AD_VIEWS_LIMIT'  		=> $data['ad_views_limit'],
-			'AD_CLICKS_LIMIT' 		=> $data['ad_clicks_limit'],
-			'AD_OWNER'        		=> $this->get_username($data['ad_owner']),
+			'AD_NAME'         	=> $data['ad_name'],
+			'AD_NOTE'         	=> $data['ad_note'],
+			'AD_CODE'         	=> $data['ad_code'],
+			'AD_ENABLED'      	=> $data['ad_enabled'],
+			'AD_END_DATE'     	=> $data['ad_end_date'],
+			'AD_PRIORITY'     	=> $data['ad_priority'],
+			'AD_CONTENT_ONLY'	=> $data['ad_content_only'],
+			'AD_VIEWS_LIMIT'  	=> $data['ad_views_limit'],
+			'AD_CLICKS_LIMIT' 	=> $data['ad_clicks_limit'],
+			'AD_OWNER'        	=> $this->get_username($data['ad_owner']),
 		));
 	}
 

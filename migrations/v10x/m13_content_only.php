@@ -10,14 +10,14 @@
 
 namespace phpbb\ads\migrations\v10x;
 
-class m13_hide_on_noncontent_pages extends \phpbb\db\migration\migration
+class m13_content_only extends \phpbb\db\migration\migration
 {
 	/**
 	 * {@inheritDoc}
 	 */
 	public function effectively_installed()
 	{
-		return $this->db_tools->sql_column_exists($this->table_prefix . 'ads', 'ad_hide_on_noncontent');
+		return $this->db_tools->sql_column_exists($this->table_prefix . 'ads', 'ad_content_only');
 	}
 
 	/**
@@ -32,7 +32,7 @@ class m13_hide_on_noncontent_pages extends \phpbb\db\migration\migration
 	}
 
 	/**
-	 * Add the hide-on-noncontent to ads table
+	 * Add the ad_content_only to ads table
 	 *
 	 * @return array Array of table schema
 	 * @access public
@@ -42,19 +42,19 @@ class m13_hide_on_noncontent_pages extends \phpbb\db\migration\migration
 		return array(
 			'add_columns' => array(
 				$this->table_prefix . 'ads' => array(
-					'ad_hide_on_noncontent' => array('BOOL', 0),
+					'ad_content_only' => array('BOOL', 0),
 				),
 			),
 			'add_index'	=> array(
 				$this->table_prefix . 'ads'	=> array(
-					'ad_hon'	=> array('ad_hide_on_noncontent'), // index used in ad\manager::get_ads
+					'ad_co'	=> array('ad_content_only'), // index used in ad\manager::get_ads
 				),
 			),
 		);
 	}
 
 	/**
-	 * Drop the hide-on-noncontent from ads table
+	 * Drop the ad_content_only from ads table
 	 *
 	 * @return array Array of table schema
 	 * @access public
@@ -64,12 +64,12 @@ class m13_hide_on_noncontent_pages extends \phpbb\db\migration\migration
 		return array(
 			'drop_keys'	=> array(
 				$this->table_prefix . 'ads' => array(
-					'ad_hon',
+					'ad_co',
 				),
 			),
 			'drop_columns' => array(
 				$this->table_prefix . 'ads' => array(
-					'ad_hide_on_noncontent',
+					'ad_content_only',
 				),
 			),
 		);

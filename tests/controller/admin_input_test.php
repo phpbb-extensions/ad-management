@@ -129,14 +129,14 @@ class admin_input_test extends \phpbb_database_test_case
 	 */
 	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors)
 	{
-		list($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_hide_on_noncontent, $ad_views_limit, $ad_clicks_limit, $ad_owner) = $data;
+		list($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner) = $data;
 
 		self::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
 		$this->request->expects($this->exactly(11))
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_hide_on_noncontent, $ad_views_limit, $ad_clicks_limit, $ad_owner));
+			->will($this->onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner));
 
 		$result = $input_controller->get_form_data();
 
@@ -155,7 +155,7 @@ class admin_input_test extends \phpbb_database_test_case
 				'ad_locations'    => $ad_locations,
 				'ad_end_date'     => $result['ad_end_date'], // Skipped, because it's different with every call
 				'ad_priority'     => $ad_priority,
-				'ad_hide_on_noncontent'	=> $ad_hide_on_noncontent,
+				'ad_content_only' => $ad_content_only,
 				'ad_views_limit'  => $ad_views_limit,
 				'ad_clicks_limit' => $ad_clicks_limit,
 				'ad_owner'        => $ad_owner_expected,

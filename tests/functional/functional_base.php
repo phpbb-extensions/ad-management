@@ -39,7 +39,7 @@ class functional_base extends \phpbb_functional_test_case
 		$this->admin_login();
 	}
 
-	protected function create_ad($location, $end_date = '', $hide_on_noncontent = false)
+	protected function create_ad($location, $end_date = '', $content_only = false)
 	{
 		// Load Advertisement management ACP page
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
@@ -57,7 +57,7 @@ class functional_base extends \phpbb_functional_test_case
 			'ad_locations'	=> array($location),
 			'ad_end_date'	=> $end_date,
 			'ad_priority'	=> 5,
-			'ad_hide_on_noncontent'	=> $hide_on_noncontent,
+			'ad_content_only'	=> $content_only,
 		);
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();

@@ -9,7 +9,7 @@
 		<column>ad_end_date</column>
 		<column>ad_priority</column>
 		<column>ad_owner</column>
-		<column>ad_hide_on_noncontent</column>
+		<column>ad_content_only</column>
 		<row>
 			<value>1</value>
 			<value>Primary ad</value>
