@@ -101,8 +101,7 @@ class helper
 		foreach ($this->location_manager->get_all_locations() as $location_category_id => $location_category)
 		{
 			$this->template->assign_block_vars('ad_locations', array(
-				'LOCATION_NAME' => $this->language->lang($location_category_id),
-				'IS_CATEGORY'	=> true,
+				'CATEGORY_NAME' => $this->language->lang($location_category_id),
 			));
 
 			foreach ($location_category as $location_id => $location_data)

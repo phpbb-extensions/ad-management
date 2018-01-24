@@ -243,8 +243,7 @@ class helper_test extends \phpbb_database_test_case
 		$this->template->expects($this->at(0))
 			->method('assign_block_vars')
 			->with('ad_locations', array(
-				'LOCATION_NAME'  => 'CAT_TOP_OF_PAGE',
-				'IS_CATEGORY'    => true,
+				'CATEGORY_NAME'  => 'CAT_TOP_OF_PAGE',
 			));
 
 		$this->template->expects($this->at(1))
@@ -259,8 +258,7 @@ class helper_test extends \phpbb_database_test_case
 		$this->template->expects($this->at(2))
 			->method('assign_block_vars')
 			->with('ad_locations', array(
-				'LOCATION_NAME'  => 'CAT_BOTTOM_OF_PAGE',
-				'IS_CATEGORY'    => true,
+				'CATEGORY_NAME'  => 'CAT_BOTTOM_OF_PAGE',
 			));
 
 		$this->template->expects($this->at(3))
