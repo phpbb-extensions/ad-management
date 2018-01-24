@@ -3,9 +3,9 @@
 	"type": "phpbb-extension",
 	"description": "An extension for phpBB that allows administrators to manage and display advertisements on their forums.",
 	"homepage": "https://www.phpbb.com",
-	"version": "1.0.4",
+	"version": "1.0.5-dev",
 	"keywords": ["phpbb", "extension", "advertisement"],
-	"license": "GPL-2.0",
+	"license": "GPL-2.0-only",
 	"authors": [
 		{
 			"name": "Jakub Senko",
