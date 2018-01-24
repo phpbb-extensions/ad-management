@@ -48,6 +48,14 @@ class pop_up extends base
 	/**
 	 * {@inheritDoc}
 	 */
+	public function get_category()
+	{
+		return self::CAT_INTERACTIVE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public function will_display()
 	{
 		if ($this->request->is_set($this->config['cookie_name'] . '_pop_up', \phpbb\request\request_interface::COOKIE))

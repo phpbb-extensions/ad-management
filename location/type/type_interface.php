@@ -15,12 +15,30 @@ namespace phpbb\ads\location\type;
 */
 interface type_interface
 {
+	const CAT_TOP_OF_PAGE = 'CAT_TOP_OF_PAGE';
+	const CAT_BOTTOM_OF_PAGE = 'CAT_BOTTOM_OF_PAGE';
+	const CAT_IN_POSTS = 'CAT_IN_POSTS';
+	const CAT_OTHER = 'CAT_OTHER';
+	const CAT_INTERACTIVE = 'CAT_INTERACTIVE';
+
 	/**
 	 * Returns the unique ID of the location.
 	 *
 	 * @return string	ID of location.
 	 */
 	public function get_id();
+
+	/**
+	 * Returns the category of the location.
+	 * Possible categories are:
+	 * - Top of page (self::CAT_TOP_OF_PAGE)
+	 * - Bottom of page (self::CAT_BOTTOM_OF_PAGE)
+	 * - In posts (self::CAT_IN_POSTS)
+	 * - Other (self::CAT_OTHER)
+	 *
+	 * @return string	ID of location.
+	 */
+	public function get_category();
 
 	/**
 	 * Returns the name of the location.

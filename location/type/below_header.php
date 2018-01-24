@@ -19,4 +19,12 @@ class below_header extends base
 	{
 		return 'below_header';
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_category()
+	{
+		return self::CAT_TOP_OF_PAGE;
+	}
 }

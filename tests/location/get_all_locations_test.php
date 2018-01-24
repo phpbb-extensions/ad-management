@@ -22,61 +22,71 @@ class get_all_locations_test extends location_base
 		$locations = $manager->get_all_locations();
 
 		$this->assertEquals(array(
-			'above_footer'	=> array(
-				'name'	=> 'AD_ABOVE_FOOTER',
-				'desc'	=> 'AD_ABOVE_FOOTER_DESC',
+			'CAT_TOP_OF_PAGE'	=> array(
+				'above_header'	=> array(
+					'name'	=> 'AD_ABOVE_HEADER',
+					'desc'	=> 'AD_ABOVE_HEADER_DESC',
+				),
+				'after_header_navbar'	=> array(
+					'name'	=> 'AD_AFTER_HEADER_NAVBAR',
+					'desc'	=> 'AD_AFTER_HEADER_NAVBAR_DESC',
+				),
+				'below_header'	=> array(
+					'name'	=> 'AD_BELOW_HEADER',
+					'desc'	=> 'AD_BELOW_HEADER_DESC',
+				),
 			),
-			'above_header'	=> array(
-				'name'	=> 'AD_ABOVE_HEADER',
-				'desc'	=> 'AD_ABOVE_HEADER_DESC',
+			'CAT_BOTTOM_OF_PAGE'	=> array(
+				'above_footer'	=> array(
+					'name'	=> 'AD_ABOVE_FOOTER',
+					'desc'	=> 'AD_ABOVE_FOOTER_DESC',
+				),
+				'after_footer_navbar'	=> array(
+					'name'	=> 'AD_AFTER_FOOTER_NAVBAR',
+					'desc'	=> 'AD_AFTER_FOOTER_NAVBAR_DESC',
+				),
+				'below_footer'	=> array(
+					'name'	=> 'AD_BELOW_FOOTER',
+					'desc'	=> 'AD_BELOW_FOOTER_DESC',
+				),
 			),
-			'after_first_post'	=> array(
-				'name'	=> 'AD_AFTER_FIRST_POST',
-				'desc'	=> 'AD_AFTER_FIRST_POST_DESC',
+			'CAT_IN_POSTS'	=> array(
+				'after_first_post'	=> array(
+					'name'	=> 'AD_AFTER_FIRST_POST',
+					'desc'	=> 'AD_AFTER_FIRST_POST_DESC',
+				),
+				'after_not_first_post'	=> array(
+					'name'	=> 'AD_AFTER_NOT_FIRST_POST',
+					'desc'	=> 'AD_AFTER_NOT_FIRST_POST_DESC',
+				),
+				'after_posts'	=> array(
+					'name'	=> 'AD_AFTER_POSTS',
+					'desc'	=> 'AD_AFTER_POSTS_DESC',
+				),
+				'before_posts'	=> array(
+					'name'	=> 'AD_BEFORE_POSTS',
+					'desc'	=> 'AD_BEFORE_POSTS_DESC',
+				),
 			),
-			'after_footer_navbar'	=> array(
-				'name'	=> 'AD_AFTER_FOOTER_NAVBAR',
-				'desc'	=> 'AD_AFTER_FOOTER_NAVBAR_DESC',
+			'CAT_OTHER'	=> array(
+				'after_profile'	=> array(
+					'name'	=> 'AD_AFTER_PROFILE',
+					'desc'	=> 'AD_AFTER_PROFILE_DESC',
+				),
+				'before_profile'	=> array(
+					'name'	=> 'AD_BEFORE_PROFILE',
+					'desc'	=> 'AD_BEFORE_PROFILE_DESC',
+				),
 			),
-			'after_header_navbar'	=> array(
-				'name'	=> 'AD_AFTER_HEADER_NAVBAR',
-				'desc'	=> 'AD_AFTER_HEADER_NAVBAR_DESC',
-			),
-			'after_not_first_post'	=> array(
-				'name'	=> 'AD_AFTER_NOT_FIRST_POST',
-				'desc'	=> 'AD_AFTER_NOT_FIRST_POST_DESC',
-			),
-			'after_posts'	=> array(
-				'name'	=> 'AD_AFTER_POSTS',
-				'desc'	=> 'AD_AFTER_POSTS_DESC',
-			),
-			'after_profile'	=> array(
-				'name'	=> 'AD_AFTER_PROFILE',
-				'desc'	=> 'AD_AFTER_PROFILE_DESC',
-			),
-			'before_posts'	=> array(
-				'name'	=> 'AD_BEFORE_POSTS',
-				'desc'	=> 'AD_BEFORE_POSTS_DESC',
-			),
-			'before_profile'	=> array(
-				'name'	=> 'AD_BEFORE_PROFILE',
-				'desc'	=> 'AD_BEFORE_PROFILE_DESC',
-			),
-			'below_footer'	=> array(
-				'name'	=> 'AD_BELOW_FOOTER',
-				'desc'	=> 'AD_BELOW_FOOTER_DESC',
-			),
-			'below_header'	=> array(
-				'name'	=> 'AD_BELOW_HEADER',
-				'desc'	=> 'AD_BELOW_HEADER_DESC',
-			),
-			'pop_up'	=> array(
-				'name'	=> 'AD_POP_UP',
-				'desc'	=> 'AD_POP_UP_DESC',
-			),
-			'slide_up'	=> array(
-				'name'	=> 'AD_SLIDE_UP',
-				'desc'	=> 'AD_SLIDE_UP_DESC',
+			'CAT_INTERACTIVE'	=> array(
+				'pop_up'	=> array(
+					'name'	=> 'AD_POP_UP',
+					'desc'	=> 'AD_POP_UP_DESC',
+				),
+				'slide_up'	=> array(
+					'name'	=> 'AD_SLIDE_UP',
+					'desc'	=> 'AD_SLIDE_UP_DESC',
+				),
 			),
 		), $locations);
 	}

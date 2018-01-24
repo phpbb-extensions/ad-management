@@ -98,14 +98,21 @@ class helper
 	 */
 	public function assign_locations($ad_locations = false)
 	{
-		foreach ($this->location_manager->get_all_locations() as $location_id => $location_data)
+		foreach ($this->location_manager->get_all_locations() as $location_category_id => $location_category)
 		{
 			$this->template->assign_block_vars('ad_locations', array(
-				'LOCATION_ID'   => $location_id,
-				'LOCATION_DESC' => $location_data['desc'],
-				'LOCATION_NAME' => $location_data['name'],
-				'S_SELECTED'    => $ad_locations ? in_array($location_id, $ad_locations) : false,
+				'CATEGORY_NAME' => $this->language->lang($location_category_id),
 			));
+
+			foreach ($location_category as $location_id => $location_data)
+			{
+				$this->template->assign_block_vars('ad_locations', array(
+					'LOCATION_ID'   => $location_id,
+					'LOCATION_DESC' => $location_data['desc'],
+					'LOCATION_NAME' => $location_data['name'],
+					'S_SELECTED'    => $ad_locations ? in_array($location_id, $ad_locations) : false,
+				));
+			}
 		}
 	}
 

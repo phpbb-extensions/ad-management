@@ -210,7 +210,7 @@ class helper_test extends \phpbb_database_test_case
 	{
 		return array(
 			array(false),
-			array(array(1)),
+			array(array('top_of_page_1')),
 		);
 	}
 
@@ -226,32 +226,48 @@ class helper_test extends \phpbb_database_test_case
 		$this->location_manager->expects($this->once())
 			->method('get_all_locations')
 			->willReturn(array(
-				1	=> array(
-					'name'	=> 'Location #1',
-					'desc'	=> 'Location #1 desc',
+				'CAT_TOP_OF_PAGE'	=> array(
+					'top_of_page_1'	=> array(
+						'name'	=> 'Location #1',
+						'desc'	=> 'Location #1 desc',
+					),
 				),
-				2	=> array(
-					'name'	=> 'Location #2',
-					'desc'	=> 'Location #2 desc',
+				'CAT_BOTTOM_OF_PAGE'	=> array(
+					'bottom_of_page_1'	=> array(
+						'name'	=> 'Location #2',
+						'desc'	=> 'Location #2 desc',
+					),
 				),
 			));
 
 		$this->template->expects($this->at(0))
 			->method('assign_block_vars')
 			->with('ad_locations', array(
-				'LOCATION_ID'   => 1,
-				'LOCATION_DESC' => 'Location #1 desc',
-				'LOCATION_NAME' => 'Location #1',
-				'S_SELECTED'    => $ad_locations ? in_array(1, $ad_locations) : false,
+				'CATEGORY_NAME'  => 'CAT_TOP_OF_PAGE',
 			));
 
 		$this->template->expects($this->at(1))
 			->method('assign_block_vars')
 			->with('ad_locations', array(
-				'LOCATION_ID'   => 2,
+				'LOCATION_ID'   => 'top_of_page_1',
+				'LOCATION_DESC' => 'Location #1 desc',
+				'LOCATION_NAME' => 'Location #1',
+				'S_SELECTED'    => $ad_locations ? in_array('top_of_page_1', $ad_locations) : false,
+			));
+
+		$this->template->expects($this->at(2))
+			->method('assign_block_vars')
+			->with('ad_locations', array(
+				'CATEGORY_NAME'  => 'CAT_BOTTOM_OF_PAGE',
+			));
+
+		$this->template->expects($this->at(3))
+			->method('assign_block_vars')
+			->with('ad_locations', array(
+				'LOCATION_ID'   => 'bottom_of_page_1',
 				'LOCATION_DESC' => 'Location #2 desc',
 				'LOCATION_NAME' => 'Location #2',
-				'S_SELECTED'    => $ad_locations ? in_array(2, $ad_locations) : false,
+				'S_SELECTED'    => $ad_locations ? in_array('bottom_of_page_1', $ad_locations) : false,
 			));
 
 		$helper->assign_locations($ad_locations);

@@ -19,4 +19,12 @@ class slide_up extends base
 	{
 		return 'slide_up';
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_category()
+	{
+		return self::CAT_INTERACTIVE;
+	}
 }
