@@ -32,10 +32,19 @@ class manager
 	/**
 	 * Get a list of all template location types
 	 *
-	 * Returns an associated array where key is the location id
-	 * and value is array of location name and location description.
+	 * Returns a composite associated array of location category, ID, name and desc:
+	 * array(
+	 *    location_category => array(
+	 *       location_id => array(
+	 *          'name' => location_name
+	 *          'desc' => location_description
+	 *       ),
+	 *       ...
+	 *    ),
+	 *    ...
+	 * )
 	 *
-	 * @return	array	Array containing a list of all template locations
+	 * @return	array	Array containing a list of all template locations sorted by categories
 	 */
 	public function get_all_locations()
 	{
