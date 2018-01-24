@@ -25,6 +25,6 @@ class slide_up extends base
 	 */
 	public function get_category()
 	{
-		return self::CAT_OTHER;
+		return self::CAT_INTERACTIVE;
 	}
 }

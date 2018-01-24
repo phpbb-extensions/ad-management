@@ -91,10 +91,11 @@ class manager
 			// Static definition also prevents external location
 			// types to use nondefined category.
 			$this->template_locations = array(
-				'CAT_TOP_OF_PAGE'	=> array(),
+				'CAT_TOP_OF_PAGE'		=> array(),
 				'CAT_BOTTOM_OF_PAGE'	=> array(),
-				'CAT_IN_POSTS'	=> array(),
-				'CAT_OTHER'	=> array(),
+				'CAT_IN_POSTS'			=> array(),
+				'CAT_OTHER'				=> array(),
+				'CAT_INTERACTIVE'		=> array(),
 			);
 
 			foreach ($template_locations as $location)

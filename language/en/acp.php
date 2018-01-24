@@ -97,6 +97,7 @@ $lang = array_merge($lang, array(
 	'CAT_BOTTOM_OF_PAGE'	=> 'Bottom of page',
 	'CAT_IN_POSTS'			=> 'In posts',
 	'CAT_OTHER'				=> 'Other',
+	'CAT_INTERACTIVE'		=> 'Interactive',
 
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',

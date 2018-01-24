@@ -77,6 +77,8 @@ class get_all_locations_test extends location_base
 					'name'	=> 'AD_BEFORE_PROFILE',
 					'desc'	=> 'AD_BEFORE_PROFILE_DESC',
 				),
+			),
+			'CAT_INTERACTIVE'	=> array(
 				'pop_up'	=> array(
 					'name'	=> 'AD_POP_UP',
 					'desc'	=> 'AD_POP_UP_DESC',

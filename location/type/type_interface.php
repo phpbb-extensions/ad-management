@@ -19,6 +19,7 @@ interface type_interface
 	const CAT_BOTTOM_OF_PAGE = 'CAT_BOTTOM_OF_PAGE';
 	const CAT_IN_POSTS = 'CAT_IN_POSTS';
 	const CAT_OTHER = 'CAT_OTHER';
+	const CAT_INTERACTIVE = 'CAT_INTERACTIVE';
 
 	/**
 	 * Returns the unique ID of the location.
