@@ -18,6 +18,9 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
 	protected $template;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\context */
+	protected $template_context;
+
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -35,6 +38,9 @@ class main_listener_base extends \phpbb_database_test_case
 
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\controller\helper */
 	protected $controller_helper;
+
+	/** @var string */
+	protected $php_ext;
 
 	/** @var string */
 	protected $ad_locations_table;
@@ -105,6 +111,7 @@ class main_listener_base extends \phpbb_database_test_case
 
 		// Load/Mock classes required by the listener class
 		$this->template = $this->getMock('\phpbb\template\template');
+		$this->template_context = $this->getMock('\phpbb\template\context');
 		$this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
@@ -117,6 +124,7 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->php_ext = $phpEx;
 	}
 
 	/**
@@ -128,12 +136,14 @@ class main_listener_base extends \phpbb_database_test_case
 	{
 		return new \phpbb\ads\event\main_listener(
 			$this->template,
+			$this->template_context,
 			$this->user,
 			$this->config_text,
 			$this->config,
 			$this->manager,
 			$this->location_manager,
-			$this->controller_helper
+			$this->controller_helper,
+			$this->php_ext
 		);
 	}
 }

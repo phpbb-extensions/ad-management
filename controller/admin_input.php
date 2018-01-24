@@ -83,16 +83,17 @@ class admin_input
 	public function get_form_data()
 	{
 		$data = array(
-			'ad_name'         => $this->request->variable('ad_name', '', true),
-			'ad_note'         => $this->request->variable('ad_note', '', true),
-			'ad_code'         => $this->request->variable('ad_code', '', true),
-			'ad_enabled'      => $this->request->variable('ad_enabled', 0),
-			'ad_locations'    => $this->request->variable('ad_locations', array('')),
-			'ad_end_date'     => $this->request->variable('ad_end_date', ''),
-			'ad_priority'     => $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
-			'ad_views_limit'  => $this->request->variable('ad_views_limit', 0),
-			'ad_clicks_limit' => $this->request->variable('ad_clicks_limit', 0),
-			'ad_owner'        => $this->request->variable('ad_owner', '', true),
+			'ad_name'         	=> $this->request->variable('ad_name', '', true),
+			'ad_note'         	=> $this->request->variable('ad_note', '', true),
+			'ad_code'         	=> $this->request->variable('ad_code', '', true),
+			'ad_enabled'      	=> $this->request->variable('ad_enabled', 0),
+			'ad_locations'    	=> $this->request->variable('ad_locations', array('')),
+			'ad_end_date'     	=> $this->request->variable('ad_end_date', ''),
+			'ad_priority'     	=> $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
+			'ad_content_only'	=> $this->request->variable('ad_content_only', 0),
+			'ad_views_limit'  	=> $this->request->variable('ad_views_limit', 0),
+			'ad_clicks_limit' 	=> $this->request->variable('ad_clicks_limit', 0),
+			'ad_owner'        	=> $this->request->variable('ad_owner', '', true),
 		);
 
 		// Validate form key

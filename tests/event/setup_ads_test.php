@@ -46,7 +46,7 @@ class setup_ads_test extends main_listener_base
 		if (count(array_intersect($hide_groups, $user_groups)) === 0)
 		{
 			$location_ids = $this->location_manager->get_all_location_ids();
-			$ads = $this->manager->get_ads($location_ids);
+			$ads = $this->manager->get_ads($location_ids, false);
 		}
 
 		$this->template

@@ -96,6 +96,11 @@
 				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
 				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10" /></dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_content_only">{{ lang('AD_CONTENT_ONLY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CONTENT_ONLY_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" name="ad_content_only" value="1"{% if AD_CONTENT_ONLY %} checked{% endif %} /> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" id="ad_content_only" name="ad_content_only" value="0"{% if not AD_CONTENT_ONLY %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
 		</fieldset>
 		<fieldset>
 			<legend>{{ lang('AD_OPTIONS') }}</legend>
