@@ -550,8 +550,10 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_add_data()
 	{
 		return array(
-			array(true),
-			array(false),
+			array(true, 0),
+			array(true, 2),
+			array(false, 0),
+			array(false, 2),
 		);
 	}
 
@@ -560,7 +562,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_add_data
 	*/
-	public function test_action_add_submit($s_error)
+	public function test_action_add_submit($s_error, $ad_owner)
 	{
 		$controller = $this->get_controller();
 
@@ -588,6 +590,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_name'		=> 'Ad Name #1',
 			'ad_code'		=> 'Ad Code #1',
 			'ad_locations'	=> array(),
+			'ad_owner'		=> $ad_owner,
 		);
 
 		$this->input->expects($this->once())
@@ -614,6 +617,11 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('insert_ad')
 				->with($data)
 				->willReturn(1);
+
+			$this->manager->expects(($ad_owner ? $this->once() : $this->never()))
+				->method('get_ads_by_owner')
+				->with($ad_owner)
+				->willReturn(array());
 
 			$this->manager->expects($this->once())
 				->method('insert_ad_locations')
@@ -815,10 +823,11 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_edit_data()
 	{
 		return array(
-			array(true, false),
-			array(false, true),
-			array(false, false),
-			array(true, true),
+			array(true, false, 0),
+			array(false, true, 0),
+			array(false, true, 2),
+			array(false, false, 0),
+			array(true, true, 0),
 		);
 	}
 
@@ -827,7 +836,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @dataProvider action_edit_data
 	*/
-	public function test_action_edit_submit($s_error, $success)
+	public function test_action_edit_submit($s_error, $success, $ad_owner)
 	{
 		$controller = $this->get_controller();
 
@@ -861,10 +870,18 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('submit_edit')
 			->willReturn(true);
 
+		$old_data = array(
+			'ad_name'		=> 'Old Ad Name #1',
+			'ad_code'		=> 'Old Ad Code #1',
+			'ad_locations'	=> array(),
+			'ad_owner'		=> $ad_owner,
+		);
+
 		$data = array(
 			'ad_name'		=> 'Ad Name #1',
 			'ad_code'		=> 'Ad Code #1',
 			'ad_locations'	=> array(),
+			'ad_owner'		=> $ad_owner,
 		);
 
 		$this->input->expects($this->once())
@@ -907,6 +924,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 		else
 		{
+			$this->manager->expects(($this->once()))
+				->method('get_ad')
+				->with(1)
+				->willReturn($old_data);
+
 			$this->manager->expects($this->once())
 				->method('update_ad')
 				->with(1, $data)
@@ -914,9 +936,10 @@ class admin_controller_test extends \phpbb_database_test_case
 
 			if ($success)
 			{
-				$this->manager->expects($this->exactly(2))
+				$this->manager->expects(($ad_owner ? $this->exactly(2) : $this->never()))
 					->method('get_ads_by_owner')
-					->with(0);
+					->with($ad_owner)
+					->willReturn(array());
 
 				$this->manager->expects($this->once())
 					->method('delete_ad_locations')
@@ -1020,17 +1043,19 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_delete_data()
 	{
 		return array(
-			array(999, true, true),
-			array(1, false, false),
-			array(1, false, true),
+			array(999, 0, true, true),
+			array(1, 0, false, false),
+			array(1, 0, false, true),
+			array(1, 2, false, true),
 		);
 	}
+
 	/**
-	* Test action_delete() method
-	*
-	* @dataProvider action_delete_data
-	*/
-	public function test_action_delete($ad_id, $error, $confirm)
+	 * Test action_delete() method
+	 *
+	 * @dataProvider action_delete_data
+	 */
+	public function test_action_delete($ad_id, $ad_owner, $error, $confirm)
 	{
 		self::$confirm = $confirm;
 
@@ -1066,11 +1091,16 @@ class admin_controller_test extends \phpbb_database_test_case
 			else
 			{
 				$this->manager->expects($this->once())
+					->method('get_ad')
+					->with($ad_id)
+					->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner));
+				$this->manager->expects($this->once())
 					->method('delete_ad')
 					->willReturn($ad_id ? true : false);
-				$this->manager->expects($this->once())
+				$this->manager->expects(($ad_owner ? $this->once() : $this->never()))
 					->method('get_ads_by_owner')
-					->with(0);
+					->with($ad_owner)
+					->willReturn(array());
 
 				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 			}
