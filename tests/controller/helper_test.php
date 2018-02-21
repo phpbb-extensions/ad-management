@@ -306,6 +306,16 @@ class helper_test extends \phpbb_database_test_case
 	}
 
 	/**
+	 * Test get_enable_visual_demo_link()
+	 */
+	public function test_get_enable_visual_demo_link()
+	{
+		$helper = $this->get_helper();
+		$result = $helper->get_enable_visual_demo_link();
+		$this->assertEquals("{$this->root_path}index.{$this->php_ext}?enable_visual_demo=true", $result);
+	}
+
+	/**
 	 * Data for test_is_expired
 	 *
 	 * @return array Array of test data
