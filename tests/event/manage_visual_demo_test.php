@@ -48,9 +48,6 @@ class manage_visual_demo_test extends main_listener_base
 			$this->user->expects($this->once())
 				->method('set_cookie')
 				->with('phpbb_ads_visual_demo', '', 0);
-
-			// redirect() will throw this, but it's ok
-			$this->setExpectedTriggerError(E_USER_ERROR, 'INSECURE_REDIRECT');
 		}
 		else
 		{
@@ -64,10 +61,6 @@ class manage_visual_demo_test extends main_listener_base
 				$this->user->expects($this->once())
 					->method('set_cookie')
 					->with('phpbb_ads_visual_demo', '', 1);
-
-				$this->template->expects($this->once())
-					->method('assign_var')
-					->with('S_PHPBB_ADS_VISUAL_DEMO', false);
 
 				$this->setExpectedTriggerError(E_USER_NOTICE, 'VISUAL_DEMO_DISABLED');
 			}

@@ -72,7 +72,7 @@ class main_listener implements EventSubscriberInterface
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
 
-			'core.index_modify_page_title'	=> 'manage_visual_demo',
+			'core.page_header'	=> 'manage_visual_demo',
 		);
 	}
 
@@ -264,20 +264,23 @@ class main_listener implements EventSubscriberInterface
 
 	public function manage_visual_demo()
 	{
+		echo 'HALOOO';
 		if ($this->request->is_set('enable_visual_demo'))
 		{
+			echo 'SOM TU';
 			$this->user->set_cookie('phpbb_ads_visual_demo', '', 0);
-			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
+
+			// enable visual demo for this request
+			$this->in_visual_demo = true;
 		}
 		else if ($this->request->is_set('disable_visual_demo'))
 		{
 			$this->user->set_cookie('phpbb_ads_visual_demo', '', 1);
 
 			// disable visual demo for this request
-			$this->template->assign_var('S_PHPBB_ADS_VISUAL_DEMO', false);
 			$this->in_visual_demo = false;
 
-			trigger_error('VISUAL_DEMO_DISABLED', E_USER_NOTICE);
+			trigger_error('VISUAL_DEMO_DISABLED');
 		}
 	}
 
