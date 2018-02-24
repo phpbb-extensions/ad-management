@@ -61,8 +61,6 @@ class manage_visual_demo_test extends main_listener_base
 				$this->user->expects($this->once())
 					->method('set_cookie')
 					->with('phpbb_ads_visual_demo', '', 1);
-
-				$this->setExpectedTriggerError(E_USER_NOTICE, 'VISUAL_DEMO_DISABLED');
 			}
 		}
 

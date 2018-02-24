@@ -264,10 +264,8 @@ class main_listener implements EventSubscriberInterface
 
 	public function manage_visual_demo()
 	{
-		echo 'HALOOO';
 		if ($this->request->is_set('enable_visual_demo'))
 		{
-			echo 'SOM TU';
 			$this->user->set_cookie('phpbb_ads_visual_demo', '', 0);
 
 			// enable visual demo for this request
@@ -279,8 +277,6 @@ class main_listener implements EventSubscriberInterface
 
 			// disable visual demo for this request
 			$this->in_visual_demo = false;
-
-			trigger_error('VISUAL_DEMO_DISABLED');
 		}
 	}
 
