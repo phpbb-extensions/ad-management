@@ -78,7 +78,13 @@
 		<fieldset>
 			<legend>{{ lang('AD_PLACEMENT') }}</legend>
 			<dl>
-				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_LOCATIONS_EXPLAIN', U_ENABLE_VISUAL_DEMO) }}</span></dt>
+				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br />
+					<span>{{ lang('AD_LOCATIONS_EXPLAIN') }}<br><br>
+						<a class="phpbb-ads-button" href="{U_ENABLE_VISUAL_DEMO}" target="_blank">
+							<i class="fa fa-fw fa-eye"></i> {{ lang('AD_LOCATIONS_VISUAL_DEMO') }}
+						</a>
+					</span>
+				</dt>
 				<dd><select id="ad_locations" name="ad_locations[]" multiple size="10">
 					{% for location in loops.ad_locations %}
 						{% if location.CATEGORY_NAME %}

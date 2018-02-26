@@ -27,6 +27,7 @@
 
 .phpbb-ads-button {
 	font-size: 13px;
+	font-family: system-ui;
 	vertical-align: middle;
 	background: #e3e3e3;
 	background: linear-gradient(to bottom, #e3e3e3 0%, #f7f7f7 100%);
@@ -34,6 +35,12 @@
 	box-shadow: inset 1px 1px 2px #ffffff;
 	margin: 2px 0;
 	padding: 3px 8px;
+}
+.phpbb-ads-button:link {
+	color: #000000;
+}
+.phpbb-ads-button:link:hover {
+	text-decoration: none;
 }
 
 .phpbb-ads-button:hover {
