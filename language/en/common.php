@@ -26,7 +26,7 @@ $lang = array_merge($lang, array(
 	'HIDE_AD'			=> 'Hide advertisement',
 
 	'VISUAL_DEMO'			=> 'Visual demo for ad locations is active',
-	'DISABLE_VISUAL_DEMO'	=> 'You can <a href="%s" data-ajax="phpbb_ads_close_visual_demo_window">disable it here</a>.',
+	'DISABLE_VISUAL_DEMO'	=> 'Click to disable visual demo.',
 
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',

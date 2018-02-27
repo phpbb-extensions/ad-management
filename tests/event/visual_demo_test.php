@@ -39,15 +39,19 @@ class visual_demo_test extends main_listener_base
 			->willReturn($in_visual_demo);
 
 		$this->template
-			->expects($in_visual_demo ? $this->once() : $this->never())
+			->expects($this->exactly($in_visual_demo ? 9 : 0))
+			->method('assign_vars');
+
+		$this->template
+			->expects($in_visual_demo ? $this->at(8) : $this->never())
 		  	->method('assign_vars')
 			->with(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'DISABLE_VISUAL_DEMO'		=> null,
+				'U_DISABLE_VISUAL_DEMO'		=> '?disable_visual_demo=true',
 			));
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
-		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'visual_demo'));
-		$dispatcher->dispatch('core.page_header_after');
+		$dispatcher->addListener('core.page_footer_after', array($this->get_listener(), 'visual_demo'));
+		$dispatcher->dispatch('core.page_footer_after');
 	}
 }
