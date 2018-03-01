@@ -33,10 +33,8 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 	{
 		return array(
 			array('permission.add', array('u_phpbb_ads')),
-			array('custom', array(
-				array($this, 'set_u_phpbb_ads_permission'),
-				array($this, 'update_ucp_module_permission'),
-			)),
+			array('custom', array(array($this, 'set_u_phpbb_ads_permission'))),
+			array('custom', array(array($this, 'update_ucp_module_permission'))),
 		);
 	}
 
@@ -65,9 +63,9 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 	 */
 	public function update_ucp_module_permission()
 	{
-		$sql = 'UPDATE ' . $this->container->getParameter('tables.modules') . '
-			SET module_auth = "ext_phpbb/ads && acl_u_phpbb_ads"
-			WHERE module_langname = "UCP_PHPBB_ADS_STATS"';
+		$sql = 'UPDATE ' . $this->container->getParameter('tables.modules') . "
+			SET module_auth = 'ext_phpbb/ads && acl_u_phpbb_ads'
+			WHERE module_langname = 'UCP_PHPBB_ADS_STATS'";
 		$this->db->sql_query($sql);
 	}
 }
