@@ -1,5 +1,18 @@
 # Changelog
 
+### 1.0.5 - 2018-03-02
+
+- Feature: Added a new option to display ads on content pages only. When enabled, the ad  will not be shown on the UCP, MCP,Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
+- Feature: Ad locations option has improved organisation to make it easier to pick the appropriate location.
+- Fix: My Advertisements tab in the UCP will no longer be shown to all users, and will only be visible to ad owners.
+- Fix: Resolved an issue affecting some users where multiple ads assigned to the same location were not being randomly rotated.
+- Fix: Ads assigned to display after first post will only be visible now if there are replies after the first post.
+
+### 1.0.4 - 2017-12-23
+
+- Fix: Improve handling of responsive advertisements.
+- Fix: Added additional statistics to the My advertisements tab, including expiration info and active/inactive status.
+
 ### 1.0.3 - 2017-11-19
 
 - Update: UCP Advertisements page shows more information about your ads including click/view limits, expiration date and active status of the ad.
