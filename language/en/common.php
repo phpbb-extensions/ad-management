@@ -27,6 +27,7 @@ $lang = array_merge($lang, array(
 
 	'VISUAL_DEMO'			=> 'Visual demo for ad locations is active',
 	'DISABLE_VISUAL_DEMO'	=> 'Click to disable visual demo.',
+	'DISABLE_VISUAL_DEMO_ERROR'	=> 'There was a problem completing your request. Please close the window to disable the visual demo.',
 
 	// Template locations
 	'AD_ABOVE_HEADER'				=> 'Above header',

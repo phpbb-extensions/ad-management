@@ -15,6 +15,8 @@
 	phpbb.addAjaxCallback('phpbb_ads_close_visual_demo_window', function(res) {
 		if (res.success) {
 			window.close();
+		} else {
+			phpbb.alert('{{ lang('GENERAL_ERROR')|escape("js") }}', '{{ lang('DISABLE_VISUAL_DEMO_ERROR')|escape("js") }}')
 		}
 	});
 </script>
