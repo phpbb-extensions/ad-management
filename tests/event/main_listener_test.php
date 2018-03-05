@@ -33,7 +33,6 @@ class main_listener_test extends main_listener_base
 			'core.page_header_after',
 			'core.delete_user_after',
 			'core.adm_page_header_after',
-			'core.page_header',
 		), array_keys(\phpbb\ads\event\main_listener::getSubscribedEvents()));
 	}
 }

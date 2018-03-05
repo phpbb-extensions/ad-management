@@ -80,7 +80,7 @@ class visual_demo_controller
 		else
 		{
 			// Since cookie does not exist yet, lets create one and send user to the index page.
-			$this->user->set_cookie('phpbb_ads_visual_demo', '', 0);
+			$this->user->set_cookie('phpbb_ads_visual_demo', time(), 0);
 			$redirect = "{$this->root_path}index.{$this->php_ext}";
 		}
 

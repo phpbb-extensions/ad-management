@@ -50,6 +50,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\analyser\manager */
 	protected $analyser;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\controller\helper */
+	protected $controller_helper;
+
 	/** @var string root_path */
 	protected $root_path;
 
@@ -110,6 +113,9 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 
@@ -139,6 +145,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->input,
 			$this->helper,
 			$this->analyser,
+			$this->controller_helper,
 			$this->root_path,
 			$this->php_ext
 		);
@@ -331,6 +338,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->input,
 				$this->helper,
 				$this->analyser,
+				$this->controller_helper,
 				$this->root_path,
 				$this->php_ext
 			))

@@ -135,7 +135,6 @@ class main_listener_base extends \phpbb_database_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->request = $this->getMock('\phpbb\request\request');
-		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 	}
 

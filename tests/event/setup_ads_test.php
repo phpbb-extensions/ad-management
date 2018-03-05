@@ -20,10 +20,10 @@ class setup_ads_test extends main_listener_base
 	public function data_setup_ads()
 	{
 		return array(
-			array(array(1), false),
-			array(array(2), false),
-			array(array(1, 2), false),
-			array(array(2, 3), false),
+			array(array(1)),
+			array(array(2)),
+			array(array(1, 2)),
+			array(array(2, 3)),
 		);
 	}
 
