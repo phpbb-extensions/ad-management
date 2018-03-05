@@ -54,7 +54,7 @@ class visual_demo_test extends main_listener_base
 		  	->method('assign_vars')
 			->with(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array('action' => 'disable', 'hash' => generate_link_hash('visual_demo'))),
+				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array('action' => 'disable')),
 			));
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();

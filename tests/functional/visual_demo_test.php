@@ -29,7 +29,7 @@ class visual_demo_test extends functional_base
 
 	public function test_visual_demo()
 	{
-		$crawler = self::request('GET', 'phpbbads-visual-demo/enable?hash=' . $this->mock_link_hash('visual_demo') . "&sid={$this->sid}");
+		$crawler = self::request('GET', "app.php/phpbbads-visual-demo/enable?sid={$this->sid}");
 
 		// We should be on index page now. Visual demo disable prompt should be displayed.
 		$this->assertContains($this->lang('DISABLE_VISUAL_DEMO'), $crawler->filter('.rules')->html());
@@ -49,28 +49,8 @@ class visual_demo_test extends functional_base
 	{
 		$this->logout();
 
-		$crawler = self::request('GET', 'phpbbads-visual-demo/enable?hash=' . $this->mock_link_hash('visual_demo') . "&sid={$this->sid}", array(), false);
+		$crawler = self::request('GET', "app.php/phpbbads-visual-demo/enable?hash=sid={$this->sid}", array(), false);
 		$this->assert_response_html(403);
 		$this->assertContains($this->lang('NO_AUTH_OPERATION'), $crawler->filter('body')->text());
-	}
-
-	/**
-	 * Create a link hash for the user 'admin'
-	 *
-	 * @param string  $link_name The name of the link
-	 * @return string the hash
-	 */
-	protected function mock_link_hash($link_name)
-	{
-		$this->get_db();
-
-		$sql = "SELECT user_form_salt
-			FROM phpbb_users
-			WHERE username = 'admin'";
-		$result = $this->db->sql_query($sql);
-		$user_form_salt = $this->db->sql_fetchfield('user_form_salt');
-		$this->db->sql_freeresult($result);
-
-		return substr(sha1($user_form_salt . $link_name), 0, 8);
 	}
 }

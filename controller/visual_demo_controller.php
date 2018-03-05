@@ -65,8 +65,8 @@ class visual_demo_controller
 	 */
 	public function handle($action)
 	{
-		// Protect against unauthorised access or CSRF/XSRF attacks
-		if (!$this->auth->acl_get('a_') || !check_link_hash($this->request->variable('hash', ''), 'visual_demo'))
+		// Protect against unauthorised access
+		if (!$this->auth->acl_get('a_'))
 		{
 			throw new \phpbb\exception\http_exception(403, 'NO_AUTH_OPERATION');
 		}

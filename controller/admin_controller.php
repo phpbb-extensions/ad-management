@@ -211,7 +211,7 @@ class admin_controller
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
-			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable', 'hash' => generate_link_hash('visual_demo'))),
+			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable')),
 		));
 	}
 
@@ -248,7 +248,7 @@ class admin_controller
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
 			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
-			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable', 'hash' => generate_link_hash('visual_demo'))),
+			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable')),
 		));
 		$this->helper->assign_data($this->data, $this->input->get_errors());
 	}
