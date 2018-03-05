@@ -50,6 +50,9 @@ class admin_controller
 	/** @var \phpbb\ads\analyser\manager */
 	protected $analyser;
 
+	/** @var \phpbb\controller\helper */
+	protected $controller_helper;
+
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -59,20 +62,21 @@ class admin_controller
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\template\template           $template     Template object
-	 * @param \phpbb\language\language           $language     Language object
-	 * @param \phpbb\request\request             $request      Request object
-	 * @param \phpbb\ads\ad\manager              $manager      Advertisement manager object
-	 * @param \phpbb\config\db_text              $config_text  Config text object
-	 * @param \phpbb\config\config               $config       Config object
-	 * @param \phpbb\group\helper                $group_helper Group helper object
-	 * @param \phpbb\ads\controller\admin_input  $input        Admin input object
-	 * @param \phpbb\ads\controller\helper 		 $helper       Helper object
-	 * @param \phpbb\ads\analyser\manager        $analyser     Ad code analyser object
-	 * @param string                      		$root_path     phpBB root path
-	 * @param string                      		$php_ext       PHP extension
+	 * @param \phpbb\template\template          $template          Template object
+	 * @param \phpbb\language\language          $language          Language object
+	 * @param \phpbb\request\request            $request           Request object
+	 * @param \phpbb\ads\ad\manager             $manager           Advertisement manager object
+	 * @param \phpbb\config\db_text             $config_text       Config text object
+	 * @param \phpbb\config\config              $config            Config object
+	 * @param \phpbb\group\helper               $group_helper      Group helper object
+	 * @param \phpbb\ads\controller\admin_input $input             Admin input object
+	 * @param \phpbb\ads\controller\helper      $helper            Helper object
+	 * @param \phpbb\ads\analyser\manager       $analyser          Ad code analyser object
+	 * @param \phpbb\controller\helper          $controller_helper Controller helper object
+	 * @param string                            $root_path         phpBB root path
+	 * @param string                            $php_ext           PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -84,6 +88,7 @@ class admin_controller
 		$this->input = $input;
 		$this->helper = $helper;
 		$this->analyser = $analyser;
+		$this->controller_helper = $controller_helper;
 
 		$this->language->add_lang('posting'); // Used by banner_upload() file errors
 		$this->language->add_lang('acp', 'phpbb/ads');
@@ -206,7 +211,7 @@ class admin_controller
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
-			'U_ENABLE_VISUAL_DEMO'	=> $this->helper->get_enable_visual_demo_link(),
+			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable', 'hash' => generate_link_hash('visual_demo'))),
 		));
 	}
 
@@ -243,7 +248,7 @@ class admin_controller
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
 			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
-			'U_ENABLE_VISUAL_DEMO'	=> $this->helper->get_enable_visual_demo_link(),
+			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable', 'hash' => generate_link_hash('visual_demo'))),
 		));
 		$this->helper->assign_data($this->data, $this->input->get_errors());
 	}

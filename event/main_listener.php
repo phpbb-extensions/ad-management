@@ -214,7 +214,7 @@ class main_listener implements EventSubscriberInterface
 
 			$this->template->assign_vars(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> append_sid($this->root_path . 'index.' . $this->php_ext, 'disable_visual_demo=true'),
+				'U_DISABLE_VISUAL_DEMO'		=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'disable', 'hash' => generate_link_hash('visual_demo'))),
 			));
 		}
 	}

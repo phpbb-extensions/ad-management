@@ -20,22 +20,6 @@ services:
             - '%core.root_path%'
             - '%phpbb.ads.tables.ad_locations%'
 
-    phpbb.ads.admin.controller:
-        class: phpbb\ads\controller\admin_controller
-        arguments:
-            - '@template'
-            - '@language'
-            - '@request'
-            - '@phpbb.ads.ad.manager'
-            - '@config_text'
-            - '@config'
-            - '@group_helper'
-            - '@phpbb.ads.admin.input'
-            - '@phpbb.ads.helper'
-            - '@phpbb.ads.analyser.manager'
-            - '%core.root_path%'
-            - '%core.php_ext%'
-
     phpbb.ads.helper:
         class: phpbb\ads\controller\helper
         arguments:
@@ -57,22 +41,6 @@ services:
             - '@request'
             - '@phpbb.ads.banner.banner'
 
-    phpbb.ads.increment.controller:
-        class: phpbb\ads\controller\increment_controller
-        arguments:
-            - '@phpbb.ads.ad.manager'
-            - '@request'
-
-    phpbb.ads.ucp.controller:
-        class: phpbb\ads\controller\ucp_controller
-        arguments:
-            - '@phpbb.ads.ad.manager'
-            - '@phpbb.ads.helper'
-            - '@user'
-            - '@language'
-            - '@template'
-            - '@config'
-
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
         arguments:
@@ -89,3 +57,46 @@ services:
             - '%core.php_ext%'
         tags:
             - { name: event.listener }
+
+# -------- Controllers -------- #
+    phpbb.ads.admin.controller:
+        class: phpbb\ads\controller\admin_controller
+        arguments:
+            - '@template'
+            - '@language'
+            - '@request'
+            - '@phpbb.ads.ad.manager'
+            - '@config_text'
+            - '@config'
+            - '@group_helper'
+            - '@phpbb.ads.admin.input'
+            - '@phpbb.ads.helper'
+            - '@phpbb.ads.analyser.manager'
+            - '@controller.helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    phpbb.ads.increment.controller:
+        class: phpbb\ads\controller\increment_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@request'
+
+    phpbb.ads.ucp.controller:
+        class: phpbb\ads\controller\ucp_controller
+        arguments:
+            - '@phpbb.ads.ad.manager'
+            - '@phpbb.ads.helper'
+            - '@user'
+            - '@language'
+            - '@template'
+            - '@config'
+
+    phpbb.ads.visual_demo.controller:
+        class: phpbb\ads\controller\visual_demo_controller
+        arguments:
+            - '@config'
+            - '@request'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
