@@ -3,7 +3,7 @@
  *
  * Pages extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2014 phpBB Limited <https://www.phpbb.com>
+ * @copyright (c) 2018 phpBB Limited <https://www.phpbb.com>
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -38,6 +38,13 @@ class visual_demo_test extends main_listener_base
 			->with($this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE)
 			->willReturn($in_visual_demo);
 
+		$this->controller_helper
+			->expects($this->any())
+			->method('route')
+			->willReturnCallback(function ($route, array $params = array()) {
+				return $route . '#' . serialize($params);
+			});
+
 		$this->template
 			->expects($this->exactly($in_visual_demo ? 9 : 0))
 			->method('assign_vars');
@@ -47,7 +54,7 @@ class visual_demo_test extends main_listener_base
 		  	->method('assign_vars')
 			->with(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> '?disable_visual_demo=true',
+				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array('action' => 'disable', 'hash' => generate_link_hash('visual_demo'))),
 			));
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();

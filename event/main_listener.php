@@ -48,16 +48,10 @@ class main_listener implements EventSubscriberInterface
 	protected $request;
 
 	/** @var string */
-	protected $root_path;
-
-	/** @var string */
 	protected $php_ext;
 
 	/** @var bool Can the current user view ads? */
 	protected $can_view_ads;
-
-	/** @var bool Is visual demo activated? */
-	protected $in_visual_demo;
 
 	/**
 	 * {@inheritdoc}
@@ -71,8 +65,6 @@ class main_listener implements EventSubscriberInterface
 			'core.page_header_after'		=> array(array('adblocker'), array('clicks')),
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
-
-			'core.page_header'	=> 'manage_visual_demo',
 		);
 	}
 
@@ -88,10 +80,9 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\ads\location\manager			$location_manager	Template location manager object
 	 * @param \phpbb\controller\helper				$controller_helper	Controller helper object
 	 * @param \phpbb\request\request				$request			Request object
-	 * @param string								$root_path			phpBB root path
 	 * @param string								$php_ext			PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $php_ext)
 	{
 		$this->template = $template;
 		$this->template_context = $template_context;
@@ -102,10 +93,7 @@ class main_listener implements EventSubscriberInterface
 		$this->location_manager = $location_manager;
 		$this->controller_helper = $controller_helper;
 		$this->request = $request;
-		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
-
-		$this->in_visual_demo = $this->request->is_set($this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE);
 	}
 
 	/**
@@ -201,7 +189,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function visual_demo()
 	{
-		if ($this->in_visual_demo)
+		if ($this->request->is_set($this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE))
 		{
 			$all_locations = $this->location_manager->get_all_locations(false);
 			foreach ($this->location_manager->get_all_location_ids() as $location_id)
@@ -214,7 +202,7 @@ class main_listener implements EventSubscriberInterface
 
 			$this->template->assign_vars(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> append_sid($this->root_path . 'index.' . $this->php_ext, 'disable_visual_demo=true'),
+				'U_DISABLE_VISUAL_DEMO'		=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'disable', 'hash' => generate_link_hash('visual_demo'))),
 			));
 		}
 	}
@@ -263,29 +251,6 @@ class main_listener implements EventSubscriberInterface
 	public function remove_ad_owner($event)
 	{
 		$this->manager->remove_ad_owner($event['user_ids']);
-	}
-
-	/**
-	 * Enable or disable visual demo
-	 *
-	 * @return	void
-	 */
-	public function manage_visual_demo()
-	{
-		if ($this->request->is_set('enable_visual_demo'))
-		{
-			$this->user->set_cookie('phpbb_ads_visual_demo', '', 0);
-
-			// enable visual demo for this request
-			$this->in_visual_demo = true;
-		}
-		else if ($this->request->is_set('disable_visual_demo'))
-		{
-			$this->user->set_cookie('phpbb_ads_visual_demo', '', 1);
-
-			// disable visual demo for this request
-			$this->in_visual_demo = false;
-		}
 	}
 
 	/**
