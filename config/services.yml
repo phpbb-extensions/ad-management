@@ -95,6 +95,7 @@ services:
     phpbb.ads.visual_demo.controller:
         class: phpbb\ads\controller\visual_demo_controller
         arguments:
+            - '@auth'
             - '@config'
             - '@request'
             - '@user'

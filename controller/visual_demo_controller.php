@@ -15,6 +15,9 @@ namespace phpbb\ads\controller;
  */
 class visual_demo_controller
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -33,14 +36,16 @@ class visual_demo_controller
 	/**
 	 * Constructor
 	 *
+	 * @param \phpbb\auth\auth       $auth
 	 * @param \phpbb\config\config   $config
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\user            $user
 	 * @param string                 $root_path
 	 * @param string                 $php_ext
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
+		$this->auth = $auth;
 		$this->config = $config;
 		$this->request = $request;
 		$this->user = $user;
@@ -60,8 +65,8 @@ class visual_demo_controller
 	 */
 	public function handle($action)
 	{
-		// Check the link hash to protect against CSRF/XSRF attacks
-		if ($this->user->data['is_bot'] || !$this->user->data['is_registered'] || !check_link_hash($this->request->variable('hash', ''), 'visual_demo'))
+		// Protect against unauthorised access or CSRF/XSRF attacks
+		if (!$this->auth->acl_get('a_') || !check_link_hash($this->request->variable('hash', ''), 'visual_demo'))
 		{
 			throw new \phpbb\exception\http_exception(403, 'NO_AUTH_OPERATION');
 		}
