@@ -53,7 +53,6 @@ services:
             - '@phpbb.ads.location.manager'
             - '@controller.helper'
             - '@request'
-            - '%core.root_path%'
             - '%core.php_ext%'
         tags:
             - { name: event.listener }
