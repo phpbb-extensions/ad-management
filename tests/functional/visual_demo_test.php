@@ -13,23 +13,11 @@ namespace phpbb\ads\tests\functional;
 /**
  * @group functional
  */
-class ads_visual_demo_test extends functional_base
+class visual_demo_test extends functional_base
 {
-	/**
-	 * {@inheritDoc}
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-
-		$this->add_lang_ext('phpbb/ads', array(
-			'common',
-		));
-	}
-
 	public function test_visual_demo()
 	{
-		self::request('GET', "app.php/phpbbads_visual_demo/enable?sid={$this->sid}");
+		self::request('GET', "app.php/phpbbads_visual_demo/enable?sid={$this->sid}", array(), false);
 		$crawler = self::request('GET', 'index.php');
 
 		// We should be on index page now. Visual demo disable prompt should be displayed.
@@ -50,7 +38,7 @@ class ads_visual_demo_test extends functional_base
 	{
 		$this->logout();
 
-		$crawler = self::request('GET', "app.php/phpbbads_visual_demo/enable", array(), false);
+		$crawler = self::request('GET', "app.php/phpbbads_visual_demo/enable?sid={$this->sid}", array(), false);
 		self::assert_response_html(403);
 		$this->assertContains($this->lang('NO_AUTH_OPERATION'), $crawler->filter('body')->text());
 	}
