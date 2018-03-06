@@ -80,15 +80,25 @@ class visual_demo_test extends \phpbb_test_case
 		return array(
 			array(
 				'enable',
+				false,
+				200,
+				0,
+			),
+			array(
+				'enable',
 				true,
-				true, // use ajax to bypass redirects in testing
 				200,
 				0,
 			),
 			array(
 				'disable',
 				true,
-				true, // use ajax to bypass redirects in testing
+				200,
+				1,
+			),
+			array(
+				'disable',
+				false,
 				200,
 				1,
 			),
@@ -100,12 +110,13 @@ class visual_demo_test extends \phpbb_test_case
 	 *
 	 * @dataProvider controller_data
 	 */
-	public function test_controller($action, $is_admin, $is_ajax, $status_code, $cookie_time)
+	public function test_controller($action, $is_ajax, $status_code, $cookie_time)
 	{
+		// User is an admin
 		$this->auth->expects($this->any())
 			->method('acl_get')
 			->with($this->stringContains('a_'), $this->anything())
-			->will($this->returnValue($is_admin));
+			->will($this->returnValue(true));
 
 		$this->request->expects($this->any())
 			->method('is_ajax')
@@ -115,8 +126,13 @@ class visual_demo_test extends \phpbb_test_case
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
 
-		$controller = $this->get_controller();
+		// If non-ajax redirect is encountered, in testing it will trigger error
+		if (!$is_ajax)
+		{
+			$this->setExpectedTriggerError(E_USER_ERROR);
+		}
 
+		$controller = $this->get_controller();
 		$response = $controller->handle($action);
 		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
 		$this->assertEquals($status_code, $response->getStatusCode());
@@ -132,13 +148,11 @@ class visual_demo_test extends \phpbb_test_case
 		return array(
 			array(
 				'enable',
-				false, // is admin
 				403,
 				'NO_AUTH_OPERATION',
 			),
 			array(
 				'disable',
-				false, // is admin
 				403,
 				'NO_AUTH_OPERATION',
 			),
@@ -150,12 +164,13 @@ class visual_demo_test extends \phpbb_test_case
 	 *
 	 * @dataProvider controller_fails_data
 	 */
-	public function test_controller_fails($action, $is_admin, $status_code, $message)
+	public function test_controller_fails($action, $status_code, $message)
 	{
+		// User is not an admin
 		$this->auth->expects($this->any())
 			->method('acl_get')
 			->with($this->stringContains('a_'), $this->anything())
-			->will($this->returnValue($is_admin));
+			->will($this->returnValue(false));
 
 		$controller = $this->get_controller();
 
