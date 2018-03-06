@@ -71,7 +71,7 @@ class visual_demo_controller
 			throw new \phpbb\exception\http_exception(403, 'NO_AUTH_OPERATION');
 		}
 
-		if ($action === 'disable' && $this->request->is_set($this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE))
+		if ($action === 'disable')
 		{
 			// If cookie already exists, lets destroy it and redirect user to previous page viewed.
 			$this->user->set_cookie('phpbb_ads_visual_demo', '', 1);

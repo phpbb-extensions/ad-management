@@ -13,7 +13,7 @@ namespace phpbb\ads\tests\functional;
 /**
 * @group functional
 */
-class acp_settings_test extends acp_base
+class acp_settings_test extends functional_base
 {
 	/**
 	* Test Advertisement management ACP settings
