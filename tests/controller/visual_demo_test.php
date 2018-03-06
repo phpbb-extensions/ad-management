@@ -111,11 +111,6 @@ class visual_demo_test extends \phpbb_test_case
 			->method('is_ajax')
 			->will($this->returnValue($is_ajax));
 
-		$this->request->expects($this->any())
-			->method('is_set')
-			->with($this->config['cookie_name'] . '_phpbb_ads_visual_demo')
-			->will($this->returnValue(true));
-
 		$this->user->expects($this->once())
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
