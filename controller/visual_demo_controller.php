@@ -73,13 +73,13 @@ class visual_demo_controller
 
 		if ($action === 'disable')
 		{
-			// If cookie already exists, lets destroy it and redirect user to previous page viewed.
+			// Destroy our cookie and redirect user to previous page viewed.
 			$this->user->set_cookie('phpbb_ads_visual_demo', '', 1);
 			$redirect = $this->request->variable('redirect', $this->user->data['session_page']);
 		}
 		else
 		{
-			// Since cookie does not exist yet, lets create one and send user to the index page.
+			// Create our cookie and send user to the index page.
 			$this->user->set_cookie('phpbb_ads_visual_demo', time(), 0);
 			$redirect = "{$this->root_path}index.{$this->php_ext}";
 		}
