@@ -18,16 +18,8 @@ namespace phpbb\ads\tests\functional;
  *
  * @group functional
  */
-class zbase_test extends \phpbb_functional_test_case
+class zbase_test extends functional_base
 {
-	/**
-	 * {@inheritDoc}
-	 */
-	protected static function setup_extensions()
-	{
-		return array('phpbb/ads');
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -36,9 +28,6 @@ class zbase_test extends \phpbb_functional_test_case
 		parent::setUp();
 
 		$this->add_lang('acp/extensions');
-
-		$this->login();
-		$this->admin_login();
 	}
 
 	public function test_disable_delete()

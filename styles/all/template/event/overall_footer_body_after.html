@@ -9,3 +9,15 @@
 	{% set PHPBB_ADS_CODE, PHPBB_ADS_ID = AD_SLIDE_UP, AD_SLIDE_UP_ID %}
 	{% include '@phpbb_ads/includes/phpbb_ads_slide_up.html' %}
 {% endif %}
+
+{% if S_PHPBB_ADS_VISUAL_DEMO %}
+<script>
+	phpbb.addAjaxCallback('phpbb_ads_close_visual_demo_window', function(res) {
+		if (res.success) {
+			window.close();
+		} else {
+			phpbb.alert('{{ lang('GENERAL_ERROR')|escape("js") }}', '{{ lang('DISABLE_VISUAL_DEMO_ERROR')|escape("js") }}')
+		}
+	});
+</script>
+{% endif %}

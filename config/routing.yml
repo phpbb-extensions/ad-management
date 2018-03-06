@@ -9,3 +9,9 @@ phpbb_ads_view:
     defaults: { _controller: phpbb.ads.increment.controller:handle, mode: views }
     requirements:
         data: (\d+-)*\d+
+
+phpbb_ads_visual_demo:
+    path: /phpbbads_visual_demo/{action}
+    defaults: { _controller: phpbb.ads.visual_demo.controller:handle }
+    requirements:
+        action: enable|disable
