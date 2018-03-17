@@ -38,6 +38,9 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 		);
 	}
 
+	/**
+	 * Find existing ad owners and assign them the new u_phpbb_ads permission
+	 */
 	public function set_u_phpbb_ads_permission()
 	{
 		if (!class_exists('auth_admin'))
@@ -48,7 +51,7 @@ class m12_u_phpbb_ads_permission extends \phpbb\db\migration\container_aware_mig
 
 		$sql = 'SELECT ad_owner
 			FROM ' . $this->table_prefix . 'ads
-			WHERE ad_owner != 0
+			WHERE ad_owner <> 0
 			GROUP BY ad_owner';
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
