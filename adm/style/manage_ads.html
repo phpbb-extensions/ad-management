@@ -80,7 +80,7 @@
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br />
 					<span>{{ lang('AD_LOCATIONS_EXPLAIN') }}<br><br>
-						<a class="phpbb-ads-button" href="{U_ENABLE_VISUAL_DEMO}" target="_blank">
+						<a class="phpbb-ads-button" href="{{ U_ENABLE_VISUAL_DEMO }}" target="_blank">
 							<i class="fa fa-fw fa-eye"></i> <span>{{ lang('AD_LOCATIONS_VISUAL_DEMO') }}</span>
 						</a>
 					</span>
@@ -113,7 +113,7 @@
 			<dl>
 				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
-				<dd>[ <a href="{U_FIND_USERNAME}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd>
+				<dd>[ <a href="{{ U_FIND_USERNAME }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a> ]</dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
