@@ -27,8 +27,14 @@ class helper_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\log\log */
 	protected $log;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
+	protected $manager;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\location\manager */
 	protected $location_manager;
+
+	/** @var \phpbb\group\helper */
+	protected $group_helper;
 
 	/** @var string */
 	protected $root_path;
@@ -74,9 +80,13 @@ class helper_test extends \phpbb_database_test_case
 		$this->log = $this->getMockBuilder('\phpbb\log\log')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->group_helper = new \phpbb\group\helper($this->language);
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 	}
@@ -94,7 +104,9 @@ class helper_test extends \phpbb_database_test_case
 			$this->language,
 			$this->template,
 			$this->log,
+			$this->manager,
 			$this->location_manager,
+			$this->group_helper,
 			$this->root_path,
 			$this->php_ext
 		);
@@ -184,6 +196,10 @@ class helper_test extends \phpbb_database_test_case
 
 		$this->location_manager->expects($this->once())
 			->method('get_all_locations')
+			->willReturn(array());
+
+		$this->manager->expects($this->once())
+			->method('load_groups')
 			->willReturn(array());
 
 		$this->template->expects($this->once())
@@ -277,6 +293,52 @@ class helper_test extends \phpbb_database_test_case
 			));
 
 		$helper->assign_locations($ad_locations);
+	}
+
+	/**
+	 * Test assign_groups()
+	 */
+	public function test_assign_groups()
+	{
+		$helper = $this->get_helper();
+
+		$this->manager->expects($this->once())
+			->method('load_groups')
+			->willReturn(array(
+				array(
+					'group_id'			=> 1,
+					'group_name'		=> 'ADMINISTRATORS',
+					'group_selected'	=> true,
+				),
+				array(
+					'group_id'			=> 2,
+					'group_name'		=> 'Custom group name',
+					'group_selected'	=> false,
+				),
+			));
+
+		$this->template->expects($this->exactly(2))
+			->method('assign_block_vars')
+			->withConsecutive(
+				array(
+					'groups',
+					array(
+						'ID'			=> '1',
+						'NAME'			=> 'Administrators',
+						'S_SELECTED'	=> true,
+					),
+				),
+				array(
+					'groups',
+					array(
+						'ID'			=> 2,
+						'NAME'			=> 'Custom group name',
+						'S_SELECTED'	=> false,
+					),
+				)
+			);
+
+		$helper->assign_groups(0);
 	}
 
 	/**

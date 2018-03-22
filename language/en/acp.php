@@ -111,8 +111,8 @@ $lang = array_merge($lang, array(
 	'ENABLE_VIEWS_EXPLAIN'			=> 'This will enable counting how many times every ad has been displayed. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
 	'ENABLE_CLICKS'					=> 'Count clicks',
 	'ENABLE_CLICKS_EXPLAIN'			=> 'This will enable counting how many times every ad has been clicked. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
-	'HIDE_GROUPS'					=> 'Hide advertisements for groups',
-	'HIDE_GROUPS_EXPLAIN'			=> 'Members of selected groups will not see any advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
+	'HIDE_GROUPS'					=> 'Hide advertisement for groups',
+	'HIDE_GROUPS_EXPLAIN'			=> 'Members of selected groups will not see this advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
 
 	'ACP_AD_SETTINGS_SAVED'	=> 'Advertisement management settings saved.',
 ));

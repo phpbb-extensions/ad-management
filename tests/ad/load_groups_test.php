@@ -19,18 +19,18 @@ class load_groups_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
-		$groups = $manager->load_groups();
+		$groups = $manager->load_groups(0);
 
 		$this->assertEquals(array(
 			array(
-				'group_id'		=> 1,
-				'group_name'	=> 'ADMINISTRATORS',
-				'group_type'	=> 3,
+				'group_id'			=> '1',
+				'group_name'		=> 'ADMINISTRATORS',
+				'group_selected'	=> '0',
 			),
 			array(
-				'group_id'		=> 2,
-				'group_name'	=> 'Custom group name',
-				'group_type'	=> 0,
+				'group_id'			=> '2',
+				'group_name'		=> 'Custom group name',
+				'group_selected'	=> '0',
 			),
 		), $groups);
 	}

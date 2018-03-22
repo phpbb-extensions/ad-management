@@ -1,3 +1,4 @@
 parameters:
     phpbb.ads.tables.ads: '%core.table_prefix%ads'
+    phpbb.ads.tables.ad_group: '%core.table_prefix%ad_group'
     phpbb.ads.tables.ad_locations: '%core.table_prefix%ad_locations'

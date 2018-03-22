@@ -24,6 +24,9 @@ class ad_base extends \phpbb_database_test_case
 	/** @var string */
 	protected $ad_locations_table;
 
+	/** @var string */
+	protected $ad_group_table;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -51,6 +54,7 @@ class ad_base extends \phpbb_database_test_case
 		$this->config = new \phpbb\config\config(array());
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
+		$this->ad_group_table = 'phpbb_ad_group';
 	}
 
 	/**
@@ -60,6 +64,6 @@ class ad_base extends \phpbb_database_test_case
 	 */
 	public function get_manager()
 	{
-		return new \phpbb\ads\ad\manager($this->db, $this->config, $this->ads_table, $this->ad_locations_table);
+		return new \phpbb\ads\ad\manager($this->db, $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 	}
 }

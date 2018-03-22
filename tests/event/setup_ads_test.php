@@ -36,18 +36,8 @@ class setup_ads_test extends main_listener_base
 	{
 		$this->user->data['user_id'] = 1;
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-
-		$this->config_text->expects($this->once())
-			->method('get')
-			->with('phpbb_ads_hide_groups')
-			->willReturn(json_encode($hide_groups));
-
-		$ads = array();
-		if (count(array_intersect($hide_groups, $user_groups)) === 0)
-		{
-			$location_ids = $this->location_manager->get_all_location_ids();
-			$ads = $this->manager->get_ads($location_ids, false);
-		}
+		$location_ids = $this->location_manager->get_all_location_ids();
+		$ads = $this->manager->get_ads($location_ids, $user_groups, false);
 
 		$this->template
 			->expects($this->exactly(count($ads)))

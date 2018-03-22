@@ -11,6 +11,7 @@ services:
             - '@config'
             - '%phpbb.ads.tables.ads%'
             - '%phpbb.ads.tables.ad_locations%'
+            - '%phpbb.ads.tables.ad_group%'
 
     phpbb.ads.banner.banner:
         class: phpbb\ads\banner\banner
@@ -28,7 +29,9 @@ services:
             - '@language'
             - '@template'
             - '@log'
+            - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'
+            - '@group_helper'
             - '%core.root_path%'
             - '%core.php_ext%'
 
@@ -67,7 +70,6 @@ services:
             - '@phpbb.ads.ad.manager'
             - '@config_text'
             - '@config'
-            - '@group_helper'
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.helper'
             - '@phpbb.ads.analyser.manager'

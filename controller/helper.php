@@ -30,8 +30,14 @@ class helper
 	/** @var \phpbb\log\log */
 	protected $log;
 
+	/** @var \phpbb\ads\ad\manager */
+	protected $manager;
+
 	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
+
+	/** @var \phpbb\group\helper */
+	protected $group_helper;
 
 	/** @var string root_path */
 	protected $root_path;
@@ -47,11 +53,13 @@ class helper
 	 * @param \phpbb\language\language    $language         Language object
 	 * @param \phpbb\template\template    $template         Template object
 	 * @param \phpbb\log\log              $log              The phpBB log system
+	 * @param \phpbb\ads\ad\manager 	  $manager 			Ad manager object
 	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
+	 * @param \phpbb\group\helper         $group_helper     Group helper object
 	 * @param string                      $root_path        phpBB root path
 	 * @param string                      $php_ext          PHP extension
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\location\manager $location_manager, $root_path, $php_ext)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\log\log $log, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\group\helper $group_helper, $root_path, $php_ext)
 	{
 		$this->user = $user;
 		$this->user_loader = $user_loader;
@@ -59,6 +67,8 @@ class helper
 		$this->template = $template;
 		$this->log = $log;
 		$this->location_manager = $location_manager;
+		$this->manager = $manager;
+		$this->group_helper = $group_helper;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -72,6 +82,7 @@ class helper
 	public function assign_data($data, $errors)
 	{
 		$this->assign_locations($data['ad_locations']);
+		$this->assign_groups(isset($data['ad_id']) ? $data['ad_id'] : 0);
 
 		$errors = array_map(array($this->language, 'lang'), $errors);
 		$this->template->assign_vars(array(
@@ -114,6 +125,19 @@ class helper
 					'S_SELECTED'    => $ad_locations ? in_array($location_id, $ad_locations) : false,
 				));
 			}
+		}
+	}
+
+	public function assign_groups($ad_id = 0)
+	{
+		$groups = $this->manager->load_groups($ad_id);
+		foreach ($groups as $group)
+		{
+			$this->template->assign_block_vars('groups', array(
+				'ID'         => $group['group_id'],
+				'NAME'       => $this->group_helper->get_name($group['group_name']),
+				'S_SELECTED' => (bool) $group['group_selected'],
+			));
 		}
 	}
 

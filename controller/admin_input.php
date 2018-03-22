@@ -94,6 +94,7 @@ class admin_input
 			'ad_views_limit'  	=> $this->request->variable('ad_views_limit', 0),
 			'ad_clicks_limit' 	=> $this->request->variable('ad_clicks_limit', 0),
 			'ad_owner'        	=> $this->request->variable('ad_owner', '', true),
+			'ad_groups'			=> $this->request->variable('hide_groups', array(0)),
 		);
 
 		// Validate form key

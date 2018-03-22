@@ -61,6 +61,7 @@ class functional_base extends \phpbb_functional_test_case
 			'ad_end_date'	=> $end_date,
 			'ad_priority'	=> 5,
 			'ad_content_only'	=> $content_only,
+			'hide_groups'		=> [],
 		);
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
