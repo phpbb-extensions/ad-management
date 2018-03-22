@@ -189,16 +189,7 @@ class manager
 		$this->db->sql_query($sql);
 		$ad_id = $this->db->sql_nextid();
 
-		// add rows to ad_group table
-		$sql_ary = array();
-		foreach ($ad_groups as $group)
-		{
-			$sql_ary[] = array(
-				'ad_id'		=> $ad_id,
-				'group_id'	=> $group,
-			);
-		}
-		$this->db->sql_multi_insert($this->ad_group_table, $sql_ary);
+		$this->insert_ad_group_data($ad_id, $ad_groups);
 
 		return $ad_id;
 	}
@@ -226,16 +217,7 @@ class manager
 			WHERE ad_id = ' . (int) $ad_id;
 		$this->db->sql_query($sql);
 
-		// add rows to ad_group table
-		$sql_ary = array();
-		foreach ($ad_groups as $group)
-		{
-			$sql_ary[] = array(
-				'ad_id'		=> $ad_id,
-				'group_id'	=> $group,
-			);
-		}
-		$this->db->sql_multi_insert($this->ad_group_table, $sql_ary);
+		$this->insert_ad_group_data($ad_id, $ad_groups);
 
 		return $result;
 	}
@@ -421,5 +403,25 @@ class manager
 			default:
 				return 'RAND()';
 		}
+	}
+
+	/**
+	 * Add rows to ad_group table.
+	 *
+	 * @param int   $ad_id     Advertisement ID
+	 * @param array $ad_groups List of groups that should not see this ad
+	 * @return void
+	 */
+	protected function insert_ad_group_data($ad_id, $ad_groups)
+	{
+		$sql_ary = array();
+		foreach ($ad_groups as $group)
+		{
+			$sql_ary[] = array(
+				'ad_id'		=> $ad_id,
+				'group_id'	=> $group,
+			);
+		}
+		$this->db->sql_multi_insert($this->ad_group_table, $sql_ary);
 	}
 }

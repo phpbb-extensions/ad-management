@@ -40,7 +40,7 @@ class insert_ad_test extends ad_base
 					'ad_end_date'	=> 0,
 					'ad_priority'	=> 5,
 					'random_column'	=> 'Random Value',
-					'ad_groups'		=> [],
+					'ad_groups'		=> ['2', '3'],
 				),
 			),
 		);

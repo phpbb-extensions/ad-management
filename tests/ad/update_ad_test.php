@@ -32,7 +32,7 @@ class update_ad_test extends ad_base
 				array(
 					'ad_name'	=> 'Primary ad Updated #2',
 					'ad_note'	=> 'Note Updated',
-					'ad_groups'	=> [],
+					'ad_groups'	=> ['2', '3'],
 				),
 			),
 			array(
