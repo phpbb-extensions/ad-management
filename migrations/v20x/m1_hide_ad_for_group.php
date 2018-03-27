@@ -94,11 +94,11 @@ class m1_hide_ad_for_group extends \phpbb\db\migration\container_aware_migration
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			foreach ($hide_groups as $group)
+			foreach ($hide_groups as $group_id)
 			{
 				$sql_ary[] = array(
 					'ad_id'		=> $row['ad_id'],
-					'group_id'	=> $group,
+					'group_id'	=> $group_id,
 				);
 			}
 		}
