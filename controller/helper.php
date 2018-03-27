@@ -129,6 +129,8 @@ class helper
 	}
 
 	/**
+	 * Assign groups data to the template.
+	 *
 	 * @param int $ad_id Advertisement ID
 	 * @return void
 	 */

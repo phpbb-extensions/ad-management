@@ -181,6 +181,7 @@ class manager
 	 */
 	public function insert_ad($data)
 	{
+		// extract ad groups here because it gets filtered in intersect_ad_data()
 		$ad_groups = $data['ad_groups'];
 		$data = $this->intersect_ad_data($data);
 
@@ -203,6 +204,7 @@ class manager
 	 */
 	public function update_ad($ad_id, $data)
 	{
+		// extract ad groups here because it gets filtered in intersect_ad_data()
 		$ad_groups = isset($data['ad_groups']) ? $data['ad_groups'] : array();
 		$data = $this->intersect_ad_data($data);
 
@@ -423,6 +425,8 @@ class manager
 	}
 
 	/**
+	 * Remove all rows of specified ad in ad_group table
+	 *
 	 * @param int	$ad_id	Advertisement ID
 	 * @return void
 	 */
