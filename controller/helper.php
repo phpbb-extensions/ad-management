@@ -128,6 +128,10 @@ class helper
 		}
 	}
 
+	/**
+	 * @param int $ad_id Advertisement ID
+	 * @return void
+	 */
 	public function assign_groups($ad_id = 0)
 	{
 		$groups = $this->manager->load_groups($ad_id);

@@ -212,11 +212,7 @@ class manager
 		$this->db->sql_query($sql);
 		$result = $this->db->sql_affectedrows();
 
-		// remove old ad_group table data
-		$sql = 'DELETE FROM ' . $this->ad_group_table . '
-			WHERE ad_id = ' . (int) $ad_id;
-		$this->db->sql_query($sql);
-
+		$this->remove_ad_group_data($ad_id);
 		$this->insert_ad_group_data($ad_id, $ad_groups);
 
 		return $result;
@@ -337,6 +333,7 @@ class manager
 	/**
 	 * Load all board groups
 	 *
+	 * @param	int		$ad_id	Advertisement ID
 	 * @return	array	List of groups
 	 */
 	public function load_groups($ad_id)
@@ -423,5 +420,16 @@ class manager
 			);
 		}
 		$this->db->sql_multi_insert($this->ad_group_table, $sql_ary);
+	}
+
+	/**
+	 * @param int	$ad_id	Advertisement ID
+	 * @return void
+	 */
+	protected function remove_ad_group_data($ad_id)
+	{
+		$sql = 'DELETE FROM ' . $this->ad_group_table . '
+			WHERE ad_id = ' . (int) $ad_id;
+		$this->db->sql_query($sql);
 	}
 }

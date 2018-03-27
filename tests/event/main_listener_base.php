@@ -126,9 +126,6 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
-			->disableOriginalConstructor()
-			->getMock();
 		$this->config = new \phpbb\config\config(array('phpbb_ads_adblocker_message' => '0'));
 		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 		$this->location_manager = new \phpbb\ads\location\manager($location_types);
@@ -150,7 +147,6 @@ class main_listener_base extends \phpbb_database_test_case
 			$this->template,
 			$this->template_context,
 			$this->user,
-			$this->config_text,
 			$this->config,
 			$this->manager,
 			$this->location_manager,

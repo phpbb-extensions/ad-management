@@ -111,7 +111,7 @@ class acp_manage_test extends functional_base
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
 			'ad_owner'	=> 'admin',
-			'hide_groups'	=> [],
+			'ad_groups'	=> [],
 		);
 
 		// Confirm preview
@@ -213,7 +213,7 @@ class acp_manage_test extends functional_base
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
 			'ad_owner'	=> 'admin',
-			'hide_groups'	=> [],
+			'ad_groups'	=> [],
 		);
 
 		// Confirm preview

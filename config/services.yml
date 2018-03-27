@@ -50,7 +50,6 @@ services:
             - '@template'
             - '@template_context'
             - '@user'
-            - '@config_text'
             - '@config'
             - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'

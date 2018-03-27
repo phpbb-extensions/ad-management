@@ -10,7 +10,7 @@
 
 namespace phpbb\ads\migrations\v20x;
 
-class m1_hide_ad_for_group extends \phpbb\db\migration\migration
+class m1_hide_ad_for_group extends \phpbb\db\migration\container_aware_migration
 {
 	/**
 	 * {@inheritDoc}
@@ -76,7 +76,33 @@ class m1_hide_ad_for_group extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
+			array('custom', array(array($this, 'convert_hide_groups'))),
 			array('config_text.remove', array('phpbb_ads_hide_groups')),
 		);
+	}
+
+	/**
+	 * Convert hide_groups config value into rows in ad_group table
+	 */
+	public function convert_hide_groups()
+	{
+		$sql_ary = array();
+
+		$hide_groups = json_decode($this->container->get('config_text')->get('phpbb_ads_hide_groups'), true);
+		$sql = 'SELECT ad_id
+			FROM ' . $this->table_prefix . 'ads';
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			foreach ($hide_groups as $group)
+			{
+				$sql_ary[] = array(
+					'ad_id'		=> $row['ad_id'],
+					'group_id'	=> $group,
+				);
+			}
+		}
+
+		$this->db->sql_multi_insert($this->table_prefix . 'ad_group', $sql_ary);
 	}
 }

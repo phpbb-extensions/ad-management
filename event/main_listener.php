@@ -29,9 +29,6 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\user */
 	protected $user;
 
-	/** @var \phpbb\config\db_text */
-	protected $config_text;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -71,7 +68,6 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\template\template				$template			Template object
 	 * @param \phpbb\template\context				$template_context	Template context object
 	 * @param \phpbb\user							$user				User object
-	 * @param \phpbb\config\db_text					$config_text		Config text object
 	 * @param \phpbb\config\config					$config				Config object
 	 * @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
 	 * @param \phpbb\ads\location\manager			$location_manager	Template location manager object
@@ -79,12 +75,11 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\request\request				$request			Request object
 	 * @param string								$php_ext			PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $php_ext)
 	{
 		$this->template = $template;
 		$this->template_context = $template_context;
 		$this->user = $user;
-		$this->config_text = $config_text;
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
