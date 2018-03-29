@@ -29,9 +29,6 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\user */
 	protected $user;
 
-	/** @var \phpbb\config\db_text */
-	protected $config_text;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -49,9 +46,6 @@ class main_listener implements EventSubscriberInterface
 
 	/** @var string */
 	protected $php_ext;
-
-	/** @var bool Can the current user view ads? */
-	protected $can_view_ads;
 
 	/**
 	 * {@inheritdoc}
@@ -74,7 +68,6 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\template\template				$template			Template object
 	 * @param \phpbb\template\context				$template_context	Template context object
 	 * @param \phpbb\user							$user				User object
-	 * @param \phpbb\config\db_text					$config_text		Config text object
 	 * @param \phpbb\config\config					$config				Config object
 	 * @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
 	 * @param \phpbb\ads\location\manager			$location_manager	Template location manager object
@@ -82,12 +75,11 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\request\request				$request			Request object
 	 * @param string								$php_ext			PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $php_ext)
 	{
 		$this->template = $template;
 		$this->template_context = $template_context;
 		$this->user = $user;
-		$this->config_text = $config_text;
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
@@ -130,27 +122,25 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function setup_ads()
 	{
-		if ($this->can_view_ads())
+		// Reason we access template's root ref is to check for existence
+		// of 'MESSAGE_TEXT', which signals error page.
+		$rootref = $this->template_context->get_root_ref();
+		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || in_array($this->user->page['page_name'], array('ucp.' . $this->php_ext, 'mcp.' . $this->php_ext));
+		$location_ids = $this->location_manager->get_all_location_ids();
+		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
+		$ad_ids = array();
+
+		foreach ($this->manager->get_ads($location_ids, $user_groups, $non_content_page) as $row)
 		{
-			// Reason we access template's root ref is to check for existence
-			// of 'MESSAGE_TEXT', which signals error page.
-			$rootref = $this->template_context->get_root_ref();
-			$non_content_page = !empty($rootref['MESSAGE_TEXT']) || in_array($this->user->page['page_name'], array('ucp.' . $this->php_ext, 'mcp.' . $this->php_ext));
-			$location_ids = $this->location_manager->get_all_location_ids();
-			$ad_ids = array();
+			$ad_ids[] = $row['ad_id'];
 
-			foreach ($this->manager->get_ads($location_ids, $non_content_page) as $row)
-			{
-				$ad_ids[] = $row['ad_id'];
-
-				$this->template->assign_vars(array(
-					'AD_' . strtoupper($row['location_id']) . '_ID'	=> $row['ad_id'],
-					'AD_' . strtoupper($row['location_id'])			=> htmlspecialchars_decode($row['ad_code']),
-				));
-			}
-
-			$this->views($ad_ids);
+			$this->template->assign_vars(array(
+				'AD_' . strtoupper($row['location_id']) . '_ID'	=> $row['ad_id'],
+				'AD_' . strtoupper($row['location_id'])			=> htmlspecialchars_decode($row['ad_code']),
+			));
 		}
+
+		$this->views($ad_ids);
 	}
 
 	/**
@@ -160,10 +150,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function adblocker()
 	{
-		$this->template->assign_var(
-			'S_DISPLAY_ADBLOCKER',
-			($this->config['phpbb_ads_adblocker_message'] && $this->can_view_ads())
-		);
+		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
 	}
 
 	/**
@@ -251,23 +238,5 @@ class main_listener implements EventSubscriberInterface
 	public function remove_ad_owner($event)
 	{
 		$this->manager->remove_ad_owner($event['user_ids']);
-	}
-
-	/**
-	 * User can view ads only if they are not in a group that has ads hidden
-	 *
-	 * @return	bool	true if the user is not in a group with ads hidden, false if they are
-	 */
-	protected function can_view_ads()
-	{
-		if ($this->can_view_ads === null)
-		{
-			$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-			$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
-
-			$this->can_view_ads = !array_intersect($user_groups, $hide_groups);
-		}
-
-		return $this->can_view_ads;
 	}
 }

@@ -38,9 +38,6 @@ class admin_controller
 	/** @var \phpbb\config\config */
 	protected $config;
 
-	/** @var \phpbb\group\helper */
-	protected $group_helper;
-
 	/** @var \phpbb\ads\controller\admin_input */
 	protected $input;
 
@@ -68,7 +65,6 @@ class admin_controller
 	 * @param \phpbb\ads\ad\manager             $manager           Advertisement manager object
 	 * @param \phpbb\config\db_text             $config_text       Config text object
 	 * @param \phpbb\config\config              $config            Config object
-	 * @param \phpbb\group\helper               $group_helper      Group helper object
 	 * @param \phpbb\ads\controller\admin_input $input             Admin input object
 	 * @param \phpbb\ads\controller\helper      $helper            Helper object
 	 * @param \phpbb\ads\analyser\manager       $analyser          Ad code analyser object
@@ -76,7 +72,7 @@ class admin_controller
 	 * @param string                            $root_path         phpBB root path
 	 * @param string                            $php_ext           PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\group\helper $group_helper, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -84,7 +80,6 @@ class admin_controller
 		$this->manager = $manager;
 		$this->config_text = $config_text;
 		$this->config = $config;
-		$this->group_helper = $group_helper;
 		$this->input = $input;
 		$this->helper = $helper;
 		$this->analyser = $analyser;
@@ -138,23 +133,11 @@ class admin_controller
 				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
 				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
 				$this->config->set('phpbb_ads_enable_clicks', $this->request->variable('enable_clicks', 0));
-				$this->config_text->set('phpbb_ads_hide_groups', json_encode($this->request->variable('hide_groups', array(0))));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
 			}
 
 			$this->error('FORM_INVALID');
-		}
-
-		$hide_groups = json_decode($this->config_text->get('phpbb_ads_hide_groups'), true);
-		$groups = $this->manager->load_groups();
-		foreach ($groups as $group)
-		{
-			$this->template->assign_block_vars('groups', array(
-				'ID'         => $group['group_id'],
-				'NAME'       => $this->group_helper->get_name($group['group_name']),
-				'S_SELECTED' => in_array($group['group_id'], $hide_groups),
-			));
 		}
 
 		$this->template->assign_vars(array(
@@ -202,6 +185,7 @@ class admin_controller
 		else
 		{
 			$this->helper->assign_locations();
+			$this->helper->assign_groups();
 		}
 
 		// Set output vars for display in the template

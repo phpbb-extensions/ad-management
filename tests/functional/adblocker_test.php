@@ -21,7 +21,6 @@ class adblocker_test extends functional_base
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
 		$form_data = array(
 			'adblocker_message'	=> 1,
-			'hide_groups'		=> array(),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);

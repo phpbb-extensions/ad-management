@@ -34,7 +34,6 @@ class acp_settings_test extends functional_base
 			'adblocker_message'	=> 1,
 			'enable_views'		=> 1,
 			'enable_clicks'		=> 1,
-			'hide_groups'		=> array(5),
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
@@ -47,15 +46,6 @@ class acp_settings_test extends functional_base
 		$this->assertEquals('1', $crawler->filter('input[name="adblocker_message"][checked]')->attr('value'));
 		$this->assertEquals('1', $crawler->filter('input[name="enable_views"][checked]')->attr('value'));
 		$this->assertEquals('1', $crawler->filter('input[name="enable_clicks"][checked]')->attr('value'));
-		$this->assertContainsLang('ADMINISTRATORS', $crawler->filter('option[selected]')->text());
-
-		// Reset hide groups
-		$crawler = $this->get_settings_page();
-		$form_data = array(
-			'hide_groups'	=> array(),
-		);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		self::submit($form, $form_data);
 	}
 
 	protected function get_settings_page()

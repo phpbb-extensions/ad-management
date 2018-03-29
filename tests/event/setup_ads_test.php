@@ -13,41 +13,14 @@ namespace phpbb\ads\tests\event;
 class setup_ads_test extends main_listener_base
 {
 	/**
-	* Data for test_setup_ads
-	*
-	* @return array Array of test data
-	*/
-	public function data_setup_ads()
-	{
-		return array(
-			array(array(1)),
-			array(array(2)),
-			array(array(1, 2)),
-			array(array(2, 3)),
-		);
-	}
-
-	/**
 	* Test the setup_ads event
-	*
-	* @dataProvider data_setup_ads
 	*/
-	public function test_setup_ads($hide_groups)
+	public function test_setup_ads()
 	{
 		$this->user->data['user_id'] = 1;
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-
-		$this->config_text->expects($this->once())
-			->method('get')
-			->with('phpbb_ads_hide_groups')
-			->willReturn(json_encode($hide_groups));
-
-		$ads = array();
-		if (count(array_intersect($hide_groups, $user_groups)) === 0)
-		{
-			$location_ids = $this->location_manager->get_all_location_ids();
-			$ads = $this->manager->get_ads($location_ids, false);
-		}
+		$location_ids = $this->location_manager->get_all_location_ids();
+		$ads = $this->manager->get_ads($location_ids, $user_groups, false);
 
 		$this->template
 			->expects($this->exactly(count($ads)))

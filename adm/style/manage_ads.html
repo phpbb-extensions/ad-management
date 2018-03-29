@@ -127,6 +127,15 @@
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
 				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br /><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>
+				<dd><select id="ad_groups" name="ad_groups[]" multiple size="8">
+						{% for group in loops.groups %}
+							<option value="{{ group.ID }}"{% if group.S_SELECTED %} selected{% endif %}>{{ group.NAME }}</option>
+						{% endfor %}
+					</select>
+				</dd>
+			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
 			<input class="button1" type="submit" id="preview" name="preview" value="{{ lang('PREVIEW') }}" />&nbsp;

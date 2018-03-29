@@ -43,13 +43,13 @@ class main_listener_base extends \phpbb_database_test_case
 	protected $request;
 
 	/** @var string */
-	protected $root_path;
-
-	/** @var string */
 	protected $php_ext;
 
 	/** @var string */
 	protected $ad_locations_table;
+
+	/** @var string */
+	protected $ad_group_table;
 
 	/**
 	* {@inheritDoc}
@@ -88,6 +88,7 @@ class main_listener_base extends \phpbb_database_test_case
 		$template = $this->getMock('\phpbb\template\template');
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
+		$this->ad_group_table = 'phpbb_ad_group';
 		// Location types
 		$locations = array(
 			'above_footer',
@@ -125,11 +126,8 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
-			->disableOriginalConstructor()
-			->getMock();
 		$this->config = new \phpbb\config\config(array('phpbb_ads_adblocker_message' => '0'));
-		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->config, $this->ads_table, $this->ad_locations_table);
+		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 		$this->location_manager = new \phpbb\ads\location\manager($location_types);
 		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()
@@ -149,13 +147,11 @@ class main_listener_base extends \phpbb_database_test_case
 			$this->template,
 			$this->template_context,
 			$this->user,
-			$this->config_text,
 			$this->config,
 			$this->manager,
 			$this->location_manager,
 			$this->controller_helper,
 			$this->request,
-			$this->root_path,
 			$this->php_ext
 		);
 	}

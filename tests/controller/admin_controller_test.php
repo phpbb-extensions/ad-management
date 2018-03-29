@@ -38,9 +38,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
 	protected $config;
 
-	/** @var \phpbb\group\helper */
-	protected $group_helper;
-
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_input */
 	protected $input;
 
@@ -103,7 +100,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->group_helper = new \phpbb\group\helper($this->language);
 		$this->input = $this->getMockBuilder('\phpbb\ads\controller\admin_input')
 			->disableOriginalConstructor()
 			->getMock();
@@ -141,7 +137,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->manager,
 			$this->config_text,
 			$this->config,
-			$this->group_helper,
 			$this->input,
 			$this->helper,
 			$this->analyser,
@@ -170,46 +165,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->config_text->expects($this->once())
-			->method('get')
-			->with('phpbb_ads_hide_groups')
-			->willReturn('[1,3]');
-
 		$this->config['phpbb_ads_adblocker_message'] = '1';
-
-		$this->manager->expects($this->once())
-			->method('load_groups')
-			->willReturn(array(
-				array(
-					'group_id'		=> 1,
-					'group_name'	=> 'ADMINISTRATORS',
-				),
-				array(
-					'group_id'		=> 2,
-					'group_name'	=> 'Custom group name',
-				),
-			));
-
-		$this->template->expects($this->exactly(2))
-			->method('assign_block_vars')
-			->withConsecutive(
-				array(
-					'groups',
-					array(
-						'ID'			=> '1',
-						'NAME'			=> 'Administrators',
-						'S_SELECTED'	=> true,
-					),
-				),
-				array(
-					'groups',
-					array(
-						'ID'			=> 2,
-						'NAME'			=> 'Custom group name',
-						'S_SELECTED'	=> false,
-					),
-				)
-			);
 
 		$this->template->expects($this->once())
 			->method('assign_vars')
@@ -269,11 +225,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				->with('enable_clicks', 0)
 				->willReturn(1);
 
-			$this->request->expects($this->at(4))
-				->method('variable')
-				->with('hide_groups', array(0))
-				->willReturn($hide_group_data);
-
 			$this->config->expects($this->at(0))
 				->method('set')
 				->with('phpbb_ads_adblocker_message', $adblocker_data);
@@ -285,10 +236,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->config->expects($this->at(2))
 				->method('set')
 				->with('phpbb_ads_enable_clicks', 1);
-
-			$this->config_text->expects($this->once())
-				->method('set')
-				->with('phpbb_ads_hide_groups', json_encode($hide_group_data));
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
 		}
@@ -334,7 +281,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->manager,
 				$this->config_text,
 				$this->config,
-				$this->group_helper,
 				$this->input,
 				$this->helper,
 				$this->analyser,

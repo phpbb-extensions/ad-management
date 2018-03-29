@@ -24,6 +24,7 @@ class update_ad_test extends ad_base
 				1,
 				array(
 					'ad_name'	=> 'Primary ad Updated',
+					'ad_groups'	=> [],
 				),
 			),
 			array(
@@ -31,18 +32,21 @@ class update_ad_test extends ad_base
 				array(
 					'ad_name'	=> 'Primary ad Updated #2',
 					'ad_note'	=> 'Note Updated',
+					'ad_groups'	=> ['2', '3'],
 				),
 			),
 			array(
 				0,
 				array(
 					'ad_name'	=> '',
+					'ad_groups'	=> [],
 				),
 			),
 			array(
 				9999,
 				array(
 					'ad_name'	=> '',
+					'ad_groups'	=> [],
 				),
 			),
 		);
@@ -60,6 +64,7 @@ class update_ad_test extends ad_base
 		$manager->update_ad($ad_id, $data);
 
 		$ad = $manager->get_ad($ad_id);
+		unset($data['ad_groups']);
 		foreach ($data as $key => $value)
 		{
 			$this->assertEquals($value, $ad[$key]);

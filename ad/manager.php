@@ -24,6 +24,9 @@ class manager
 	/** @var string */
 	protected $ad_locations_table;
 
+	/** @var string */
+	protected $ad_group_table;
+
 	/**
 	 * Constructor
 	 *
@@ -31,13 +34,15 @@ class manager
 	 * @param    \phpbb\config\config              $config             Config object
 	 * @param    string                            $ads_table          Ads table
 	 * @param    string                            $ad_locations_table Ad locations table
+	 * @param    string                            $ad_group_table 	   Ad group table
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, $ads_table, $ad_locations_table)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, $ads_table, $ad_locations_table, $ad_group_table)
 	{
 		$this->db = $db;
 		$this->config = $config;
 		$this->ads_table = $ads_table;
 		$this->ad_locations_table = $ad_locations_table;
+		$this->ad_group_table = $ad_group_table;
 	}
 
 	/**
@@ -62,14 +67,16 @@ class manager
 	 * Get one ad per every location
 	 *
 	 * @param    array $ad_locations List of ad locations to fetch ads for
+	 * @param    array $user_groups List of user groups
 	 * @param    bool  $non_content_page Is current page non-content oriented (e.g.: login, UCP, MCP)? Default is false.
 	 * @return    array    List of ad codes for each location
 	 */
-	public function get_ads($ad_locations, $non_content_page = false)
+	public function get_ads($ad_locations, $user_groups, $non_content_page = false)
 	{
 		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
 		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
 		$sql_where_non_content = $non_content_page ? 'AND a.ad_content_only = 0' : '';
+		$sql_where_user_groups = !empty($user_groups) ? 'AND NOT EXISTS (SELECT ag.group_id FROM ' . $this->ad_group_table . ' ag WHERE ag.ad_id = a.ad_id AND ' . $this->db->sql_in_set('ag.group_id', $user_groups) . ')' : '';
 
 		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code
 				FROM ' . $this->ad_locations_table . ' al
@@ -81,6 +88,7 @@ class manager
 					$sql_where_views
 					$sql_where_clicks
 					$sql_where_non_content
+					$sql_where_user_groups
 					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
 				ORDER BY al.location_id, (' . $this->sql_random() . ' * a.ad_priority) DESC';
 		$result = $this->db->sql_query($sql);
@@ -173,12 +181,18 @@ class manager
 	 */
 	public function insert_ad($data)
 	{
+		// extract ad groups here because it gets filtered in intersect_ad_data()
+		$ad_groups = $data['ad_groups'];
 		$data = $this->intersect_ad_data($data);
 
+		// add a row to ads table
 		$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
 		$this->db->sql_query($sql);
+		$ad_id = $this->db->sql_nextid();
 
-		return $this->db->sql_nextid();
+		$this->insert_ad_group_data($ad_id, $ad_groups);
+
+		return $ad_id;
 	}
 
 	/**
@@ -190,14 +204,20 @@ class manager
 	 */
 	public function update_ad($ad_id, $data)
 	{
+		// extract ad groups here because it gets filtered in intersect_ad_data()
+		$ad_groups = isset($data['ad_groups']) ? $data['ad_groups'] : array();
 		$data = $this->intersect_ad_data($data);
 
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
 			WHERE ad_id = ' . (int) $ad_id;
 		$this->db->sql_query($sql);
+		$result = $this->db->sql_affectedrows();
 
-		return $this->db->sql_affectedrows();
+		$this->remove_ad_group_data($ad_id);
+		$this->insert_ad_group_data($ad_id, $ad_groups);
+
+		return $result;
 	}
 
 	/**
@@ -315,14 +335,20 @@ class manager
 	/**
 	 * Load all board groups
 	 *
+	 * @param	int		$ad_id	Advertisement ID
 	 * @return	array	List of groups
 	 */
-	public function load_groups()
+	public function load_groups($ad_id)
 	{
-		$sql = 'SELECT group_id, group_name, group_type
-			FROM ' . GROUPS_TABLE . "
-			WHERE group_name <> 'BOTS'
-			ORDER BY group_name ASC";
+		$sql = 'SELECT g.group_id, g.group_name, (
+				SELECT COUNT(ad_id)
+				FROM ' . $this->ad_group_table . ' ag
+				WHERE ag.ad_id = ' . (int) $ad_id . '
+					AND ag.group_id = g.group_id
+			) as group_selected
+			FROM ' . GROUPS_TABLE . " g
+			WHERE g.group_name <> 'BOTS'
+			ORDER BY g.group_name ASC";
 		$result = $this->db->sql_query($sql);
 		$groups = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
@@ -376,5 +402,38 @@ class manager
 			default:
 				return 'RAND()';
 		}
+	}
+
+	/**
+	 * Add rows to ad_group table.
+	 *
+	 * @param int   $ad_id     Advertisement ID
+	 * @param array $ad_groups List of groups that should not see this ad
+	 * @return void
+	 */
+	protected function insert_ad_group_data($ad_id, $ad_groups)
+	{
+		$sql_ary = array();
+		foreach ($ad_groups as $group)
+		{
+			$sql_ary[] = array(
+				'ad_id'		=> $ad_id,
+				'group_id'	=> $group,
+			);
+		}
+		$this->db->sql_multi_insert($this->ad_group_table, $sql_ary);
+	}
+
+	/**
+	 * Remove all rows of specified ad in ad_group table
+	 *
+	 * @param int	$ad_id	Advertisement ID
+	 * @return void
+	 */
+	protected function remove_ad_group_data($ad_id)
+	{
+		$sql = 'DELETE FROM ' . $this->ad_group_table . '
+			WHERE ad_id = ' . (int) $ad_id;
+		$this->db->sql_query($sql);
 	}
 }

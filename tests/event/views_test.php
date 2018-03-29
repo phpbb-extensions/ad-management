@@ -36,11 +36,6 @@ class views_test extends main_listener_base
 		$this->user->data['is_bot'] = $is_bot;
 		$this->config['phpbb_ads_enable_views'] = true;
 
-		$this->config_text->expects($this->any())
-			->method('get')
-			->with('phpbb_ads_hide_groups')
-			->willReturn(json_encode(array()));
-
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();

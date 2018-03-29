@@ -44,7 +44,7 @@ class get_ads_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
-		$ads = $manager->get_ads($locations, $non_content_page);
+		$ads = $manager->get_ads($locations, [], $non_content_page);
 
 		$this->assertEquals($expected, $ads);
 	}
