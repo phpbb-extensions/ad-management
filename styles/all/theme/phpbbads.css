@@ -2,7 +2,7 @@
 	text-align: center;
 }
 
-.phpbb-ads-center > :first-child {
+.phpbb-ads-center > :first-child:not(script) {
 	display: inline-block;
 	max-width: 100%;
 }
