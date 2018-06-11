@@ -10,6 +10,7 @@
 		<column>ad_priority</column>
 		<column>ad_owner</column>
 		<column>ad_content_only</column>
+		<column>ad_centering</column>
 		<row>
 			<value>1</value>
 			<value>Primary ad</value>
@@ -20,6 +21,7 @@
 			<value>5</value>
 			<value>2</value>
 			<value>0</value>
+			<value>1</value>
 		</row>
 		<row>
 			<value>2</value>
@@ -31,6 +33,7 @@
 			<value>5</value>
 			<value>2</value>
 			<value>0</value>
+			<value>1</value>
 		</row>
 		<row>
 			<value>3</value>
@@ -42,6 +45,7 @@
 			<value>5</value>
 			<value>3</value>
 			<value>0</value>
+			<value>1</value>
 		</row>
 		<row>
 			<value>4</value>
@@ -53,6 +57,7 @@
 			<value>1</value>
 			<value>4</value>
 			<value>0</value>
+			<value>1</value>
 		</row>
 		<row>
 			<value>5</value>
@@ -64,6 +69,7 @@
 			<value>3</value>
 			<value>0</value>
 			<value>0</value>
+			<value>1</value>
 		</row>
 		<row>
 			<value>6</value>
@@ -75,6 +81,7 @@
 			<value>5</value>
 			<value>0</value>
 			<value>0</value>
+			<value>1</value>
 		</row>
 		<row>
 			<value>7</value>
@@ -85,6 +92,7 @@
 			<value>0</value>
 			<value>5</value>
 			<value>0</value>
+			<value>1</value>
 			<value>1</value>
 		</row>
 	</table>
