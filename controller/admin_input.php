@@ -95,6 +95,7 @@ class admin_input
 			'ad_clicks_limit' 	=> $this->request->variable('ad_clicks_limit', 0),
 			'ad_owner'        	=> $this->request->variable('ad_owner', '', true),
 			'ad_groups'			=> $this->request->variable('ad_groups', array(0)),
+			'ad_centering'		=> $this->request->variable('ad_centering', true),
 		);
 
 		// Validate form key

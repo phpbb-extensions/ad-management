@@ -21,13 +21,13 @@ class get_ads_test extends ad_base
 	{
 		return array(
 			array(array('after_profile'), array(
-				array('location_id' => 'after_profile', 'ad_code' => 'Ad Code #1', 'ad_id' => '1'),
+				array('location_id' => 'after_profile', 'ad_code' => 'Ad Code #1', 'ad_id' => '1', 'ad_centering' => '1'),
 			), false),
 			array(array('before_profile'), array(
-				array('location_id' => 'before_profile', 'ad_code' => 'Ad Code #4', 'ad_id' => '4'),
+				array('location_id' => 'before_profile', 'ad_code' => 'Ad Code #4', 'ad_id' => '4', 'ad_centering' => '1'),
 			), false),
 			array(array('below_footer'), array(
-				array('location_id' => 'below_footer', 'ad_code' => 'Ad Code #7', 'ad_id' => '7'),
+				array('location_id' => 'below_footer', 'ad_code' => 'Ad Code #7', 'ad_id' => '7', 'ad_centering' => '1'),
 			), false),
 			array(array('below_footer'), array(), true),
 			array(array('foo_bar'), array(), false),

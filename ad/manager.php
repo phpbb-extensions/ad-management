@@ -78,7 +78,7 @@ class manager
 		$sql_where_non_content = $non_content_page ? 'AND a.ad_content_only = 0' : '';
 		$sql_where_user_groups = !empty($user_groups) ? 'AND NOT EXISTS (SELECT ag.group_id FROM ' . $this->ad_group_table . ' ag WHERE ag.ad_id = a.ad_id AND ' . $this->db->sql_in_set('ag.group_id', $user_groups) . ')' : '';
 
-		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code
+		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
@@ -375,6 +375,7 @@ class manager
 			'ad_clicks_limit'	=> '',
 			'ad_owner'			=> '',
 			'ad_content_only'	=> '',
+			'ad_centering'		=> '',
 		));
 	}
 

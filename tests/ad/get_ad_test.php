@@ -34,6 +34,7 @@ class get_ad_test extends ad_base
 				'ad_clicks_limit'	=> '0',
 				'ad_owner'	=> '2',
 				'ad_content_only' => '0',
+				'ad_centering' => '1',
 			)),
 			array(0, array()),
 		);
