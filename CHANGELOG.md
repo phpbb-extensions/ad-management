@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.0 - 2018-06-28
+
+- Feature: Added an option for automatically centering an ad. Enable this option to have an ad be centered, or disable it and use your own positioning CSS in your ad code.
+- Feature: Hiding ads from user groups is now set individually for each ad instead of globally. When upgrading from older versions, the old "Hide advertisement for groups" setting will be applied to all existing ads.
+- Fix: Restyled the visual ad locations demo.
+- Fix: Addressed minor code issues.
+
 ### 1.0.5 - 2018-03-06
 
 - Feature: Added a new option to display ads on content pages only. When enabled, the ad  will not be shown on the UCP, MCP,Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
