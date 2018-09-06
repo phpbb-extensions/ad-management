@@ -29,7 +29,7 @@ class get_all_location_ids_test extends location_base
 				'below_footer',
 				'pop_up',
 				'slide_up',
-				'hidden',
+				'scripts',
 			)),
 			array('viewtopic', '', false, array(
 				'above_header',
@@ -44,7 +44,7 @@ class get_all_location_ids_test extends location_base
 				'before_posts',
 				'pop_up',
 				'slide_up',
-				'hidden',
+				'scripts',
 			)),
 			array('memberlist', 'viewprofile', false, array(
 				'above_header',
@@ -57,7 +57,7 @@ class get_all_location_ids_test extends location_base
 				'before_profile',
 				'pop_up',
 				'slide_up',
-				'hidden',
+				'scripts',
 			)),
 			array('index', '', true, array(
 				'above_header',
@@ -67,7 +67,7 @@ class get_all_location_ids_test extends location_base
 				'after_footer_navbar',
 				'below_footer',
 				'slide_up',
-				'hidden',
+				'scripts',
 			)),
 		);
 	}

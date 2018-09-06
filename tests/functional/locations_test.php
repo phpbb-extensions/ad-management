@@ -31,8 +31,8 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is the second child of body (after hidden ad)
-		$this->assertContains($ad_code, $crawler->filter('body')->children()->eq(1)->html());
+		// Confirm above header ad is the first child of body
+		$this->assertContains($ad_code, $crawler->filter('body')->children()->first()->html());
 	}
 
 	public function test_location_after_first_post()
@@ -143,16 +143,6 @@ class locations_test extends functional_base
 		$this->assertContains($ad_code, $crawler->filter('.headerbar')->nextAll()->html());
 	}
 
-	public function test_location_hidden()
-	{
-		$ad_code = $this->create_ad('hidden');
-
-		$crawler = self::request('GET', 'index.php');
-
-		// Confirm hidden ad is the first child of body
-		$this->assertContains($ad_code, $crawler->filter('body')->children()->first()->html());
-	}
-
 	public function test_location_pop_up()
 	{
 		$ad_code = $this->create_ad('pop_up');
@@ -161,6 +151,16 @@ class locations_test extends functional_base
 
 		// Confirm pop-up ad is present
 		$this->assertContains($ad_code, $crawler->filter('script')->last()->html());
+	}
+
+	public function test_location_scripts()
+	{
+		$ad_code = $this->create_ad('scripts');
+
+		$crawler = self::request('GET', 'index.php');
+
+		// Confirm scripts ad is in the <head>
+		$this->assertContains($ad_code, $crawler->filter('head')->html());
 	}
 
 	public function test_location_slide_up()

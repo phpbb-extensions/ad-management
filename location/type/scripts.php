@@ -10,14 +10,14 @@
 
 namespace phpbb\ads\location\type;
 
-class hidden extends base
+class scripts extends base
 {
 	/**
 	 * {@inheritDoc}
 	 */
 	public function get_id()
 	{
-		return 'hidden';
+		return 'scripts';
 	}
 
 	/**

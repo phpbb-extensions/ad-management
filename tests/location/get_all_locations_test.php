@@ -89,9 +89,9 @@ class get_all_locations_test extends location_base
 				),
 			),
 			'CAT_SPECIAL'	=> array(
-				'hidden'	=> array(
-					'name'	=> 'AD_HIDDEN',
-					'desc'	=> 'AD_HIDDEN_DESC',
+				'scripts'	=> array(
+					'name'	=> 'AD_SCRIPTS',
+					'desc'	=> 'AD_SCRIPTS_DESC',
 				),
 			),
 		), $locations);
