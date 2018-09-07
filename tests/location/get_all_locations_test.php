@@ -88,6 +88,12 @@ class get_all_locations_test extends location_base
 					'desc'	=> 'AD_SLIDE_UP_DESC',
 				),
 			),
+			'CAT_SPECIAL'	=> array(
+				'scripts'	=> array(
+					'name'	=> 'AD_SCRIPTS',
+					'desc'	=> 'AD_SCRIPTS_DESC',
+				),
+			),
 		), $locations);
 	}
 }

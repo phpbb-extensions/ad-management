@@ -58,4 +58,6 @@ $lang = array_merge($lang, array(
 	'AD_POP_UP_DESC'				=> 'Displays once per day when user visits this board as overlaying box. User need to close this box to continue to the content. Please, be aware, that this kind of advertisement is very obtrusive to the user!',
 	'AD_SLIDE_UP'					=> 'Slide up',
 	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom.',
+	'AD_SCRIPTS'					=> 'Scripts',
+	'AD_SCRIPTS_DESC'				=> 'This location is for specialty JavaScript code like AdSense Auto ads, tracking codes, etc. The code entered here will be inserted into the page’s HEAD tag and is not intended for ad placement, but only for helper scripts.',
 ));

@@ -102,6 +102,12 @@ services:
         tags:
             - { name: phpbb.ads.location.type }
 
+    phpbb.ads.location.type.scripts:
+        class: phpbb\ads\location\type\scripts
+        parent: phpbb.ads.location.type.base
+        tags:
+            - { name: phpbb.ads.location.type }
+
     phpbb.ads.location.type.slide_up:
         class: phpbb\ads\location\type\slide_up
         parent: phpbb.ads.location.type.base

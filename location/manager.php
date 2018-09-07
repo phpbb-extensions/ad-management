@@ -126,6 +126,7 @@ class manager
 				'CAT_IN_POSTS'			=> array(),
 				'CAT_OTHER'				=> array(),
 				'CAT_INTERACTIVE'		=> array(),
+				'CAT_SPECIAL'			=> array(),
 			);
 
 			foreach ($template_locations as $location)

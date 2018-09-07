@@ -103,6 +103,7 @@ $lang = array_merge($lang, array(
 	'CAT_IN_POSTS'			=> 'In posts',
 	'CAT_OTHER'				=> 'Other',
 	'CAT_INTERACTIVE'		=> 'Interactive',
+	'CAT_SPECIAL'			=> 'Special',
 
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',
