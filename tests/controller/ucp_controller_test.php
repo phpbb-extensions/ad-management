@@ -70,7 +70,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->language = new \phpbb\language\language($lang_loader);
-		$this->template = $this->getMock('\phpbb\template\template');
+		$this->template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->config = new \phpbb\config\config(array(
 			'phpbb_ads_enable_views'	=> 0,
 			'phpbb_ads_enable_clicks'	=> 0,

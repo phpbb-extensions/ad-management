@@ -44,9 +44,13 @@ class location_base extends \phpbb_test_case
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$this->language = new \phpbb\language\language($lang_loader);
 		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
-		$this->request = $this->getMock('\phpbb\request\request');
+		$this->request = $this->getMockBuilder('\phpbb\request\request')
+			->disableOriginalConstructor()
+			->getMock();
 		$config = new \phpbb\config\config(array());
-		$template = $this->getMock('\phpbb\template\template');
+		$template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
 		// Location types
 		$locations = array(
 			'above_footer',

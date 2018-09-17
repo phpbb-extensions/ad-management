@@ -100,9 +100,15 @@ class acp_module_test extends \phpbb_test_case
 		global $phpbb_container, $request, $template;
 
 		define('IN_ADMIN', true);
-		$request = $this->getMock('\phpbb\request\request');
-		$template = $this->getMock('\phpbb\template\template');
-		$phpbb_container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+		$request = $this->getMockBuilder('\phpbb\request\request')
+			->disableOriginalConstructor()
+			->getMock();
+		$template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
+		$phpbb_container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')
+			->disableOriginalConstructor()
+			->getMock();
 		$admin_controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
 			->disableOriginalConstructor()
 			->getMock();
