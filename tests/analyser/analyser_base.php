@@ -43,8 +43,12 @@ class analyser_base extends \phpbb_test_case
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 
-		$this->request = $this->getMock('\phpbb\request\request');
-		$this->template = $this->getMock('\phpbb\template\template');
+		$this->request = $this->getMockBuilder('\phpbb\request\request')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->lang = new \phpbb\language\language($lang_loader);
 
 		// Tests

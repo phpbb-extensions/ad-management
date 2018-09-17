@@ -83,9 +83,13 @@ class main_listener_base extends \phpbb_database_test_case
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$lang = new \phpbb\language\language($lang_loader);
 		$user = new \phpbb\user($lang, '\phpbb\datetime');
-		$request = $this->getMock('\phpbb\request\request');
+		$request = $this->getMockBuilder('\phpbb\request\request')
+			->disableOriginalConstructor()
+			->getMock();
 		$config = new \phpbb\config\config(array());
-		$template = $this->getMock('\phpbb\template\template');
+		$template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
 		$this->ad_group_table = 'phpbb_ad_group';
@@ -121,8 +125,12 @@ class main_listener_base extends \phpbb_database_test_case
 		}
 
 		// Load/Mock classes required by the listener class
-		$this->template = $this->getMock('\phpbb\template\template');
-		$this->template_context = $this->getMock('\phpbb\template\context');
+		$this->template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->template_context = $this->getMockBuilder('\phpbb\template\context')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
@@ -132,7 +140,9 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->request = $this->getMock('\phpbb\request\request');
+		$this->request = $this->getMockBuilder('\phpbb\request\request')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->php_ext = $phpEx;
 	}
 

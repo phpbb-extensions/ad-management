@@ -35,7 +35,7 @@ class ucp_module_test extends \phpbb_test_case
 
 		$this->module_manager = new \phpbb\module\module_manager(
 			new \phpbb\cache\driver\dummy(),
-			$this->getMock('\phpbb\db\driver\driver_interface'),
+			$this->getMockBuilder('\phpbb\db\driver\driver_interface')->disableOriginalConstructor()->getMock(),
 			$this->extension_manager,
 			MODULES_TABLE,
 			$phpbb_root_path,
@@ -84,9 +84,15 @@ class ucp_module_test extends \phpbb_test_case
 		global $phpbb_container, $request, $template;
 
 		define('IN_ADMIN', true);
-		$request = $this->getMock('\phpbb\request\request');
-		$template = $this->getMock('\phpbb\template\template');
-		$phpbb_container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+		$request = $this->getMockBuilder('\phpbb\request\request')
+			->disableOriginalConstructor()
+			->getMock();
+		$template = $this->getMockBuilder('\phpbb\template\template')
+			->disableOriginalConstructor()
+			->getMock();
+		$phpbb_container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')
+			->disableOriginalConstructor()
+			->getMock();
 		$ucp_controller = $this->getMockBuilder('\phpbb\ads\controller\ucp_controller')
 			->disableOriginalConstructor()
 			->getMock();
