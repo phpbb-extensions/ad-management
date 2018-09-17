@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.1 - 2018-09-17
+
+- Feature: Added a new "Special" location we call "Scripts" which can be used for adding specialised JS code like AdSense Auto ads and tracking codes.
+
 ### 2.0.0 - 2018-06-28
 
 - Feature: Added an option for automatically centering an ad. Enable this option to have an ad be centered, or disable it and use your own positioning CSS in your ad code.
