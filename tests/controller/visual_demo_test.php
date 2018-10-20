@@ -129,7 +129,7 @@ class visual_demo_test extends \phpbb_test_case
 		// If non-ajax redirect is encountered, in testing it will trigger error
 		if (!$is_ajax)
 		{
-			$this->setExpectedTriggerError(E_USER_ERROR);
+			$this->setExpectedTriggerError(E_USER_WARNING);
 		}
 
 		$controller = $this->get_controller();
