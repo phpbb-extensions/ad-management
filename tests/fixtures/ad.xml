@@ -6,6 +6,7 @@
 		<column>ad_note</column>
 		<column>ad_code</column>
 		<column>ad_enabled</column>
+		<column>ad_start_date</column>
 		<column>ad_end_date</column>
 		<column>ad_priority</column>
 		<column>ad_owner</column>
@@ -17,6 +18,7 @@
 			<value>Ad description #1</value>
 			<value>Ad Code #1</value>
 			<value>1</value>
+			<value>1514764800</value>
 			<value>2051308800</value>
 			<value>5</value>
 			<value>2</value>
@@ -30,6 +32,7 @@
 			<value>Ad Code #2</value>
 			<value>0</value>
 			<value>0</value>
+			<value>0</value>
 			<value>5</value>
 			<value>2</value>
 			<value>0</value>
@@ -41,6 +44,7 @@
 			<value>Ad description #3</value>
 			<value>Ad Code #3</value>
 			<value>1</value>
+			<value>0</value>
 			<value>1</value>
 			<value>5</value>
 			<value>3</value>
@@ -54,6 +58,7 @@
 			<value>Ad Code #4</value>
 			<value>1</value>
 			<value>0</value>
+			<value>0</value>
 			<value>1</value>
 			<value>4</value>
 			<value>0</value>
@@ -65,6 +70,7 @@
 			<value>Ad description #5</value>
 			<value>Ad Code #5</value>
 			<value>1</value>
+			<value>0</value>
 			<value>0</value>
 			<value>3</value>
 			<value>0</value>
@@ -78,6 +84,7 @@
 			<value></value>
 			<value>1</value>
 			<value>0</value>
+			<value>0</value>
 			<value>5</value>
 			<value>0</value>
 			<value>0</value>
@@ -89,6 +96,7 @@
 			<value>Ad description #7</value>
 			<value>Ad Code #7</value>
 			<value>1</value>
+			<value>0</value>
 			<value>0</value>
 			<value>5</value>
 			<value>0</value>

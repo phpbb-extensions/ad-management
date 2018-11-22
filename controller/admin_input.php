@@ -88,6 +88,7 @@ class admin_input
 			'ad_code'         	=> $this->request->variable('ad_code', '', true),
 			'ad_enabled'      	=> $this->request->variable('ad_enabled', 0),
 			'ad_locations'    	=> $this->request->variable('ad_locations', array('')),
+			'ad_start_date'     => $this->request->variable('ad_start_date', ''),
 			'ad_end_date'     	=> $this->request->variable('ad_end_date', ''),
 			'ad_priority'     	=> $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
 			'ad_content_only'	=> $this->request->variable('ad_content_only', 0),
@@ -112,6 +113,12 @@ class admin_input
 			{
 				$data[$prop_name] = $this->{$method}($prop_val);
 			}
+		}
+
+		// Make sure start date is sooner than end date
+		if ($data['ad_start_date'] != 0 && $data['ad_end_date'] != 0 && $data['ad_start_date'] > $data['ad_end_date'])
+		{
+			$this->errors[] = $this->language->lang('END_DATE_TOO_SOON');
 		}
 
 		return $data;
@@ -198,33 +205,25 @@ class admin_input
 	}
 
 	/**
-	 * Validate advertisement end date
+	 * Validate advertisement start date
 	 *
-	 * End date must use the expected format of YYYY-MM-DD.
-	 * If the date is valid, convert it to a timestamp and then
-	 * make sure the timestamp is less than the current time.
+	 * @param string $start_date Advertisement start date
+	 * @return int The start date converted to timestamp if valid, otherwise 0.
+	 */
+	protected function validate_ad_start_date($start_date)
+	{
+		return $this->validate_date($start_date, 'START');
+	}
+
+	/**
+	 * Validate advertisement end date.
 	 *
 	 * @param string $end_date Advertisement end date
 	 * @return int The end date converted to timestamp if valid, otherwise 0.
 	 */
 	protected function validate_ad_end_date($end_date)
 	{
-		$timestamp = 0;
-		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $end_date))
-		{
-			$timestamp = (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $end_date);
-
-			if ($timestamp < time())
-			{
-				$this->errors[] = 'AD_END_DATE_INVALID';
-			}
-		}
-		else if ($end_date !== '')
-		{
-			$this->errors[] = 'AD_END_DATE_INVALID';
-		}
-
-		return $timestamp;
+		return $this->validate_date($end_date, 'END');
 	}
 
 	/**
@@ -315,5 +314,35 @@ class admin_input
 			'title'		=> $this->language->lang('INFORMATION'),
 			'text'		=> $text,
 		));
+	}
+
+	/**
+	 * Validate advertisement date
+	 *
+	 * The date must use the expected format of YYYY-MM-DD.
+	 * If the date is valid, convert it to a timestamp and then
+	 * make sure the timestamp is less than the current time.
+	 *
+	 * @param string $date Advertisement date
+	 * @return int The date converted to timestamp if valid, otherwise 0.
+	 */
+	protected function validate_date($date, $type)
+	{
+		$timestamp = 0;
+		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $date))
+		{
+			$timestamp = (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $date);
+
+			if ($timestamp < time())
+			{
+				$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
+			}
+		}
+		else if ($date !== '')
+		{
+			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
+		}
+
+		return $timestamp;
 	}
 }

@@ -26,6 +26,7 @@ class get_ad_test extends ad_base
 				'ad_note' => 'Ad description #1',
 				'ad_code' => 'Ad Code #1',
 				'ad_enabled' => '1',
+				'ad_start_date' => '1514764800',
 				'ad_end_date' => '2051308800',
 				'ad_priority' => '5',
 				'ad_views'	=> '0',

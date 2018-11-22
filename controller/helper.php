@@ -93,6 +93,7 @@ class helper
 			'AD_NOTE'         	=> $data['ad_note'],
 			'AD_CODE'         	=> $data['ad_code'],
 			'AD_ENABLED'      	=> $data['ad_enabled'],
+			'AD_START_DATE'     => $data['ad_start_date'],
 			'AD_END_DATE'     	=> $data['ad_end_date'],
 			'AD_PRIORITY'     	=> $data['ad_priority'],
 			'AD_CONTENT_ONLY'	=> $data['ad_content_only'],

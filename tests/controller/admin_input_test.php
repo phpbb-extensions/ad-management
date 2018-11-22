@@ -97,28 +97,31 @@ class admin_input_test extends \phpbb_database_test_case
 	public function get_form_data_data()
 	{
 		return array(
-			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', '', [], 0], 0, ['FORM_INVALID']),
-			array(true, ['', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_NAME_REQUIRED']),
-			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_NAME_TOO_LONG']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_CODE_ILLEGAL_CHARS']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '5', '0', '', '', '', [], 0], 0, ['AD_END_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '5', '0', '', '', '', [], 0], 0, ['AD_END_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '0', '0', '', '', '', [], 0], 0, ['AD_PRIORITY_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '11', '0', '', '', '', [], 0], 0, ['AD_PRIORITY_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '-1', '', '', [], 0], 0, ['AD_VIEWS_LIMIT_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '-1', '', [], 0], 0, ['AD_CLICKS_LIMIT_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', 'adm', [], 0], 0, ['AD_OWNER_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '5', '0', '', '', 'adm', [], 0], 0, ['AD_OWNER_INVALID']),
-			array(false, ['', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '0', '0', '-1', '-1', 'adm', [], 0], 0, [
+			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['FORM_INVALID']),
+			array(true, ['', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_NAME_REQUIRED']),
+			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_NAME_TOO_LONG']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_CODE_ILLEGAL_CHARS']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '', '5', '0', '', '', '', [], 0], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', 'blah', '5', '0', '', '', '', [], 0], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '', '5', '0', '', '', '', [], 0], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '1970-01-01', '5', '0', '', '', '', [], 0], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '0', '0', '', '', '', [], 0], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '11', '0', '', '', '', [], 0], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '-1', '', '', [], 0], 0, ['AD_VIEWS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '-1', '', [], 0], 0, ['AD_CLICKS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', 'adm', [], 0], 0, ['AD_OWNER_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', 'adm', [], 0], 0, ['AD_OWNER_INVALID']),
+			array(false, ['', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', 'blah', '0', '0', '-1', '-1', 'adm', [], 0], 0, [
 				'FORM_INVALID',
 				'AD_NAME_REQUIRED',
+				'AD_START_DATE_INVALID',
 				'AD_END_DATE_INVALID',
 				'AD_PRIORITY_INVALID',
 				'AD_VIEWS_LIMIT_INVALID',
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
 			]),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2033-01-01', '4', '1', '50', '30', 'admin', ['5'], 0], 2, []),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2033-01-01', '4', '1', '50', '30', 'admin', ['5'], 0], 2, []),
 		);
 	}
 
@@ -129,14 +132,14 @@ class admin_input_test extends \phpbb_database_test_case
 	 */
 	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors)
 	{
-		list($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering) = $data;
+		list($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering) = $data;
 
 		self::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
-		$this->request->expects($this->exactly(13))
+		$this->request->expects($this->exactly(14))
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering));
+			->will($this->onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering));
 
 		$result = $input_controller->get_form_data();
 
@@ -153,6 +156,7 @@ class admin_input_test extends \phpbb_database_test_case
 				'ad_code'         => $ad_code,
 				'ad_enabled'      => $ad_enabled,
 				'ad_locations'    => $ad_locations,
+				'ad_start_date'   => $result['ad_start_date'], // Skipped, because it's different with every call
 				'ad_end_date'     => $result['ad_end_date'], // Skipped, because it's different with every call
 				'ad_priority'     => $ad_priority,
 				'ad_content_only' => $ad_content_only,

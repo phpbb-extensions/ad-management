@@ -129,6 +129,10 @@
 				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0" /></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" id="ad_start_date" name="ad_start_date" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
 				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
 			</dl>
@@ -165,6 +169,7 @@
 			<tr>
 				<th style="width: 30%">{{ lang('AD_NAME') }}</th>
 				<th>{{ lang('AD_PRIORITY') }}</th>
+				<th>{{ lang('AD_START_DATE') }}</th>
 				<th>{{ lang('AD_END_DATE') }}</th>
 				{% if S_VIEWS_ENABLED %}<th>{{ lang('AD_VIEWS') }}</th>{% endif %}
 				{% if S_CLICKS_ENABLED %}<th>{{ lang('AD_CLICKS') }}</th>{% endif %}
@@ -187,11 +192,12 @@
 				}
 			] %}
 				{% if list.loop %}
-					<td class="row3" colspan="{{ 5 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
 					{% for ad in list.loop %}
 						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
 							<td><strong>{{ ad.NAME }}</strong></td>
 							<td>{{ ad.PRIORITY }}</td>
+							<td>{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}</td>
 							<td>
 								{% if ad.END_DATE < NOW %}<strong class="error">{% endif %}
 									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
@@ -225,7 +231,7 @@
 					{% endfor %}
 				{% elseif not loops.ads and not loops.expired and loop.last %}
 					<tr>
-						<td colspan="{{ 5 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+						<td colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
 					</tr>
 				{% endif %}
 			{% endfor %}
