@@ -169,6 +169,7 @@
 			<tr>
 				<th style="width: 30%">{{ lang('AD_NAME') }}</th>
 				<th>{{ lang('AD_PRIORITY') }}</th>
+				<th>{{ lang('AD_START_DATE') }}</th>
 				<th>{{ lang('AD_END_DATE') }}</th>
 				{% if S_VIEWS_ENABLED %}<th>{{ lang('AD_VIEWS') }}</th>{% endif %}
 				{% if S_CLICKS_ENABLED %}<th>{{ lang('AD_CLICKS') }}</th>{% endif %}
@@ -191,11 +192,16 @@
 				}
 			] %}
 				{% if list.loop %}
-					<td class="row3" colspan="{{ 5 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
 					{% for ad in list.loop %}
 						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
 							<td><strong>{{ ad.NAME }}</strong></td>
 							<td>{{ ad.PRIORITY }}</td>
+							<td>
+								{% if ad.START_DATE < NOW %}<strong class="error">{% endif %}
+									{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
+								{% if ad.START_DATE < NOW %}</strong>{% endif %}
+							</td>
 							<td>
 								{% if ad.END_DATE < NOW %}<strong class="error">{% endif %}
 									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
@@ -229,7 +235,7 @@
 					{% endfor %}
 				{% elseif not loops.ads and not loops.expired and loop.last %}
 					<tr>
-						<td colspan="{{ 5 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+						<td colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
 					</tr>
 				{% endif %}
 			{% endfor %}

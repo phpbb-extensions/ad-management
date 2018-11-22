@@ -112,7 +112,7 @@ class manager
 	 */
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_priority, ad_name, ad_enabled, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
+		$sql = 'SELECT ad_id, ad_priority, ad_name, ad_enabled, ad_start_date, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
@@ -369,6 +369,7 @@ class manager
 			'ad_note'			=> '',
 			'ad_code'			=> '',
 			'ad_enabled'		=> '',
+			'ad_start_date'		=> '',
 			'ad_end_date'		=> '',
 			'ad_priority'		=> '',
 			'ad_views_limit'	=> '',
