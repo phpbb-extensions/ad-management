@@ -92,6 +92,7 @@ class ucp_controller
 
 			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
 				'NAME'			=> $ad['ad_name'],
+				'START_DATE'	=> $ad['ad_start_date'],
 				'END_DATE'		=> $ad['ad_end_date'],
 				'VIEWS'			=> $ad['ad_views'],
 				'VIEWS_LIMIT'	=> $ad['ad_views_limit'],
