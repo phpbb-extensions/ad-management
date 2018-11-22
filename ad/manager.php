@@ -83,6 +83,8 @@ class manager
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
+					AND (a.ad_start_date = 0
+						OR a.ad_start_date < ' . time() . ')
 					AND (a.ad_end_date = 0
 						OR a.ad_end_date > ' . time() . ")
 					$sql_where_views
