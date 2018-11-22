@@ -64,6 +64,19 @@ class acp_manage_test extends functional_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
 
+		// Confirm error when submitting old start date
+		$form_data = array(
+			'ad_start_date'	=> '2000-01-01',
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_START_DATE_INVALID'));
+
+		// Confirm error when submitting older end date than start date
+		$form_data = array(
+			'ad_start_date'	=> '2018-01-01',
+			'ad_end_date'	=> '2017-01-01',
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('END_DATE_TOO_SOON'));
+
 		// Confirm error when submitting old end date
 		$form_data = array(
 			'ad_end_date'	=> '2000-01-01',
@@ -106,6 +119,7 @@ class acp_manage_test extends functional_base
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> true,
+			'ad_start_date'	=> '2030-01-01',
 			'ad_end_date'	=> '2035-01-01',
 			'ad_priority'	=> 1,
 			'ad_views_limit'	=> 0,
@@ -157,6 +171,7 @@ class acp_manage_test extends functional_base
 			'ad_note'		=> '',
 			'ad_code'		=> '',
 			'ad_enabled'	=> false,
+			'ad_start_date'	=> '',
 			'ad_end_date'	=> '',
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_REQUIRED'));
@@ -166,6 +181,19 @@ class acp_manage_test extends functional_base
 			'ad_name'		=> str_repeat('a', 256),
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
+
+		// Confirm error when submitting old start date
+		$form_data = array(
+			'ad_start_date'	=> '2000-01-01',
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_START_DATE_INVALID'));
+
+		// Confirm error when submitting older end date than start date
+		$form_data = array(
+			'ad_start_date'	=> '2018-01-01',
+			'ad_end_date'	=> '2017-01-01',
+		);
+		$this->submit_with_error($crawler, $form_data, $this->lang('END_DATE_TOO_SOON'));
 
 		// Confirm error when submitting old end date
 		$form_data = array(
@@ -209,6 +237,7 @@ class acp_manage_test extends functional_base
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE EDITED -->',
 			'ad_enabled'	=> false,
+			'ad_start_date'	=> '2030-01-02',
 			'ad_end_date'	=> '2035-01-02',
 			'ad_priority'	=> 2,
 			'ad_views_limit'	=> 0,
@@ -230,10 +259,11 @@ class acp_manage_test extends functional_base
 		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
 		$this->assertContainsLang('ACP_AD_EDIT_SUCCESS', $crawler->text());
 
-		// Confirm new ad appears in the list, is disabled and end date is present and updated
+		// Confirm new ad appears in the list, is disabled and stard and end date is present and updated
 		$crawler = $this->get_manage_page();
 		$this->assertContains('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
+		$this->assertContains('2030-01-02', $crawler->text());
 		$this->assertContains('2035-01-02', $crawler->text());
 
 		// Confirm the log entry has been added correctly
