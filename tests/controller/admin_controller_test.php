@@ -657,6 +657,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_note'			=> 'Ad description #1',
 			'ad_code'			=> 'Ad Code #1',
 			'ad_enabled'		=> '1',
+			'ad_start_date'		=> '1514764800',
 			'ad_end_date'		=> '2051308800',
 			'ad_priority'		=> '5',
 			'ad_views_limit'	=> '0',
@@ -1087,12 +1088,14 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_id'			=> 1,
 				'ad_name'		=> '',
 				'ad_enabled'	=> 1,
+				'ad_start_date'	=> 0,
 				'ad_end_date'	=> 0,
 			),
 			array(
 				'ad_id'			=> 2,
 				'ad_name'		=> '',
 				'ad_enabled'	=> 1,
+				'ad_start_date'	=> 0,
 				'ad_end_date'	=> 1,
 			),
 		);
