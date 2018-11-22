@@ -197,11 +197,7 @@
 						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
 							<td><strong>{{ ad.NAME }}</strong></td>
 							<td>{{ ad.PRIORITY }}</td>
-							<td>
-								{% if ad.START_DATE < NOW %}<strong class="error">{% endif %}
-									{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
-								{% if ad.START_DATE < NOW %}</strong>{% endif %}
-							</td>
+							<td>{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}</td>
 							<td>
 								{% if ad.END_DATE < NOW %}<strong class="error">{% endif %}
 									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
