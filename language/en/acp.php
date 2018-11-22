@@ -83,6 +83,7 @@ $lang = array_merge($lang, array(
 	'NO_FILE_SELECTED'			=> 'No file selected.',
 	'CANNOT_CREATE_DIRECTORY'	=> 'The <samp>phpbb_ads</samp> directory could not be created. Please make sure the <samp>/images</samp> directory is writable.',
 	'FILE_MOVE_UNSUCCESSFUL'	=> 'Unable to move file to <samp>images/phpbb_ads</samp>.',
+	'END_DATE_TOO_SOON'			=> 'End date is sooner than start date.',
 	'ACP_AD_DOES_NOT_EXIST'		=> 'The advertisement does not exist.',
 	'ACP_AD_ADD_SUCCESS'		=> 'Advertisement added successfully.',
 	'ACP_AD_EDIT_SUCCESS'		=> 'Advertisement edited successfully.',

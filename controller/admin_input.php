@@ -115,8 +115,11 @@ class admin_input
 			}
 		}
 
-		// Make sure start date sooner than end date
-		
+		// Make sure start date is sooner than end date
+		if ($data['ad_start_date'] != 0 && $data['ad_end_date'] != 0 && $data['ad_start_date'] > $data['ad_end_date'])
+		{
+			$this->errors[] = $this->language->lang('END_DATE_TOO_SOON');
+		}
 
 		return $data;
 	}
