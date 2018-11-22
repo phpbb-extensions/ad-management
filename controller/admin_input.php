@@ -212,7 +212,7 @@ class admin_input
 	 */
 	protected function validate_ad_start_date($start_date)
 	{
-		return $this->validate_date($start_date);
+		return $this->validate_date($start_date, 'START');
 	}
 
 	/**
@@ -223,7 +223,7 @@ class admin_input
 	 */
 	protected function validate_ad_end_date($end_date)
 	{
-		return $this->validate_date($end_date);
+		return $this->validate_date($end_date, 'END');
 	}
 
 	/**
@@ -326,7 +326,7 @@ class admin_input
 	 * @param string $date Advertisement date
 	 * @return int The date converted to timestamp if valid, otherwise 0.
 	 */
-	protected function validate_date($date)
+	protected function validate_date($date, $type)
 	{
 		$timestamp = 0;
 		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $date))
@@ -335,12 +335,12 @@ class admin_input
 
 			if ($timestamp < time())
 			{
-				$this->errors[] = 'AD_END_DATE_INVALID';
+				$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
 			}
 		}
 		else if ($date !== '')
 		{
-			$this->errors[] = 'AD_END_DATE_INVALID';
+			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
 		}
 
 		return $timestamp;
