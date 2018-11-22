@@ -129,6 +129,10 @@
 				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0" /></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" id="ad_start_date" name="ad_start_date" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
+			</dl>
+			<dl>
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
 				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
 			</dl>
