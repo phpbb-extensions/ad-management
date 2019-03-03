@@ -107,10 +107,10 @@ class helper
 	/**
 	 * Assign template locations data to the template.
 	 *
-	 * @param	mixed	$ad_locations	The form data or nothing.
-	 * @return	void
+	 * @param array $ad_locations The form data or nothing.
+	 * @return void
 	 */
-	public function assign_locations($ad_locations = false)
+	public function assign_locations($ad_locations = array())
 	{
 		foreach ($this->location_manager->get_all_locations() as $location_category_id => $location_category)
 		{
@@ -124,7 +124,7 @@ class helper
 					'LOCATION_ID'   => $location_id,
 					'LOCATION_DESC' => $location_data['desc'],
 					'LOCATION_NAME' => $location_data['name'],
-					'S_SELECTED'    => $ad_locations ? in_array($location_id, $ad_locations) : false,
+					'S_SELECTED'    => in_array($location_id, $ad_locations),
 				));
 			}
 		}

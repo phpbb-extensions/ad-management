@@ -19,6 +19,11 @@ class main_module
 	public $tpl_name;
 	public $u_action;
 
+	/**
+	 * Main UCP module
+	 *
+	 * @throws \Exception
+	 */
 	public function main()
 	{
 		global $phpbb_container;

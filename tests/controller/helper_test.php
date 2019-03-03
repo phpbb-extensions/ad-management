@@ -245,7 +245,7 @@ class helper_test extends \phpbb_database_test_case
 	public function assign_locations_data()
 	{
 		return array(
-			array(false),
+			array(array()),
 			array(array('top_of_page_1')),
 		);
 	}
