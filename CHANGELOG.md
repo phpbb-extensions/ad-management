@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.0.2 - 2019-04-01
+
+- Feature: Added a starting date option for advertisements.
+- Fix: Addressed a caching issue related to users being moved in/out of groups and not seeing the correct ads immediately for their group status.
+
 ### 2.0.1 - 2018-09-17
 
 - Feature: Added a new "Special" location we call "Scripts" which can be used for adding specialised JS code like AdSense Auto ads and tracking codes.
