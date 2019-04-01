@@ -44,6 +44,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\cache\driver\driver_interface */
+	protected $cache;
+
 	/** @var string */
 	protected $php_ext;
 
@@ -59,6 +62,8 @@ class main_listener implements EventSubscriberInterface
 			'core.page_header_after'		=> array(array('adblocker'), array('clicks')),
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
+			'core.group_add_user_after'		=> 'destroy_user_group_cache',
+			'core.group_delete_user_after'	=> 'destroy_user_group_cache',
 		);
 	}
 
@@ -73,9 +78,10 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\ads\location\manager			$location_manager	Template location manager object
 	 * @param \phpbb\controller\helper				$controller_helper	Controller helper object
 	 * @param \phpbb\request\request				$request			Request object
+	 * @param \phpbb\cache\driver\driver_interface	$cache				Cache driver object
 	 * @param string								$php_ext			PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, \phpbb\cache\driver\driver_interface $cache, $php_ext)
 	{
 		$this->template = $template;
 		$this->template_context = $template_context;
@@ -85,6 +91,7 @@ class main_listener implements EventSubscriberInterface
 		$this->location_manager = $location_manager;
 		$this->controller_helper = $controller_helper;
 		$this->request = $request;
+		$this->cache = $cache;
 		$this->php_ext = $php_ext;
 	}
 
@@ -239,5 +246,16 @@ class main_listener implements EventSubscriberInterface
 	public function remove_ad_owner($event)
 	{
 		$this->manager->remove_ad_owner($event['user_ids']);
+	}
+
+	/**
+	 * Destroy user_group cache after user was removed from the group.
+	 *
+	 * @param	\phpbb\event\data	$event	The event object
+	 * @return	void
+	 */
+	public function destroy_user_group_cache($event)
+	{
+		$this->cache->destroy('sql', USER_GROUP_TABLE);
 	}
 }
