@@ -55,6 +55,7 @@ services:
             - '@phpbb.ads.location.manager'
             - '@controller.helper'
             - '@request'
+            - '@cache.driver'
             - '%core.php_ext%'
         tags:
             - { name: event.listener }

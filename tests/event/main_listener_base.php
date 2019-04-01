@@ -42,6 +42,9 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
 	protected $request;
 
+	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\cache\driver\driver_interface */
+	protected $cache;
+
 	/** @var string */
 	protected $php_ext;
 
@@ -143,6 +146,9 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->cache = $this->getMockBuilder('\phpbb\cache\driver\dummy')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->php_ext = $phpEx;
 	}
 
@@ -162,6 +168,7 @@ class main_listener_base extends \phpbb_database_test_case
 			$this->location_manager,
 			$this->controller_helper,
 			$this->request,
+			$this->cache,
 			$this->php_ext
 		);
 	}
