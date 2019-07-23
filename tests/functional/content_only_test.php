@@ -40,9 +40,15 @@ class content_only_test extends functional_base
 		$ad_code = $this->create_ad('above_header', '', true);
 
 		$crawler = self::request('GET', 'ucp.php');
+		$this->assertContainsLang('UCP', $crawler->filter('h2')->text());
 		$this->assertNotContains($ad_code, $crawler->html());
 
 		$crawler = self::request('GET', 'mcp.php');
+		$this->assertContainsLang('MCP', $crawler->filter('h2')->text());
+		$this->assertNotContains($ad_code, $crawler->html());
+
+		$crawler = self::request('GET', 'posting.php?mode=post&f=2');
+		$this->assertCount(1, $crawler->filter('#postingbox'));
 		$this->assertNotContains($ad_code, $crawler->html());
 	}
 }

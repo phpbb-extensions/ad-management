@@ -132,7 +132,7 @@ class main_listener implements EventSubscriberInterface
 		// Reason we access template's root ref is to check for existence
 		// of 'MESSAGE_TEXT', which signals error page.
 		$rootref = $this->template_context->get_root_ref();
-		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || in_array($this->user->page['page_name'], array('ucp.' . $this->php_ext, 'mcp.' . $this->php_ext));
+		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || in_array($this->user->page['page_name'], array('posting.' . $this->php_ext, 'ucp.' . $this->php_ext, 'mcp.' . $this->php_ext));
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ad_ids = array();
@@ -251,10 +251,9 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Destroy user_group cache after user was removed from the group.
 	 *
-	 * @param	\phpbb\event\data	$event	The event object
 	 * @return	void
 	 */
-	public function destroy_user_group_cache($event)
+	public function destroy_user_group_cache()
 	{
 		$this->cache->destroy('sql', USER_GROUP_TABLE);
 	}
