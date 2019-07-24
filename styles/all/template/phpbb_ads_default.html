@@ -1,5 +1,5 @@
 {% if PHPBB_ADS_CODE %}
-	<div{% if S_PHPBB_ADS_CENTER %} class="phpbb-ads-center"{% endif %} style="{{ PHPBB_ADS_STYLE }}" data-ad-id="{{ PHPBB_ADS_ID|e('html_attr') }}">
+	<div{% if S_PHPBB_ADS_CENTER %} class="phpbb-ads-center"{% endif %} style="{{ PHPBB_ADS_STYLE }}" data-phpbb-ads-id="{{ PHPBB_ADS_ID|e('html_attr') }}">
 		{{ PHPBB_ADS_CODE }}
 	</div>
 {% endif %}
