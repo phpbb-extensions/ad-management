@@ -88,7 +88,24 @@ class helper_test extends \phpbb_database_test_case
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->group_helper = new \phpbb\group\helper($this->language);
+		$this->group_helper = new \phpbb\group\helper(
+			$this->getMockBuilder('\phpbb\auth\auth')->getMock(),
+			$this->getMockBuilder('\phpbb\cache\service')->disableOriginalConstructor()->getMock(),
+			new \phpbb\config\config([]),
+			$this->language,
+			$phpbb_dispatcher,
+			new \phpbb\path_helper(
+				new \phpbb\symfony_request(
+					new \phpbb_mock_request()
+				),
+				new \phpbb\filesystem\filesystem(),
+				$this->getMockBuilder('\phpbb\request\request')->getMock(),
+				$phpbb_root_path,
+				$phpEx
+			),
+			$this->user
+		);
+
 		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $phpEx;
 	}
