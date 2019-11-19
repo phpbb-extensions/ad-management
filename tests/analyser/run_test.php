@@ -107,7 +107,7 @@ class run_test extends analyser_base
 	{
 		$manager = $this->get_manager();
 
-		$this->request->expects($this->any())
+		$this->request
 			->method('server')
 			->with('HTTPS', false)
 			->willReturn($is_https);

@@ -82,10 +82,10 @@ class get_all_location_ids_test extends location_base
 		$this->user->page['page_name'] = $page_name;
 		$this->user->page['query_string'] = $query_string;
 
-		$this->request->expects($this->any())
+		$this->request
 			->method('is_set')
 			->with('_pop_up')
-			->will($this->returnValue($cookie));
+			->willReturn($cookie);
 
 		$manager = $this->get_manager();
 

@@ -40,11 +40,11 @@ class views_test extends main_listener_base
 			->disableOriginalConstructor()
 			->getMock();
 
-		$this->manager->expects($this->any())
+		$this->manager->expects($this->once())
 			->method('load_memberships')
 			->willReturn(array());
 
-		$this->manager->expects($this->any())
+		$this->manager->expects($this->once())
 			->method('get_ads')
 			->willReturn(array(array(
 				'ad_id'			=> '1',

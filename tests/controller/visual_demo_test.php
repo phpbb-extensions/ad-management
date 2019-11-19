@@ -113,14 +113,14 @@ class visual_demo_test extends \phpbb_test_case
 	public function test_controller($action, $is_ajax, $status_code, $cookie_time)
 	{
 		// User is an admin
-		$this->auth->expects($this->any())
+		$this->auth->expects($this->once())
 			->method('acl_get')
 			->with($this->stringContains('a_'), $this->anything())
-			->will($this->returnValue(true));
+			->willReturn(true);
 
-		$this->request->expects($this->any())
+		$this->request->expects($this->once())
 			->method('is_ajax')
-			->will($this->returnValue($is_ajax));
+			->willReturn($is_ajax);
 
 		$this->user->expects($this->once())
 			->method('set_cookie')
@@ -167,10 +167,10 @@ class visual_demo_test extends \phpbb_test_case
 	public function test_controller_fails($action, $status_code, $message)
 	{
 		// User is not an admin
-		$this->auth->expects($this->any())
+		$this->auth->expects($this->once())
 			->method('acl_get')
 			->with($this->stringContains('a_'), $this->anything())
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$controller = $this->get_controller();
 

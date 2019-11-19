@@ -114,10 +114,10 @@ class acp_module_test extends \phpbb_test_case
 			->getMock();
 
 		$phpbb_container
-			->expects($this->any())
+			->expects($this->once())
 			->method('get')
 			->with('phpbb.ads.admin.controller')
-			->will($this->returnValue($admin_controller));
+			->willReturn($admin_controller);
 
 		$admin_controller
 			->expects($this->once())

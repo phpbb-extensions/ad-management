@@ -39,7 +39,7 @@ class visual_demo_test extends main_listener_base
 			->willReturn($in_visual_demo);
 
 		$this->controller_helper
-			->expects($this->any())
+			->expects($in_visual_demo ? $this->once() : $this->never())
 			->method('route')
 			->willReturnCallback(function ($route, array $params = array()) {
 				return $route . '#' . serialize($params);
@@ -51,7 +51,7 @@ class visual_demo_test extends main_listener_base
 
 		$this->template
 			->expects($in_visual_demo ? $this->at(8) : $this->never())
-		  	->method('assign_vars')
+			->method('assign_vars')
 			->with(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
 				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array('action' => 'disable')),

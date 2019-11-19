@@ -1053,17 +1053,17 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 			else
 			{
-				$this->manager->expects($this->once())
-					->method('get_ad')
-					->with($ad_id)
-					->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner));
-				$this->manager->expects($this->once())
-					->method('delete_ad')
-					->willReturn($ad_id ? true : false);
-				$this->manager->expects(($ad_owner ? $this->once() : $this->never()))
-					->method('get_ads_by_owner')
-					->with($ad_owner)
-					->willReturn(array());
+			$this->manager->expects($this->once())
+				->method('get_ad')
+				->with($ad_id)
+				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner));
+			$this->manager->expects($this->once())
+				->method('delete_ad')
+				->willReturn($ad_id ? true : false);
+			$this->manager->expects(($ad_owner ? $this->once() : $this->never()))
+				->method('get_ads_by_owner')
+				->with($ad_owner)
+				->willReturn(array());
 
 				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 			}
