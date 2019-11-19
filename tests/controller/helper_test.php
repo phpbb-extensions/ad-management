@@ -61,7 +61,7 @@ class helper_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

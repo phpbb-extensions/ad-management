@@ -78,7 +78,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	/**
 	* {@inheritDoc}
 	*/
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -1045,14 +1045,12 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_all_ads')
 				->willReturn(array());
 		}
+		else if ($error)
+		{
+			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
+		}
 		else
 		{
-			if ($error)
-			{
-				$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
-			}
-			else
-			{
 			$this->manager->expects($this->once())
 				->method('get_ad')
 				->with($ad_id)
@@ -1065,8 +1063,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				->with($ad_owner)
 				->willReturn(array());
 
-				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
-			}
+			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 		}
 
 		$this->request->expects($this->at(0))
