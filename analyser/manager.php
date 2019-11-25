@@ -15,9 +15,6 @@ class manager
 	/** @var array Ad code analysis tests */
 	protected $tests;
 
-	/** @var \phpbb\request\request */
-	protected $request;
-
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -28,14 +25,12 @@ class manager
 	 * Construct an ad code analysis manager object
 	 *
 	 * @param	array						$tests		Ad code analysis tests passed via the service container
-	 * @param	\phpbb\request\request		$request	Request object
 	 * @param	\phpbb\template\template	$template	Template object
 	 * @param	\phpbb\language\language	$lang		Language object
 	 */
-	public function __construct($tests, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\language\language $lang)
+	public function __construct($tests, \phpbb\template\template $template, \phpbb\language\language $lang)
 	{
 		$this->tests = $tests;
-		$this->request = $request;
 		$this->template = $template;
 		$this->lang = $lang;
 	}
