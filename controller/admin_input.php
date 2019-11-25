@@ -329,7 +329,7 @@ class admin_input
 	protected function validate_date($date, $type)
 	{
 		$timestamp = 0;
-		if (preg_match('#^\d{4}\-\d{2}\-\d{2}$#', $date))
+		if (preg_match('#^\d{4}-\d{2}-\d{2}$#', $date))
 		{
 			$timestamp = (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $date);
 
