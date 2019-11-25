@@ -26,7 +26,7 @@ class functional_base extends \phpbb_functional_test_case
 	/**
 	* {@inheritDoc}
 	*/
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

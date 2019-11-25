@@ -18,7 +18,7 @@ class content_only_test extends functional_base
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

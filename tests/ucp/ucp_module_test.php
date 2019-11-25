@@ -98,10 +98,10 @@ class ucp_module_test extends \phpbb_test_case
 			->getMock();
 
 		$phpbb_container
-			->expects($this->any())
+			->expects($this->once())
 			->method('get')
 			->with('phpbb.ads.ucp.controller')
-			->will($this->returnValue($ucp_controller));
+			->willReturn($ucp_controller);
 
 		$ucp_controller
 			->expects($this->once())

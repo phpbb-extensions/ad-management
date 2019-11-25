@@ -23,7 +23,7 @@ class zbase_test extends functional_base
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
@@ -35,14 +35,14 @@ class zbase_test extends functional_base
 		// Disable
 		$crawler = self::request('GET', 'adm/index.php?i=acp_extensions&mode=main&action=disable_pre&ext_name=phpbb%2Fads&sid=' . $this->sid);
 		$this->assertContains($this->lang('EXTENSION_DISABLE_CONFIRM', 'Advertisement Management'), $crawler->filter('#main')->text());
-		$form = $crawler->selectButton($this->lang('EXTENSION_DISABLE'))->form();
+		$form = $crawler->selectButton($this->lang('YES'))->form();
 		$crawler = self::submit($form);
 		$this->assertContainsLang('EXTENSION_DISABLE_SUCCESS', $crawler->filter('.successbox')->text());
 
 		// Delete
 		$crawler = self::request('GET', 'adm/index.php?i=acp_extensions&mode=main&action=delete_data_pre&ext_name=phpbb%2Fads&sid=' . $this->sid);
 		$this->assertContains($this->lang('EXTENSION_DELETE_DATA_CONFIRM', 'Advertisement Management'), static::get_content()); // use get_content because lang contains HTML
-		$form = $crawler->selectButton($this->lang('EXTENSION_DELETE_DATA'))->form();
+		$form = $crawler->selectButton($this->lang('YES'))->form();
 		$crawler = self::submit($form);
 		$this->assertContainsLang('EXTENSION_DELETE_DATA_SUCCESS', $crawler->filter('.successbox')->text());
 	}

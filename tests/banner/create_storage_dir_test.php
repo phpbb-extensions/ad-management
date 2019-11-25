@@ -51,7 +51,8 @@ class create_storage_dir_test extends banner_base
 			{
 				$mkdir->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('CANNOT_CREATE_DIRECTORY'));
 
-				$this->setExpectedException('\phpbb\filesystem\exception\filesystem_exception', 'CANNOT_CREATE_DIRECTORY');
+				$this->expectException('\phpbb\filesystem\exception\filesystem_exception');
+				$this->expectExceptionMessage('CANNOT_CREATE_DIRECTORY');
 			}
 		}
 

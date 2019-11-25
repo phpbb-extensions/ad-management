@@ -70,7 +70,8 @@ class upload_test extends banner_base
 				->method('set_error')
 				->with('FILE_MOVE_UNSUCCESSFUL');
 
-			$this->setExpectedException('\phpbb\exception\runtime_exception', 'FILE_MOVE_UNSUCCESSFUL');
+			$this->expectException('\phpbb\exception\runtime_exception');
+			$this->expectExceptionMessage('FILE_MOVE_UNSUCCESSFUL');
 
 			$manager->upload();
 		}
