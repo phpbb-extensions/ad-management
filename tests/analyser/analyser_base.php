@@ -84,7 +84,6 @@ class analyser_base extends \phpbb_test_case
 	{
 		return new \phpbb\ads\analyser\manager(
 			$this->tests,
-			$this->request,
 			$this->template,
 			$this->lang
 		);

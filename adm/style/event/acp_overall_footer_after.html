@@ -38,7 +38,7 @@
 		});
 		$.datetimepicker.setLocale('{{ S_USER_LANG }}');
 
-		$('#upload_banner').click(function(e) {
+		$('#upload_banner').on('click', function(e) {
 			e.preventDefault();
 
 			var file = $('#banner')[0].files[0];

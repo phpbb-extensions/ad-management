@@ -3,7 +3,6 @@ services:
         class: phpbb\ads\analyser\manager
         arguments:
             - '@phpbb.ads.analyser.test_collection'
-            - '@request'
             - '@template'
             - '@language'
 
