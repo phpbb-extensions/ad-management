@@ -267,6 +267,7 @@ class main_listener implements EventSubscriberInterface
 	protected function is_non_content_page($page_name)
 	{
 		return in_array($page_name, [
+			'memberlist.' . $this->php_ext,
 			'posting.' . $this->php_ext,
 			'ucp.' . $this->php_ext,
 			'mcp.' . $this->php_ext,
