@@ -269,6 +269,7 @@ class main_listener implements EventSubscriberInterface
 		return in_array($page_name, [
 			'memberlist.' . $this->php_ext,
 			'posting.' . $this->php_ext,
+			'viewonline.' . $this->php_ext,
 			'ucp.' . $this->php_ext,
 			'mcp.' . $this->php_ext,
 		]);
