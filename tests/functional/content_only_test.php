@@ -52,7 +52,7 @@ class content_only_test extends functional_base
 		$this->assertNotContains($ad_code, $crawler->html());
 
 		$crawler = self::request('GET', 'memberlist.php');
-		$this->assertContainsLang('MEMBERS', $crawler->filter('h2')->text());
+		$this->assertContainsLang('MEMBERLIST', $crawler->filter('h2')->eq(1)->text());
 		$this->assertNotContains($ad_code, $crawler->html());
 
 		$crawler = self::request('GET', 'viewonline.php');
