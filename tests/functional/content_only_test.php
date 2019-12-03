@@ -50,5 +50,13 @@ class content_only_test extends functional_base
 		$crawler = self::request('GET', 'posting.php?mode=post&f=2');
 		$this->assertCount(1, $crawler->filter('#postingbox'));
 		$this->assertNotContains($ad_code, $crawler->html());
+
+		$crawler = self::request('GET', 'memberlist.php');
+		$this->assertContainsLang('MEMBERS', $crawler->filter('h2')->text());
+		$this->assertNotContains($ad_code, $crawler->html());
+
+		$crawler = self::request('GET', 'viewonline.php');
+		$this->assertCount(1, $crawler->filter('.viewonline-title'));
+		$this->assertNotContains($ad_code, $crawler->html());
 	}
 }
