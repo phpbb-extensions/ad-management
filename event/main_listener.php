@@ -132,7 +132,7 @@ class main_listener implements EventSubscriberInterface
 		// Reason we access template's root ref is to check for existence
 		// of 'MESSAGE_TEXT', which signals error page.
 		$rootref = $this->template_context->get_root_ref();
-		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || in_array($this->user->page['page_name'], array('posting.' . $this->php_ext, 'ucp.' . $this->php_ext, 'mcp.' . $this->php_ext));
+		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || $this->is_non_content_page($this->user->page['page_name']);
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ad_ids = array();
@@ -256,5 +256,20 @@ class main_listener implements EventSubscriberInterface
 	public function destroy_user_group_cache()
 	{
 		$this->cache->destroy('sql', USER_GROUP_TABLE);
+	}
+
+	/**
+	 * Check if the given page name is designated as a non-content page.
+	 *
+	 * @param string $page_name
+	 * @return bool True or false
+	 */
+	protected function is_non_content_page($page_name)
+	{
+		return in_array($page_name, [
+			'posting.' . $this->php_ext,
+			'ucp.' . $this->php_ext,
+			'mcp.' . $this->php_ext,
+		]);
 	}
 }
