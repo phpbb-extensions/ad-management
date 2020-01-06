@@ -354,7 +354,7 @@ class helper_test extends \phpbb_database_test_case
 				array(
 					'groups',
 					array(
-						'ID'			=> '1',
+						'ID'			=> 1,
 						'NAME'			=> 'Administrators',
 						'S_SELECTED'	=> true,
 					),
@@ -369,7 +369,7 @@ class helper_test extends \phpbb_database_test_case
 				)
 			);
 
-		$helper->assign_groups(0);
+		$helper->assign_groups();
 	}
 
 	/**

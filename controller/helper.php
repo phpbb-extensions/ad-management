@@ -82,7 +82,7 @@ class helper
 	public function assign_data($data, $errors)
 	{
 		$this->assign_locations($data['ad_locations']);
-		$this->assign_groups(isset($data['ad_id']) ? $data['ad_id'] : 0);
+		$this->assign_groups((isset($data['ad_id']) ? $data['ad_id'] : 0), (isset($data['ad_groups']) ? $data['ad_groups'] : array()));
 
 		$errors = array_map(array($this->language, 'lang'), $errors);
 		$this->template->assign_vars(array(
@@ -133,12 +133,21 @@ class helper
 	/**
 	 * Assign groups data to the template.
 	 *
-	 * @param int $ad_id Advertisement ID
+	 * @param int   $ad_id Advertisement ID
+	 * @param array $selected Array of selected groups from the form
 	 * @return void
 	 */
-	public function assign_groups($ad_id = 0)
+	public function assign_groups($ad_id = 0, $selected = array())
 	{
 		$groups = $this->manager->load_groups($ad_id);
+
+		if (!$ad_id && count($selected))
+		{
+			array_walk($groups, function (&$group) use ($selected) {
+				$group['group_selected'] = in_array($group['group_id'], $selected);
+			});
+		}
+
 		foreach ($groups as $group)
 		{
 			$this->template->assign_block_vars('groups', array(
