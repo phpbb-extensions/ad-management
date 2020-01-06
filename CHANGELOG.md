@@ -4,6 +4,7 @@
 
 - Fix: Updated the "Display on content pages only" option so ads will no longer appear when writing posts or viewing member lists. This is to improve compliance with rules from Google AdSense.
 - Fix: Addressed an issue where ad previews in the ACP could be hidden if your browser has Ad Blocking software.
+- Fix: Addressed an issue when previewing an ad and any selected groups in the "Hide advertisement for groups" field would be lost.
 - Fix: Minor code improvements and corrections.
 
 ### 2.0.2 - 2019-04-01
