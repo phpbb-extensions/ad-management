@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.3 - 2019-12-03
+
+- Fix: Updated the "Display on content pages only" option so ads will no longer appear when writing posts or viewing member lists. This is to improve compliance with rules from Google AdSense.
+- Fix: Addressed an issue where ad previews in the ACP could be hidden if your browser has Ad Blocking software.
+- Fix: Addressed an issue when previewing an ad and any selected groups in the "Hide advertisement for groups" field would be lost.
+- Fix: Minor code improvements and corrections.
+
 ### 2.0.2 - 2019-04-01
 
 - Feature: Added a starting date option for advertisements.
@@ -18,7 +25,7 @@
 
 ### 1.0.5 - 2018-03-06
 
-- Feature: Added a new option to display ads on content pages only. When enabled, the ad  will not be shown on the UCP, MCP,Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
+- Feature: Added a new option to display ads on content pages only. When enabled, the ad will not be shown on the UCP, MCP, Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
 - Feature: Ad locations option has improved organisation to make it easier to pick the appropriate location. Also, a new Visual Demo has been added so you can see where all the ad locations physically appear on your board.
 - Fix: My Advertisements tab in the UCP will no longer be shown to all users, and will only be visible to ad owners.
 - Fix: Resolved an issue affecting some users where multiple ads assigned to the same location were not being randomly rotated.
