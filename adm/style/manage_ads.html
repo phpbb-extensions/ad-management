@@ -44,7 +44,7 @@
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
 				<dd>
 					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
-					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code"><i class="fa fa-fw fa-stethoscope"></i> <span>{{ lang('ANALYSE_AD_CODE') }}</span></button>
+					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code"><i class="icon fa-fw fa-stethoscope"></i> <span>{{ lang('ANALYSE_AD_CODE') }}</span></button>
 					<div class="analyser-results">
 						{% if loops.analyser_results_notice or loops.analyser_results_warning %}
 							{% if loops.analyser_results_notice %}
@@ -71,7 +71,7 @@
 				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br /><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
 				<dd>
 					<input type="file" accept="image/*" class="inputbox autowidth" id="banner" name="banner" />
-					<button class="button2 phpbb-ads-button" id="upload_banner" name="upload_banner"><i class="fa fa-fw fa-upload"></i> <span>{{ lang('BANNER_UPLOAD') }}</span></button>
+					<button class="button2 phpbb-ads-button" id="upload_banner" name="upload_banner"><i class="icon fa-fw fa-upload"></i> <span>{{ lang('BANNER_UPLOAD') }}</span></button>
 				</dd>
 			</dl>
 		</fieldset>
@@ -81,7 +81,7 @@
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br />
 					<span>{{ lang('AD_LOCATIONS_EXPLAIN') }}<br><br>
 						<a class="phpbb-ads-button" href="{{ U_ENABLE_VISUAL_DEMO }}" target="_blank">
-							<i class="fa fa-fw fa-eye"></i> <span>{{ lang('AD_LOCATIONS_VISUAL_DEMO') }}</span>
+							<i class="icon fa-fw fa-eye"></i> <span>{{ lang('AD_LOCATIONS_VISUAL_DEMO') }}</span>
 						</a>
 					</span>
 				</dt>
