@@ -26,4 +26,4 @@ The Advertisement Management extension allows phpBB board administrators to add 
 
 ## License
 
-[GPLv2](license.txt)
+[GNU General Public License v2](license.txt)
