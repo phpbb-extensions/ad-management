@@ -40,6 +40,6 @@ class load_memberships_test extends ad_base
 
 		$memberships = $manager->load_memberships($user_id);
 
-		$this->assertEquals($user_groups, $memberships);
+		self::assertEquals($user_groups, $memberships);
 	}
 }

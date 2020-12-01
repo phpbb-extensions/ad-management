@@ -18,7 +18,7 @@ class end_date_test extends functional_base
 	/**
 	* {@inheritDoc}
 	*/
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -32,7 +32,7 @@ class end_date_test extends functional_base
 		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
-		$this->assertContains($ad_code, $crawler->html());
+		self::assertStringContainsString($ad_code, $crawler->html());
 	}
 
 	public function test_future_end_date_displays()
@@ -42,7 +42,7 @@ class end_date_test extends functional_base
 		$crawler = self::request('GET', 'index.php');
 
 		// Confirm above header ad is present
-		$this->assertContains($ad_code, $crawler->html());
+		self::assertStringContainsString($ad_code, $crawler->html());
 
 		return $ad_code;
 	}
@@ -59,6 +59,6 @@ class end_date_test extends functional_base
 		$crawler = self::request('GET', 'index.php');
 
 		// Confirm below header ad is not present
-		$this->assertNotContains($ad_code, $crawler->html());
+		self::assertStringNotContainsString($ad_code, $crawler->html());
 	}
 }

@@ -32,25 +32,27 @@ class visual_demo_test extends main_listener_base
 	 */
 	public function test_visual_demo($in_visual_demo)
 	{
+		$this->user->page['page_name'] = 'viewtopic';
+
 		$this->request
-			->expects($this->once())
+			->expects(self::once())
 			->method('is_set')
 			->with($this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE)
 			->willReturn($in_visual_demo);
 
 		$this->controller_helper
-			->expects($in_visual_demo ? $this->once() : $this->never())
+			->expects($in_visual_demo ? self::once() : self::never())
 			->method('route')
 			->willReturnCallback(function ($route, array $params = array()) {
 				return $route . '#' . serialize($params);
 			});
 
 		$this->template
-			->expects($this->exactly($in_visual_demo ? 9 : 0))
+			->expects(self::exactly($in_visual_demo ? 9 : 0))
 			->method('assign_vars');
 
 		$this->template
-			->expects($in_visual_demo ? $this->at(8) : $this->never())
+			->expects($in_visual_demo ? self::at(8) : self::never())
 			->method('assign_vars')
 			->with(array(
 				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,

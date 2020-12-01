@@ -67,7 +67,7 @@ class update_ad_test extends ad_base
 		unset($data['ad_groups']);
 		foreach ($data as $key => $value)
 		{
-			$this->assertEquals($value, $ad[$key]);
+			self::assertEquals($value, $ad[$key]);
 		}
 	}
 }

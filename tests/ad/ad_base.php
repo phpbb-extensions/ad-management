@@ -46,7 +46,7 @@ class ad_base extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 

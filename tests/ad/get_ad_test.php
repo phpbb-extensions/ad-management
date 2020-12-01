@@ -52,6 +52,6 @@ class get_ad_test extends ad_base
 
 		$ad = $manager->get_ad($ad_id);
 
-		$this->assertEquals($expected, $ad);
+		self::assertEquals($expected, $ad);
 	}
 }

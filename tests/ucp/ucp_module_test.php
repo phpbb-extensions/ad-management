@@ -18,7 +18,7 @@ class ucp_module_test extends \phpbb_test_case
 	/** @var \phpbb\module\module_manager */
 	protected $module_manager;
 
-	public function setUp()
+	protected function setUp(): void
 	{
 		global $phpbb_dispatcher, $phpbb_extension_manager, $phpbb_root_path, $phpEx;
 
@@ -47,7 +47,7 @@ class ucp_module_test extends \phpbb_test_case
 
 	public function test_module_info()
 	{
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			'\\phpbb\\ads\\ucp\\main_module' => array(
 				'filename'	=> '\\phpbb\\ads\\ucp\\main_module',
 				'title'		=> 'UCP_PHPBB_ADS_TITLE',
@@ -76,14 +76,18 @@ class ucp_module_test extends \phpbb_test_case
 	 */
 	public function test_module_auth($module_auth, $expected)
 	{
-		$this->assertEquals($expected, p_master::module_auth($module_auth, 0));
+		self::assertEquals($expected, p_master::module_auth($module_auth, 0));
 	}
 
 	public function test_main_module()
 	{
 		global $phpbb_container, $request, $template;
 
-		define('IN_ADMIN', true);
+		if (!defined('IN_ADMIN'))
+		{
+			define('IN_ADMIN', true);
+		}
+
 		$request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -98,21 +102,21 @@ class ucp_module_test extends \phpbb_test_case
 			->getMock();
 
 		$phpbb_container
-			->expects($this->once())
+			->expects(self::once())
 			->method('get')
 			->with('phpbb.ads.ucp.controller')
 			->willReturn($ucp_controller);
 
 		$ucp_controller
-			->expects($this->once())
+			->expects(self::once())
 			->method('set_page_url');
 
 		$ucp_controller
-			->expects($this->once())
+			->expects(self::once())
 			->method('get_page_title');
 
 		$ucp_controller
-			->expects($this->once())
+			->expects(self::once())
 			->method('main');
 
 		$p_master = new p_master();

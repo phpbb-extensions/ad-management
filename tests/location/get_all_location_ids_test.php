@@ -91,6 +91,6 @@ class get_all_location_ids_test extends location_base
 
 		$location_ids = $manager->get_all_location_ids();
 
-		$this->assertEquals($expected, $location_ids);
+		self::assertEquals($expected, $location_ids);
 	}
 }

@@ -25,7 +25,7 @@ class remove_test extends banner_base
 			->getMock();
 		$manager->set_file($file);
 
-		$file->expects($this->once())
+		$file->expects(self::once())
 			->method('remove');
 
 		$manager->remove();

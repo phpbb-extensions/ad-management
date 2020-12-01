@@ -38,6 +38,6 @@ class increment_ad_clicks_test extends ad_base
 
 		$ad = $manager->get_ad($ad_id);
 
-		$this->assertEquals($ad_id ? 1 : null, $ad['ad_clicks']);
+		self::assertEquals($ad_id ? 1 : null, $ad['ad_clicks']);
 	}
 }

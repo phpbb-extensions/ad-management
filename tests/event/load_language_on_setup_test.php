@@ -26,7 +26,7 @@ class load_language_on_setup_test extends main_listener_base
 		$dispatcher->dispatch('core.user_setup', $event);
 
 		$event_data_after = $event->get_data_filtered($event_data);
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			'lang_set_ext'	=> array(
 				array(
 					'ext_name' => 'phpbb/ads',

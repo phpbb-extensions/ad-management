@@ -117,7 +117,7 @@ class run_test extends analyser_base
 			$i = 0;
 			foreach ($expected as $message)
 			{
-				$this->template->expects($this->at($i))
+				$this->template->expects(self::at($i))
 					->method('assign_block_vars')
 					->with('analyser_results_' . $message['severity'], array(
 						'MESSAGE'	=> $this->lang->lang($message['lang_key']),
@@ -128,7 +128,7 @@ class run_test extends analyser_base
 		}
 		else
 		{
-			$this->template->expects($this->never())
+			$this->template->expects(self::never())
 				->method('assign_block_vars');
 		}
 

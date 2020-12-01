@@ -37,7 +37,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -86,19 +86,19 @@ class increment_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($ad_id ? $this->once() : $this->never())
+		$this->request->expects($ad_id ? self::once() : self::never())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
 		try
 		{
 			$response = $controller->handle($ad_id, 'clicks');
-			$this->assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+			self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
 		}
 		catch (\phpbb\exception\http_exception $exception)
 		{
-			$this->assertEquals(403, $exception->getStatusCode());
-			$this->assertEquals('NOT_AUTHORISED', $exception->getMessage());
+			self::assertEquals(403, $exception->getStatusCode());
+			self::assertEquals('NOT_AUTHORISED', $exception->getMessage());
 		}
 	}
 
@@ -126,11 +126,11 @@ class increment_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects(!empty($ad_ids) ? $this->once() : $this->never())
+		$this->request->expects(!empty($ad_ids) ? self::once() : self::never())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
-		$this->manager->expects(($is_ajax && !empty($ad_ids)) ? $this->once() : $this->never())
+		$this->manager->expects(($is_ajax && !empty($ad_ids)) ? self::once() : self::never())
 			->method('increment_ads_views')
 			->with(explode('-', $ad_ids));
 
@@ -138,12 +138,12 @@ class increment_controller_test extends \phpbb_database_test_case
 		{
 			$response = $controller->handle($ad_ids, 'views');
 
-			$this->assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+			self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
 		}
 		catch (\phpbb\exception\http_exception $exception)
 		{
-			$this->assertEquals(403, $exception->getStatusCode());
-			$this->assertEquals('NOT_AUTHORISED', $exception->getMessage());
+			self::assertEquals(403, $exception->getStatusCode());
+			self::assertEquals('NOT_AUTHORISED', $exception->getMessage());
 		}
 	}
 }

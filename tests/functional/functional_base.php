@@ -26,7 +26,7 @@ class functional_base extends \phpbb_functional_test_case
 	/**
 	* {@inheritDoc}
 	*/
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -68,7 +68,7 @@ class functional_base extends \phpbb_functional_test_case
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
 		$this->assertContainsLang('ACP_AD_ADD_SUCCESS', $crawler->text());
 
 		return $form_data['ad_code'];

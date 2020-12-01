@@ -34,17 +34,18 @@ class views_test extends main_listener_base
 	{
 		$this->user->data['user_id'] = 10;
 		$this->user->data['is_bot'] = $is_bot;
+		$this->user->page['page_name'] = 'viewtopic';
 		$this->config['phpbb_ads_enable_views'] = true;
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('load_memberships')
 			->willReturn(array());
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('get_ads')
 			->willReturn(array(array(
 				'ad_id'			=> '1',
@@ -52,19 +53,20 @@ class views_test extends main_listener_base
 				'location_id'	=> '',
 			)));
 
-		$this->controller_helper->expects(($is_bot ? $this->never() : $this->once()))
+		$this->controller_helper->expects(($is_bot ? self::never() : self::once()))
 			->method('route')
 			->with('phpbb_ads_view', array('data' => '1'))
 			->willReturn('app.php/adsview/1');
 
 		if (!$is_bot)
 		{
-			$this->template->expects($this->at(1))
+			$this->template
+				->expects(self::exactly(2))
 				->method('assign_vars')
-				->with(array(
-					'S_INCREMENT_VIEWS'	=> true,
-					'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1',
-				));
+				->withConsecutive(
+					[['AD__ID' => '1', 'AD_' => '', 'AD__CENTER' => false]],
+					[['S_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
+				);
 		}
 
 		$listener = $this->get_listener();

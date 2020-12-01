@@ -36,14 +36,14 @@ class create_storage_dir_test extends banner_base
 	{
 		$manager = $this->get_manager();
 
-		$this->filesystem->expects($this->once())
+		$this->filesystem->expects(self::once())
 			->method('exists')
 			->with($this->root_path . 'images/phpbb_ads')
 			->willReturn($dir_exists);
 
 		if (!$dir_exists)
 		{
-			$mkdir = $this->filesystem->expects($this->once())
+			$mkdir = $this->filesystem->expects(self::once())
 				->method('mkdir')
 				->with($this->root_path . 'images/phpbb_ads');
 

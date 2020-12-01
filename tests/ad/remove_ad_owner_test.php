@@ -36,14 +36,14 @@ class remove_ad_owner_test extends ad_base
 
 		foreach ($user_ids as $user_id)
 		{
-			$this->assertNotEmpty($manager->get_ads_by_owner($user_id));
+			self::assertNotEmpty($manager->get_ads_by_owner($user_id));
 		}
 
 		$manager->remove_ad_owner($user_ids);
 
 		foreach ($user_ids as $user_id)
 		{
-			$this->assertEmpty($manager->get_ads_by_owner($user_id));
+			self::assertEmpty($manager->get_ads_by_owner($user_id));
 		}
 	}
 }

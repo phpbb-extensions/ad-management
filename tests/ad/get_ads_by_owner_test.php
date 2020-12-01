@@ -59,6 +59,6 @@ class get_ads_by_owner_test extends ad_base
 
 		$ads = $manager->get_ads_by_owner($user_id);
 
-		$this->assertEquals($expected, $ads);
+		self::assertEquals($expected, $ads);
 	}
 }

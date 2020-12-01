@@ -46,6 +46,6 @@ class disable_xss_protection_test extends main_listener_base
 
 		$listener->disable_xss_protection($event);
 
-		$this->assertEquals($expected, array_key_exists('X-XSS-Protection', $event['http_headers']));
+		self::assertEquals($expected, array_key_exists('X-XSS-Protection', $event['http_headers']));
 	}
 }

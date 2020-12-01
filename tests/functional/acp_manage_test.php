@@ -51,9 +51,9 @@ class acp_manage_test extends functional_base
 		$crawler = self::submit($form, array(
 			'ad_code'	=> '<script src="">alert();window.location.href=""</script>',
 		));
-		$this->assertContains('Non-asynchronous javascript', $crawler->filter('.analyser-results')->html());
-		$this->assertContains('Usage of <samp>alert()</samp>', $crawler->filter('.analyser-results')->html());
-		$this->assertContains('Redirection', $crawler->filter('.analyser-results')->html());
+		self::assertStringContainsString('Non-asynchronous javascript', $crawler->filter('.analyser-results')->html());
+		self::assertStringContainsString('Usage of <samp>alert()</samp>', $crawler->filter('.analyser-results')->html());
+		self::assertStringContainsString('Redirection', $crawler->filter('.analyser-results')->html());
 
 		// Confirm error when submitting without required field data
 		$this->submit_with_error($crawler, array(), $this->lang('AD_NAME_REQUIRED'));
@@ -132,24 +132,24 @@ class acp_manage_test extends functional_base
 		// Confirm preview
 		$form = $crawler->selectButton($this->lang('PREVIEW'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
-		$this->assertContains($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
+		self::assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
+		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
 
 		// Confirm add
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
 		$this->assertContainsLang('ACP_AD_ADD_SUCCESS', $crawler->text());
 
 		// Confirm new ad appears in the list, is enabled and end date is displayed correctly
 		$crawler = $this->get_manage_page();
-		$this->assertContains('Functional test name', $crawler->text());
+		self::assertStringContainsString('Functional test name', $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
-		$this->assertContains('2035-01-01', $crawler->text());
+		self::assertStringContainsString('2035-01-01', $crawler->text());
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
-		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_ADD_LOG', $form_data['ad_name'])), $crawler->text());
+		self::assertStringContainsString(strip_tags($this->lang('ACP_PHPBB_ADS_ADD_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
 	/**
@@ -250,25 +250,25 @@ class acp_manage_test extends functional_base
 		// Confirm preview
 		$form = $crawler->selectButton($this->lang('PREVIEW'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
-		$this->assertContains($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
+		self::assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
+		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
 
 		// Confirm edit
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
 		$this->assertContainsLang('ACP_AD_EDIT_SUCCESS', $crawler->text());
 
 		// Confirm new ad appears in the list, is disabled and stard and end date is present and updated
 		$crawler = $this->get_manage_page();
-		$this->assertContains('Functional test name edited', $crawler->text());
+		self::assertStringContainsString('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
-		$this->assertContains('2030-01-02', $crawler->text());
-		$this->assertContains('2035-01-02', $crawler->text());
+		self::assertStringContainsString('2030-01-02', $crawler->text());
+		self::assertStringContainsString('2035-01-02', $crawler->text());
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
-		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', $form_data['ad_name'])), $crawler->text());
+		self::assertStringContainsString(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
 	/**
@@ -320,7 +320,7 @@ class acp_manage_test extends functional_base
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
-		$this->assertContains(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
+		self::assertStringContainsString(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
 	public static function click($link)
@@ -337,7 +337,7 @@ class acp_manage_test extends functional_base
 	{
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
-		$this->assertGreaterThan(0, $crawler->filter('.errorbox')->count());
-		$this->assertContains($error_lang, $crawler->text());
+		self::assertGreaterThan(0, $crawler->filter('.errorbox')->count());
+		self::assertStringContainsString($error_lang, $crawler->text());
 	}
 }

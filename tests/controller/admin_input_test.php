@@ -49,7 +49,7 @@ class admin_input_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -97,21 +97,21 @@ class admin_input_test extends \phpbb_database_test_case
 	public function get_form_data_data()
 	{
 		return array(
-			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['FORM_INVALID']),
-			array(true, ['', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_NAME_REQUIRED']),
-			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_NAME_TOO_LONG']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', '', '', '', '', '5', '0', '', '', '', [], 0], 0, ['AD_CODE_ILLEGAL_CHARS']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', '', '5', '0', '', '', '', [], 0], 0, ['AD_START_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', 'blah', '5', '0', '', '', '', [], 0], 0, ['AD_END_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '1970-01-01', '', '5', '0', '', '', '', [], 0], 0, ['AD_START_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '1970-01-01', '5', '0', '', '', '', [], 0], 0, ['AD_END_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '0', '0', '', '', '', [], 0], 0, ['AD_PRIORITY_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '11', '0', '', '', '', [], 0], 0, ['AD_PRIORITY_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '-1', '', '', [], 0], 0, ['AD_VIEWS_LIMIT_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '-1', '', [], 0], 0, ['AD_CLICKS_LIMIT_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', 'adm', [], 0], 0, ['AD_OWNER_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '', '', '', '', '5', '0', '', '', 'adm', [], 0], 0, ['AD_OWNER_INVALID']),
-			array(false, ['', 'Ad Note #1', 'Ad Code #1', '', '', 'blah', 'blah', '0', '0', '-1', '-1', 'adm', [], 0], 0, [
+			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['FORM_INVALID']),
+			array(true, ['', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['AD_NAME_REQUIRED']),
+			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['AD_NAME_TOO_LONG']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['AD_CODE_ILLEGAL_CHARS']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', '', 5, 0, 0, 0, '', [], false], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', 'blah', 5, 0, 0, 0, '', [], false], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '1970-01-01', '', 5, 0, 0, 0, '', [], false], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '1970-01-01', 5, 0, 0, 0, '', [], false], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 0, 0, 0, 0, '', [], false], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 11, 0, 0, 0, '', [], false], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, -1, 0, '', [], false], 0, ['AD_VIEWS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, -1, '', [], false], 0, ['AD_CLICKS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, 'adm', [], false], 0, ['AD_OWNER_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, 'adm', [], false], 0, ['AD_OWNER_INVALID']),
+			array(false, ['', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', 'blah', 0, 0, -1, -1, 'adm', [], false], 0, [
 				'FORM_INVALID',
 				'AD_NAME_REQUIRED',
 				'AD_START_DATE_INVALID',
@@ -137,20 +137,20 @@ class admin_input_test extends \phpbb_database_test_case
 		self::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
-		$this->request->expects($this->exactly(14))
+		$this->request->expects(self::exactly(14))
 			->method('variable')
-			->will($this->onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering));
+			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering));
 
 		$result = $input_controller->get_form_data();
 
 		if (!empty($errors))
 		{
-			$this->assertGreaterThan(0, $input_controller->has_errors());
-			$this->assertEquals($errors, $input_controller->get_errors());
+			self::assertGreaterThan(0, $input_controller->has_errors());
+			self::assertEquals($errors, $input_controller->get_errors());
 		}
 		else
 		{
-			$this->assertEquals(array(
+			self::assertEquals(array(
 				'ad_name'         => $ad_name,
 				'ad_note'         => $ad_note,
 				'ad_code'         => $ad_code,
@@ -196,7 +196,7 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		$input_controller = $this->get_input_controller();
 
-		$create_storage_dir = $this->banner->expects($this->once())
+		$create_storage_dir = $this->banner->expects(self::once())
 			->method('create_storage_dir');
 		if (!$can_create_directory)
 		{
@@ -204,7 +204,7 @@ class admin_input_test extends \phpbb_database_test_case
 		}
 		else
 		{
-			$upload = $this->banner->expects($this->once())
+			$upload = $this->banner->expects(self::once())
 				->method('upload');
 			if (!$can_move_file)
 			{
@@ -218,11 +218,11 @@ class admin_input_test extends \phpbb_database_test_case
 
 		if (!$can_create_directory || !$can_move_file)
 		{
-			$this->banner->expects($this->once())
+			$this->banner->expects(self::once())
 				->method('remove');
 		}
 
-		$this->request->expects($this->once())
+		$this->request->expects(self::once())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
@@ -233,12 +233,12 @@ class admin_input_test extends \phpbb_database_test_case
 		}
 
 		$result = $input_controller->banner_upload($ad_code);
-		$this->assertEquals($ad_code_expected, $result);
+		self::assertEquals($ad_code_expected, $result);
 
 		if (count($file_error))
 		{
-			$this->assertGreaterThan(0, $input_controller->has_errors());
-			$this->assertEquals(array(implode('<br />', $file_error)), $input_controller->get_errors());
+			self::assertGreaterThan(0, $input_controller->has_errors());
+			self::assertEquals(array(implode('<br />', $file_error)), $input_controller->get_errors());
 		}
 	}
 }

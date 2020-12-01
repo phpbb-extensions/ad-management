@@ -18,7 +18,7 @@ class main_listener_test extends main_listener_base
 	public function test_construct()
 	{
 		$listener = $this->get_listener();
-		$this->assertInstanceOf('\Symfony\Component\EventDispatcher\EventSubscriberInterface', $listener);
+		self::assertInstanceOf('\Symfony\Component\EventDispatcher\EventSubscriberInterface', $listener);
 	}
 
 	/**
@@ -26,7 +26,7 @@ class main_listener_test extends main_listener_base
 	*/
 	public function test_getSubscribedEvents()
 	{
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			'core.permissions',
 			'core.user_setup',
 			'core.page_footer_after',

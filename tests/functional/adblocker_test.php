@@ -28,7 +28,7 @@ class adblocker_test extends functional_base
 
 		// Confirm ad blocker code is present
 		$crawler = self::request('GET', 'index.php');
-		$this->assertEquals(1, $crawler->filter('#phpbb-ads-ab')->count());
+		self::assertEquals(1, $crawler->filter('#phpbb-ads-ab')->count());
 	}
 
 	public function test_adblocker_code_is_not_present()
@@ -42,6 +42,6 @@ class adblocker_test extends functional_base
 		$this->assertContainsLang('ACP_AD_SETTINGS_SAVED', $crawler->text());
 
 		$crawler = self::request('GET', 'index.php');
-		$this->assertEquals(0, $crawler->filter('#phpbb-ads-ab')->count());
+		self::assertEquals(0, $crawler->filter('#phpbb-ads-ab')->count());
 	}
 }

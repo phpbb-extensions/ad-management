@@ -52,7 +52,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -108,7 +108,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->assertEquals($this->language->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
+		self::assertEquals($this->language->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
 	}
 
 	/**
@@ -148,18 +148,19 @@ class ucp_controller_test extends \phpbb_database_test_case
 	 */
 	public function test_main($enable_views, $enable_clicks, $ads)
 	{
+		$this->user->data['user_id'] = 2;
 		$this->config['phpbb_ads_enable_views'] = $enable_views;
 		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
 		$controller = $this->get_controller();
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('get_ads_by_owner')
 			->willReturn($ads);
 
-		$this->template->expects($this->exactly(count($ads)))
+		$this->template->expects(self::exactly(count($ads)))
 			->method('assign_block_vars');
 
-		$this->template->expects($this->once())
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'S_VIEWS_ENABLED'	=> $enable_views,
