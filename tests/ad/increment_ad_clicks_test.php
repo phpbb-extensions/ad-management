@@ -38,6 +38,13 @@ class increment_ad_clicks_test extends ad_base
 
 		$ad = $manager->get_ad($ad_id);
 
-		self::assertEquals($ad_id ? 1 : null, $ad['ad_clicks']);
+		if ($ad_id)
+		{
+			self::assertEquals(1, $ad['ad_clicks']);
+		}
+		else
+		{
+			self::assertArrayNotHasKey('ad_clicks', $ad);
+		}
 	}
 }

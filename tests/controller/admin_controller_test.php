@@ -996,14 +996,11 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		list($with0, $with1, $with2, $with3) = [['action', ''], ['id', 0], ['i', ''], ['mode', '']];
-		list($will0, $will1, $will2, $will3) = ['delete', $ad_id, '', ''];
-
 		$this->request
 			->expects(self::exactly($confirm ? 2 : 4))
 			->method('variable')
-			->withConsecutive($with0, $with1, $with2, $with3)
-			->willReturnOnConsecutiveCalls($will0, $will1, $will2, $will3);
+			->withConsecutive(...[['action', ''], ['id', 0], ['i', ''], ['mode', '']])
+			->willReturnOnConsecutiveCalls(...['delete', $ad_id, '', '']);
 
 		if (!$confirm)
 		{
