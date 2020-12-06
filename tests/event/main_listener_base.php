@@ -54,6 +54,9 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var string */
 	protected $ad_group_table;
 
+	/** @var array */
+	protected $locations;
+
 	/**
 	* {@inheritDoc}
 	*/
@@ -97,7 +100,7 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->ad_locations_table = 'phpbb_ad_locations';
 		$this->ad_group_table = 'phpbb_ad_group';
 		// Location types
-		$locations = array(
+		$this->locations = array(
 			'above_footer',
 			'above_header',
 			'after_footer_navbar',
@@ -114,7 +117,7 @@ class main_listener_base extends \phpbb_database_test_case
 			'slide_up',
 		);
 		$location_types = array();
-		foreach ($locations as $type)
+		foreach ($this->locations as $type)
 		{
 			$class = "\\phpbb\\ads\\location\\type\\$type";
 			if ($type === 'pop_up')
@@ -134,18 +137,14 @@ class main_listener_base extends \phpbb_database_test_case
 		$this->template_context = $this->getMockBuilder('\phpbb\template\context')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->user = $this->getMockBuilder('\phpbb\user')
-			->disableOriginalConstructor()
-			->getMock();
+		$this->user = $user;
 		$this->config = new \phpbb\config\config(array('phpbb_ads_adblocker_message' => '0'));
 		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 		$this->location_manager = new \phpbb\ads\location\manager($location_types);
 		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
-			->disableOriginalConstructor()
-			->getMock();
+		$this->request = $request;
 		$this->cache = $this->getMockBuilder('\phpbb\cache\driver\dummy')
 			->disableOriginalConstructor()
 			->getMock();

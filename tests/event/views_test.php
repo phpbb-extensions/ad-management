@@ -51,6 +51,7 @@ class views_test extends main_listener_base
 				'ad_id'			=> '1',
 				'ad_code'		=> '',
 				'location_id'	=> '',
+				'ad_centering'	=> '',
 			)));
 
 		$this->controller_helper->expects(($is_bot ? self::never() : self::once()))

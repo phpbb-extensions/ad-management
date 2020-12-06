@@ -1018,7 +1018,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->manager->expects(self::once())
 				->method('get_ad')
 				->with($ad_id)
-				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner));
+				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
 			$this->manager->expects(self::once())
 				->method('delete_ad')
 				->willReturn($ad_id ? true : false);
@@ -1047,6 +1047,12 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_enabled'	=> 1,
 				'ad_start_date'	=> 0,
 				'ad_end_date'	=> 0,
+				'ad_priority'	=> 5,
+				'ad_views'		=> 0,
+				'ad_clicks'		=> 0,
+				'ad_views_limit'	=> 0,
+				'ad_clicks_limit'	=> 0,
+
 			),
 			array(
 				'ad_id'			=> 2,
@@ -1054,6 +1060,11 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_enabled'	=> 1,
 				'ad_start_date'	=> 0,
 				'ad_end_date'	=> 1,
+				'ad_priority'	=> 5,
+				'ad_views'		=> 0,
+				'ad_clicks'		=> 0,
+				'ad_views_limit'	=> 0,
+				'ad_clicks_limit'	=> 0,
 			),
 		);
 

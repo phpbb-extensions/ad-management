@@ -53,14 +53,14 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $db, $phpbb_root_path, $phpEx;
+		global $config, $db, $request, $symfony_request, $user, $phpbb_root_path, $phpEx;
 
 		// Global variables
 		$db = $this->new_dbal();
 
 		// Load/Mock classes required by the controller class
 		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
-		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
+		$this->user = $user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
 		$this->user_loader = new \phpbb\user_loader($db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
@@ -69,6 +69,16 @@ class admin_input_test extends \phpbb_database_test_case
 		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
 			->disableOriginalConstructor()
 			->getMock();
+
+		// Global objects required by generate_board_url()
+		$config = new \phpbb\config\config(array(
+			'script_path'           => '/phpbb',
+			'server_name'           => 'localhost',
+			'server_port'           => 80,
+			'server_protocol'       => 'http://',
+		));
+		$request = new \phpbb_mock_request;
+		$symfony_request = new \phpbb\symfony_request($request);
 	}
 
 	/**
@@ -181,9 +191,9 @@ class admin_input_test extends \phpbb_database_test_case
 			array(false, true, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(false, true, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
-			array(true, true, false, array(), '', '<img src="http://images/phpbb_ads/abcdef.jpg" />'),
-			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
-			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://images/phpbb_ads/abcdef.jpg\" />"),
+			array(true, true, false, array(), '', '<img src="http://localhost/phpbb/images/phpbb_ads/abcdef.jpg" />'),
+			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\" />"),
+			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://loscalhost/phpbb/images/phpbb_ads/abcdef.jpg\" />"),
 		);
 	}
 
