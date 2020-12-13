@@ -130,7 +130,11 @@ class visual_demo_test extends \phpbb_test_case
 		// If non-ajax redirect is encountered, in testing it will trigger error
 		if (!$is_ajax)
 		{
-			$this->setExpectedTriggerError(E_USER_WARNING);
+			// Throws E_WARNING in PHP 8.0+ and E_USER_WARNING in earlier versions
+			$exceptionName = version_compare(PHP_VERSION, '8.0', '<') ? \PHPUnit\Framework\Error\Error::class : \PHPUnit\Framework\Error\Warning::class;
+			$errno = version_compare(PHP_VERSION, '8.0', '<') ? E_USER_WARNING : E_WARNING;
+			$this->expectException($exceptionName);
+			$this->expectExceptionCode($errno);
 		}
 
 		$controller = $this->get_controller();

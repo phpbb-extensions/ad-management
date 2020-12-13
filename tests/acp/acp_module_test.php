@@ -132,6 +132,8 @@ class acp_module_test extends \phpbb_test_case
 			->method("mode_$mode");
 
 		$p_master = new p_master();
+		$p_master->module_ary[0]['is_duplicate'] = 0;
+		$p_master->module_ary[0]['url_extra'] = '';
 		$p_master->load('acp', '\phpbb\ads\acp\main_module', $mode);
 	}
 }

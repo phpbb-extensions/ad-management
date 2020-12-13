@@ -83,7 +83,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		parent::setUp();
 
 		global $phpbb_root_path, $phpEx;
-		global $phpbb_dispatcher, $cache, $db;
+		global $phpbb_dispatcher, $cache, $db, $user;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 
@@ -92,6 +92,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->language = new \phpbb\language\language($lang_loader);
+		$user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -948,7 +949,11 @@ class admin_controller_test extends \phpbb_database_test_case
 		if ($is_ajax)
 		{
 			// Handle trigger_error() output called from json_response
-			$this->setExpectedTriggerError(E_WARNING);
+			if (isset(\PHPUnit\Framework\Error\Warning::$enabled))
+			{
+				\PHPUnit\Framework\Error\Warning::$enabled = true;
+			}
+			$this->expectException(\PHPUnit\Framework\Error\Warning::class);
 		}
 		else
 		{
@@ -1012,6 +1017,10 @@ class admin_controller_test extends \phpbb_database_test_case
 		else if ($error)
 		{
 			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
+			$this->manager->expects(self::once())
+				->method('get_ad')
+				->with($ad_id)
+				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
 		}
 		else
 		{

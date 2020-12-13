@@ -239,7 +239,11 @@ class admin_input_test extends \phpbb_database_test_case
 		if ($is_ajax)
 		{
 			// Handle trigger_error() output called from json_response
-			$this->setExpectedTriggerError(E_WARNING);
+			if (isset(\PHPUnit\Framework\Error\Warning::$enabled))
+			{
+				\PHPUnit\Framework\Error\Warning::$enabled = true;
+			}
+			$this->expectException(\PHPUnit\Framework\Error\Warning::class);
 		}
 
 		$result = $input_controller->banner_upload($ad_code);
