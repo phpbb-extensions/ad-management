@@ -588,7 +588,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('action', '')
 			->willReturn('add');
 
-		$controller->mode_manage();
+		$reflection_controller = new \ReflectionObject($controller);
+		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
+		$reflection_controller_auth_admin->setAccessible(true);
+		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
+		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
+		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
+		$reflection_controller_mode_manage_method->invoke($controller);
 	}
 
 	/**
@@ -909,7 +916,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 		}
 
-		$controller->mode_manage();
+		$reflection_controller = new \ReflectionObject($controller);
+		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
+		$reflection_controller_auth_admin->setAccessible(true);
+		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
+		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
+		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
+		$reflection_controller_mode_manage_method->invoke($controller);
 	}
 
 	/**
@@ -1039,7 +1053,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 		}
 
-		$controller->mode_manage();
+		$reflection_controller = new \ReflectionObject($controller);
+		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
+		$reflection_controller_auth_admin->setAccessible(true);
+		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
+		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
+		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
+		$reflection_controller_mode_manage_method->invoke($controller);
 	}
 
 	/**
