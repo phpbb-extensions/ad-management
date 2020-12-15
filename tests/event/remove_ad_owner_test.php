@@ -21,6 +21,6 @@ class remove_ad_owner_test extends main_listener_base
 		$event = new \phpbb\event\data(compact($event_data));
 		$dispatcher->dispatch('core.delete_user_after', $event);
 
-		$this->assertEmpty($this->manager->get_ads_by_owner(999));
+		self::assertEmpty($this->manager->get_ads_by_owner(999));
 	}
 }

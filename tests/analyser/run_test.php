@@ -114,21 +114,21 @@ class run_test extends analyser_base
 
 		if (count($expected))
 		{
-			$i = 0;
+			$analyser_results = [];
 			foreach ($expected as $message)
 			{
-				$this->template->expects($this->at($i))
-					->method('assign_block_vars')
-					->with('analyser_results_' . $message['severity'], array(
-						'MESSAGE'	=> $this->lang->lang($message['lang_key']),
-					));
-
-				$i++;
+				$analyser_results = array_merge($analyser_results, [['analyser_results_' . $message['severity'], [
+					'MESSAGE'	=> $this->lang->lang($message['lang_key'])]]
+				]);
 			}
+
+			$this->template->expects(self::exactly(count($expected)))
+				->method('assign_block_vars')
+				->withConsecutive(...$analyser_results);
 		}
 		else
 		{
-			$this->template->expects($this->never())
+			$this->template->expects(self::never())
 				->method('assign_block_vars');
 		}
 

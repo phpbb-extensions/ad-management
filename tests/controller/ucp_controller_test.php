@@ -52,7 +52,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -108,7 +108,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->assertEquals($this->language->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
+		self::assertEquals($this->language->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
 	}
 
 	/**
@@ -121,19 +121,37 @@ class ucp_controller_test extends \phpbb_database_test_case
 		return array(
 			array(1, 1, array(
 				array(
-					'ad_name'	=> 'First ad',
-					'ad_views'	=> '0',
-					'ad_cliks'	=> '0',
+					'ad_id'				=> 1,
+					'ad_name'			=> 'First ad',
+					'ad_views'			=> 0,
+					'ad_clicks'			=> 0,
+					'ad_enabled'		=> 1,
+					'ad_start_date'		=> 0,
+					'ad_end_date'		=> 0,
+					'ad_views_limit'	=> 0,
+					'ad_clicks_limit'	=> 0,
 				),
 				array(
-					'ad_name'	=> 'Second ad',
-					'ad_views'	=> '10',
-					'ad_cliks'	=> '0',
+					'ad_id'				=> 2,
+					'ad_name'			=> 'Second ad',
+					'ad_views'			=> 10,
+					'ad_clicks'			=> 0,
+					'ad_enabled'		=> 1,
+					'ad_start_date'		=> 0,
+					'ad_end_date'		=> 0,
+					'ad_views_limit'	=> 0,
+					'ad_clicks_limit'	=> 0,
 				),
 				array(
-					'ad_name'	=> 'Third ad',
-					'ad_views'	=> '20',
-					'ad_cliks'	=> '10',
+					'ad_id'				=> 3,
+					'ad_name'			=> 'Third ad',
+					'ad_views'			=> 20,
+					'ad_clicks'			=> 10,
+					'ad_enabled'		=> 1,
+					'ad_start_date'		=> 0,
+					'ad_end_date'		=> 0,
+					'ad_views_limit'	=> 0,
+					'ad_clicks_limit'	=> 0,
 				),
 			)),
 			array(1, 0, array()),
@@ -148,18 +166,19 @@ class ucp_controller_test extends \phpbb_database_test_case
 	 */
 	public function test_main($enable_views, $enable_clicks, $ads)
 	{
+		$this->user->data['user_id'] = 2;
 		$this->config['phpbb_ads_enable_views'] = $enable_views;
 		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
 		$controller = $this->get_controller();
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('get_ads_by_owner')
 			->willReturn($ads);
 
-		$this->template->expects($this->exactly(count($ads)))
+		$this->template->expects(self::exactly(count($ads)))
 			->method('assign_block_vars');
 
-		$this->template->expects($this->once())
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'S_VIEWS_ENABLED'	=> $enable_views,

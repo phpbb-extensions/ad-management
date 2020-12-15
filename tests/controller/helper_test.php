@@ -61,7 +61,7 @@ class helper_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -145,71 +145,76 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_name'			=> 'Ad Name #1',
 					  'ad_note'			=> 'Ad Note #1',
 					  'ad_code'			=> 'Ad Code #1',
-					  'ad_enabled'		=> '1',
+					  'ad_enabled'		=> 1,
 					  'ad_start_date'	=> '',
 					  'ad_end_date'		=> '',
-					  'ad_priority'		=> '5',
-					  'ad_content_only'	=> '0',
-					  'ad_views_limit'	=> '0',
-					  'ad_clicks_limit'	=> '0',
-					  'ad_owner'			=> '0',
-					  'ad_centering'	=> '0',
+					  'ad_priority'		=> 5,
+					  'ad_content_only'	=> 0,
+					  'ad_views_limit'	=> 0,
+					  'ad_clicks_limit'	=> 0,
+					  'ad_owner'		=> 0,
+					  'ad_centering'	=> false,
+					  'ad_locations'	=> [],
 				  ), '', array('AD_PRIORITY_INVALID'), true, 'AD_PRIORITY_INVALID'),
 			array(array(
 					  'ad_name'			=> 'Ad Name #1',
 					  'ad_note'			=> 'Ad Note #1',
 					  'ad_code'			=> 'Ad Code #1',
-					  'ad_enabled'		=> '1',
+					  'ad_enabled'		=> 1,
 					  'ad_start_date'	=> '0',
 					  'ad_end_date'		=> '0',
-					  'ad_priority'		=> '5',
-					  'ad_content_only'	=> '0',
-					  'ad_views_limit'	=> '0',
-					  'ad_clicks_limit'	=> '0',
-					  'ad_owner'			=> '0',
-					  'ad_centering'	=> '0',
+					  'ad_priority'		=> 5,
+					  'ad_content_only'	=> 0,
+					  'ad_views_limit'	=> 0,
+					  'ad_clicks_limit'	=> 0,
+					  'ad_owner'		=> 0,
+					  'ad_centering'	=> 0,
+					  'ad_locations'	=> [],
 				  ), '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br />AD_NAME_REQUIRED'),
 			array(array(
 					  'ad_name'			=> 'Ad Name #2',
 					  'ad_note'			=> 'Ad Note #2',
 					  'ad_code'			=> 'Ad Code #2',
-					  'ad_enabled'		=> '0',
+					  'ad_enabled'		=> 0,
 					  'ad_start_date'	=> '1',
 					  'ad_end_date'		=> '1',
-					  'ad_priority'		=> '5',
-					  'ad_content_only'	=> '0',
-					  'ad_views_limit'	=> '0',
-					  'ad_clicks_limit'	=> '0',
-					  'ad_owner'			=> '99',
-					  'ad_centering'	=> '0',
+					  'ad_priority'		=> 5,
+					  'ad_content_only'	=> 0,
+					  'ad_views_limit'	=> 0,
+					  'ad_clicks_limit'	=> 0,
+					  'ad_owner'		=> 99,
+					  'ad_centering'	=> 0,
+					  'ad_locations'	=> [],
 				  ), 'Anonymous', array(), false, ''),
 			array(array(
 					  'ad_name'			=> 'Ad Name #2',
 					  'ad_note'			=> 'Ad Note #2',
 					  'ad_code'			=> 'Ad Code #2',
-					  'ad_enabled'		=> '0',
+					  'ad_enabled'		=> 0,
 					  'ad_start_date'	=> '1970-01-01',
 					  'ad_end_date'		=> '1970-01-01',
-					  'ad_priority'		=> '5',
-					  'ad_content_only'	=> '0',
-					  'ad_views_limit'	=> '0',
-					  'ad_clicks_limit'	=> '0',
-					  'ad_owner'			=> '99',
-					  'ad_centering'	=> '0',
+					  'ad_priority'		=> 5,
+					  'ad_content_only'	=> 0,
+					  'ad_views_limit'	=> 0,
+					  'ad_clicks_limit'	=> 0,
+					  'ad_owner'		=> 99,
+					  'ad_centering'	=> 0,
+					  'ad_locations'	=> [],
 				  ), 'Anonymous', array(), false, ''),
 			array(array(
 					  'ad_name'			=> 'Ad Name #3',
 					  'ad_note'			=> 'Ad Note #3',
 					  'ad_code'			=> 'Ad Code #3',
-					  'ad_enabled'		=> '0',
+					  'ad_enabled'		=> 0,
 					  'ad_start_date'	=> '1483228800',
 					  'ad_end_date'		=> '1483228800',
-					  'ad_priority'		=> '5',
-					  'ad_content_only'	=> '0',
-					  'ad_views_limit'	=> '0',
-					  'ad_clicks_limit'	=> '0',
-					  'ad_owner'			=> '2',
-					  'ad_centering'	=> '0',
+					  'ad_priority'		=> 5,
+					  'ad_content_only'	=> 0,
+					  'ad_views_limit'	=> 0,
+					  'ad_clicks_limit'	=> 0,
+					  'ad_owner'		=> 2,
+					  'ad_centering'	=> 0,
+					  'ad_locations'	=> [],
 				  ), 'admin', array(), false, ''),
 		);
 	}
@@ -223,15 +228,15 @@ class helper_test extends \phpbb_database_test_case
 	{
 		$helper = $this->get_helper();
 
-		$this->location_manager->expects($this->once())
+		$this->location_manager->expects(self::once())
 			->method('get_all_locations')
 			->willReturn(array());
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('load_groups')
 			->willReturn(array());
 
-		$this->template->expects($this->once())
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'S_ERROR'   => $s_errors,
@@ -276,7 +281,7 @@ class helper_test extends \phpbb_database_test_case
 	{
 		$helper = $this->get_helper();
 
-		$this->location_manager->expects($this->once())
+		$this->location_manager->expects(self::once())
 			->method('get_all_locations')
 			->willReturn(array(
 				'CAT_TOP_OF_PAGE'	=> array(
@@ -293,35 +298,28 @@ class helper_test extends \phpbb_database_test_case
 				),
 			));
 
-		$this->template->expects($this->at(0))
+		$this->template->expects(self::exactly(4))
 			->method('assign_block_vars')
-			->with('ad_locations', array(
-				'CATEGORY_NAME'  => 'CAT_TOP_OF_PAGE',
-			));
-
-		$this->template->expects($this->at(1))
-			->method('assign_block_vars')
-			->with('ad_locations', array(
-				'LOCATION_ID'   => 'top_of_page_1',
-				'LOCATION_DESC' => 'Location #1 desc',
-				'LOCATION_NAME' => 'Location #1',
-				'S_SELECTED'    => $ad_locations ? in_array('top_of_page_1', $ad_locations) : false,
-			));
-
-		$this->template->expects($this->at(2))
-			->method('assign_block_vars')
-			->with('ad_locations', array(
-				'CATEGORY_NAME'  => 'CAT_BOTTOM_OF_PAGE',
-			));
-
-		$this->template->expects($this->at(3))
-			->method('assign_block_vars')
-			->with('ad_locations', array(
-				'LOCATION_ID'   => 'bottom_of_page_1',
-				'LOCATION_DESC' => 'Location #2 desc',
-				'LOCATION_NAME' => 'Location #2',
-				'S_SELECTED'    => $ad_locations ? in_array('bottom_of_page_1', $ad_locations) : false,
-			));
+			->withConsecutive(
+				['ad_locations', [
+					'CATEGORY_NAME'  => 'CAT_TOP_OF_PAGE',
+				]],
+				['ad_locations', [
+					'LOCATION_ID'   => 'top_of_page_1',
+					'LOCATION_DESC' => 'Location #1 desc',
+					'LOCATION_NAME' => 'Location #1',
+					'S_SELECTED'    => $ad_locations ? in_array('top_of_page_1', $ad_locations) : false,
+				]],
+				['ad_locations', [
+					'CATEGORY_NAME'  => 'CAT_BOTTOM_OF_PAGE',
+				]],
+				['ad_locations', [
+					'LOCATION_ID'   => 'bottom_of_page_1',
+					'LOCATION_DESC' => 'Location #2 desc',
+					'LOCATION_NAME' => 'Location #2',
+					'S_SELECTED'    => $ad_locations ? in_array('bottom_of_page_1', $ad_locations) : false,
+				]]
+			);
 
 		$helper->assign_locations($ad_locations);
 	}
@@ -333,7 +331,7 @@ class helper_test extends \phpbb_database_test_case
 	{
 		$helper = $this->get_helper();
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('load_groups')
 			->willReturn(array(
 				array(
@@ -348,7 +346,7 @@ class helper_test extends \phpbb_database_test_case
 				),
 			));
 
-		$this->template->expects($this->exactly(2))
+		$this->template->expects(self::exactly(2))
 			->method('assign_block_vars')
 			->withConsecutive(
 				array(
@@ -381,7 +379,7 @@ class helper_test extends \phpbb_database_test_case
 		$this->user->ip = '0.0.0.0';
 		$helper = $this->get_helper();
 
-		$this->log->expects($this->once())
+		$this->log->expects(self::once())
 			->method('add')
 			->with('admin', 1, '0.0.0.0', 'ACP_PHPBB_ADS_DELETE_LOG', $this->anything(), array('Ad Name'));
 
@@ -395,7 +393,7 @@ class helper_test extends \phpbb_database_test_case
 	{
 		$helper = $this->get_helper();
 		$result = $helper->get_find_username_link();
-		$this->assertEquals("{$this->root_path}memberlist.{$this->php_ext}?mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true", $result);
+		self::assertEquals("{$this->root_path}memberlist.{$this->php_ext}?mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true", $result);
 	}
 
 	/**
@@ -474,6 +472,6 @@ class helper_test extends \phpbb_database_test_case
 	{
 		$helper = $this->get_helper();
 		$result = $helper->is_expired($row);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 	}
 }

@@ -21,7 +21,7 @@ class load_groups_test extends ad_base
 
 		$groups = $manager->load_groups(0);
 
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			array(
 				'group_id'			=> '1',
 				'group_name'		=> 'ADMINISTRATORS',

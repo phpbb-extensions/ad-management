@@ -26,7 +26,7 @@ class set_permissions_test extends main_listener_base
 		$dispatcher->dispatch('core.permissions', $event);
 
 		$event_data_after = $event->get_data_filtered($event_data);
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			'permissions'	=> array(
 				'u_phpbb_ads'	=> array('lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc'),
 			),

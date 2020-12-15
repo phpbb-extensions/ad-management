@@ -30,7 +30,7 @@ class visual_demo_test extends \phpbb_test_case
 	/** @var string */
 	protected $phpEx;
 
-	public function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -51,6 +51,7 @@ class visual_demo_test extends \phpbb_test_case
 		$user = $this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->user->data['session_page'] = '';
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->phpEx = $phpEx;
 	}
@@ -113,29 +114,33 @@ class visual_demo_test extends \phpbb_test_case
 	public function test_controller($action, $is_ajax, $status_code, $cookie_time)
 	{
 		// User is an admin
-		$this->auth->expects($this->once())
+		$this->auth->expects(self::once())
 			->method('acl_get')
 			->with($this->stringContains('a_'), $this->anything())
 			->willReturn(true);
 
-		$this->request->expects($this->once())
+		$this->request->expects(self::once())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
-		$this->user->expects($this->once())
+		$this->user->expects(self::once())
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
 
 		// If non-ajax redirect is encountered, in testing it will trigger error
 		if (!$is_ajax)
 		{
-			$this->setExpectedTriggerError(E_USER_WARNING);
+			// Throws E_WARNING in PHP 8.0+ and E_USER_WARNING in earlier versions
+			$exceptionName = version_compare(PHP_VERSION, '8.0', '<') ? \PHPUnit\Framework\Error\Error::class : \PHPUnit\Framework\Error\Warning::class;
+			$errno = version_compare(PHP_VERSION, '8.0', '<') ? E_USER_WARNING : E_WARNING;
+			$this->expectException($exceptionName);
+			$this->expectExceptionCode($errno);
 		}
 
 		$controller = $this->get_controller();
 		$response = $controller->handle($action);
-		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
-		$this->assertEquals($status_code, $response->getStatusCode());
+		self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+		self::assertEquals($status_code, $response->getStatusCode());
 	}
 
 	/**
@@ -167,7 +172,7 @@ class visual_demo_test extends \phpbb_test_case
 	public function test_controller_fails($action, $status_code, $message)
 	{
 		// User is not an admin
-		$this->auth->expects($this->once())
+		$this->auth->expects(self::once())
 			->method('acl_get')
 			->with($this->stringContains('a_'), $this->anything())
 			->willReturn(false);
@@ -177,12 +182,12 @@ class visual_demo_test extends \phpbb_test_case
 		try
 		{
 			$controller->handle($action);
-			$this->fail('The expected \phpbb\exception\http_exception was not thrown');
+			self::fail('The expected \phpbb\exception\http_exception was not thrown');
 		}
 		catch (\phpbb\exception\http_exception $exception)
 		{
-			$this->assertEquals($status_code, $exception->getStatusCode());
-			$this->assertEquals($message, $exception->getMessage());
+			self::assertEquals($status_code, $exception->getStatusCode());
+			self::assertEquals($message, $exception->getMessage());
 		}
 	}
 }

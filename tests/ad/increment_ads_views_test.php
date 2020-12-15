@@ -40,7 +40,7 @@ class increment_ads_views_test extends ad_base
 		{
 			$ad = $manager->get_ad($ad_id);
 
-			$this->assertEquals(1, $ad['ad_views']);
+			self::assertEquals(1, $ad['ad_views']);
 		}
 	}
 }

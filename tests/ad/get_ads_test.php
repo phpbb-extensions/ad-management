@@ -46,7 +46,7 @@ class get_ads_test extends ad_base
 
 		$ads = $manager->get_ads($locations, [], $non_content_page);
 
-		$this->assertEquals($expected, $ads);
+		self::assertEquals($expected, $ads);
 	}
 
 	/**
@@ -61,7 +61,7 @@ class get_ads_test extends ad_base
 
 		for ($i = 0; $i < 100; $i++)
 		{
-			$test = $manager->get_ads(array('above_header'), false);
+			$test = $manager->get_ads(array('above_header'), array());
 
 			$ad = end($test);
 
@@ -79,7 +79,7 @@ class get_ads_test extends ad_base
 			}
 		}
 
-		$this->assertTrue($high > $mid);
-		$this->assertTrue($mid > $low);
+		self::assertTrue($high > $mid);
+		self::assertTrue($mid > $low);
 	}
 }

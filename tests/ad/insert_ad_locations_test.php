@@ -59,6 +59,6 @@ class insert_ad_locations_test extends ad_base
 
 		$manager->insert_ad_locations($ad_id, $ad_locations);
 
-		$this->assertEquals($manager->get_ad_locations($ad_id), $expected);
+		self::assertEquals($manager->get_ad_locations($ad_id), $expected);
 	}
 }

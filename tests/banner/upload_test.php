@@ -34,10 +34,10 @@ class upload_test extends banner_base
 	{
 		$manager = $this->get_manager();
 
-		$this->files_upload->expects($this->once())
+		$this->files_upload->expects(self::once())
 			->method('reset_vars');
 
-		$this->files_upload->expects($this->once())
+		$this->files_upload->expects(self::once())
 			->method('set_allowed_extensions')
 			->with(array('gif', 'jpg', 'jpeg', 'png'));
 
@@ -50,23 +50,23 @@ class upload_test extends banner_base
 			$file->error[] = 'FILE_MOVE_UNSUCCESSFUL';
 		}
 
-		$this->files_upload->expects($this->once())
+		$this->files_upload->expects(self::once())
 			->method('handle_upload')
 			->with('files.types.form', 'banner')
 			->willReturn($file);
 
-		$file->expects($this->once())
+		$file->expects(self::once())
 			->method('clean_filename')
 			->with('unique_ext');
 
-		$file->expects($this->once())
+		$file->expects(self::once())
 			->method('move_file')
 			->with('images/phpbb_ads')
 			->willReturn($file_move_success);
 
 		if (!$file_move_success)
 		{
-			$file->expects($this->once())
+			$file->expects(self::once())
 				->method('set_error')
 				->with('FILE_MOVE_UNSUCCESSFUL');
 
@@ -77,14 +77,14 @@ class upload_test extends banner_base
 		}
 		else
 		{
-			$file->expects($this->once())
+			$file->expects(self::once())
 				->method('get')
 				->with('realname')
 				->willReturn('abcdef.jpg');
 
 			$result = $manager->upload();
 
-			$this->assertEquals('abcdef.jpg', $result);
+			self::assertEquals('abcdef.jpg', $result);
 		}
 	}
 }

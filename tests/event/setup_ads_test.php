@@ -18,12 +18,13 @@ class setup_ads_test extends main_listener_base
 	public function test_setup_ads()
 	{
 		$this->user->data['user_id'] = 1;
+		$this->user->page['page_name'] = 'viewtopic';
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$ads = $this->manager->get_ads($location_ids, $user_groups, false);
 
 		$this->template
-			->expects($this->exactly(count($ads)))
+			->expects(self::exactly(count($ads)))
 			->method('assign_vars');
 
 		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();

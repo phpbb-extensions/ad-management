@@ -18,7 +18,7 @@ class destroy_user_group_cache_test extends main_listener_base
 	public function test_destroy_user_group_cache()
 	{
 		$this->cache
-			->expects($this->exactly(2))
+			->expects(self::exactly(2))
 			->method('destroy')
 			->with('sql', USER_GROUP_TABLE);
 

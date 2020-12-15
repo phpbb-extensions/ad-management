@@ -19,13 +19,13 @@ class delete_ad_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
-		$this->assertNotEmpty($manager->get_ad(6));
+		self::assertNotEmpty($manager->get_ad(6));
 
 		$affected_rows = $manager->delete_ad(6);
 
-		$this->assertEquals(1, $affected_rows);
+		self::assertEquals(1, $affected_rows);
 
-		$this->assertEmpty($manager->get_ad(6));
+		self::assertEmpty($manager->get_ad(6));
 	}
 
 	/**
@@ -39,6 +39,6 @@ class delete_ad_test extends ad_base
 
 		$manager->delete_ad_locations(0);
 
-		$this->assertCount($total_ads, $manager->get_all_ads());
+		self::assertCount($total_ads, $manager->get_all_ads());
 	}
 }

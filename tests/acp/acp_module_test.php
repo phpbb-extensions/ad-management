@@ -18,7 +18,7 @@ class acp_module_test extends \phpbb_test_case
 	/** @var \phpbb\module\module_manager */
 	protected $module_manager;
 
-	public function setUp()
+	protected function setUp(): void
 	{
 		global $phpbb_dispatcher, $phpbb_extension_manager, $phpbb_root_path, $phpEx;
 
@@ -47,7 +47,7 @@ class acp_module_test extends \phpbb_test_case
 
 	public function test_module_info()
 	{
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			'\\phpbb\\ads\\acp\\main_module' => array(
 				'filename'	=> '\\phpbb\\ads\\acp\\main_module',
 				'title'		=> 'ACP_PHPBB_ADS_TITLE',
@@ -81,7 +81,7 @@ class acp_module_test extends \phpbb_test_case
 	 */
 	public function test_module_auth($module_auth, $expected)
 	{
-		$this->assertEquals($expected, p_master::module_auth($module_auth, 0));
+		self::assertEquals($expected, p_master::module_auth($module_auth, 0));
 	}
 
 	public function main_module_test_data()
@@ -99,7 +99,11 @@ class acp_module_test extends \phpbb_test_case
 	{
 		global $phpbb_container, $request, $template;
 
-		define('IN_ADMIN', true);
+		if (!defined('IN_ADMIN'))
+		{
+			define('IN_ADMIN', true);
+		}
+
 		$request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -114,20 +118,22 @@ class acp_module_test extends \phpbb_test_case
 			->getMock();
 
 		$phpbb_container
-			->expects($this->once())
+			->expects(self::once())
 			->method('get')
 			->with('phpbb.ads.admin.controller')
 			->willReturn($admin_controller);
 
 		$admin_controller
-			->expects($this->once())
+			->expects(self::once())
 			->method('set_page_url');
 
 		$admin_controller
-			->expects($this->once())
+			->expects(self::once())
 			->method("mode_$mode");
 
 		$p_master = new p_master();
+		$p_master->module_ary[0]['is_duplicate'] = 0;
+		$p_master->module_ary[0]['url_extra'] = '';
 		$p_master->load('acp', '\phpbb\ads\acp\main_module', $mode);
 	}
 }

@@ -35,7 +35,7 @@ class banner_base extends \phpbb_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 

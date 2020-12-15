@@ -34,13 +34,13 @@ class clicks_test extends main_listener_base
 	{
 		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
 
-		$this->controller_helper->expects($enable_clicks ? $this->once() : $this->never())
+		$this->controller_helper->expects($enable_clicks ? self::once() : self::never())
 			->method('route')
 			->with('phpbb_ads_click', array('data' => 0))
 			->willReturn('app.php/adsclick/0');
 
 		$this->template
-			->expects($enable_clicks ? $this->once() : $this->never())
+			->expects($enable_clicks ? self::once() : self::never())
 			->method('assign_vars')
 			->with(array(
 				'U_PHPBB_ADS_CLICK'		=> 'app.php/adsclick/0',

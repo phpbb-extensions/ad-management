@@ -59,10 +59,10 @@ class insert_ad_test extends ad_base
 
 		$ad_id = $manager->insert_ad($data);
 
-		$this->assertGreaterThan(6, $ad_id);
+		self::assertGreaterThan(6, $ad_id);
 
 		$new_ad = $manager->get_ad($ad_id);
 
-		$this->assertEquals($data['ad_name'], $new_ad['ad_name']);
+		self::assertEquals($data['ad_name'], $new_ad['ad_name']);
 	}
 }

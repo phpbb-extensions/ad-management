@@ -78,12 +78,12 @@ class admin_controller_test extends \phpbb_database_test_case
 	/**
 	* {@inheritDoc}
 	*/
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
 		global $phpbb_root_path, $phpEx;
-		global $phpbb_dispatcher, $cache, $db;
+		global $phpbb_dispatcher, $cache, $db, $user;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 
@@ -92,6 +92,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->language = new \phpbb\language\language($lang_loader);
+		$user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -159,7 +160,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_get_page_title()
 	{
 		$controller = $this->get_controller();
-		$this->assertEquals($controller->get_page_title(), $this->language->lang('ACP_PHPBB_ADS_TITLE'));
+		self::assertEquals($controller->get_page_title(), $this->language->lang('ACP_PHPBB_ADS_TITLE'));
 	}
 
 	/**
@@ -171,7 +172,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->config['phpbb_ads_adblocker_message'] = '1';
 
-		$this->template->expects($this->once())
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION'			=> $this->u_action,
@@ -207,39 +208,35 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->once())
+		$this->request->expects(self::once())
 			->method('is_set_post')
 			->with('submit')
 			->willReturn(true);
 
 		if ($valid_form)
 		{
-			$this->request->expects($this->at(1))
+			$this->request
+				->expects(self::exactly(3))
 				->method('variable')
-				->with('adblocker_message', 0)
-				->willReturn($adblocker_data);
+				->withConsecutive(
+					['adblocker_message', 0],
+					['enable_views', 0],
+					['enable_clicks', 0]
+				)
+				->willReturnOnConsecutiveCalls(
+					$adblocker_data,
+					1,
+					1
+				);
 
-			$this->request->expects($this->at(2))
-				->method('variable')
-				->with('enable_views', 0)
-				->willReturn(1);
-
-			$this->request->expects($this->at(3))
-				->method('variable')
-				->with('enable_clicks', 0)
-				->willReturn(1);
-
-			$this->config->expects($this->at(0))
+			$this->config
+				->expects(self::exactly(3))
 				->method('set')
-				->with('phpbb_ads_adblocker_message', $adblocker_data);
-
-			$this->config->expects($this->at(1))
-				->method('set')
-				->with('phpbb_ads_enable_views', 1);
-
-			$this->config->expects($this->at(2))
-				->method('set')
-				->with('phpbb_ads_enable_clicks', 1);
+				->withConsecutive(
+					['phpbb_ads_adblocker_message', $adblocker_data],
+					['phpbb_ads_enable_views', 1],
+					['phpbb_ads_enable_clicks', 1]
+				);
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
 		}
@@ -294,11 +291,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			))
 			->getMock();
 
-		$this->request->expects($this->once())
+		$this->request->expects(self::once())
 			->method('variable')
 			->willReturn($action);
 
-		$controller->expects($this->once())
+		$controller->expects(self::once())
 			->method($expected);
 
 		$controller->mode_manage();
@@ -311,39 +308,32 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request
+			->expects(self::exactly(5))
 			->method('is_set_post')
-			->with('preview')
-			->willReturn(false);
+			->withConsecutive(
+				['preview'],
+				['upload_banner'],
+				['analyse_ad_code'],
+				['submit_add'],
+				['submit_edit']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				false,
+				false,
+				false,
+				false
+			);
 
-		$this->request->expects($this->at(2))
-			->method('is_set_post')
-			->with('upload_banner')
-			->willReturn(false);
-
-		$this->request->expects($this->at(3))
-			->method('is_set_post')
-			->with('analyse_ad_code')
-			->willReturn(false);
-
-		$this->request->expects($this->at(4))
-			->method('is_set_post')
-			->with('submit_add')
-			->willReturn(false);
-
-		$this->request->expects($this->at(5))
-			->method('is_set_post')
-			->with('submit_edit')
-			->willReturn(false);
-
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('assign_locations');
 
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('get_find_username_link')
 			->willReturn('u_find_username');
 
-		$this->template->expects($this->once())
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'S_ADD_AD'				=> true,
@@ -354,10 +344,11 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_ENABLE_VISUAL_DEMO'	=> null,
 			));
 
-		$this->request->expects($this->at(0))
+		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
+
 		$controller->mode_manage();
 	}
 
@@ -368,7 +359,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request->expects(self::once())
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(true);
@@ -378,26 +369,27 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_locations'	=> array(),
 		);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_form_data')
 			->willReturn($data);
 
-		$this->template->expects($this->at(0))
+		$this->template->expects(self::once())
 			->method('assign_var')
 			->with('PREVIEW', '<!-- AD CODE SAMPLE -->');
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_errors')
 			->willReturn(array());
 
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('assign_data')
 			->with($data, array());
 
-		$this->request->expects($this->at(0))
+		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
+
 		$controller->mode_manage();
 	}
 
@@ -408,15 +400,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request
+			->expects(self::exactly(2))
 			->method('is_set_post')
-			->with('preview')
-			->willReturn(false);
-
-		$this->request->expects($this->at(2))
-			->method('is_set_post')
-			->with('upload_banner')
-			->willReturn(true);
+			->withConsecutive(
+				['preview'],
+				['upload_banner']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				true
+			);
 
 		$data = array(
 			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
@@ -425,29 +419,30 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$banner_ad_code = '<!-- BANNER AD CODE -->';
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_form_data')
 			->willReturn($data);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('banner_upload')
 			->with($data['ad_code'])
 			->willReturn($banner_ad_code);
 
 		$data['ad_code'] = $banner_ad_code;
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_errors')
 			->willReturn(array());
 
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('assign_data')
 			->with($data, array());
 
-		$this->request->expects($this->at(0))
+		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
+
 		$controller->mode_manage();
 	}
 
@@ -458,46 +453,46 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request
+			->expects(self::exactly(3))
 			->method('is_set_post')
-			->with('preview')
-			->willReturn(false);
-
-		$this->request->expects($this->at(2))
-			->method('is_set_post')
-			->with('upload_banner')
-			->willReturn(false);
-
-		$this->request->expects($this->at(3))
-			->method('is_set_post')
-			->with('analyse_ad_code')
-			->willReturn(true);
+			->withConsecutive(
+				['preview'],
+				['upload_banner'],
+				['analyse_ad_code']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				false,
+				true
+			);
 
 		$data = array(
 			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
 			'ad_locations'	=> array(),
 		);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_form_data')
 			->willReturn($data);
 
-		$this->analyser->expects($this->once())
+		$this->analyser->expects(self::once())
 			->method('run')
 			->with($data['ad_code']);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_errors')
 			->willReturn(array());
 
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('assign_data')
 			->with($data, array());
 
-		$this->request->expects($this->at(0))
+		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
+
 		$controller->mode_manage();
 	}
 
@@ -525,25 +520,20 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request->expects(self::exactly(4))
 			->method('is_set_post')
-			->with('preview')
-			->willReturn(false);
-
-		$this->request->expects($this->at(2))
-			->method('is_set_post')
-			->with('upload_banner')
-			->willReturn(false);
-
-		$this->request->expects($this->at(3))
-			->method('is_set_post')
-			->with('analyse_ad_code')
-			->willReturn(false);
-
-		$this->request->expects($this->at(4))
-			->method('is_set_post')
-			->with('submit_add')
-			->willReturn(true);
+			->withConsecutive(
+				['preview'],
+				['upload_banner'],
+				['analyse_ad_code'],
+				['submit_add']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				false,
+				false,
+				true
+			);
 
 		$data = array(
 			'ad_name'		=> 'Ad Name #1',
@@ -552,52 +542,60 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_owner'		=> $ad_owner,
 		);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_form_data')
 			->willReturn($data);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('has_errors')
 			->willReturn($s_error);
 
 		if ($s_error)
 		{
-			$this->input->expects($this->once())
+			$this->input->expects(self::once())
 				->method('get_errors')
 				->willReturn(array());
 
-			$this->helper->expects($this->once())
+			$this->helper->expects(self::once())
 				->method('assign_data')
 				->with($data, array());
 		}
 		else
 		{
-			$this->manager->expects($this->once())
+			$this->manager->expects(self::once())
 				->method('insert_ad')
 				->with($data)
 				->willReturn(1);
 
-			$this->manager->expects(($ad_owner ? $this->once() : $this->never()))
+			$this->manager->expects(($ad_owner ? self::once() : self::never()))
 				->method('get_ads_by_owner')
 				->with($ad_owner)
 				->willReturn(array());
 
-			$this->manager->expects($this->once())
+			$this->manager->expects(self::once())
 				->method('insert_ad_locations')
 				->with(1, array());
 
-			$this->helper->expects($this->once())
+			$this->helper->expects(self::once())
 				->method('log')
 				->with('ADD', 'Ad Name #1');
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_ADD_SUCCESS');
 		}
 
-		$this->request->expects($this->at(0))
+		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
-		$controller->mode_manage();
+
+		$reflection_controller = new \ReflectionObject($controller);
+		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
+		$reflection_controller_auth_admin->setAccessible(true);
+		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
+		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
+		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
+		$reflection_controller_mode_manage_method->invoke($controller);
 	}
 
 	/**
@@ -622,35 +620,33 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request->expects(self::exactly(2))
 			->method('variable')
-			->with('id', 0)
-			->willReturn($ad_id);
+			->withConsecutive(
+				['action', ''],
+				['id', 0]
+			)
+			->willReturnOnConsecutiveCalls(
+				'edit',
+				$ad_id
+			);
 
-		$this->request->expects($this->at(2))
+		$this->request->expects(self::exactly(5))
 			->method('is_set_post')
-			->with('preview')
-			->willReturn(false);
-
-		$this->request->expects($this->at(3))
-			->method('is_set_post')
-			->with('upload_banner')
-			->willReturn(false);
-
-		$this->request->expects($this->at(4))
-			->method('is_set_post')
-			->with('analyse_ad_code')
-			->willReturn(false);
-
-		$this->request->expects($this->at(5))
-			->method('is_set_post')
-			->with('submit_add')
-			->willReturn(false);
-
-		$this->request->expects($this->at(6))
-			->method('is_set_post')
-			->with('submit_edit')
-			->willReturn(false);
+			->withConsecutive(
+				['preview'],
+				['upload_banner'],
+				['analyse_ad_code'],
+				['submit_add'],
+				['submit_edit']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				false,
+				false,
+				false,
+				false
+			);
 
 		$data = array(
 			'ad_name'			=> 'Primary ad',
@@ -665,7 +661,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_owner'			=> '2',
 		);
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('get_ad')
 			->willReturn(!$ad_id ? false : $data);
 
@@ -679,16 +675,16 @@ class admin_controller_test extends \phpbb_database_test_case
 				'above_footer',
 				'above_header',
 			);
-			$this->manager->expects($this->once())
+			$this->manager->expects(self::once())
 				->method('get_ad_locations')
 				->willReturn($ad_locations);
 			$data['ad_locations'] = $ad_locations;
 
-			$this->helper->expects($this->once())
+			$this->helper->expects(self::once())
 				->method('get_find_username_link')
 				->willReturn('u_find_username');
 
-			$this->template->expects($this->at(0))
+			$this->template->expects(self::once())
 				->method('assign_vars')
 				->with(array(
 					'S_EDIT_AD'				=> true,
@@ -700,19 +696,15 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_ENABLE_VISUAL_DEMO'	=> null,
 				));
 
-			$this->input->expects($this->once())
+			$this->input->expects(self::once())
 				->method('get_errors')
 				->willReturn(array());
 
-			$this->helper->expects($this->once())
+			$this->helper->expects(self::once())
 				->method('assign_data')
 				->with($data, array());
 		}
 
-		$this->request->expects($this->at(0))
-			->method('variable')
-			->with('action', '')
-			->willReturn('edit');
 		$controller->mode_manage();
 	}
 
@@ -723,12 +715,19 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request
+			->expects(self::exactly(2))
 			->method('variable')
-			->with('id', 0)
-			->willReturn(1);
+			->withConsecutive(
+				['action', ''],
+				['id', 0]
+			)
+			->willReturnOnConsecutiveCalls(
+				'edit',
+				1
+			);
 
-		$this->request->expects($this->at(2))
+		$this->request->expects(self::once())
 			->method('is_set_post')
 			->with('preview')
 			->willReturn(true);
@@ -738,19 +737,19 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_locations'	=> array(),
 		);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_form_data')
 			->willReturn($data);
 
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('get_find_username_link')
 			->willReturn('u_find_username');
 
-		$this->template->expects($this->at(0))
+		$this->template->expects(self::once())
 			->method('assign_var')
 			->with('PREVIEW', 'Ad Code #1');
 
-		$this->template->expects($this->at(1))
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'S_EDIT_AD'				=> true,
@@ -762,18 +761,14 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_ENABLE_VISUAL_DEMO'	=> null,
 			));
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_errors')
 			->willReturn(array());
 
-		$this->helper->expects($this->once())
+		$this->helper->expects(self::once())
 			->method('assign_data')
 			->with($data, array());
 
-		$this->request->expects($this->at(0))
-			->method('variable')
-			->with('action', '')
-			->willReturn('edit');
 		$controller->mode_manage();
 	}
 
@@ -802,35 +797,37 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request
+			->expects(self::exactly(3))
 			->method('variable')
-			->with('id', 0)
-			->willReturn(1);
+			->withConsecutive(
+				['action', ''],
+				['id', 0],
+				['id', 0]
+			)
+			->willReturnOnConsecutiveCalls(
+				'edit',
+				1,
+				1
+			);
 
-		$this->request->expects($this->at(2))
+		$this->request
+			->expects(self::exactly(5))
 			->method('is_set_post')
-			->with('preview')
-			->willReturn(false);
-
-		$this->request->expects($this->at(3))
-			->method('is_set_post')
-			->with('upload_banner')
-			->willReturn(false);
-
-		$this->request->expects($this->at(4))
-			->method('is_set_post')
-			->with('analyse_ad_code')
-			->willReturn(false);
-
-		$this->request->expects($this->at(5))
-			->method('is_set_post')
-			->with('submit_add')
-			->willReturn(false);
-
-		$this->request->expects($this->at(6))
-			->method('is_set_post')
-			->with('submit_edit')
-			->willReturn(true);
+			->withConsecutive(
+				['preview'],
+				['upload_banner'],
+				['analyse_ad_code'],
+				['submit_add'],
+				['submit_edit']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				false,
+				false,
+				false,
+				true
+			);
 
 		$old_data = array(
 			'ad_name'		=> 'Old Ad Name #1',
@@ -846,26 +843,21 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_owner'		=> $ad_owner,
 		);
 
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('get_form_data')
 			->willReturn($data);
 
-		$this->request->expects($this->at(7))
-			->method('variable')
-			->with('id', 0)
-			->willReturn(1);
-
-		$this->input->expects($this->once())
+		$this->input->expects(self::once())
 			->method('has_errors')
 			->willReturn($s_error);
 
 		if ($s_error)
 		{
-			$this->helper->expects($this->once())
+			$this->helper->expects(self::once())
 				->method('get_find_username_link')
 				->willReturn('u_find_username');
 
-			$this->template->expects($this->at(0))
+			$this->template->expects(self::once())
 				->method('assign_vars')
 				->with(array(
 					'S_EDIT_AD'				=> true,
@@ -877,42 +869,42 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_ENABLE_VISUAL_DEMO'	=> null,
 				));
 
-			$this->input->expects($this->once())
+			$this->input->expects(self::once())
 				->method('get_errors')
 				->willReturn(array());
 
-			$this->helper->expects($this->once())
+			$this->helper->expects(self::once())
 				->method('assign_data')
 				->with($data, array());
 		}
 		else
 		{
-			$this->manager->expects(($this->once()))
+			$this->manager->expects((self::once()))
 				->method('get_ad')
 				->with(1)
 				->willReturn($old_data);
 
-			$this->manager->expects($this->once())
+			$this->manager->expects(self::once())
 				->method('update_ad')
 				->with(1, $data)
 				->willReturn($success);
 
 			if ($success)
 			{
-				$this->manager->expects(($ad_owner ? $this->exactly(2) : $this->never()))
+				$this->manager->expects(($ad_owner ? self::exactly(2) : self::never()))
 					->method('get_ads_by_owner')
 					->with($ad_owner)
 					->willReturn(array());
 
-				$this->manager->expects($this->once())
+				$this->manager->expects(self::once())
 					->method('delete_ad_locations')
 					->with(1);
 
-				$this->manager->expects($this->once())
+				$this->manager->expects(self::once())
 					->method('insert_ad_locations')
 					->with(1, array());
 
-				$this->helper->expects($this->once())
+				$this->helper->expects(self::once())
 					->method('log')
 					->with('EDIT', 'Ad Name #1');
 
@@ -924,11 +916,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 		}
 
-		$this->request->expects($this->at(0))
-			->method('variable')
-			->with('action', '')
-			->willReturn('edit');
-		$controller->mode_manage();
+		$reflection_controller = new \ReflectionObject($controller);
+		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
+		$reflection_controller_auth_admin->setAccessible(true);
+		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
+		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
+		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
+		$reflection_controller_mode_manage_method->invoke($controller);
 	}
 
 	/**
@@ -957,45 +952,41 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
-			->method('variable')
-			->with('id', 0)
-			->willReturn($ad_id);
-
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('update_ad')
 			->willReturn($ad_id ? true : false);
 
-		$this->request->expects($this->once())
+		$this->request->expects(self::once())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
 		if ($is_ajax)
 		{
 			// Handle trigger_error() output called from json_response
-			$this->setExpectedTriggerError(E_WARNING);
+			if (isset(\PHPUnit\Framework\Error\Warning::$enabled))
+			{
+				\PHPUnit\Framework\Error\Warning::$enabled = true;
+			}
+			$this->expectException(\PHPUnit\Framework\Error\Warning::class);
 		}
 		else
 		{
 			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 		}
 
-		if ($enable)
-		{
-			$this->request->expects($this->at(0))
-				->method('variable')
-				->with('action', '')
-				->willReturn('enable');
-			$controller->mode_manage();
-		}
-		else
-		{
-			$this->request->expects($this->at(0))
-				->method('variable')
-				->with('action', '')
-				->willReturn('disable');
-			$controller->mode_manage();
-		}
+		$this->request
+			->expects(self::exactly(2))
+			->method('variable')
+			->withConsecutive(
+				['action', ''],
+				['id', 0]
+			)
+			->willReturnOnConsecutiveCalls(
+				$enable ? 'enable' : 'disable',
+				$ad_id
+			);
+
+		$controller->mode_manage();
 	}
 
 	/**
@@ -1024,41 +1015,37 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
-		$this->request->expects($this->at(1))
+		$this->request
+			->expects(self::exactly($confirm ? 2 : 4))
 			->method('variable')
-			->with('id', 0)
-			->willReturn($ad_id);
+			->withConsecutive(...[['action', ''], ['id', 0], ['i', ''], ['mode', '']])
+			->willReturnOnConsecutiveCalls(...['delete', $ad_id, '', '']);
 
 		if (!$confirm)
 		{
-			$this->request->expects($this->at(2))
-				->method('variable')
-				->with('i', '')
-				->willReturn('');
-			$this->request->expects($this->at(3))
-				->method('variable')
-				->with('mode', '')
-				->willReturn('');
-
 			// called in list_ads()
-			$this->manager->expects($this->atMost(1))
+			$this->manager->expects(self::atMost(1))
 				->method('get_all_ads')
 				->willReturn(array());
 		}
 		else if ($error)
 		{
 			$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DELETE_ERRORED');
+			$this->manager->expects(self::once())
+				->method('get_ad')
+				->with($ad_id)
+				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
 		}
 		else
 		{
-			$this->manager->expects($this->once())
+			$this->manager->expects(self::once())
 				->method('get_ad')
 				->with($ad_id)
-				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner));
-			$this->manager->expects($this->once())
+				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
+			$this->manager->expects(self::once())
 				->method('delete_ad')
 				->willReturn($ad_id ? true : false);
-			$this->manager->expects(($ad_owner ? $this->once() : $this->never()))
+			$this->manager->expects(($ad_owner ? self::once() : self::never()))
 				->method('get_ads_by_owner')
 				->with($ad_owner)
 				->willReturn(array());
@@ -1066,11 +1053,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 		}
 
-		$this->request->expects($this->at(0))
-			->method('variable')
-			->with('action', '')
-			->willReturn('delete');
-		$controller->mode_manage();
+		$reflection_controller = new \ReflectionObject($controller);
+		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
+		$reflection_controller_auth_admin->setAccessible(true);
+		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
+		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
+		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
+		$reflection_controller_mode_manage_method->invoke($controller);
 	}
 
 	/**
@@ -1087,6 +1077,12 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_enabled'	=> 1,
 				'ad_start_date'	=> 0,
 				'ad_end_date'	=> 0,
+				'ad_priority'	=> 5,
+				'ad_views'		=> 0,
+				'ad_clicks'		=> 0,
+				'ad_views_limit'	=> 0,
+				'ad_clicks_limit'	=> 0,
+
 			),
 			array(
 				'ad_id'			=> 2,
@@ -1094,31 +1090,38 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_enabled'	=> 1,
 				'ad_start_date'	=> 0,
 				'ad_end_date'	=> 1,
+				'ad_priority'	=> 5,
+				'ad_views'		=> 0,
+				'ad_clicks'		=> 0,
+				'ad_views_limit'	=> 0,
+				'ad_clicks_limit'	=> 0,
 			),
 		);
 
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('get_all_ads')
 			->willReturn($rows);
 
-		$this->helper->expects($this->at(0))
+		$this->helper
+			->expects(self::exactly(2))
 			->method('is_expired')
-			->with($rows[0])
-			->willReturn(false);
+			->withConsecutive(
+				[$rows[0]],
+				[$rows[1]]
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				true
+			);
 
-		$this->helper->expects($this->at(1))
-			->method('is_expired')
-			->with($rows[1])
-			->willReturn(true);
-
-		$this->manager->expects($this->once())
+		$this->manager->expects(self::once())
 			->method('update_ad')
 			->with(2, array('ad_enabled' => 0));
 
-		$this->template->expects($this->atLeastOnce())
+		$this->template->expects(self::atLeastOnce())
 			->method('assign_block_vars');
 
-		$this->template->expects($this->once())
+		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
@@ -1126,10 +1129,11 @@ class admin_controller_test extends \phpbb_database_test_case
 				'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
 			));
 
-		$this->request->expects($this->at(0))
+		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
 			->willReturn('');
+
 		$controller->mode_manage();
 	}
 }

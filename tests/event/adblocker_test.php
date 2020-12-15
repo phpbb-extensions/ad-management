@@ -34,7 +34,7 @@ class adblocker_test extends main_listener_base
 	{
 		$this->config['phpbb_ads_adblocker_message'] = $allow_adblocker;
 		$this->template
-			->expects($this->once())
+			->expects(self::once())
 			->method('assign_var')
 			->with('S_DISPLAY_ADBLOCKER', $expected);
 

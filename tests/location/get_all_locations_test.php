@@ -21,7 +21,7 @@ class get_all_locations_test extends location_base
 
 		$locations = $manager->get_all_locations();
 
-		$this->assertEquals(array(
+		self::assertEquals(array(
 			'CAT_TOP_OF_PAGE'	=> array(
 				'above_header'	=> array(
 					'name'	=> 'AD_ABOVE_HEADER',

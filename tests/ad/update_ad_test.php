@@ -61,13 +61,18 @@ class update_ad_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
-		$manager->update_ad($ad_id, $data);
+		$updated = $manager->update_ad($ad_id, $data);
 
 		$ad = $manager->get_ad($ad_id);
 		unset($data['ad_groups']);
 		foreach ($data as $key => $value)
 		{
-			$this->assertEquals($value, $ad[$key]);
+			if ($updated)
+			{
+				self::assertEquals($value, $ad[$key]);
+				continue;
+			}
+			self::assertEmpty($ad);
 		}
 	}
 }
