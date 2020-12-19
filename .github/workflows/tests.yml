@@ -1,11 +1,18 @@
 name: Tests
 
+env:
+    EXTNAME: phpbb/ads   # Your extension vendor/package name
+    PHPBB_BRANCH: 3.3.x  # The phpBB branch to run tests on
+    SNIFF: 1             # Should we run code sniffer on your code?
+    IMAGE_ICC: 1         # Should we run icc profile sniffer on your images?
+    EPV: 1               # Should we run EPV (Extension Pre Validator) on your code?
+
 on:
     push:
-        branches:
+        branches:       # Run tests when commits are pushed to these branches in your repo
             - master
             - develop
-    pull_request:
+    pull_request:       # Run tests when pull requests are made on these branches in your repo
         branches:
             - master
             - develop
@@ -64,13 +71,6 @@ jobs:
                       db: "mysql:5.7"
                     - php: '8.1'
                       db: "mysql:5.7"
-
-        env:
-            EXTNAME: phpbb/ads  # Your extension vendor/package name
-            SNIFF: 1            # Should we run code sniffer on your code?
-            IMAGE_ICC: 1        # Should we run icc profile sniffer on your images?
-            EPV: 1              # Should we run EPV (Extension Pre Validator) on your code?
-            PHPBB_BRANCH: 3.3.x # The phpBB branch to run tests on
 
         name: PHP ${{ matrix.php }} - ${{ matrix.db_alias != '' && matrix.db_alias || matrix.db }}
 
