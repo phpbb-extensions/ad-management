@@ -2,24 +2,24 @@ name: Tests
 
 env:
     EXTNAME: phpbb/ads   # Your extension vendor/package name
-    SNIFF: 1             # Should we run code sniffer on your code?
-    IMAGE_ICC: 1         # Should we run icc profile sniffer on your images?
-    EPV: 1               # Should we run EPV (Extension Pre Validator) on your code?
-    PHPBB_BRANCH: task/github-actions  # The phpBB branch to run tests on # TODO after WIP change to 3.3.x
-    PHPBB_REPO: marc1706/phpbb   # Do Not Change This! # TODO after WIP change to phpbb/phpbb
+    SNIFF: 1             # Run code sniffer on your code? 1 or 0
+    IMAGE_ICC: 1         # Run icc profile sniffer on your images? 1 or 0
+    EPV: 1               # Run EPV (Extension Pre Validator) on your code? 1 or 0
+    EXECUTABLE_FILES: 0  # Run check for executable files? 1 or 0
+    PHPBB_BRANCH: 3.3.x  # The phpBB branch to run tests on
 
 on:
     push:
-        branches:       # Run tests when commits are pushed to these branches in your repo
+        branches:        # Run tests when commits are pushed to these branches in your repo
             - master
             - develop
-    pull_request:       # Run tests when pull requests are made on these branches in your repo
+    pull_request:        # Run tests when pull requests are made on these branches in your repo
         branches:
             - master
             - develop
 
 jobs:
-    # Basic checks, e.g. EPV, code sniffer, images check, etc.
+    # START Basic Checks Job (EPV, code sniffer, images check, etc.)
     basic-checks:
         runs-on: ubuntu-18.04
         strategy:
@@ -32,11 +32,10 @@ jobs:
         name: PHP ${{ matrix.php }} - ${{ matrix.db }}
 
         steps:
-
             - name: Checkout phpBB
               uses: actions/checkout@v2
               with:
-                  repository: ${{ env.PHPBB_REPO }}
+                  repository: phpbb/phpbb
                   ref: ${{ env.PHPBB_BRANCH }}
                   path: phpBB3
 
@@ -77,12 +76,18 @@ jobs:
               run: .github/check-image-icc-profiles.sh
               working-directory: ./phpBB3
 
+            - name: Check executable files
+              if: ${{ env.EXECUTABLE_FILES != 0 }}
+              run: .github/ext-check-executable-files.sh ./ $EXTNAME
+              working-directory: ./phpBB3
+
             - name: Run EPV
               if: ${{ env.EPV != 0 }}
               run: phpBB/vendor/bin/EPV.php run --dir="phpBB/ext/$EXTNAME/"
               working-directory: ./phpBB3
+    # END Basic Checks Job
 
-    # Tests for MySQL and MariaDB
+    # START MySQL and MariaDB Job
     mysql-tests:
         runs-on: ubuntu-18.04
         strategy:
@@ -146,11 +151,10 @@ jobs:
                     - 6379:6379
 
         steps:
-
             - name: Checkout phpBB
               uses: actions/checkout@v2
               with:
-                  repository: ${{ env.PHPBB_REPO }}
+                  repository: phpbb/phpbb
                   ref: ${{ env.PHPBB_BRANCH }}
                   path: phpBB3
 
@@ -197,8 +201,9 @@ jobs:
                   DB: ${{steps.database-type.outputs.db}}
               run: phpBB/vendor/bin/phpunit --configuration phpBB/ext/$EXTNAME/.github/phpunit-$DB-github.xml --bootstrap ./tests/bootstrap.php
               working-directory: ./phpBB3
+    # END MySQL and MariaDB Job
 
-    # Tests for PostgreSQL
+    # START PostgreSQL Job
     postgres-tests:
         runs-on: ubuntu-18.04
         strategy:
@@ -206,6 +211,8 @@ jobs:
                 include:
                     - php: '7.1'
                       db: "postgres:9.5"
+                    - php: '7.1'
+                      db: "postgres:9.6"
                     - php: '7.1'
                       db: "postgres:10"
                     - php: '7.1'
@@ -244,11 +251,10 @@ jobs:
                     - 6379:6379
 
         steps:
-
             - name: Checkout phpBB
               uses: actions/checkout@v2
               with:
-                  repository: ${{ env.PHPBB_REPO }}
+                  repository: phpbb/phpbb
                   ref: ${{ env.PHPBB_BRANCH }}
                   path: phpBB3
 
@@ -295,8 +301,9 @@ jobs:
                   DB: ${{steps.database-type.outputs.db}}
               run: phpBB/vendor/bin/phpunit --configuration phpBB/ext/$EXTNAME/.github/phpunit-$DB-github.xml --bootstrap ./tests/bootstrap.php
               working-directory: ./phpBB3
+    # END PostgreSQL Job
 
-    # Other database types, namely sqlite3 and mssql
+    # START Other Tests Job (SQLite 3 and mssql)
     other-tests:
         runs-on: ubuntu-18.04
         strategy:
@@ -339,11 +346,10 @@ jobs:
                     - 6379:6379
 
         steps:
-
             - name: Checkout phpBB
               uses: actions/checkout@v2
               with:
-                  repository: ${{ env.PHPBB_REPO }}
+                  repository: phpbb/phpbb
                   ref: ${{ env.PHPBB_BRANCH }}
                   path: phpBB3
 
@@ -395,3 +401,4 @@ jobs:
                   DB: ${{steps.database-type.outputs.db}}
               run: phpBB/vendor/bin/phpunit --configuration phpBB/ext/$EXTNAME/.github/phpunit-$DB-github.xml --bootstrap ./tests/bootstrap.php
               working-directory: ./phpBB3
+    # END Other Tests Job
