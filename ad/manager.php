@@ -408,6 +408,12 @@ class manager
 			case 'sqlite3':
 				return '(0.5 - RANDOM() / CAST(-9223372036854775808 AS REAL) / 2)';
 
+			// https://improve.dk/weighted-random-selections-in-sql-server/
+			case 'mssql':
+			case 'mssql_odbc':
+			case 'mssqlnative':
+				return 'ROUND(RAND(CAST(NEWID() AS VARBINARY)), 1, 1)';
+
 			default:
 				return 'RAND()';
 		}
