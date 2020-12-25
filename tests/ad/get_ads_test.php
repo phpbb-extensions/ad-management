@@ -55,12 +55,11 @@ class get_ads_test extends ad_base
 	 */
 	public function test_get_ads_priority()
 	{
-		if (strpos($this->db->get_sql_layer(), 'mssql') === 0)
-		{
-			self::markTestSkipped('MSSQL fails this test. Skip for now. Figure out later.');
-		}
-
-		$low = $mid = $high = 0;
+		$counter = [
+			1 => 0, // Ad #1 has high priority
+			4 => 0, // Ad #4 has low priority
+			5 => 0, // Ad #5 has medium priority
+		];
 
 		$manager = $this->get_manager();
 
@@ -70,21 +69,10 @@ class get_ads_test extends ad_base
 
 			$ad = end($test);
 
-			if ($ad['ad_code'] === 'Ad Code #1')
-			{
-				$high++;
-			}
-			else if ($ad['ad_code'] === 'Ad Code #5')
-			{
-				$mid++;
-			}
-			else if ($ad['ad_code'] === 'Ad Code #4')
-			{
-				$low++;
-			}
+			$counter[$ad['ad_id']]++;
 		}
 
-		self::assertTrue($high > $mid);
-		self::assertTrue($mid > $low);
+		self::assertTrue($counter[1] > $counter[5]);
+		self::assertTrue($counter[5] > $counter[4]);
 	}
 }
