@@ -502,3 +502,84 @@ jobs:
               run: phpBB/vendor/bin/phpunit --configuration phpBB/ext/${env:EXTNAME}/.github/phpunit-psql-windows-github.xml --bootstrap ./tests/bootstrap.php --verbose --stop-on-error
               working-directory: ./phpBB3
     # END Test with IIS & PostgreSQL on Windows
+
+    # START Oracle Test Job
+    oracle-tests:
+        runs-on: ubuntu-18.04
+        strategy:
+            matrix:
+                include:
+                    - php: '7.4'
+                      db: "oci"
+
+        name: PHP ${{ matrix.php }} - ${{ matrix.db }}
+
+        services:
+            oracle:
+                image: deepdiver/docker-oracle-xe-11g
+                options: >-
+                    --name oci_docker
+                ports:
+                    - "1521:1521"
+
+            redis:
+                image: redis
+                options: >-
+                    --health-cmd "redis-cli ping"
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 6379:6379
+
+        steps:
+            - name: Checkout phpBB
+              uses: actions/checkout@v2
+              with:
+                  repository: marc1706/phpbb #phpbb/phpbb
+                  ref: task/github-actions #${{ env.PHPBB_BRANCH }}
+                  path: phpBB3
+
+            - name: Checkout extension
+              uses: actions/checkout@v2
+              with:
+                  path: phpBB3/phpBB/ext/${{ env.EXTNAME }}
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, mysqli, sqlite, pdo_sqlite, intl, gd, exif, iconv, sqlsrv, pdo_sqlsrv, ldap, oci8, pdo_oci
+                  coverage: none
+
+            - name: Setup environment for phpBB
+              env:
+                  DB: ${{ matrix.db }}
+                  PHP_VERSION: ${{ matrix.php }}
+                  NOTESTS: '0'
+              run: .github/setup-phpbb.sh $DB $PHP_VERSION ${NOTESTS:-0}
+              working-directory: ./phpBB3
+
+            - name: Setup database
+              env:
+                  DB: ${{ matrix.db }}
+                  MYISAM: '0'
+              run: .github/setup-database.sh $DB $MYISAM
+              working-directory: ./phpBB3
+
+            - name: Adjust OCI config
+              run: |
+                  docker exec oci_docker sh -c 'echo "alter system set processes = 1000 scope=spfile;" | sqlplus system/oracle@localhost:1521/xe'
+                  docker exec oci_docker sh -c 'echo "alter system set sessions = 1000 scope=spfile;" | sqlplus system/oracle@localhost:1521/xe'
+                  docker exec oci_docker sh -c '/etc/init.d/oracle-xe restart'
+
+            - name: Setup PHPUnit files
+              run: mkdir -p phpBB/ext/$EXTNAME/.github && cp .github/phpunit* $_
+              working-directory: ./phpBB3
+
+            - name: Run unit tests
+              env:
+                  DB: ${{ matrix.db }}
+              run: phpBB/vendor/bin/phpunit --configuration phpBB/ext/$EXTNAME/.github/phpunit-$DB-github.xml --bootstrap ./tests/bootstrap.php
+              working-directory: ./phpBB3
+    # END Oracle Test Job
