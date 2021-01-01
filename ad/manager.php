@@ -398,7 +398,7 @@ class manager
 		switch ($this->db->get_sql_layer())
 		{
 			case 'oracle':
-				return 'VALUE()';
+				return 'DBMS_RANDOM.VALUE';
 
 			case 'postgres':
 				return 'RANDOM()';
