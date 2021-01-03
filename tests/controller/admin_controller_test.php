@@ -963,11 +963,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		if ($is_ajax)
 		{
 			// Handle trigger_error() output called from json_response
-			if (isset(\PHPUnit\Framework\Error\Warning::$enabled))
-			{
-				\PHPUnit\Framework\Error\Warning::$enabled = true;
-			}
-			$this->expectException(\PHPUnit\Framework\Error\Warning::class);
+			$this->setExpectedTriggerError(E_WARNING);
 		}
 		else
 		{
