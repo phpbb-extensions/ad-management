@@ -80,4 +80,13 @@ class functional_base extends \phpbb_functional_test_case
 			SET ad_enabled = 0';
 		$this->db->sql_query($sql);
 	}
+
+	protected function enable_quick_reply()
+	{
+		$crawler = self::request('GET', "adm/index.php?i=acp_board&mode=post&sid={$this->sid}");
+		$form = $crawler->selectButton('allow_quick_reply_enable')->form();
+		$crawler = self::submit($form);
+		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		$this->assertContainsLang('CONFIG_UPDATED', $crawler->text());
+	}
 }
