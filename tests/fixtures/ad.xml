@@ -151,6 +151,14 @@
 			<value>7</value>
 			<value>below_footer</value>
 		</row>
+		<row>
+			<value>8</value>
+			<value>before_quickreply</value>
+		</row>
+		<row>
+			<value>9</value>
+			<value>after_quickreply</value>
+		</row>
 	</table>
 	<table name="phpbb_groups">
 		<column>group_id</column>

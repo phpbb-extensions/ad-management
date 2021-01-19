@@ -103,6 +103,18 @@ class locations_test extends functional_base
 		self::assertStringContainsString($ad_code, $crawler->filter('#viewprofile')->nextAll()->html());
 	}
 
+	public function test_location_after_quickreply()
+	{
+		$this->enable_quick_reply();
+
+		$ad_code = $this->create_ad('after_quickreply');
+
+		$crawler = self::request('GET', 'viewtopic.php?t=1');
+
+		// Confirm after qr ad is after qr
+		self::assertStringContainsString($ad_code, $crawler->filter('#qr_postform')->html());
+	}
+
 	public function test_location_before_posts()
 	{
 		$ad_code = $this->create_ad('before_posts');
@@ -121,6 +133,18 @@ class locations_test extends functional_base
 
 		// Confirm before profile ad is before profile
 		self::assertStringContainsString($ad_code, $crawler->filter('#viewprofile')->previousAll()->html());
+	}
+
+	public function test_location_before_quickreply()
+	{
+		$this->enable_quick_reply();
+
+		$ad_code = $this->create_ad('before_quickreply');
+
+		$crawler = self::request('GET', 'viewtopic.php?t=1');
+
+		// Confirm before qr ad is before qr
+		self::assertStringContainsString($ad_code, $crawler->filter('#qr_postform')->html());
 	}
 
 	public function test_location_below_footer()

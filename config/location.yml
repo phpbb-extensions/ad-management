@@ -67,6 +67,12 @@ services:
         tags:
             - { name: phpbb.ads.location.type }
 
+    phpbb.ads.location.type.after_quickreply:
+        class: phpbb\ads\location\type\after_quickreply
+        parent: phpbb.ads.location.type.base
+        tags:
+            - { name: phpbb.ads.location.type }
+
     phpbb.ads.location.type.before_posts:
         class: phpbb\ads\location\type\before_posts
         parent: phpbb.ads.location.type.base
@@ -75,6 +81,12 @@ services:
 
     phpbb.ads.location.type.before_profile:
         class: phpbb\ads\location\type\before_profile
+        parent: phpbb.ads.location.type.base
+        tags:
+            - { name: phpbb.ads.location.type }
+
+    phpbb.ads.location.type.before_quickreply:
+        class: phpbb\ads\location\type\before_quickreply
         parent: phpbb.ads.location.type.base
         tags:
             - { name: phpbb.ads.location.type }

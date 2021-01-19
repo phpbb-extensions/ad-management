@@ -63,9 +63,17 @@ class get_all_locations_test extends location_base
 					'name'	=> 'AD_AFTER_POSTS',
 					'desc'	=> 'AD_AFTER_POSTS_DESC',
 				),
+				'after_quickreply'	=> array(
+					'name'	=> 'AD_AFTER_QUICKREPLY',
+					'desc'	=> 'AD_AFTER_QUICKREPLY_DESC',
+				),
 				'before_posts'	=> array(
 					'name'	=> 'AD_BEFORE_POSTS',
 					'desc'	=> 'AD_BEFORE_POSTS_DESC',
+				),
+				'before_quickreply'	=> array(
+					'name'	=> 'AD_BEFORE_QUICKREPLY',
+					'desc'	=> 'AD_BEFORE_QUICKREPLY_DESC',
 				),
 			),
 			'CAT_OTHER'	=> array(
