@@ -65,7 +65,7 @@ class views_test extends main_listener_base
 				->expects(self::exactly(2))
 				->method('assign_vars')
 				->withConsecutive(
-					[['AD__ID' => '1', 'AD_' => '', 'AD__CENTER' => false]],
+					[['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false]],
 					[['S_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
 				);
 		}

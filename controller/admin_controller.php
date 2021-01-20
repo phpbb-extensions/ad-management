@@ -418,7 +418,7 @@ class admin_controller
 	 */
 	protected function preview()
 	{
-		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($this->data['ad_code']));
+		$this->template->assign_var('PREVIEW', htmlspecialchars_decode($this->data['ad_code'], ENT_COMPAT));
 	}
 
 	/**

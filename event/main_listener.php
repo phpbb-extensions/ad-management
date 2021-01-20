@@ -142,9 +142,9 @@ class main_listener implements EventSubscriberInterface
 			$ad_ids[] = $row['ad_id'];
 
 			$this->template->assign_vars(array(
-				'AD_' . strtoupper($row['location_id']) . '_ID'		=> $row['ad_id'],
-				'AD_' . strtoupper($row['location_id'])				=> htmlspecialchars_decode($row['ad_code']),
-				'AD_' . strtoupper($row['location_id']) . '_CENTER'	=> (bool) $row['ad_centering'],
+				'AD_' . strtoupper($row['location_id']) => htmlspecialchars_decode($row['ad_code'], ENT_COMPAT),
+				'AD_' . strtoupper($row['location_id']) . '_ID' => (int) $row['ad_id'],
+				'AD_' . strtoupper($row['location_id']) . '_CENTER' => (bool) $row['ad_centering'],
 			));
 		}
 
