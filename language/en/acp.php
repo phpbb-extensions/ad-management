@@ -60,7 +60,7 @@ $lang = array_merge($lang, array(
 	'AD_START_DATE_EXPLAIN'		=> 'Set the date the advertisement will start and become enabled. Leave this field blank if you do not want the advertisement to start automatically in the future. Please use <samp>YYYY-MM-DD</samp> format.',
 	'AD_END_DATE'				=> 'End Date',
 	'AD_END_DATE_EXPLAIN'		=> 'Set the date the advertisement will expire and become disabled. Leave this field blank if you do not want the advertisement to expire. Please use <samp>YYYY-MM-DD</samp> format.',
-	'AD_CENTERING'				=> 'Center this ad automaically',
+	'AD_CENTERING'				=> 'Center this ad automatically',
 	'AD_CENTERING_EXPLAIN'		=> 'Set to yes to let this extension center your ad automatically. If this leads to undesired results, use CSS directly in the code to center your ad accordingly.',
 
 	'AD_PREVIEW'				=> 'Preview this advertisement',
