@@ -42,6 +42,7 @@ $lang = array_merge($lang, array(
 	'AD_LOCATIONS'				=> 'Locations',
 	'AD_LOCATIONS_EXPLAIN'		=> 'Select locations where you want this advertisement displayed. Mouse over a location for a short description of it. If multiple ads use the same location, one ad will be randomly selected to display in that location each time. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one location.',
 	'AD_LOCATIONS_VISUAL_DEMO'	=> 'Start visual demo of ad locations',
+	'VISUAL_DEMO_EXPLAIN'		=> 'Start the visual demo to open your forum in a new browser window with sample ads in every location. Only you will see the demo, your visitors will see your forum normally. You must deactivate the demo when you are done viewing it (or it will persist for you as you use your forum). The “Click to disable visual demo” button will be available on every page.',
 	'AD_PRIORITY'				=> 'Priority',
 	'AD_PRIORITY_EXPLAIN'		=> 'Set a number between 1 and 10. Advertisements with higher number will be displayed more often when there are multiple ads using the same location.',
 	'AD_CONTENT_ONLY'			=> 'Display on content pages only',
