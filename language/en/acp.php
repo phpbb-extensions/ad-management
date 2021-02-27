@@ -42,6 +42,7 @@ $lang = array_merge($lang, array(
 	'AD_LOCATIONS'				=> 'Locations',
 	'AD_LOCATIONS_EXPLAIN'		=> 'Select locations where you want this advertisement displayed. Mouse over a location for a short description of it. If multiple ads use the same location, one ad will be randomly selected to display in that location each time. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one location.',
 	'AD_LOCATIONS_VISUAL_DEMO'	=> 'Start visual demo of ad locations',
+	'VISUAL_DEMO_EXPLAIN'		=> 'Start the visual demo to open your forum in a new browser window with sample ads in every location. Only you will see the demo, your visitors will see your forum normally. You must deactivate the demo when you are done viewing it (or it will persist for you as you use your forum). The “Click to disable visual demo” button will be available on every page.',
 	'AD_PRIORITY'				=> 'Priority',
 	'AD_PRIORITY_EXPLAIN'		=> 'Set a number between 1 and 10. Advertisements with higher number will be displayed more often when there are multiple ads using the same location.',
 	'AD_CONTENT_ONLY'			=> 'Display on content pages only',
@@ -59,7 +60,7 @@ $lang = array_merge($lang, array(
 	'AD_START_DATE_EXPLAIN'		=> 'Set the date the advertisement will start and become enabled. Leave this field blank if you do not want the advertisement to start automatically in the future. Please use <samp>YYYY-MM-DD</samp> format.',
 	'AD_END_DATE'				=> 'End Date',
 	'AD_END_DATE_EXPLAIN'		=> 'Set the date the advertisement will expire and become disabled. Leave this field blank if you do not want the advertisement to expire. Please use <samp>YYYY-MM-DD</samp> format.',
-	'AD_CENTERING'				=> 'Center this ad automaically',
+	'AD_CENTERING'				=> 'Center this ad automatically',
 	'AD_CENTERING_EXPLAIN'		=> 'Set to yes to let this extension center your ad automatically. If this leads to undesired results, use CSS directly in the code to center your ad accordingly.',
 
 	'AD_PREVIEW'				=> 'Preview this advertisement',
