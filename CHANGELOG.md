@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.4 - 2021-01-21
+
+- Feature: Added new advertisement locations before and after the Quick Reply editor.
+- Fix: Title of the pop up advertisement window will be properly displayed.
+- Fix: Addressed potential PHP 8 compatibility issues.
+- Fix: Correctly handle advertisement priority in MSSQL and Oracle databases.
+
 ### 2.0.3 - 2019-12-03
 
 - Fix: Updated the "Display on content pages only" option so ads will no longer appear when writing posts or viewing member lists. This is to improve compliance with rules from Google AdSense.
