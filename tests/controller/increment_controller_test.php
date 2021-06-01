@@ -12,10 +12,10 @@ namespace phpbb\ads\controller;
 
 class increment_controller_test extends \phpbb_database_test_case
 {
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
 	protected $request;
 
 	/**

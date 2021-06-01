@@ -47,8 +47,8 @@ class clicks_test extends main_listener_base
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 
-		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'clicks'));
-		$dispatcher->dispatch('core.page_header_after');
+		$dispatcher->trigger_event('core.page_header_after');
 	}
 }

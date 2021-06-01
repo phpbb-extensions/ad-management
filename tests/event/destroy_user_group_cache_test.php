@@ -22,11 +22,11 @@ class destroy_user_group_cache_test extends main_listener_base
 			->method('destroy')
 			->with('sql', USER_GROUP_TABLE);
 
-		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.group_add_user_after', array($this->get_listener(), 'destroy_user_group_cache'));
-		$dispatcher->dispatch('core.group_add_user_after');
+		$dispatcher->trigger_event('core.group_add_user_after');
 
 		$dispatcher->addListener('core.group_delete_user_after', array($this->get_listener(), 'destroy_user_group_cache'));
-		$dispatcher->dispatch('core.group_delete_user_after');
+		$dispatcher->trigger_event('core.group_delete_user_after');
 	}
 }

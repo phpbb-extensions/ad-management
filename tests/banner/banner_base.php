@@ -12,16 +12,16 @@ namespace phpbb\ads\tests\banner;
 
 class banner_base extends \phpbb_test_case
 {
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\files\upload */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\upload */
 	protected $files_upload;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\filesystem\filesystem */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\filesystem\filesystem */
 	protected $filesystem;
 
 	/** @var string */
 	protected $root_path;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\files\filespec */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\filespec */
 	protected $file;
 
 	/**

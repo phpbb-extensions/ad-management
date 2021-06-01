@@ -38,8 +38,8 @@ class adblocker_test extends main_listener_base
 			->method('assign_var')
 			->with('S_DISPLAY_ADBLOCKER', $expected);
 
-		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'adblocker'));
-		$dispatcher->dispatch('core.page_header_after');
+		$dispatcher->trigger_event('core.page_header_after');
 	}
 }

@@ -12,16 +12,16 @@ namespace phpbb\ads\tests\event;
 
 class main_listener_base extends \phpbb_database_test_case
 {
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\db_text */
 	protected $config_text;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\context */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\context */
 	protected $template_context;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\user */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\user */
 	protected $user;
 
 	/** @var string ads_table */
@@ -36,13 +36,13 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var \phpbb\ads\location\manager */
 	protected $location_manager;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\controller\helper */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\controller\helper */
 	protected $controller_helper;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
 	protected $request;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\cache\driver\driver_interface */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\cache\driver\driver_interface */
 	protected $cache;
 
 	/** @var string */
