@@ -5,3 +5,7 @@
 {# end ad location #}
 
 {% include '@phpbb_ads/includes/ad_views.html' %}
+
+{% if S_DISPLAY_ADBLOCKER %}
+	{% INCLUDEJS '@phpbb_ads/js/abdetect.js' %}
+{% endif %}
