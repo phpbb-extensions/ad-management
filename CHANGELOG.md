@@ -1,8 +1,9 @@
 # Changelog
 
-### 2.0.5 - 2021-05-28
+### 2.0.5 - 2021-06-15
 
 - Updated and improved the appearance of the Visual Demo of Ad Locations.
+- Updated and improved ad block detection.
 - Improved (for hi-res displays) the appearance of the edit/delete icons in the ACP.
 - Fixed various typos.
 
