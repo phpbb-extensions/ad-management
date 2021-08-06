@@ -17,22 +17,19 @@ class load_language_on_setup_test extends main_listener_base
 	*/
 	public function test_load_language_on_setup()
 	{
-		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.user_setup', array($this->get_listener(), 'load_language_on_setup'));
 
 		$lang_set_ext = array();
 		$event_data = array('lang_set_ext');
-		$event = new \phpbb\event\data(compact($event_data));
-		$dispatcher->dispatch('core.user_setup', $event);
+		$event_data_after = $dispatcher->trigger_event('core.user_setup', compact($event_data));
+		extract($event_data_after, EXTR_OVERWRITE);
 
-		$event_data_after = $event->get_data_filtered($event_data);
 		self::assertEquals(array(
-			'lang_set_ext'	=> array(
-				array(
-					'ext_name' => 'phpbb/ads',
-					'lang_set' => 'common',
-				)
-			),
-		), $event_data_after);
+			array(
+				'ext_name' => 'phpbb/ads',
+				'lang_set' => 'common',
+			)
+		), $lang_set_ext);
 	}
 }

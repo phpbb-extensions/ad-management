@@ -12,16 +12,16 @@ namespace phpbb\ads\tests\controller;
 
 class visual_demo_test extends \phpbb_test_case
 {
-	/** @var \phpbb\auth\auth|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \phpbb\auth\auth|\PHPUnit\Framework\MockObject\MockObject */
 	protected $auth;
 
 	/** @var \phpbb\config\config */
 	protected $config;
 
-	/** @var \phpbb\request\request|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \phpbb\request\request|\PHPUnit\Framework\MockObject\MockObject */
 	protected $request;
 
-	/** @var \phpbb\user|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \phpbb\user|\PHPUnit\Framework\MockObject\MockObject */
 	protected $user;
 
 	/** @var string */

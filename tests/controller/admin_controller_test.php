@@ -20,34 +20,34 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var bool A return value for confirm_box() */
 	public static $confirm = true;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
 	protected $request;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\db_text */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\db_text */
 	protected $config_text;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
 	protected $config;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_input */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\admin_input */
 	protected $input;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\helper */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\helper */
 	protected $helper;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\analyser\manager */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\analyser\manager */
 	protected $analyser;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\controller\helper */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\controller\helper */
 	protected $controller_helper;
 
 	/** @var string root_path */
@@ -272,7 +272,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*/
 	public function test_mode_manage($action, $expected)
 	{
-		/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\admin_controller $controller */
+		/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\admin_controller $controller */
 		$controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
 			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(

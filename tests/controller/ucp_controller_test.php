@@ -12,22 +12,22 @@ namespace phpbb\ads\controller;
 
 class ucp_controller_test extends \phpbb_database_test_case
 {
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\controller\helper */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\helper */
 	protected $helper;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\user */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\user */
 	protected $user;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\language\language */
 	protected $language;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\config\config */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
 	protected $config;
 
 	/** @var string Custom form action */

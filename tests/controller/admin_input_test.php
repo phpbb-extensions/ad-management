@@ -24,10 +24,10 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\request\request */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
 	protected $request;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\banner\banner */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\banner\banner */
 	protected $banner;
 
 	/**

@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.5 - 2021-06-15
+
+- Updated and improved the appearance of the Visual Demo of Ad Locations.
+- Updated and improved ad block detection.
+- Improved (for hi-res displays) the appearance of the edit/delete icons in the ACP.
+- Fixed various typos.
+
 ### 2.0.4 - 2021-01-21
 
 - Feature: Added new advertisement locations before and after the Quick Reply editor.
@@ -21,7 +28,7 @@
 
 ### 2.0.1 - 2018-09-17
 
-- Feature: Added a new "Special" location we call "Scripts" which can be used for adding specialised JS code like AdSense Auto ads and tracking codes.
+- Feature: Added a new "Special" location we call "Scripts" which can be used for adding specialised Javascript codes like AdSense Auto ads and tracking codes.
 
 ### 2.0.0 - 2018-06-28
 
@@ -33,15 +40,15 @@
 ### 1.0.5 - 2018-03-06
 
 - Feature: Added a new option to display ads on content pages only. When enabled, the ad will not be shown on the UCP, MCP, Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
-- Feature: Ad locations option has improved organisation to make it easier to pick the appropriate location. Also, a new Visual Demo has been added so you can see where all the ad locations physically appear on your board.
-- Fix: My Advertisements tab in the UCP will no longer be shown to all users, and will only be visible to ad owners.
+- Feature: Ad locations option has improved organisation to make it easier to pick the appropriate location. Also, a new Visual Demo has been added, so you can see where all the ad locations physically appear on your board.
+- Fix: My Advertisements tab in the UCP will no longer be shown to all users, and will only be visible to advertisement owners.
 - Fix: Resolved an issue affecting some users where multiple ads assigned to the same location were not being randomly rotated.
 - Fix: Ads assigned to display after first post will only be visible now if there are replies after the first post.
 
 ### 1.0.4 - 2017-12-23
 
 - Fix: Improve handling of responsive advertisements.
-- Fix: Added additional statistics to the My advertisements tab, including expiration info and active/inactive status.
+- Fix: Added additional statistics to the "My advertisements" tab, including expiration info and active/inactive status.
 
 ### 1.0.3 - 2017-11-19
 
@@ -61,7 +68,7 @@
 
 - Feature: Advertisement views and clicks statistics.
 - Feature: Ad owner - a user can be designated as an ad owner and can view ad statistics.
-- Feature: Banner image uploading added to the ACP's advertisement creation form.
+- Feature: Banner image uploading added to the ACP advertisement creation form.
 - Code fixes and improvements.
 
 ### 1.0.0 - 2017-06-24

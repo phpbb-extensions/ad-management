@@ -18,19 +18,19 @@ class helper_test extends \phpbb_database_test_case
 	/** @var \phpbb\user_loader */
 	protected $user_loader;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\language\language */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\language\language */
 	protected $language;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\template\template */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\log\log */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\log\log */
 	protected $log;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\ad\manager */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject|\phpbb\ads\location\manager */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\location\manager */
 	protected $location_manager;
 
 	/** @var \phpbb\group\helper */

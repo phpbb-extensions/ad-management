@@ -21,7 +21,7 @@ class location_base extends \phpbb_test_case
 	/** @var \phpbb\language\language */
 	protected $language;
 
-	/** @var \phpbb\request\request|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \phpbb\request\request|\PHPUnit\Framework\MockObject\MockObject */
 	protected $request;
 
 	/**

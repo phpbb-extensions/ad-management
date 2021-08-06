@@ -27,8 +27,8 @@ class setup_ads_test extends main_listener_base
 			->expects(self::exactly(count($ads)))
 			->method('assign_vars');
 
-		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
+		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));
-		$dispatcher->dispatch('core.page_header_after');
+		$dispatcher->trigger_event('core.page_header_after');
 	}
 }
