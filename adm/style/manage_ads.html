@@ -118,7 +118,7 @@
 			<dl>
 				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
-				<dd>[ <a href="{{ U_FIND_USERNAME }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a> ]</dd>
+				<dd>[ <a href="{{ U_FIND_USERNAME }}" id="find-username">{{ lang('FIND_USERNAME') }}</a> ]</dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
@@ -159,6 +159,12 @@
 			{{ S_FORM_TOKEN }}
 		</fieldset>
 	</form>
+	<script>
+		document.getElementById("find-username").addEventListener("click", (e) => {
+			e.preventDefault();
+			find_username(e.target.href);
+		})
+	</script>
 
 {% else %}
 
@@ -167,7 +173,7 @@
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 			<tr>
-				<th style="width: 30%">{{ lang('AD_NAME') }}</th>
+				<th style="width: 30%;">{{ lang('AD_NAME') }}</th>
 				<th>{{ lang('AD_PRIORITY') }}</th>
 				<th>{{ lang('AD_START_DATE') }}</th>
 				<th>{{ lang('AD_END_DATE') }}</th>
