@@ -75,7 +75,10 @@ class helper_test extends \phpbb_database_test_case
 		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
 		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
-		$this->user_loader = new \phpbb\user_loader($db, $phpbb_root_path, $phpEx, 'phpbb_users');
+		$avatar_helper = $this->getMockBuilder('\phpbb\avatar\helper')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->user_loader = new \phpbb\user_loader($avatar_helper, $db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
 			->disableOriginalConstructor()
 			->getMock();
@@ -88,8 +91,12 @@ class helper_test extends \phpbb_database_test_case
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
 			->getMock();
+		$avatar_helper = $this->getMockBuilder('\phpbb\avatar\helper')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->group_helper = new \phpbb\group\helper(
 			$this->getMockBuilder('\phpbb\auth\auth')->getMock(),
+			$avatar_helper,
 			$this->getMockBuilder('\phpbb\cache\service')->disableOriginalConstructor()->getMock(),
 			new \phpbb\config\config([]),
 			$this->language,
@@ -98,7 +105,6 @@ class helper_test extends \phpbb_database_test_case
 				new \phpbb\symfony_request(
 					new \phpbb_mock_request()
 				),
-				new \phpbb\filesystem\filesystem(),
 				$this->getMockBuilder('\phpbb\request\request')->getMock(),
 				$phpbb_root_path,
 				$phpEx

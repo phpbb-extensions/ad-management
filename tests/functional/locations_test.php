@@ -42,7 +42,7 @@ class locations_test extends functional_base
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
 		// Confirm after first post ad is NOT after first post when it's the only post
-		self::assertStringNotContainsString($ad_code, $crawler->filter('#p1')->nextAll()->eq(0)->html());
+		self::assertStringNotContainsString($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());
 
 		// Create a reply
 		$this->create_post(2, 1, 'Re: Welcome to phpBB3', 'This is a test post.');
@@ -50,7 +50,7 @@ class locations_test extends functional_base
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
 		// Confirm after first post ad is after first post when it's the only post
-		self::assertStringContainsString($ad_code, $crawler->filter('#p1')->nextAll()->eq(0)->html());
+		self::assertStringContainsString($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());
 	}
 
 	public function test_location_after_footer_navbar()
@@ -80,7 +80,7 @@ class locations_test extends functional_base
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
 		// Confirm after not first post ad is after second post
-		self::assertStringContainsString($ad_code, $crawler->filter('#p2')->nextAll()->eq(0)->html());
+		self::assertStringContainsString($ad_code, $crawler->filter('#p2')->nextAll()->eq(1)->html());
 	}
 
 	public function test_location_after_posts()
