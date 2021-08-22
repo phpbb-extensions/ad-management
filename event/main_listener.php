@@ -259,7 +259,9 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Check if the page user is currently on is designated as a non-content page.
+	 * Check if the page user is currently on is a non-content page.
+	 * This should include member list and details pages, posting and
+	 * replying pages, anything inside the UCP, MCP and ACP.
 	 *
 	 * @return bool True or false
 	 */
@@ -267,8 +269,8 @@ class main_listener implements EventSubscriberInterface
 	{
 		return count(array_intersect([$this->user->page['page_name'], $this->user->page['page_dir']], [
 			'memberlist.' . $this->php_ext,
-			'posting.' . $this->php_ext,
 			'viewonline.' . $this->php_ext,
+			'posting.' . $this->php_ext,
 			'ucp.' . $this->php_ext,
 			'mcp.' . $this->php_ext,
 			'adm',
