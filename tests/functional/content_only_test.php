@@ -58,5 +58,11 @@ class content_only_test extends functional_base
 		$crawler = self::request('GET', 'viewonline.php');
 		self::assertCount(1, $crawler->filter('.viewonline-title'));
 		self::assertStringNotContainsString($ad_code, $crawler->html());
+
+		$this->logout();
+		$this->login();
+		$crawler = self::request('GET', 'adm/index.php?sid=' . $this->sid);
+		self::assertStringContainsString($this->lang('LOGIN_ADMIN_CONFIRM'), $crawler->filter('html')->text());
+		self::assertStringNotContainsString($ad_code, $crawler->html());
 	}
 }

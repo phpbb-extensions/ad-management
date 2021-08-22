@@ -132,7 +132,7 @@ class main_listener implements EventSubscriberInterface
 		// Reason we access template's root ref is to check for existence
 		// of 'MESSAGE_TEXT', which signals error page.
 		$rootref = $this->template_context->get_root_ref();
-		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || $this->is_non_content_page($this->user->page['page_name']);
+		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || $this->is_non_content_page($this->user->page['page_name'], $this->user->page['page_dir']);
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ad_ids = array();
@@ -259,19 +259,21 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Check if the given page name is designated as a non-content page.
+	 * Check if the given page is designated as a non-content page.
 	 *
-	 * @param string $page_name
+	 * @param string $page_name Name of the current user page
+	 * @param string $page_dir  Name of the current user directory
 	 * @return bool True or false
 	 */
-	protected function is_non_content_page($page_name)
+	protected function is_non_content_page($page_name, $page_dir)
 	{
-		return in_array($page_name, [
+		return count(array_intersect([$page_name, $page_dir], [
 			'memberlist.' . $this->php_ext,
 			'posting.' . $this->php_ext,
 			'viewonline.' . $this->php_ext,
 			'ucp.' . $this->php_ext,
 			'mcp.' . $this->php_ext,
-		]);
+			'adm',
+		])) > 0;
 	}
 }
