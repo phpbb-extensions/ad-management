@@ -35,6 +35,7 @@ class views_test extends main_listener_base
 		$this->user->data['user_id'] = 10;
 		$this->user->data['is_bot'] = $is_bot;
 		$this->user->page['page_name'] = 'viewtopic';
+		$this->user->page['page_dir'] = '';
 		$this->config['phpbb_ads_enable_views'] = true;
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
