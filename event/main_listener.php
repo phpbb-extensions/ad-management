@@ -171,7 +171,7 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
-				'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0)),
+				'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0), true, ''),
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 		}
@@ -213,8 +213,8 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
 		{
 			$this->template->assign_vars(array(
-				'S_INCREMENT_VIEWS'		=> true,
-				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
+				'S_INCREMENT_VIEWS'	=> true,
+				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids)), true, ''),
 			));
 		}
 	}

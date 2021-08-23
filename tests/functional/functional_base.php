@@ -56,14 +56,14 @@ class functional_base extends \phpbb_functional_test_case
 			'ad_name'		=> 'Functional test template location ' . $location,
 			'ad_note'		=> '',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE ' . $location . ' -->',
-			'ad_enabled'	=> true,
+			'ad_enabled'	=> 1,
 			'ad_locations'	=> array($location),
 			'ad_start_date'	=> $start_date,
 			'ad_end_date'	=> $end_date,
 			'ad_priority'	=> 5,
-			'ad_content_only'	=> $content_only,
+			'ad_content_only'	=> (int) $content_only,
 			'ad_groups'		=> [],
-			'ad_centering'	=> $centering,
+			'ad_centering'	=> (int) $centering,
 		);
 
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
