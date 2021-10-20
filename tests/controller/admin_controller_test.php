@@ -274,7 +274,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\admin_controller $controller */
 		$controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
-			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
+			->onlyMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->template,
 				$this->language,
