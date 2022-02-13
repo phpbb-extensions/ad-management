@@ -1,0 +1,14 @@
+{
+	"name": "phpbb-ads",
+	"author": "phpBB Limited",
+	"license": "GPL-2.0",
+	"scripts": {
+		"copy-adblock": "copyfiles --flat node_modules/just-detect-adblock/dist/bundle.umd.js styles/all/template/js"
+	},
+	"dependencies": {
+		"just-detect-adblock": "^1.1.0"
+	},
+	"devDependencies": {
+		"copyfiles": "^2.4.1"
+	}
+}
