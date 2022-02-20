@@ -26,9 +26,6 @@ class acp_settings_test extends functional_base
 		// Confirm page contains proper heading
 		$this->assertContainsLang('SETTINGS', $crawler->text());
 
-		// Confirm no group is selected yet
-		self::assertCount(0, $crawler->filter('option[selected]'));
-
 		// Submit form
 		$form_data = array(
 			'adblocker_message'	=> 1,
@@ -43,7 +40,7 @@ class acp_settings_test extends functional_base
 		$crawler = $this->get_settings_page();
 
 		// Confirm Adblocker, views and clicks are enabled and admin group is selected
-		self::assertEquals('1', $crawler->filter('input[name="adblocker_message"][checked]')->attr('value'));
+		self::assertEquals('1', $crawler->filter('option[selected]')->attr('value'));
 		self::assertEquals('1', $crawler->filter('input[name="enable_views"][checked]')->attr('value'));
 		self::assertEquals('1', $crawler->filter('input[name="enable_clicks"][checked]')->attr('value'));
 	}
