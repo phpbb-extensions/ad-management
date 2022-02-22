@@ -2,7 +2,7 @@
 	"name": "phpbb/ads",
 	"type": "phpbb-extension",
 	"description": "An extension for phpBB that allows administrators to manage and display advertisements on their forums.",
-	"homepage": "https://www.phpbb.com",
+	"homepage": "https://www.phpbb.com/customise/db/extension/ads/",
 	"version": "2.0.5",
 	"keywords": ["phpbb", "extension", "advertisement"],
 	"license": "GPL-2.0-only",
