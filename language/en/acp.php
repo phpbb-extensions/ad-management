@@ -113,7 +113,12 @@ $lang = array_merge($lang, array(
 	// Settings
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',
 	'ADBLOCKER_MESSAGE'				=> 'Ad blocker detected message',
-	'ADBLOCKER_MESSAGE_EXPLAIN'		=> 'Display a polite message to visitors using ad blockers, advising them to consider disabling ad blocking on this forum.',
+	'ADBLOCKER_MESSAGE_EXPLAIN'		=> 'Display a message to visitors using ad blockers, asking or requiring them to disable ad blocking on this forum. If requiring visitors to disable ad blockers, they will not be able to use the forum until they have disabled their ad blocker.',
+	'ADBLOCKER_MODES'				=> [
+		0 => 'Allow ad blockers',
+		1 => 'Ask visitors to disable ad blockers',
+		2 => 'Require visitors to disable ad blockers',
+	],
 	'CLICKS_VIEWS_LEGEND'			=> 'Statistics and Tracking',
 	'ENABLE_VIEWS'					=> 'Count views',
 	'ENABLE_VIEWS_EXPLAIN'			=> 'This will enable counting how many times every ad has been displayed. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',

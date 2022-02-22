@@ -142,7 +142,8 @@ class admin_controller
 
 		$this->template->assign_vars(array(
 			'U_ACTION'          => $this->u_action,
-			'ADBLOCKER_MESSAGE' => $this->config['phpbb_ads_adblocker_message'],
+			'AD_BLOCK_MODES'	=> ext::AD_BLOCK_MODES,
+			'AD_BLOCK_CONFIG'	=> $this->config['phpbb_ads_adblocker_message'],
 			'ENABLE_VIEWS'      => $this->config['phpbb_ads_enable_views'],
 			'ENABLE_CLICKS'     => $this->config['phpbb_ads_enable_clicks'],
 		));
