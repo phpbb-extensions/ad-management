@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.6 - 2022-02-22
+
+- Added an option for more aggressive handling of ad block users, requiring them to disable ad blockers to access the forum.
+- Switched to a stronger ad block detection script based on BlockAdBlock.
+- Add ADM pages to the non-content page restriction filter (to prevent showing ads during ACP login).
+- Fix: Prevent session ID from blocking click and view tracking.
+
 ### 2.0.5 - 2021-06-15
 
 - Updated and improved the appearance of the Visual Demo of Ad Locations.
@@ -10,7 +17,7 @@
 ### 2.0.4 - 2021-01-21
 
 - Feature: Added new advertisement locations before and after the Quick Reply editor.
-- Fix: Title of the pop up advertisement window will be properly displayed.
+- Fix: Title of the popup advertisement window will be properly displayed.
 - Fix: Addressed potential PHP 8 compatibility issues.
 - Fix: Correctly handle advertisement priority in MSSQL and Oracle databases.
 
