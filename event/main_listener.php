@@ -158,7 +158,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function adblocker()
 	{
-		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+		$this->template->assign_var('S_DISPLAY_ADBLOCKER', (int) $this->config['phpbb_ads_adblocker_message']);
 	}
 
 	/**
