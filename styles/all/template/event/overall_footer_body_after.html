@@ -27,7 +27,7 @@
 	justDetectAdblock.detectAnyAdblocker().then(function(detected) {
 		if (detected) {
 			document.getElementById('phpbb-aJHwDeoSqLhW').style.display='block';
-			{% if S_DISPLAY_ADBLOCKER == '2' %}document.getElementById('darkenwrapper').style.display='block';{% endif %}
+			{% if S_DISPLAY_ADBLOCKER === 2 %}document.getElementById('darkenwrapper').style.display='block';{% endif %}
 		}
 	});
 </script>
