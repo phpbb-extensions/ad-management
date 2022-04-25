@@ -132,7 +132,7 @@ class main_listener implements EventSubscriberInterface
 		// Reason we access template's root ref is to check for existence
 		// of 'MESSAGE_TEXT', which signals error page.
 		$rootref = $this->template_context->get_root_ref();
-		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || $this->is_non_content_page($this->user->page['page_name']);
+		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || $this->is_non_content_page();
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ad_ids = array();
@@ -158,7 +158,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function adblocker()
 	{
-		$this->template->assign_var('S_DISPLAY_ADBLOCKER', $this->config['phpbb_ads_adblocker_message']);
+		$this->template->assign_var('S_DISPLAY_ADBLOCKER', (int) $this->config['phpbb_ads_adblocker_message']);
 	}
 
 	/**
@@ -171,7 +171,7 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['phpbb_ads_enable_clicks'])
 		{
 			$this->template->assign_vars(array(
-				'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0)),
+				'U_PHPBB_ADS_CLICK'		=> $this->controller_helper->route('phpbb_ads_click', array('data' => 0), true, ''),
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 		}
@@ -213,8 +213,8 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
 		{
 			$this->template->assign_vars(array(
-				'S_INCREMENT_VIEWS'		=> true,
-				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids))),
+				'S_INCREMENT_VIEWS'	=> true,
+				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array('data' => implode('-', $ad_ids)), true, ''),
 			));
 		}
 	}
@@ -259,19 +259,21 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Check if the given page name is designated as a non-content page.
+	 * Check if the page user is currently on is a non-content page.
+	 * This should include member list and details pages, posting and
+	 * replying pages, anything inside the UCP, MCP and ACP.
 	 *
-	 * @param string $page_name
 	 * @return bool True or false
 	 */
-	protected function is_non_content_page($page_name)
+	protected function is_non_content_page()
 	{
-		return in_array($page_name, [
+		return count(array_intersect([$this->user->page['page_name'], $this->user->page['page_dir']], [
 			'memberlist.' . $this->php_ext,
-			'posting.' . $this->php_ext,
 			'viewonline.' . $this->php_ext,
+			'posting.' . $this->php_ext,
 			'ucp.' . $this->php_ext,
 			'mcp.' . $this->php_ext,
-		]);
+			'adm',
+		])) > 0;
 	}
 }

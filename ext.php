@@ -15,6 +15,7 @@ class ext extends \phpbb\extension\base
 	const DATE_FORMAT = 'Y-m-d';
 	const MAX_NAME_LENGTH = 255;
 	const DEFAULT_PRIORITY = 5;
+	const AD_BLOCK_MODES = [0, 1, 2];
 
 	/**
 	 * {@inheritdoc}

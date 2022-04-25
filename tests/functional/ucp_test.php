@@ -31,7 +31,7 @@ class ucp_test extends functional_base
 			'ad_name'		=> 'Functional test UCP module',
 			'ad_note'		=> 'Functional test UCP module note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
-			'ad_enabled'	=> true,
+			'ad_enabled'	=> 1,
 			'ad_start_date'	=> '2030-01-01',
 			'ad_end_date'	=> '2035-01-01',
 			'ad_priority'	=> 1,

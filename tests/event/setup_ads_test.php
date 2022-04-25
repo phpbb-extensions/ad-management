@@ -19,6 +19,7 @@ class setup_ads_test extends main_listener_base
 	{
 		$this->user->data['user_id'] = 1;
 		$this->user->page['page_name'] = 'viewtopic';
+		$this->user->page['page_dir'] = '';
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$ads = $this->manager->get_ads($location_ids, $user_groups, false);

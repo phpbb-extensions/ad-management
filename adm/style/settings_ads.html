@@ -15,9 +15,14 @@
 	<fieldset>
 		<legend>{{ lang('ADBLOCKER_LEGEND') }}</legend>
 		<dl>
-			<dt><label for="detected_message">{{ lang('ADBLOCKER_MESSAGE') ~ lang('COLON') }}</label><br /><span>{{ lang('ADBLOCKER_MESSAGE_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="detected_message" name="adblocker_message" value="1"{% if ADBLOCKER_MESSAGE %} checked{% endif %} /> {{ lang('ENABLED') }}</label>
-				<label><input type="radio" class="radio" name="adblocker_message" value="0"{% if not ADBLOCKER_MESSAGE %} checked{% endif %} /> {{ lang('DISABLED') }}</label></dd>
+			<dt><label for="adblocker_message">{{ lang('ADBLOCKER_MESSAGE') ~ lang('COLON') }}</label><br /><span>{{ lang('ADBLOCKER_MESSAGE_EXPLAIN') }}</span></dt>
+			<dd>
+				<select name="adblocker_message" id="adblocker_message">
+					{% for ad_block_mode in AD_BLOCK_MODES %}
+						<option value="{{ ad_block_mode }}"{% if ad_block_mode == AD_BLOCK_CONFIG %} selected="selected"{% endif %}>{{ lang('ADBLOCKER_MODES', ad_block_mode) }}</option>
+					{% endfor %}
+				</select>
+			</dd>
 		</dl>
 	</fieldset>
 	<fieldset>

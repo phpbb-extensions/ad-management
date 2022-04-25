@@ -14,17 +14,17 @@
 		${dir}/ is the folder of your extension, e.g. ext/acme/demo/
 		-->
 		<delete dir="${dir}/tests" />
-		<delete dir="${dir}/travis" />
 		<delete dir="${dir}/.github" />
 
 		<delete file="${dir}/.gitignore" />
 		<delete file="${dir}/.gitattributes" />
-		<delete file="${dir}/.travis.yml" />
 		<delete file="${dir}/build.xml" />
 		<delete file="${dir}/composer.lock" />
 		<delete file="${dir}/composer.phar" />
 		<delete file="${dir}/phpunit.xml.dist" />
 		<delete file="${dir}/README.md" />
+		<delete file="${dir}/package.json" />
+		<delete file="${dir}/package-lock.json" />
 	</target>
 
 	<!--
