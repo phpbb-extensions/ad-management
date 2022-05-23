@@ -1,0 +1,74 @@
+{% include 'ucp_header.html' %}
+
+<h2 class="fs-5">{{ lang('UCP_PHPBB_ADS_STATS') }}</h2>
+<div class="panel bg-body rounded-3 p-2 mb-2">
+	<div class="inner table-responsive">
+		<table class="table">
+			<thead>
+			<tr>
+				<th class="name">{{ lang('AD_NAME') }}</th>
+				<th style="width: 15%"class="center text-center">{{ lang('AD_START_DATE') }}</th>
+				<th style="width: 15%"class="center text-center">{{ lang('AD_END_DATE') }}</th>
+				{% if S_VIEWS_ENABLED %}<th class="center text-center" style="width: 15%">{{ lang('AD_VIEWS') }}</th>{% endif %}
+				{% if S_CLICKS_ENABLED %}<th class="center text-center" style="width: 15%">{{ lang('AD_CLICKS') }}</th>{% endif %}
+				<th style="width: 15%"class="center text-center">{{ lang('AD_STATUS') }}</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% set NOW = "now"|date("U") %}
+			{% for list in [
+				{
+					'heading': lang('ACTIVE_ADS'),
+					'loop': loops.ads
+				},
+				{
+					'heading': lang('EXPIRED_ADS'),
+					'loop': loops.expired
+				}
+			] %}
+				{% if list.loop %}
+					<td class="row3" colspan="{{ 4 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					{% for ad in list.loop %}
+						<tr class="{% if loop.index0 is even %}bg2 bg-secondary bg-opacity-25{% else %}bg1 bg-secondary bg-opacity-10{% endif %}">
+							<td>{{ ad.NAME }}</td>
+							<td class="center text-center">{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}</td>
+							<td class="center text-center">
+								{% if ad.END_DATE < NOW %}<strong class="error text-danger">{% endif %}
+									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
+								{% if ad.END_DATE < NOW %}</strong>{% endif %}
+							</td>
+							{% if S_VIEWS_ENABLED %}
+								<td class="center text-center">
+									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error text-danger">{% endif %}
+										{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
+										{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
+								</td>
+							{% endif %}
+							{% if S_CLICKS_ENABLED %}
+								<td class="center text-center">
+									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error text-danger">{% endif %}
+										{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
+										{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
+								</td>
+							{% endif %}
+							<td class="center text-center">
+								{% if list.loop == loops.expired %}
+									{{ lang('EXPIRED') }}
+								{% else %}
+									{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				{% elseif not loops.ads and not loops.expired and loop.last %}
+					<tr>
+						<td class="alert alert-info" colspan="{{ 4 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('NO_ADS') }}</td>
+					</tr>
+				{% endif %}
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}
