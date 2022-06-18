@@ -27,6 +27,8 @@ class set_permissions_test extends main_listener_base
 
 		self::assertEquals(array(
 			'u_phpbb_ads'	=> array('lang' => 'ACL_U_PHPBB_ADS', 'cat' => 'misc'),
+			'a_phpbb_ads_m'	=> array('lang' => 'ACL_A_PHPBB_ADS_M', 'cat' => 'misc'),
+			'a_phpbb_ads_s'	=> array('lang' => 'ACL_A_PHPBB_ADS_S', 'cat' => 'misc'),
 		), $permissions);
 	}
 }

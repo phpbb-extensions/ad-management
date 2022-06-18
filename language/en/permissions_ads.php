@@ -20,4 +20,6 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACL_U_PHPBB_ADS' => 'Can view own advertisement management statistics',
+	'ACL_A_PHPBB_ADS_M' => 'Can manage phpBB Advertisement ads',
+	'ACL_A_PHPBB_ADS_S' => 'Can manage phpBB Advertisement settings',
 ));

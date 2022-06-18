@@ -20,10 +20,10 @@ class ext extends \phpbb\extension\base
 	/**
 	 * {@inheritdoc}
 	 *
-	 * Require phpBB 3.2.1 due to use of $event->update_subarray()
+	 * Requires phpBB 3.3.2 due to using role_exists check in permission migration.
 	 */
 	public function is_enableable()
 	{
-		return phpbb_version_compare(PHPBB_VERSION, '3.2.1', '>=');
+		return phpbb_version_compare(PHPBB_VERSION, '3.3.2', '>=');
 	}
 }
