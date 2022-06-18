@@ -24,9 +24,6 @@ class location_base extends \phpbb_test_case
 	/** @var \phpbb\request\request|\PHPUnit\Framework\MockObject\MockObject */
 	protected $request;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');

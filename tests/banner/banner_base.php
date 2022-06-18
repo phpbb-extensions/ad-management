@@ -24,9 +24,6 @@ class banner_base extends \phpbb_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\filespec */
 	protected $file;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');

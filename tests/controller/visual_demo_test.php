@@ -131,8 +131,8 @@ class visual_demo_test extends \phpbb_test_case
 		if (!$is_ajax)
 		{
 			// Throws E_WARNING in PHP 8.0+ and E_USER_WARNING in earlier versions
-			$exceptionName = version_compare(PHP_VERSION, '8.0', '<') ? \PHPUnit\Framework\Error\Error::class : \PHPUnit\Framework\Error\Warning::class;
-			$errno = version_compare(PHP_VERSION, '8.0', '<') ? E_USER_WARNING : E_WARNING;
+			$exceptionName = PHP_VERSION_ID < 80000 ? \PHPUnit\Framework\Error\Error::class : \PHPUnit\Framework\Error\Warning::class;
+			$errno = PHP_VERSION_ID < 80000 ? E_USER_WARNING : E_WARNING;
 			$this->expectException($exceptionName);
 			$this->expectExceptionCode($errno);
 		}
