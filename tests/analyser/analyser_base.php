@@ -24,9 +24,6 @@ class analyser_base extends \phpbb_test_case
 	/** @var \phpbb\language\language */
 	protected $lang;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	protected static function setup_extensions()
 	{
 		return array('phpbb/ads');
