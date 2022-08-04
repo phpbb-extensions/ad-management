@@ -37,7 +37,6 @@ class visual_demo_test extends main_listener_base
 		$this->user->page['page_name'] = 'viewtopic';
 
 		$this->request
-			->expects(self::any())
 			->method('is_set')
 			->withConsecutive(
 				[$this->config['cookie_name'] . '_phpbb_ads_visual_demo', \phpbb\request\request_interface::COOKIE],

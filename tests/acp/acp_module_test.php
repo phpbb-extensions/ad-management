@@ -54,12 +54,12 @@ class acp_module_test extends \phpbb_test_case
 				'modes'		=> array(
 					'manage'	=> array(
 						'title'	=> 'ACP_MANAGE_ADS_TITLE',
-						'auth'	=> 'ext_phpbb/ads && acl_a_board',
+						'auth'	=> 'ext_phpbb/ads && acl_a_phpbb_ads_m',
 						'cat'	=> array('ACP_PHPBB_ADS_TITLE')
 					),
 					'settings'	=> array(
 						'title'	=> 'ACP_ADS_SETTINGS_TITLE',
-						'auth'	=> 'ext_phpbb/ads && acl_a_board',
+						'auth'	=> 'ext_phpbb/ads && acl_a_phpbb_ads_s',
 						'cat'	=> array('ACP_PHPBB_ADS_TITLE')
 					),
 				),

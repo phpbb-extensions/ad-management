@@ -60,7 +60,7 @@ class manager
 		$data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		return $data !== false ? $data : array();
+		return $data !== false ? $data : [];
 	}
 
 	/**
@@ -183,8 +183,8 @@ class manager
 	/**
 	 * Insert new advertisement to the database
 	 *
-	 * @param    array $data New ad data
-	 * @return    int        New advertisement ID
+	 * @param  array $data New ad data
+	 * @return int        New advertisement ID
 	 */
 	public function insert_ad($data)
 	{
@@ -195,7 +195,7 @@ class manager
 		// add a row to ads table
 		$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
 		$this->db->sql_query($sql);
-		$ad_id = $this->db->sql_nextid();
+		$ad_id = (int) $this->db->sql_nextid();
 
 		$this->insert_ad_group_data($ad_id, $ad_groups);
 
@@ -212,7 +212,7 @@ class manager
 	public function update_ad($ad_id, $data)
 	{
 		// extract ad groups here because it gets filtered in intersect_ad_data()
-		$ad_groups = isset($data['ad_groups']) ? $data['ad_groups'] : array();
+		$ad_groups = $data['ad_groups'] ?? [];
 		$data = $this->intersect_ad_data($data);
 
 		$sql = 'UPDATE ' . $this->ads_table . '
@@ -269,7 +269,7 @@ class manager
 	 */
 	public function get_ad_locations($ad_id)
 	{
-		$ad_locations = array();
+		$ad_locations = [];
 
 		$sql = 'SELECT location_id
 			FROM ' . $this->ad_locations_table . '
@@ -293,13 +293,13 @@ class manager
 	 */
 	public function insert_ad_locations($ad_id, $ad_locations)
 	{
-		$sql_ary = array();
+		$sql_ary = [];
 		foreach ($ad_locations as $ad_location)
 		{
-			$sql_ary[] = array(
+			$sql_ary[] = [
 				'ad_id'			=> $ad_id,
 				'location_id'	=> $ad_location,
-			);
+			];
 		}
 		$this->db->sql_multi_insert($this->ad_locations_table, $sql_ary);
 	}
@@ -325,7 +325,7 @@ class manager
 	 */
 	public function load_memberships($user_id)
 	{
-		$memberships = array();
+		$memberships = [];
 		$sql = 'SELECT group_id
 			FROM ' . USER_GROUP_TABLE . '
 			WHERE user_id = ' . (int) $user_id . '
@@ -371,7 +371,7 @@ class manager
 	 */
 	protected function intersect_ad_data($data)
 	{
-		return array_intersect_key($data, array(
+		return array_intersect_key($data, [
 			'ad_name'			=> '',
 			'ad_note'			=> '',
 			'ad_code'			=> '',
@@ -384,7 +384,7 @@ class manager
 			'ad_owner'			=> '',
 			'ad_content_only'	=> '',
 			'ad_centering'		=> '',
-		));
+		]);
 	}
 
 	/**
@@ -428,13 +428,13 @@ class manager
 	 */
 	protected function insert_ad_group_data($ad_id, $ad_groups)
 	{
-		$sql_ary = array();
+		$sql_ary = [];
 		foreach ($ad_groups as $group)
 		{
-			$sql_ary[] = array(
+			$sql_ary[] = [
 				'ad_id'		=> $ad_id,
 				'group_id'	=> $group,
-			);
+			];
 		}
 		$this->db->sql_multi_insert($this->ad_group_table, $sql_ary);
 	}

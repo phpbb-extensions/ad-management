@@ -672,7 +672,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 		else
 		{
-			$ad_locations = !$ad_id ? false : array(
+			$ad_locations = array(
 				'above_footer',
 				'above_header',
 			);
@@ -955,7 +955,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->manager->expects(self::once())
 			->method('update_ad')
-			->willReturn($ad_id ? true : false);
+			->willReturn((bool) $ad_id);
 
 		$this->request->expects(self::once())
 			->method('is_ajax')
@@ -1015,8 +1015,8 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->request
 			->expects(self::exactly($confirm ? 2 : 4))
 			->method('variable')
-			->withConsecutive(...[['action', ''], ['id', 0], ['i', ''], ['mode', '']])
-			->willReturnOnConsecutiveCalls(...['delete', $ad_id, '', '']);
+			->withConsecutive(['action', ''], ['id', 0], ['i', ''], ['mode', ''])
+			->willReturnOnConsecutiveCalls('delete', $ad_id, '', '');
 
 		if (!$confirm)
 		{
@@ -1041,7 +1041,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
 			$this->manager->expects(self::once())
 				->method('delete_ad')
-				->willReturn($ad_id ? true : false);
+				->willReturn((bool) $ad_id);
 			$this->manager->expects(($ad_owner ? self::once() : self::never()))
 				->method('get_ads_by_owner')
 				->with($ad_owner)

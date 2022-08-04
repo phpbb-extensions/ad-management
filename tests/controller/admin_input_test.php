@@ -145,7 +145,7 @@ class admin_input_test extends \phpbb_database_test_case
 	 */
 	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors)
 	{
-		list($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering) = $data;
+		[$ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering] = $data;
 
 		self::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();

@@ -33,16 +33,14 @@ class delete_ad_locations_test extends ad_base
 	{
 		$manager = $this->get_manager();
 
-		$sql = 'SELECT COUNT(ad_id) as total_ad_locations
-			FROM phpbb_ad_locations';
+		$sql = 'SELECT COUNT(ad_id) as total_ad_locations FROM phpbb_ad_locations';
+
 		$result = $this->db->sql_query($sql);
 		$total_ad_locations = $this->db->sql_fetchfield('total_ad_locations');
 		$this->db->sql_freeresult($result);
 
 		$manager->delete_ad_locations(0);
 
-		$sql = 'SELECT COUNT(ad_id) as total_ad_locations
-			FROM phpbb_ad_locations';
 		$result = $this->db->sql_query($sql);
 		self::assertEquals($this->db->sql_fetchfield('total_ad_locations'), $total_ad_locations);
 		$this->db->sql_freeresult($result);

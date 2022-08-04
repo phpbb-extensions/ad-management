@@ -82,7 +82,7 @@ class helper
 	public function assign_data($data, $errors)
 	{
 		$this->assign_locations($data['ad_locations']);
-		$this->assign_groups((isset($data['ad_id']) ? $data['ad_id'] : 0), (isset($data['ad_groups']) ? $data['ad_groups'] : array()));
+		$this->assign_groups(($data['ad_id'] ?? 0), ($data['ad_groups'] ?? array()));
 
 		$errors = array_map(array($this->language, 'lang'), $errors);
 		$this->template->assign_vars(array(

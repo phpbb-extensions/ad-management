@@ -314,7 +314,7 @@ class helper_test extends \phpbb_database_test_case
 					'LOCATION_ID'   => 'top_of_page_1',
 					'LOCATION_DESC' => 'Location #1 desc',
 					'LOCATION_NAME' => 'Location #1',
-					'S_SELECTED'    => $ad_locations ? in_array('top_of_page_1', $ad_locations) : false,
+					'S_SELECTED'    => $ad_locations && in_array('top_of_page_1', $ad_locations),
 				]],
 				['ad_locations', [
 					'CATEGORY_NAME'  => 'CAT_BOTTOM_OF_PAGE',
@@ -323,7 +323,7 @@ class helper_test extends \phpbb_database_test_case
 					'LOCATION_ID'   => 'bottom_of_page_1',
 					'LOCATION_DESC' => 'Location #2 desc',
 					'LOCATION_NAME' => 'Location #2',
-					'S_SELECTED'    => $ad_locations ? in_array('bottom_of_page_1', $ad_locations) : false,
+					'S_SELECTED'    => $ad_locations && in_array('bottom_of_page_1', $ad_locations),
 				]]
 			);
 
