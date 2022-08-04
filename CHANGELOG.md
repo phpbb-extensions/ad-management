@@ -1,5 +1,12 @@
 # Changelog
 
+### 3.0.0 - 2022-06-18
+
+- Dropped support for phpBB 3.2.x (new minimum requirements: phpBB 3.3.2 and PHP 7.1.3).
+- Added new Admin permissions for accessing the ad management and settings.
+- Fixed an issue where ad blocker warning message was on top of the Quick links drop down menu.
+- Support for ScaffoldBB style added.
+
 ### 2.0.6 - 2022-02-22
 
 - Added an option for more aggressive handling of ad block users, requiring them to disable ad blockers to access the forum.
