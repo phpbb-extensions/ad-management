@@ -61,7 +61,7 @@ class visual_demo_controller
 	 *
 	 * @param string $action enable|disable
 	 * @return \Symfony\Component\HttpFoundation\JsonResponse
-	 * @throws \phpbb\exception\http_exception An http exception
+	 * @throws \phpbb\exception\http_exception http exception
 	 */
 	public function handle($action)
 	{
@@ -81,7 +81,7 @@ class visual_demo_controller
 		{
 			// Create our cookie and send user to the index page.
 			$this->user->set_cookie('phpbb_ads_visual_demo', time(), 0);
-			$redirect = "{$this->root_path}index.{$this->php_ext}";
+			$redirect = "{$this->root_path}index.$this->php_ext";
 		}
 
 		// Send a JSON response if an AJAX request was used
@@ -96,7 +96,7 @@ class visual_demo_controller
 		$redirect = reapply_sid($redirect);
 		redirect($redirect);
 
-		// We shouldn't get here, but throw an http exception just in case
+		// We shouldn't get here, but throw http exception just in case
 		throw new \phpbb\exception\http_exception(500, 'GENERAL_ERROR');
 	}
 }
