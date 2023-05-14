@@ -113,10 +113,6 @@ class ucp_module_test extends \phpbb_test_case
 
 		$ucp_controller
 			->expects(self::once())
-			->method('get_page_title');
-
-		$ucp_controller
-			->expects(self::once())
 			->method('main');
 
 		$p_master = new p_master();

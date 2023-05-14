@@ -109,16 +109,6 @@ class admin_controller
 	}
 
 	/**
-	 * Get ACP page title for Ads module
-	 *
-	 * @return	string	Language string for Ads ACP module
-	 */
-	public function get_page_title()
-	{
-		return $this->language->lang('ACP_PHPBB_ADS_TITLE');
-	}
-
-	/**
 	 * Process user request for settings mode
 	 *
 	 * @return	void
