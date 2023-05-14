@@ -115,6 +115,7 @@ class admin_input_test extends \phpbb_database_test_case
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', 'blah', 5, 0, 0, 0, '', [], false], 0, ['AD_END_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '1970-01-01', '', 5, 0, 0, 0, '', [], false], 0, ['AD_START_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '1970-01-01', 5, 0, 0, 0, '', [], false], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '2060-01-01', '2050-01-01', 5, 0, 0, 0, '', [], false], 0, ['END_DATE_TOO_SOON']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 0, 0, 0, 0, '', [], false], 0, ['AD_PRIORITY_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 11, 0, 0, 0, '', [], false], 0, ['AD_PRIORITY_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, -1, 0, '', [], false], 0, ['AD_VIEWS_LIMIT_INVALID']),

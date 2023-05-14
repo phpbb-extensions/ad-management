@@ -143,6 +143,17 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_views_limit'	=> 0,
 					'ad_clicks_limit'	=> 0,
 				),
+				array(
+					'ad_id'				=> 4,
+					'ad_name'			=> 'Fourth ad',
+					'ad_views'			=> 0,
+					'ad_clicks'			=> 0,
+					'ad_enabled'		=> 1,
+					'ad_start_date'		=> 0,
+					'ad_end_date'		=> 1,
+					'ad_views_limit'	=> 0,
+					'ad_clicks_limit'	=> 0,
+				),
 			)),
 			array(1, 0, array()),
 			array(0, 1, array()),
@@ -164,6 +175,10 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->manager->expects(self::once())
 			->method('get_ads_by_owner')
 			->willReturn($ads);
+
+		$this->helper->expects(self::exactly(count($ads)))
+			->method('is_expired')
+			->willReturnOnConsecutiveCalls(false, false, false, true);
 
 		$this->template->expects(self::exactly(count($ads)))
 			->method('assign_block_vars');
