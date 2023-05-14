@@ -102,16 +102,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * Test get_page_title() method
-	 */
-	public function test_get_page_title()
-	{
-		$controller = $this->get_controller();
-
-		self::assertEquals($this->language->lang('UCP_PHPBB_ADS_STATS'), $controller->get_page_title());
-	}
-
-	/**
 	 * Test data for the test_main() function
 	 *
 	 * @return array Array of test data

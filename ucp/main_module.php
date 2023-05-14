@@ -38,7 +38,7 @@ class main_module
 		$this->tpl_name = 'ucp_ads_stats';
 
 		// Set the page title for our UCP page
-		$this->page_title = $ucp_controller->get_page_title();
+		$this->page_title = 'UCP_PHPBB_ADS_STATS';
 
 		$ucp_controller->main();
 	}

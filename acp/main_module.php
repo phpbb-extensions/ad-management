@@ -40,7 +40,7 @@ class main_module
 		$this->tpl_name = $mode . '_ads';
 
 		// Set the page title for our ACP page
-		$this->page_title = $admin_controller->get_page_title();
+		$this->page_title = 'ACP_PHPBB_ADS_TITLE';
 
 		$admin_controller->{'mode_' . $mode}();
 	}
