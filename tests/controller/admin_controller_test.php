@@ -155,15 +155,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * Test get_page_title() method
-	 */
-	public function test_get_page_title()
-	{
-		$controller = $this->get_controller();
-		self::assertEquals($controller->get_page_title(), $this->language->lang('ACP_PHPBB_ADS_TITLE'));
-	}
-
-	/**
 	 * Test mode_settings()
 	 */
 	public function test_mode_settings_no_submit()

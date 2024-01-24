@@ -65,14 +65,6 @@ class ucp_controller
 	}
 
 	/**
-	 * @return	string	Module language string
-	 */
-	public function get_page_title()
-	{
-		return $this->language->lang('UCP_PHPBB_ADS_STATS');
-	}
-
-	/**
 	 * Display UCP ads module
 	 */
 	public function main()
