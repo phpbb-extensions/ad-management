@@ -20,10 +20,10 @@ class ext extends \phpbb\extension\base
 	/**
 	 * {@inheritdoc}
 	 *
-	 * Requires phpBB 3.3.2 due to using role_exists check in permission migration.
+	 * Requires phpBB 4.0.0 due to use of Icon().
 	 */
 	public function is_enableable()
 	{
-		return phpbb_version_compare(PHPBB_VERSION, '3.3.2', '>=');
+		return phpbb_version_compare(PHPBB_VERSION, '4.0.0-dev', '>=');
 	}
 }
