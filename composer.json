@@ -33,7 +33,7 @@
 	"extra": {
 		"display-name": "Advertisement Management",
 		"soft-require": {
-			"phpbb/phpbb": ">=3.3.2"
+			"phpbb/phpbb": ">=3.3.2,<4.0.0@dev"
 		},
 		"version-check": {
 			"host": "www.phpbb.com",
