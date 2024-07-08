@@ -1,13 +1,13 @@
 {# begin ad location #}
 {% if loops.postrow|length > 1 and postrow.S_FIRST_ROW %}
 	{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
-	{{ ad.renderAds(AD_AFTER_FIRST_POST, AD_AFTER_FIRST_POST_ID, AD_AFTER_FIRST_POST_CENTER, 'margin: 10px 0;') }}
+	{{ ad.renderAds(AD_AFTER_FIRST_POST, AD_AFTER_FIRST_POST_ID, AD_AFTER_FIRST_POST_CENTER) }}
 {% endif %}
 {# end ad location #}
 
 {# begin ad location #}
 {% if not postrow.S_FIRST_ROW %}
 	{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
-	{{ ad.renderAds(AD_AFTER_NOT_FIRST_POST, AD_AFTER_NOT_FIRST_POST_ID, AD_AFTER_NOT_FIRST_POST_CENTER, 'margin: 10px 0;') }}
+	{{ ad.renderAds(AD_AFTER_NOT_FIRST_POST, AD_AFTER_NOT_FIRST_POST_ID, AD_AFTER_NOT_FIRST_POST_CENTER) }}
 {% endif %}
 {# end ad location #}
