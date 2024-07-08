@@ -1,10 +1,11 @@
+{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
 <script>
 	(function($, window, document, phpbb) {
 		'use strict';
 
 		$(window).on('load', function() {
 			document.cookie = '{{ POP_UP_COOKIE_NAME }}=true; expires={{ POP_UP_COOKIE_EXPIRES }}; path={{ POP_UP_COOKIE_PATH }}';
-			phpbb.alert('{{ lang('ADVERTISEMENT')|upper|e('js') }}', `{% include '@phpbb_ads/phpbb_ads_default.html' %}`);
+			phpbb.alert('{{ lang('ADVERTISEMENT')|upper|e('js') }}', `{{ ad.renderAds(AD_POP_UP, AD_POP_UP_ID, AD_POP_UP_CENTER) }}`);
 		});
 	})(jQuery, window, document, phpbb);
 </script>
