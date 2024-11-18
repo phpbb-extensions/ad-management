@@ -1,6 +1,5 @@
 {# begin ad location #}
 {# clear: both; is introduced because of jumpbox in user profile which is floating right #}
-{% set PHPBB_ADS_STYLE = 'margin: 10px 0; clear: both;' %}
-{% set PHPBB_ADS_CODE, PHPBB_ADS_ID, S_PHPBB_ADS_CENTER = AD_ABOVE_FOOTER, AD_ABOVE_FOOTER_ID, AD_ABOVE_FOOTER_CENTER %}
-{% include '@phpbb_ads/phpbb_ads_default.html' %}
+{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
+{{ ad.renderAds(AD_ABOVE_FOOTER, AD_ABOVE_FOOTER_ID, AD_ABOVE_FOOTER_CENTER, 'clear: both;') }}
 {# end ad location #}

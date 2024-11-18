@@ -1,3 +1,4 @@
-{% set PHPBB_ADS_STYLE = 'margin: 10px 0;' %}
-{% set PHPBB_ADS_CODE, PHPBB_ADS_ID, S_PHPBB_ADS_CENTER = AD_AFTER_HEADER_NAVBAR, AD_AFTER_HEADER_NAVBAR_ID, AD_AFTER_HEADER_NAVBAR_CENTER %}
-{% include '@phpbb_ads/phpbb_ads_default.html' %}
+{# begin ad location #}
+{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
+{{ ad.renderAds(AD_AFTER_HEADER_NAVBAR, AD_AFTER_HEADER_NAVBAR_ID, AD_AFTER_HEADER_NAVBAR_CENTER) }}
+{# end ad location #}

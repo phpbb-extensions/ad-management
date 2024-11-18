@@ -1,5 +1,4 @@
 {# begin ad location #}
-{% set PHPBB_ADS_STYLE = 'margin: 10px 0;' %}
-{% set PHPBB_ADS_CODE, PHPBB_ADS_ID, S_PHPBB_ADS_CENTER = AD_BELOW_HEADER, AD_BELOW_HEADER_ID, AD_BELOW_HEADER_CENTER %}
-{% include '@phpbb_ads/phpbb_ads_default.html' %}
+{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
+{{ ad.renderAds(AD_BELOW_HEADER, AD_BELOW_HEADER_ID, AD_BELOW_HEADER_CENTER) }}
 {# end ad location #}
