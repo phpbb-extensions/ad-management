@@ -4,6 +4,24 @@ imports:
     - { resource: location.yml }
 
 services:
+    phpbb.ads.storage:
+        class: phpbb\storage\storage
+        arguments:
+            - '@storage.adapter.factory'
+            - '@storage.file_tracker'
+            - 'phpbb_ads'
+        tags:
+            - { name: storage }
+
+    phpbb.ads.controller.banner:
+        class: phpbb\storage\controller\controller
+        arguments:
+            - '@cache'
+            - '@dbal.conn'
+            - '@mimetype.extension_guesser'
+            - '@phpbb.ads.storage'
+            - '@symfony_request'
+
     phpbb.ads.ad.manager:
         class: phpbb\ads\ad\manager
         arguments:
@@ -17,9 +35,7 @@ services:
         class: phpbb\ads\banner\banner
         arguments:
             - '@files.upload'
-            - '@filesystem'
-            - '%core.root_path%'
-            - '%phpbb.ads.tables.ad_locations%'
+            - '@phpbb.ads.storage'
 
     phpbb.ads.helper:
         class: phpbb\ads\controller\helper
