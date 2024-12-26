@@ -10,10 +10,24 @@
 
 namespace phpbb\ads\migrations\v30x;
 
+use phpbb\filesystem\filesystem;
 use phpbb\storage\provider\local;
 
 class m1_storage extends \phpbb\db\migration\container_aware_migration
 {
+	/**
+	 * {@inheritdoc}
+	 */
+	public function effectively_installed()
+	{
+		/** @var filesystem $filesystem_interface */
+		$filesystem = $this->container->get('filesystem');
+
+		return $this->config->offsetExists('storage\\phpbb_ads\\provider') &&
+			$this->config->offsetExists('storage\\phpbb_ads\\config\\path') &&
+			$filesystem->exists($this->phpbb_root_path . 'images/phpbb_ads');
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -29,8 +43,41 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 	{
 		return array(
 			['config.add', ['storage\\phpbb_ads\\provider', local::class]],
-			['config.add', ['storage\\phpbb_ads\\config\\path', 'images/phpbb_ads']], // todo: make sure this exists in migration if is a new installation
+			['config.add', ['storage\\phpbb_ads\\config\\path', 'images/phpbb_ads']],
+			['custom', [[$this, 'migrate_ads_storage']]],
 		);
+	}
+
+	public function migrate_ads_storage()
+	{
+		/** @var filesystem $filesystem_interface */
+		$filesystem = $this->container->get('filesystem');
+
+		/** @var file_tracker $file_tracker */
+		$file_tracker = $this->container->get('storage.file_tracker');
+
+		if (!$filesystem->exists($this->phpbb_root_path . 'images/phpbb_ads'))
+		{
+			$filesystem->mkdir($this->phpbb_root_path . 'images/phpbb_ads');
+		}
+
+		$dir = $this->phpbb_root_path . 'images/phpbb_ads';
+		$handle = @opendir($dir);
+
+		if ($handle)
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if ($file === '.' || $file === '..')
+				{
+					continue;
+				}
+
+				$file_tracker->track_file('phpbb_ads', $file, filesize($this->phpbb_root_path . 'images/phpbb_ads/' . $file));
+			}
+
+			closedir($handle);
+		}
 	}
 
 	public function revert_data()
@@ -38,6 +85,12 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 		return [
 			['config.remove', ['storage\\phpbb_ads\\provider']],
 			['config.remove', ['storage\\phpbb_ads\\config\\path']],
+			['custom', [[$this, 'revert_ads_storage']]],
 		];
+	}
+
+	public function revert_ads_storage()
+	{
+		$this->sql_query('DELETE FROM ' . $this->tables['storage'] . ' WHERE storage = "phpbb_ads"');
 	}
 }

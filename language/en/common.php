@@ -66,4 +66,7 @@ $lang = array_merge($lang, array(
 	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom.',
 	'AD_SCRIPTS'					=> 'Scripts',
 	'AD_SCRIPTS_DESC'				=> 'This location is for specialty JavaScript code like AdSense Auto ads, tracking codes, etc. The code entered here will be inserted into the page’s HEAD tag and is not intended for ad placement, but only for helper scripts.',
+
+	// Storage
+	'STORAGE_PHPBB_ADS_TITLE' => 'phpBB Ads',
 ));

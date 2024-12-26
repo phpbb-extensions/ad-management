@@ -54,6 +54,7 @@ services:
     phpbb.ads.admin.input:
         class: phpbb\ads\controller\admin_input
         arguments:
+            - '@controller.helper'
             - '@user'
             - '@user_loader'
             - '@language'

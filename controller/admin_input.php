@@ -17,6 +17,9 @@ use phpbb\ads\ext;
  */
 class admin_input
 {
+	/** @var \phpbb\controller\helper */
+	protected $controller_helper;
+
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -44,8 +47,9 @@ class admin_input
 	 * @param \phpbb\request\request   $request     Request object
 	 * @param \phpbb\ads\banner\banner $banner      Banner upload object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
+	public function __construct(\phpbb\controller\helper $controller_helper, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
 	{
+		$this->controller_helper = $controller_helper;
 		$this->user = $user;
 		$this->user_loader = $user_loader;
 		$this->language = $language;
@@ -136,7 +140,7 @@ class admin_input
 		{
 			$realname = $this->banner->upload();
 
-			$banner_html = '<img src="' . generate_board_url() . '/ads_download/' . $realname . '" />';
+			$banner_html = '<img src="' . generate_board_url() . $this->controller_helper->route('phpbb_ads_storage_banner', ['file' => $realname]) . '" />';
 
 			if ($this->request->is_ajax())
 			{
