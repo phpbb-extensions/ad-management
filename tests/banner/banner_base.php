@@ -15,14 +15,12 @@ class banner_base extends \phpbb_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\upload */
 	protected $files_upload;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\filesystem\filesystem */
-	protected $filesystem;
-
-	/** @var string */
-	protected $root_path;
-
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\filespec */
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\filespec_storage */
 	protected $file;
+
+	/** @var \phpbb\storage\storage */
+
+	protected $storage;
 
 	protected static function setup_extensions()
 	{
@@ -36,16 +34,12 @@ class banner_base extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path;
-
 		$this->files_upload = $this->getMockBuilder('\phpbb\files\upload')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->filesystem = $this->getMockBuilder('\phpbb\filesystem\filesystem')
+		$this->storage = $this->getMockBuilder('\phpbb\storage\storage')
 			->disableOriginalConstructor()
 			->getMock();
-
-		$this->root_path = $phpbb_root_path;
 	}
 
 	/**
@@ -57,8 +51,7 @@ class banner_base extends \phpbb_test_case
 	{
 		return new \phpbb\ads\banner\banner(
 			$this->files_upload,
-			$this->filesystem,
-			$this->root_path
+			$this->storage
 		);
 	}
 }

@@ -56,12 +56,13 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 		/** @var file_tracker $file_tracker */
 		$file_tracker = $this->container->get('storage.file_tracker');
 
-		if (!$filesystem->exists($this->phpbb_root_path . 'images/phpbb_ads'))
+		$dir = $this->phpbb_root_path . 'images/phpbb_ads';
+
+		if (!$filesystem->exists($dir))
 		{
-			$filesystem->mkdir($this->phpbb_root_path . 'images/phpbb_ads');
+			$filesystem->mkdir($dir);
 		}
 
-		$dir = $this->phpbb_root_path . 'images/phpbb_ads';
 		$handle = @opendir($dir);
 
 		if ($handle)
@@ -73,7 +74,7 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 					continue;
 				}
 
-				$file_tracker->track_file('phpbb_ads', $file, filesize($this->phpbb_root_path . 'images/phpbb_ads/' . $file));
+				$file_tracker->track_file('phpbb_ads', $file, filesize($dir . '/' . $file));
 			}
 
 			closedir($handle);
