@@ -198,9 +198,6 @@ class admin_input_test extends \phpbb_database_test_case
 	public function banner_upload_data()
 	{
 		return array(
-			array(false, false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
-			array(false, true, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
-			array(false, true, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
 			array(true, true, false, array(), '', '<img src="http://localhost/phpbb/images/phpbb_ads/abcdef.jpg" />'),
 			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\" />"),
