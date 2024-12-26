@@ -83,7 +83,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		parent::setUp();
 
 		global $phpbb_root_path, $phpEx;
-		global $phpbb_dispatcher, $cache, $db, $user;
+		global $phpbb_dispatcher, $cache, $db, $user, $language;
 
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 
@@ -91,7 +91,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->language = new \phpbb\language\language($lang_loader);
+		$language = $this->language = new \phpbb\language\language($lang_loader);
 		$user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()

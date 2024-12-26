@@ -161,7 +161,7 @@ class acp_manage_test extends functional_base
 		$crawler = $this->get_manage_page();
 
 		// Hit edit button
-		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->parents()->first()->link();
+		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->ancestors()->first()->link();
 		$crawler = static::click($edit_link);
 		$this->assertContainsLang('ACP_ADS_EDIT', $crawler->filter('#main h1')->text());
 
@@ -302,7 +302,7 @@ class acp_manage_test extends functional_base
 		$crawler = $this->get_manage_page();
 
 		// Hit delete button
-		$delete_link = $crawler->filter('[title="' . $this->lang('DELETE') . '"]')->parents()->first()->link();
+		$delete_link = $crawler->filter('[title="' . $this->lang('DELETE') . '"]')->ancestors()->first()->link();
 		$crawler = static::click($delete_link);
 		$this->assertContainsLang('CONFIRM_OPERATION', $crawler->text());
 
