@@ -15,6 +15,8 @@ use phpbb\storage\provider\local;
 
 class m1_storage extends \phpbb\db\migration\container_aware_migration
 {
+	private const BATCH_SIZE = 100;
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -33,19 +35,19 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 	 */
 	public static function depends_on()
 	{
-		return array(
+		return [
 			'\phpbb\db\migration\data\v400\dev',
 			'\phpbb\ads\migrations\v20x\m1_hide_ad_for_group',
-		);
+		];
 	}
 
 	public function update_data()
 	{
-		return array(
+		return [
 			['config.add', ['storage\\phpbb_ads\\provider', local::class]],
 			['config.add', ['storage\\phpbb_ads\\config\\path', 'images/phpbb_ads']],
 			['custom', [[$this, 'migrate_ads_storage']]],
-		);
+		];
 	}
 
 	public function migrate_ads_storage()
@@ -67,6 +69,7 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 
 		if ($handle)
 		{
+			$files = [];
 			while (($file = readdir($handle)) !== false)
 			{
 				if ($file === '.' || $file === '..')
@@ -74,7 +77,21 @@ class m1_storage extends \phpbb\db\migration\container_aware_migration
 					continue;
 				}
 
-				$file_tracker->track_file('phpbb_ads', $file, filesize($dir . '/' . $file));
+				$files[] = [
+					'file_path'		=> $file,
+					'filesize'		=> filesize($dir . '/' . $file),
+				];
+
+				if (count($files) >= self::BATCH_SIZE)
+				{
+					$file_tracker->track_files('phpbb_ads', $files);
+					$files = [];
+				}
+			}
+
+			if (!empty($files))
+			{
+				$file_tracker->track_files('phpbb_ads', $files);
 			}
 
 			closedir($handle);
