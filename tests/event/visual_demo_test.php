@@ -56,12 +56,20 @@ class visual_demo_test extends main_listener_base
 			->method('assign_vars');
 
 		$this->template
-			->expects($in_visual_demo ? self::at($location_indeces - 1) : self::never())
+			->expects(self::exactly($in_visual_demo ? $location_indeces : 0))
 			->method('assign_vars')
-			->with(array(
-				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array('action' => 'disable')),
-			));
+			->willReturnCallback(function($params) use ($location_indeces) {
+				static $callCount = 0;
+				$callCount++;
+				if ($callCount === $location_indeces) {
+					$this->assertEquals([
+						'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
+						'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(['action' => 'disable']),
+					], $params);
+					return true;
+				}
+				return true;
+			});
 
 		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.page_footer_after', array($this->get_listener(), 'visual_demo'));
