@@ -212,7 +212,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	protected function views($ad_ids)
 	{
-		if ($this->config['phpbb_ads_enable_views'] && !$this->user->data['is_bot'] && count($ad_ids))
+		if ($this->config['phpbb_ads_enable_views'] && empty($this->user->data['is_bot']) && count($ad_ids))
 		{
 			$this->template->assign_vars(array(
 				'S_INCREMENT_VIEWS'	=> true,

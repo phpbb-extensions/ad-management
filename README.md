@@ -2,7 +2,7 @@
 
 This is the repository for the development of the Advertisement Management extension, a Google Summer of Code project developed by Jakub Senko for phpBB.
 
-[![Build Status](https://github.com/phpbb-extensions/ad-management/workflows/Tests/badge.svg)](https://github.com/phpbb-extensions/ad-management/actions)
+[![Build Status](https://github.com/phpbb-extensions/ad-management/actions/workflows/tests.yml/badge.svg)](https://github.com/phpbb-extensions/ad-management/actions)
 [![codecov](https://codecov.io/gh/phpbb-extensions/ad-management/branch/master/graph/badge.svg?token=ezeD03g3Lt)](https://codecov.io/gh/phpbb-extensions/ad-management)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/phpbb-extensions/ad-management/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/phpbb-extensions/ad-management/?branch=master)
 

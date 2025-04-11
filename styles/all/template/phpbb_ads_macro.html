@@ -1,0 +1,7 @@
+{% macro renderAds(PHPBB_ADS_CODE, PHPBB_ADS_ID, S_PHPBB_ADS_CENTER = false, PHPBB_ADS_STYLE = '') %}
+	{% if PHPBB_ADS_CODE %}
+		<div class="phpbb-ads{% if S_PHPBB_ADS_CENTER %} phpbb-ads-center{% endif %}" style="{{ PHPBB_ADS_STYLE }}" data-phpbb-ads-id="{{ PHPBB_ADS_ID|e('html_attr') }}">
+			{{ PHPBB_ADS_CODE }}
+		</div>
+	{% endif %}
+{% endmacro %}

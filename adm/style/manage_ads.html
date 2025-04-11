@@ -12,8 +12,8 @@
 	{% if PREVIEW %}
 		<fieldset>
 			<legend>{{ lang('PREVIEW') }}</legend>
-			{% set PHPBB_ADS_CODE, S_PHPBB_ADS_CENTER = PREVIEW, AD_CENTERING %}
-			{% include '@phpbb_ads/phpbb_ads_default.html' %}
+			{% import '@phpbb_ads/phpbb_ads_macro.html' as preview %}
+			{{ preview.renderAds(PREVIEW, 0, AD_CENTERING) }}
 		</fieldset>
 	{% endif %}
 
@@ -89,7 +89,7 @@
 					{% for location in loops.ad_locations %}
 						{% if location.CATEGORY_NAME %}
 							{% if not loop.first %}</optgroup>{% endif %}
-							<optgroup label="{{ location.CATEGORY_NAME }}">
+							<optgroup label="{{ location.CATEGORY_NAME }}" style="border:none;">
 						{% else %}
 							<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
 						{% endif %}
