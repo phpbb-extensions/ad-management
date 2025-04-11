@@ -10,50 +10,34 @@
 
 namespace phpbb\ads\banner;
 
+use phpbb\storage\storage;
+
 class banner
 {
 	/** @var \phpbb\files\upload */
 	protected $files_upload;
 
-	/** @var \phpbb\filesystem\filesystem_interface */
-	protected $filesystem;
-
-	/** @var string */
-	protected $root_path;
-
-	/** @var \phpbb\files\filespec */
+	/** @var \phpbb\files\filespec_storage */
 	protected $file;
+
+	/** @var storage */
+	protected $storage;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\files\upload						$files_upload	Files upload object
-	 * @param \phpbb\filesystem\filesystem_interface	$filesystem		Filesystem object
-	 * @param string									$root_path		Root path
+	 * @param \phpbb\files\upload	$files_upload	Files upload object
+	 * @param storage				$storage		Storage object
 	 */
-	public function __construct(\phpbb\files\upload $files_upload, \phpbb\filesystem\filesystem_interface $filesystem, $root_path)
+	public function __construct(\phpbb\files\upload $files_upload, storage $storage)
 	{
 		$this->files_upload = $files_upload;
-		$this->filesystem = $filesystem;
-		$this->root_path = $root_path;
+		$this->storage = $storage;
 	}
 
 	public function set_file($file)
 	{
 		$this->file = $file;
-	}
-
-	/**
-	 * Create storage directory for banners uploaded by Ads Management
-	 *
-	 * @throws \phpbb\filesystem\exception\filesystem_exception
-	 */
-	public function create_storage_dir()
-	{
-		if (!$this->filesystem->exists($this->root_path . 'images/phpbb_ads'))
-		{
-			$this->filesystem->mkdir($this->root_path . 'images/phpbb_ads');
-		}
 	}
 
 	/**
@@ -69,11 +53,11 @@ class banner
 		$this->files_upload->set_allowed_extensions(array('gif', 'jpg', 'jpeg', 'png'));
 
 		// Upload file
-		$this->set_file($this->files_upload->handle_upload('files.types.form', 'banner'));
+		$this->set_file($this->files_upload->handle_upload('files.types.form_storage', 'banner'));
 		$this->file->clean_filename('unique_ext');
 
 		// Move file to proper location
-		if (!$this->file->move_file('images/phpbb_ads'))
+		if (!$this->file->move_file($this->storage))
 		{
 			$this->file->set_error('FILE_MOVE_UNSUCCESSFUL');
 		}
@@ -91,6 +75,6 @@ class banner
 	 */
 	public function remove()
 	{
-		$this->file->remove();
+		$this->file->remove($this->storage);
 	}
 }

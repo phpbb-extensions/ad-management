@@ -42,7 +42,7 @@ class upload_test extends banner_base
 			->with(array('gif', 'jpg', 'jpeg', 'png'));
 
 		// Mock filespec
-		$file = $this->getMockBuilder('\phpbb\files\filespec')
+		$file = $this->getMockBuilder('\phpbb\files\filespec_storage')
 			->disableOriginalConstructor()
 			->getMock();
 		if (!$file_move_success)
@@ -52,7 +52,7 @@ class upload_test extends banner_base
 
 		$this->files_upload->expects(self::once())
 			->method('handle_upload')
-			->with('files.types.form', 'banner')
+			->with('files.types.form_storage', 'banner')
 			->willReturn($file);
 
 		$file->expects(self::once())
@@ -61,7 +61,7 @@ class upload_test extends banner_base
 
 		$file->expects(self::once())
 			->method('move_file')
-			->with('images/phpbb_ads')
+			->with($this->storage)
 			->willReturn($file_move_success);
 
 		if (!$file_move_success)
