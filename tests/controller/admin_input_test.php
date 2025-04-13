@@ -15,6 +15,9 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var bool A return value for check_form_key() */
 	public static $valid_form = true;
 
+	/** @var \phpbb\controller\helper */
+	protected $controller_helper;
+
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -60,6 +63,9 @@ class admin_input_test extends \phpbb_database_test_case
 
 		// Load/Mock classes required by the controller class
 		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
+		$this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->user = $user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$this->user->timezone = new \DateTimeZone('UTC');
 		$avatar_helper = $this->getMockBuilder('\phpbb\avatar\helper')
@@ -92,6 +98,7 @@ class admin_input_test extends \phpbb_database_test_case
 	public function get_input_controller()
 	{
 		$input = new \phpbb\ads\controller\admin_input(
+			$this->controller_helper,
 			$this->user,
 			$this->user_loader,
 			$this->language,
@@ -191,9 +198,6 @@ class admin_input_test extends \phpbb_database_test_case
 	public function banner_upload_data()
 	{
 		return array(
-			array(false, false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
-			array(false, true, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
-			array(false, true, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
 			array(true, true, false, array(), '', '<img src="http://localhost/phpbb/images/phpbb_ads/abcdef.jpg" />'),
 			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\" />"),
@@ -210,24 +214,15 @@ class admin_input_test extends \phpbb_database_test_case
 	{
 		$input_controller = $this->get_input_controller();
 
-		$create_storage_dir = $this->banner->expects(self::once())
-			->method('create_storage_dir');
-		if (!$can_create_directory)
+		$upload = $this->banner->expects(self::once())
+			->method('upload');
+		if (!$can_move_file)
 		{
-			$create_storage_dir->willThrowException(new \phpbb\exception\runtime_exception('CANNOT_CREATE_DIRECTORY'));
+			$upload->willThrowException(new \phpbb\exception\runtime_exception('FILE_MOVE_UNSUCCESSFUL'));
 		}
 		else
 		{
-			$upload = $this->banner->expects(self::once())
-				->method('upload');
-			if (!$can_move_file)
-			{
-				$upload->willThrowException(new \phpbb\exception\runtime_exception('FILE_MOVE_UNSUCCESSFUL'));
-			}
-			else
-			{
-				$upload->willReturn('abcdef.jpg');
-			}
+			$upload->willReturn('abcdef.jpg');
 		}
 
 		if (!$can_create_directory || !$can_move_file)
@@ -235,6 +230,9 @@ class admin_input_test extends \phpbb_database_test_case
 			$this->banner->expects(self::once())
 				->method('remove');
 		}
+
+		$this->controller_helper->method('route')
+			->willReturn('/images/phpbb_ads/abcdef.jpg');
 
 		$this->request->expects(self::once())
 			->method('is_ajax')

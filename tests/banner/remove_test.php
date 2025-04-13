@@ -20,13 +20,14 @@ class remove_test extends banner_base
 		$manager = $this->get_manager();
 
 		// Mock filespec
-		$file = $this->getMockBuilder('\phpbb\files\filespec')
+		$file = $this->getMockBuilder('\phpbb\files\filespec_storage')
 			->disableOriginalConstructor()
 			->getMock();
 		$manager->set_file($file);
 
 		$file->expects(self::once())
-			->method('remove');
+			->method('remove')
+			->with($this->storage);
 
 		$manager->remove();
 	}
