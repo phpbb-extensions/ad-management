@@ -15,3 +15,8 @@ phpbb_ads_visual_demo:
     defaults: { _controller: phpbb.ads.visual_demo.controller:handle }
     requirements:
         action: enable|disable
+
+phpbb_ads_storage_banner:
+    path:             /ads_download/{file}
+    defaults:
+        _controller:  phpbb.ads.controller.banner:handle
