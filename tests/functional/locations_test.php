@@ -70,7 +70,7 @@ class locations_test extends functional_base
 		$crawler = self::request('GET', 'index.php');
 
 		// Confirm after header navbar ad is present on correct location
-		self::assertStringContainsString($ad_code, $crawler->filter('#page-header')->nextAll()->eq(0)->html());
+		self::assertStringContainsString($ad_code, $crawler->filter('#nav-breadcrumbs')->nextAll()->eq(0)->html());
 	}
 
 	public function test_location_after_not_first_post()
@@ -164,7 +164,7 @@ class locations_test extends functional_base
 		$crawler = self::request('GET', 'index.php');
 
 		// Confirm below header ad is directly after header
-		self::assertStringContainsString($ad_code, $crawler->filter('.headerbar')->nextAll()->html());
+		self::assertStringContainsString($ad_code, $crawler->filter('.headerbar')->children()->last()->html());
 	}
 
 	public function test_location_pop_up()
