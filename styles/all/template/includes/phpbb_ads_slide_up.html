@@ -1,6 +1,7 @@
 <div class="phpbbad-slide-up">
 	<div class="phpbbad-slide-up-center">{{ Icon('font', 'chevron-down', lang('HIDE_AD'), true, 'fas phpbbad-slide-up-close') }}</div>
-	{% include '@phpbb_ads/phpbb_ads_default.html' %}
+	{% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
+	{{ ad.renderAds(AD_SLIDE_UP, AD_SLIDE_UP_ID, AD_SLIDE_UP_CENTER, 'margin: 0;') }}
 </div>
 
 <script>

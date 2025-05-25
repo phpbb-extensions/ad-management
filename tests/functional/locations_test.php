@@ -189,8 +189,6 @@ class locations_test extends functional_base
 
 	public function test_location_slide_up()
 	{
-		$this->markTestSkipped('Failing @github for some stupid reason');
-
 		$ad_code = $this->create_ad('slide_up');
 
 		$crawler = self::request('GET', 'index.php');
