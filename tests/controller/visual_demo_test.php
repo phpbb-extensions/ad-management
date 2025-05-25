@@ -10,48 +10,60 @@
 
 namespace phpbb\ads\tests\controller;
 
-class visual_demo_test extends \phpbb_test_case
+use phpbb\ads\controller\visual_demo_controller;
+use phpbb\auth\auth;
+use phpbb\config\config;
+use phpbb\exception\http_exception;
+use phpbb\request\request;
+use phpbb\user;
+use phpbb_mock_event_dispatcher;
+use phpbb_test_case;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
+use phpbb\path_helper;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+class visual_demo_test extends phpbb_test_case
 {
-	/** @var \phpbb\auth\auth|\PHPUnit\Framework\MockObject\MockObject */
-	protected $auth;
-
-	/** @var \phpbb\config\config */
-	protected $config;
-
-	/** @var \phpbb\request\request|\PHPUnit\Framework\MockObject\MockObject */
-	protected $request;
-
-	/** @var \phpbb\user|\PHPUnit\Framework\MockObject\MockObject */
-	protected $user;
-
-	/** @var string */
-	protected $phpbb_root_path;
-
-	/** @var string */
-	protected $phpEx;
+	protected auth|MockObject $auth;
+	protected config $config;
+	protected MockObject|request $request;
+	protected user|MockObject $user;
+	protected string $phpbb_root_path;
+	protected string $phpEx;
 
 	protected function setUp(): void
 	{
 		parent::setUp();
 
-		global $phpbb_dispatcher, $phpbb_path_helper, $phpbb_root_path, $phpEx, $user;
+		global $config, $phpbb_dispatcher, $phpbb_path_helper, $phpbb_root_path, $phpEx, $user;
 
-		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
-		$phpbb_path_helper = $this->getMockBuilder('\phpbb\path_helper')
+		$phpbb_dispatcher = new phpbb_mock_event_dispatcher();
+		$phpbb_path_helper = $this->getMockBuilder(path_helper::class)
 			->disableOriginalConstructor()
 			->getMock();
 
-		$this->auth = $this->getMockBuilder('\phpbb\auth\auth')->getMock();
-		$this->config = new \phpbb\config\config(array(
+		$phpbb_path_helper->method('update_web_root_path')
+			->willReturnArgument(0);
+
+		$this->auth = $this->getMockBuilder(auth::class)->getMock();
+
+		$config = $this->config = new config(array(
 			'cookie_name' => 'test',
 		));
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
+
+		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$user = $this->user = $this->getMockBuilder('\phpbb\user')
+		$this->request->method('variable')
+			->willReturnArgument(0);
+
+		$user = $this->user = $this->getMockBuilder(user::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->user->data['session_page'] = '';
+		$this->user->data['session_page'] = "index.$phpEx";
+		$this->user->page['page_dir'] = '';
+
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->phpEx = $phpEx;
 	}
@@ -59,9 +71,9 @@ class visual_demo_test extends \phpbb_test_case
 	/**
 	* Create our controller
 	*/
-	protected function get_controller()
+	protected function get_controller(): visual_demo_controller
 	{
-		return new \phpbb\ads\controller\visual_demo_controller(
+		return new visual_demo_controller(
 			$this->auth,
 			$this->config,
 			$this->request,
@@ -76,7 +88,7 @@ class visual_demo_test extends \phpbb_test_case
 	 *
 	 * @return array Test data
 	 */
-	public function controller_data()
+	public function controller_data(): array
 	{
 		return array(
 			array(
@@ -127,19 +139,16 @@ class visual_demo_test extends \phpbb_test_case
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
 
-		// If non-ajax redirect is encountered, in testing it will trigger error
+		// If a non-ajax redirect is encountered, in testing it will trigger_error/exception
 		if (!$is_ajax)
 		{
-			// Throws E_WARNING in PHP 8.0+ and E_USER_WARNING in earlier versions
-			$exceptionName = PHP_VERSION_ID < 80000 ? \PHPUnit\Framework\Error\Error::class : \PHPUnit\Framework\Error\Warning::class;
-			$errno = PHP_VERSION_ID < 80000 ? E_USER_WARNING : E_WARNING;
-			$this->expectException($exceptionName);
-			$this->expectExceptionCode($errno);
+			$this->expectException(Exception::class);
+			$this->expectExceptionMessage('INSECURE_REDIRECT');
 		}
 
 		$controller = $this->get_controller();
 		$response = $controller->handle($action);
-		self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+		self::assertInstanceOf(JsonResponse::class, $response);
 		self::assertEquals($status_code, $response->getStatusCode());
 	}
 
@@ -148,7 +157,7 @@ class visual_demo_test extends \phpbb_test_case
 	 *
 	 * @return array Test data
 	 */
-	public function controller_fails_data()
+	public function controller_fails_data(): array
 	{
 		return array(
 			array(
@@ -184,7 +193,7 @@ class visual_demo_test extends \phpbb_test_case
 			$controller->handle($action);
 			self::fail('The expected \phpbb\exception\http_exception was not thrown');
 		}
-		catch (\phpbb\exception\http_exception $exception)
+		catch (http_exception $exception)
 		{
 			self::assertEquals($status_code, $exception->getStatusCode());
 			self::assertEquals($message, $exception->getMessage());
