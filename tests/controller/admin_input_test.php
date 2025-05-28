@@ -195,9 +195,9 @@ class admin_input_test extends \phpbb_database_test_case
 			array(false, true, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(false, true, true, array('CANNOT_CREATE_DIRECTORY'), '', ''),
 			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
-			array(true, true, false, array(), '', '<img src="http://localhost/phpbb/images/phpbb_ads/abcdef.jpg" />'),
-			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\" />"),
-			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://loscalhost/phpbb/images/phpbb_ads/abcdef.jpg\" />"),
+			array(true, true, false, array(), '', '<img src="http://localhost/phpbb/images/phpbb_ads/abcdef.jpg">'),
+			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\">"),
+			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://loscalhost/phpbb/images/phpbb_ads/abcdef.jpg\">"),
 		);
 	}
 
@@ -252,7 +252,7 @@ class admin_input_test extends \phpbb_database_test_case
 		if (count($file_error))
 		{
 			self::assertGreaterThan(0, $input_controller->has_errors());
-			self::assertEquals(array(implode('<br />', $file_error)), $input_controller->get_errors());
+			self::assertEquals(array(implode('<br>', $file_error)), $input_controller->get_errors());
 		}
 	}
 }

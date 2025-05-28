@@ -176,7 +176,7 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_owner'		=> 0,
 					  'ad_centering'	=> 0,
 					  'ad_locations'	=> [],
-				  ), '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br />AD_NAME_REQUIRED'),
+				  ), '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br>AD_NAME_REQUIRED'),
 			array(array(
 					  'ad_name'			=> 'Ad Name #2',
 					  'ad_note'			=> 'Ad Note #2',

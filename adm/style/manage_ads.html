@@ -28,20 +28,20 @@
 		<fieldset>
 			<legend>{{ lang('AD_SETTINGS') }}</legend>
 			<dl>
-				<dt><label for="ad_name">{{ lang('AD_NAME') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
-				<dd><input class="text medium" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255" /></dd>
+				<dt><label for="ad_name">{{ lang('AD_NAME') ~ lang('COLON') }}</label><br><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255"></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked{% endif %} /> {{ lang('ENABLED') }}</label>
-					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked{% endif %} /> {{ lang('DISABLED') }}</label></dd>
+				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked{% endif %}> {{ lang('ENABLED') }}</label>
+					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked{% endif %}> {{ lang('DISABLED') }}</label></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
+				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_note" name="ad_note" rows="5" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
+				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
 				<dd>
 					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
 					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code">{{ Icon('font', 'stethoscope', lang('ANALYSE_AD_CODE')) }}</button>
@@ -68,9 +68,9 @@
 		<fieldset>
 			<legend>{{ lang('AD_BANNER') }}</legend>
 			<dl>
-				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br /><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
+				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
 				<dd>
-					<input type="file" accept="image/*" class="inputbox autowidth" id="banner" name="banner" />
+					<input type="file" accept="image/*" class="inputbox autowidth" id="banner" name="banner">
 					<button class="button2 phpbb-ads-button" id="upload_banner" name="upload_banner">{{ Icon('font', 'upload', lang('BANNER_UPLOAD')) }}</button>
 				</dd>
 			</dl>
@@ -78,7 +78,7 @@
 		<fieldset>
 			<legend>{{ lang('AD_PLACEMENT') }}</legend>
 			<dl>
-				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br />
+				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br>
 					<span>{{ lang('AD_LOCATIONS_EXPLAIN') }}<br><br>
 						<a class="phpbb-ads-button" href="{{ U_ENABLE_VISUAL_DEMO }}" target="_blank">
 							{{ Icon('font', 'eye', lang('AD_LOCATIONS_VISUAL_DEMO')) }}
@@ -99,45 +99,45 @@
 				</dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10" /></dd>
+				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10"></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_content_only">{{ lang('AD_CONTENT_ONLY') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CONTENT_ONLY_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" name="ad_content_only" value="1"{% if AD_CONTENT_ONLY %} checked{% endif %} /> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" id="ad_content_only" name="ad_content_only" value="0"{% if not AD_CONTENT_ONLY %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+				<dt><label for="ad_content_only">{{ lang('AD_CONTENT_ONLY') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CONTENT_ONLY_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" name="ad_content_only" value="1"{% if AD_CONTENT_ONLY %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" id="ad_content_only" name="ad_content_only" value="0"{% if not AD_CONTENT_ONLY %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_centering">{{ lang('AD_CENTERING') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CENTERING_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_centering" name="ad_centering" value="1"{% if AD_CENTERING %} checked{% endif %} /> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ad_centering" value="0"{% if not AD_CENTERING %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+				<dt><label for="ad_centering">{{ lang('AD_CENTERING') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CENTERING_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_centering" name="ad_centering" value="1"{% if AD_CENTERING %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ad_centering" value="0"{% if not AD_CENTERING %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 			</dl>
 		</fieldset>
 		<fieldset>
 			<legend>{{ lang('AD_OPTIONS') }}</legend>
 			<dl>
-				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
-				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>
+				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}"></dd>
 				<dd>[ <a href="{{ U_FIND_USERNAME }}" id="find-username">{{ lang('FIND_USERNAME') }}</a> ]</dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" size="20" min="0" /></dd>
+				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" size="20" min="0"></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0" /></dd>
+				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
+				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0"></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="text" id="ad_start_date" name="ad_start_date" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
+				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" id="ad_start_date" name="ad_start_date" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20"></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20" /></dd>
+				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="text" id="ad_end_date" name="ad_end_date" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}" size="20" maxlength="20"></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br /><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>
+				<dt><label for="ad_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>
 				<dd><select id="ad_groups" name="ad_groups[]" multiple size="8">
 						{% for group in loops.groups %}
 							<option value="{{ group.ID }}"{% if group.S_SELECTED %} selected{% endif %}>{{ group.NAME }}</option>
@@ -147,14 +147,14 @@
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
-			<input class="button1" type="submit" id="preview" name="preview" value="{{ lang('PREVIEW') }}" />&nbsp;
-			<input class="button1" type="submit" id="submit" name="submit_{% if S_EDIT_AD %}edit{% else %}add{% endif %}" value="{{ lang('SUBMIT') }}" />&nbsp;
-			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+			<input class="button1" type="submit" id="preview" name="preview" value="{{ lang('PREVIEW') }}">&nbsp;
+			<input class="button1" type="submit" id="submit" name="submit_{% if S_EDIT_AD %}edit{% else %}add{% endif %}" value="{{ lang('SUBMIT') }}">&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">
 			{% if S_EDIT_AD %}
-				<input type="hidden" name="id" value="{{ EDIT_ID }}" />
-				<input type="hidden" name="action" value="edit" />
+				<input type="hidden" name="id" value="{{ EDIT_ID }}">
+				<input type="hidden" name="action" value="edit">
 			{% else %}
-				<input type="hidden" name="action" value="add" />
+				<input type="hidden" name="action" value="add">
 			{% endif %}
 			{{ S_FORM_TOKEN }}
 		</fieldset>
@@ -246,7 +246,7 @@
 
 	<form id="acp_phpbb_ads_quick_add" method="post" action="{{ U_ACTION_ADD }}">
 		<fieldset class="quick">
-			<input class="button2" type="submit" value="{{ lang('ACP_ADS_ADD') }}" />
+			<input class="button2" type="submit" value="{{ lang('ACP_ADS_ADD') }}">
 			{{ S_FORM_TOKEN }}
 		</fieldset>
 	</form>

@@ -87,7 +87,7 @@ class helper
 		$errors = array_map(array($this->language, 'lang'), $errors);
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (bool) count($errors),
-			'ERROR_MSG' => count($errors) ? implode('<br />', $errors) : '',
+			'ERROR_MSG' => count($errors) ? implode('<br>', $errors) : '',
 
 			'AD_NAME'         	=> $data['ad_name'],
 			'AD_NOTE'         	=> $data['ad_note'],

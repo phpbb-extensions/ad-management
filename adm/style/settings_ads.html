@@ -15,7 +15,7 @@
 	<fieldset>
 		<legend>{{ lang('ADBLOCKER_LEGEND') }}</legend>
 		<dl>
-			<dt><label for="adblocker_message">{{ lang('ADBLOCKER_MESSAGE') ~ lang('COLON') }}</label><br /><span>{{ lang('ADBLOCKER_MESSAGE_EXPLAIN') }}</span></dt>
+			<dt><label for="adblocker_message">{{ lang('ADBLOCKER_MESSAGE') ~ lang('COLON') }}</label><br><span>{{ lang('ADBLOCKER_MESSAGE_EXPLAIN') }}</span></dt>
 			<dd>
 				<select name="adblocker_message" id="adblocker_message">
 					{% for ad_block_mode in AD_BLOCK_MODES %}
@@ -28,19 +28,19 @@
 	<fieldset>
 		<legend>{{ lang('CLICKS_VIEWS_LEGEND') }}</legend>
 		<dl>
-			<dt><label for="enable_views">{{ lang('ENABLE_VIEWS') ~ lang('COLON') }}</label><br /><span>{{ lang('ENABLE_VIEWS_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="enable_views" name="enable_views" value="1"{% if ENABLE_VIEWS %} checked{% endif %} /> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="enable_views" value="0"{% if not ENABLE_VIEWS %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+			<dt><label for="enable_views">{{ lang('ENABLE_VIEWS') ~ lang('COLON') }}</label><br><span>{{ lang('ENABLE_VIEWS_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="enable_views" name="enable_views" value="1"{% if ENABLE_VIEWS %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="enable_views" value="0"{% if not ENABLE_VIEWS %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 		</dl>
 		<dl>
-			<dt><label for="enable_clicks">{{ lang('ENABLE_CLICKS') ~ lang('COLON') }}</label><br /><span>{{ lang('ENABLE_CLICKS_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="enable_clicks" name="enable_clicks" value="1"{% if ENABLE_CLICKS %} checked{% endif %} /> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="enable_clicks" value="0"{% if not ENABLE_CLICKS %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+			<dt><label for="enable_clicks">{{ lang('ENABLE_CLICKS') ~ lang('COLON') }}</label><br><span>{{ lang('ENABLE_CLICKS_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="enable_clicks" name="enable_clicks" value="1"{% if ENABLE_CLICKS %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="enable_clicks" value="0"{% if not ENABLE_CLICKS %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 		</dl>
 	</fieldset>
 	<fieldset class="submit-buttons">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
-		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">
 		{{ S_FORM_TOKEN }}
 	</fieldset>
 </form>
