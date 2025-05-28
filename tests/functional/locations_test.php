@@ -45,7 +45,7 @@ class locations_test extends functional_base
 		self::assertStringNotContainsString($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());
 
 		// Create a reply
-		$this->create_post(2, 1, 'Re: Welcome to phpBB3', 'This is a test post.');
+		$this->create_post(2, 1, 'Re: Welcome to phpBB', 'This is a test post.');
 
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
