@@ -17,7 +17,7 @@ class run_test extends analyser_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function run_data()
+	public function run_data(): array
 	{
 		return array(
 			array('&lt;script async&gt;alert()&lt;/script&gt;', false, array(
@@ -117,14 +117,18 @@ class run_test extends analyser_base
 			$analyser_results = [];
 			foreach ($expected as $message)
 			{
-				$analyser_results = array_merge($analyser_results, [['analyser_results_' . $message['severity'], [
-					'MESSAGE'	=> $this->lang->lang($message['lang_key'])]]
-				]);
+				$analyser_results[] = ['analyser_results_' . $message['severity'], [
+					'MESSAGE' => $this->lang->lang($message['lang_key'])]
+				];
 			}
 
 			$this->template->expects(self::exactly(count($expected)))
 				->method('assign_block_vars')
-				->withConsecutive(...$analyser_results);
+				->willReturnCallback(function($arg1, $arg2) use (&$analyser_results) {
+					$expectation = array_shift($analyser_results);
+					self::assertEquals($expectation[0], $arg1);
+					self::assertEquals($expectation[1], $arg2);
+				});
 		}
 		else
 		{

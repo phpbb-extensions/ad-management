@@ -12,57 +12,74 @@ namespace phpbb\ads\controller;
 
 require_once __DIR__ . '/../../../../../includes/functions_acp.php';
 
-use phpbb\ads\controller\admin_input_test as input;
+use phpbb\ads\ad\manager;
 use phpbb\ads\ext;
+use phpbb\config\config;
+use phpbb\config\db_text;
+use phpbb\language\language;
+use phpbb\language\language_file_loader;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
+use phpbb_database_test_case;
+use phpbb_mock_cache;
+use phpbb_mock_event_dispatcher;
+use PHPUnit\DbUnit\DataSet\DefaultDataSet;
+use PHPUnit\DbUnit\DataSet\IDataSet;
+use PHPUnit\DbUnit\DataSet\XmlDataSet;
+use PHPUnit\Framework\MockObject\MockObject;
+use phpbb\datetime;
+use ReflectionException;
+use ReflectionObject;
 
-class admin_controller_test extends \phpbb_database_test_case
+class admin_controller_test extends phpbb_database_test_case
 {
 	/** @var bool A return value for confirm_box() */
-	public static $confirm = true;
+	public static bool $confirm = true;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
-	protected $template;
+	/** @var MockObject|template */
+	protected template|MockObject $template;
 
-	/** @var \phpbb\language\language */
-	protected $language;
+	/** @var language */
+	protected language $language;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
-	protected $request;
+	/** @var MockObject|request */
+	protected MockObject|request $request;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
-	protected $manager;
+	/** @var MockObject|manager */
+	protected manager|MockObject $manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\db_text */
-	protected $config_text;
+	/** @var MockObject|db_text */
+	protected db_text|MockObject $config_text;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
-	protected $config;
+	/** @var MockObject|config */
+	protected config|MockObject $config;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\admin_input */
-	protected $input;
+	/** @var MockObject|\phpbb\ads\controller\admin_input */
+	protected \phpbb\ads\controller\admin_input|MockObject $input;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\helper */
-	protected $helper;
+	/** @var MockObject|\phpbb\ads\controller\helper */
+	protected MockObject|\phpbb\ads\controller\helper $helper;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\analyser\manager */
-	protected $analyser;
+	/** @var MockObject|\phpbb\ads\analyser\manager */
+	protected MockObject|\phpbb\ads\analyser\manager $analyser;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\controller\helper */
-	protected $controller_helper;
+	/** @var MockObject|\phpbb\controller\helper */
+	protected \phpbb\controller\helper|MockObject $controller_helper;
 
 	/** @var string root_path */
-	protected $root_path;
+	protected string $root_path;
 
 	/** @var string php_ext */
-	protected $php_ext;
+	protected string $php_ext;
 
 	/** @var string Custom form action */
-	protected $u_action;
+	protected string $u_action;
 
 	/**
 	* {@inheritDoc}
 	*/
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -70,7 +87,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	/**
 	* {@inheritDoc}
 	*/
-	public function getDataSet()
+	public function getDataSet(): IDataSet|XmlDataSet|DefaultDataSet
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
@@ -85,36 +102,36 @@ class admin_controller_test extends \phpbb_database_test_case
 		global $phpbb_root_path, $phpEx;
 		global $phpbb_dispatcher, $cache, $db, $user, $language;
 
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
 
 		// Load/Mock classes required by the controller class
-		$this->template = $this->getMockBuilder('\phpbb\template\template')
+		$this->template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$language = $this->language = new \phpbb\language\language($lang_loader);
-		$user = new \phpbb\user($this->language, '\phpbb\datetime');
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
+		$language = $this->language = new language($lang_loader);
+		$user = new user($this->language, datetime::class);
+		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
+		$this->config_text = $this->getMockBuilder(db_text::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config = $this->getMockBuilder('\phpbb\config\config')
+		$this->config = $this->getMockBuilder(config::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->input = $this->getMockBuilder('\phpbb\ads\controller\admin_input')
+		$this->input = $this->getMockBuilder(\phpbb\ads\controller\admin_input::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->helper = $this->getMockBuilder('\phpbb\ads\controller\helper')
+		$this->helper = $this->getMockBuilder(\phpbb\ads\controller\helper::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
+		$this->analyser = $this->getMockBuilder(\phpbb\ads\analyser\manager::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
+		$this->controller_helper = $this->getMockBuilder(\phpbb\controller\helper::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$this->root_path = $phpbb_root_path;
@@ -123,8 +140,8 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->u_action = $phpbb_root_path . 'adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage';
 
 		// Global variables
-		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
-		$cache = new \phpbb_mock_cache();
+		$phpbb_dispatcher = new phpbb_mock_event_dispatcher();
+		$cache = new phpbb_mock_cache();
 		$db = $this->new_dbal();
 	}
 
@@ -133,7 +150,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return	\phpbb\ads\controller\admin_controller	Admin controller
 	*/
-	public function get_controller()
+	public function get_controller(): admin_controller
 	{
 		$controller = new \phpbb\ads\controller\admin_controller(
 			$this->template,
@@ -181,7 +198,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_mode_settings()
+	public function data_mode_settings(): array
 	{
 		return array(
 			array(false, 0, array(0)),
@@ -196,7 +213,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	 */
 	public function test_mode_settings_submit($valid_form, $adblocker_data, $hide_group_data)
 	{
-		input::$valid_form = $valid_form;
+		\phpbb\ads\controller\admin_input_test::$valid_form = $valid_form;
 
 		$controller = $this->get_controller();
 
@@ -207,28 +224,34 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		if ($valid_form)
 		{
+			$variable_expectations = [
+				['adblocker_message', 0, $adblocker_data],
+				['enable_views', 0, 1],
+				['enable_clicks', 0, 1]
+			];
 			$this->request
 				->expects(self::exactly(3))
 				->method('variable')
-				->withConsecutive(
-					['adblocker_message', 0],
-					['enable_views', 0],
-					['enable_clicks', 0]
-				)
-				->willReturnOnConsecutiveCalls(
-					$adblocker_data,
-					1,
-					1
-				);
+				->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations) {
+					$expectation = array_shift($variable_expectations);
+					self::assertEquals($expectation[0], $arg1);
+					self::assertEquals($expectation[1], $arg2);
+					return $expectation[2];
+				});
 
+			$config_expectations = [
+				['phpbb_ads_adblocker_message', $adblocker_data],
+				['phpbb_ads_enable_views', 1],
+				['phpbb_ads_enable_clicks', 1]
+			];
 			$this->config
 				->expects(self::exactly(3))
 				->method('set')
-				->withConsecutive(
-					['phpbb_ads_adblocker_message', $adblocker_data],
-					['phpbb_ads_enable_views', 1],
-					['phpbb_ads_enable_clicks', 1]
-				);
+				->willReturnCallback(function($arg1, $arg2) use (&$config_expectations) {
+					$expectation = array_shift($config_expectations);
+					self::assertEquals($expectation[0], $arg1);
+					self::assertEquals($expectation[1], $arg2);
+				});
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');
 		}
@@ -245,7 +268,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function data_mode_manage()
+	public function data_mode_manage(): array
 	{
 		return array(
 			array('add', 'action_add'),
@@ -264,8 +287,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	*/
 	public function test_mode_manage($action, $expected)
 	{
-		/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\admin_controller $controller */
-		$controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
+		/** @var MockObject|\phpbb\ads\controller\admin_controller $controller */
+		$controller = $this->getMockBuilder(admin_controller::class)
 			->onlyMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->template,
@@ -300,23 +323,21 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$post_expectations = [
+			'preview',
+			'upload_banner',
+			'analyse_ad_code',
+			'submit_add',
+			'submit_edit'
+		];
 		$this->request
 			->expects(self::exactly(5))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner'],
-				['analyse_ad_code'],
-				['submit_add'],
-				['submit_edit']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				false,
-				false,
-				false,
-				false
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations) {
+				$expectation = array_shift($post_expectations);
+				self::assertEquals($expectation, $arg);
+				return false;
+			});
 
 		$this->helper->expects(self::once())
 			->method('assign_locations');
@@ -330,7 +351,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with(array(
 				'S_ADD_AD'				=> true,
 				'U_BACK'				=> $this->u_action,
-				'U_ACTION'				=> "{$this->u_action}&amp;action=add",
+				'U_ACTION'				=> "$this->u_action&amp;action=add",
 				'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
@@ -392,17 +413,16 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$post_expectations = ['preview', 'upload_banner'];
+		$return_values = [false, true];
 		$this->request
 			->expects(self::exactly(2))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				true
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations, &$return_values) {
+				$expectation = array_shift($post_expectations);
+				self::assertEquals($expectation, $arg);
+				return array_shift($return_values);
+			});
 
 		$data = array(
 			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
@@ -445,19 +465,16 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code'];
+		$return_values = [false, false, true];
 		$this->request
 			->expects(self::exactly(3))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner'],
-				['analyse_ad_code']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				false,
-				true
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations, &$return_values) {
+				$expectation = array_shift($post_expectations);
+				self::assertEquals($expectation, $arg);
+				return array_shift($return_values);
+			});
 
 		$data = array(
 			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
@@ -493,7 +510,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_add_data()
+	public function action_add_data(): array
 	{
 		return array(
 			array(true, 0),
@@ -512,20 +529,15 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code', 'submit_add'];
+		$return_values = [false, false, false, true];
 		$this->request->expects(self::exactly(4))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner'],
-				['analyse_ad_code'],
-				['submit_add']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				false,
-				false,
-				true
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations, &$return_values) {
+				$expectation = array_shift($post_expectations);
+				self::assertEquals($expectation, $arg);
+				return array_shift($return_values);
+			});
 
 		$data = array(
 			'ad_name'		=> 'Ad Name #1',
@@ -580,14 +592,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->with('action', '')
 			->willReturn('add');
 
-		$reflection_controller = new \ReflectionObject($controller);
-		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
-		$reflection_controller_auth_admin->setAccessible(true);
-		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
-		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
-		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
-		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
-		$reflection_controller_mode_manage_method->invoke($controller);
+		$this->reflection($controller);
 	}
 
 	/**
@@ -595,7 +600,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_edit_no_submit_data()
+	public function action_edit_no_submit_data(): array
 	{
 		return array(
 			array(0),
@@ -612,33 +617,25 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$variable_expectations = [['action', ''], ['id', 0]];
+		$return_values = ['edit', $ad_id];
 		$this->request->expects(self::exactly(2))
 			->method('variable')
-			->withConsecutive(
-				['action', ''],
-				['id', 0]
-			)
-			->willReturnOnConsecutiveCalls(
-				'edit',
-				$ad_id
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				$expectation = array_shift($variable_expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+				return array_shift($return_values);
+			});
 
+		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code', 'submit_add', 'submit_edit'];
 		$this->request->expects(self::exactly(5))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner'],
-				['analyse_ad_code'],
-				['submit_add'],
-				['submit_edit']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				false,
-				false,
-				false,
-				false
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations) {
+				$expectation = array_shift($post_expectations);
+				self::assertEquals($expectation, $arg);
+				return false;
+			});
 
 		$data = array(
 			'ad_name'			=> 'Primary ad',
@@ -682,7 +679,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'S_EDIT_AD'				=> true,
 					'EDIT_ID'				=> $ad_id,
 					'U_BACK'				=> $this->u_action,
-					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
+					'U_ACTION'				=> "$this->u_action&amp;action=edit&amp;id=" . $ad_id,
 					'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
@@ -707,17 +704,17 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$variable_expectations = [['action', ''], ['id', 0]];
+		$return_values = ['edit', 1];
 		$this->request
 			->expects(self::exactly(2))
 			->method('variable')
-			->withConsecutive(
-				['action', ''],
-				['id', 0]
-			)
-			->willReturnOnConsecutiveCalls(
-				'edit',
-				1
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				$expectation = array_shift($variable_expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+				return array_shift($return_values);
+			});
 
 		$this->request->expects(self::once())
 			->method('is_set_post')
@@ -747,7 +744,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'S_EDIT_AD'				=> true,
 				'EDIT_ID'				=> 1,
 				'U_BACK'				=> $this->u_action,
-				'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
+				'U_ACTION'				=> "$this->u_action&amp;action=edit&amp;id=1",
 				'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
@@ -769,7 +766,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_edit_data()
+	public function action_edit_data(): array
 	{
 		return array(
 			array(true, false, 0),
@@ -789,37 +786,28 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$variable_expectations = [['action', ''], ['id', 0], ['id', 0]];
+		$return_values = ['edit', 1, 1];
 		$this->request
 			->expects(self::exactly(3))
 			->method('variable')
-			->withConsecutive(
-				['action', ''],
-				['id', 0],
-				['id', 0]
-			)
-			->willReturnOnConsecutiveCalls(
-				'edit',
-				1,
-				1
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				$expectation = array_shift($variable_expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+				return array_shift($return_values);
+			});
 
+		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code', 'submit_add', 'submit_edit'];
+		$post_return_values = [false, false, false, false, true];
 		$this->request
 			->expects(self::exactly(5))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner'],
-				['analyse_ad_code'],
-				['submit_add'],
-				['submit_edit']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				false,
-				false,
-				false,
-				true
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations, &$post_return_values) {
+				$expectation = array_shift($post_expectations);
+				self::assertEquals($expectation, $arg);
+				return array_shift($post_return_values);
+			});
 
 		$old_data = array(
 			'ad_name'		=> 'Old Ad Name #1',
@@ -855,7 +843,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'S_EDIT_AD'				=> true,
 					'EDIT_ID'				=> 1,
 					'U_BACK'				=> $this->u_action,
-					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
+					'U_ACTION'				=> "$this->u_action&amp;action=edit&amp;id=1",
 					'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
@@ -908,14 +896,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			}
 		}
 
-		$reflection_controller = new \ReflectionObject($controller);
-		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
-		$reflection_controller_auth_admin->setAccessible(true);
-		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
-		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
-		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
-		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
-		$reflection_controller_mode_manage_method->invoke($controller);
+		$this->reflection($controller);
 	}
 
 	/**
@@ -923,7 +904,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function ad_enable_data()
+	public function ad_enable_data(): array
 	{
 		return array(
 			array(0, true, false, 'ACP_AD_ENABLE_ERRORED'),
@@ -962,17 +943,17 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 		}
 
+		$variable_expectations = [['action', ''], ['id', 0]];
+		$return_values = [$enable ? 'enable' : 'disable', $ad_id];
 		$this->request
 			->expects(self::exactly(2))
 			->method('variable')
-			->withConsecutive(
-				['action', ''],
-				['id', 0]
-			)
-			->willReturnOnConsecutiveCalls(
-				$enable ? 'enable' : 'disable',
-				$ad_id
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				$expectation = array_shift($variable_expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+				return array_shift($return_values);
+			});
 
 		$controller->mode_manage();
 	}
@@ -982,7 +963,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_delete_data()
+	public function action_delete_data(): array
 	{
 		return array(
 			array(999, 0, true, true),
@@ -1003,11 +984,17 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
+		$variable_expectations = [['action', ''], ['id', 0], ['i', ''], ['mode', '']];
+		$return_values = ['delete', $ad_id, '', ''];
 		$this->request
 			->expects(self::exactly($confirm ? 2 : 4))
 			->method('variable')
-			->withConsecutive(['action', ''], ['id', 0], ['i', ''], ['mode', ''])
-			->willReturnOnConsecutiveCalls('delete', $ad_id, '', '');
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				$expectation = array_shift($variable_expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+				return array_shift($return_values);
+			});
 
 		if (!$confirm)
 		{
@@ -1041,14 +1028,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 		}
 
-		$reflection_controller = new \ReflectionObject($controller);
-		$reflection_controller_auth_admin = $reflection_controller->getProperty('auth_admin');
-		$reflection_controller_auth_admin->setAccessible(true);
-		$reflection_controller_auth_admin = $reflection_controller_auth_admin->getValue($controller);
-		$reflection_controller_auth_admin->acl_options['id']['u_'] = 0;
-		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
-		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
-		$reflection_controller_mode_manage_method->invoke($controller);
+		$this->reflection($controller);
 	}
 
 	/**
@@ -1090,17 +1070,16 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('get_all_ads')
 			->willReturn($rows);
 
+		$expired_expectations = [$rows[0], $rows[1]];
+		$return_values = [false, true];
 		$this->helper
 			->expects(self::exactly(2))
 			->method('is_expired')
-			->withConsecutive(
-				[$rows[0]],
-				[$rows[1]]
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				true
-			);
+			->willReturnCallback(function($arg) use (&$expired_expectations, &$return_values) {
+				$expectation = array_shift($expired_expectations);
+				self::assertEquals($expectation, $arg);
+				return array_shift($return_values);
+			});
 
 		$this->manager->expects(self::once())
 			->method('update_ad')
@@ -1124,6 +1103,25 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$controller->mode_manage();
 	}
+
+	/**
+	 * @param admin_controller $controller
+	 * @return void
+	 */
+	private function reflection(admin_controller $controller): void
+	{
+		try {
+			$reflection = new ReflectionObject($controller);
+			$auth_admin_prop = $reflection->getProperty('auth_admin');
+			$auth_admin_prop->setAccessible(true);
+			$auth_admin = $auth_admin_prop->getValue($controller);
+			$auth_admin->acl_options['id']['u_'] = 0;
+			$auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
+			$reflection->getMethod('mode_manage')->invoke($controller);
+		} catch (ReflectionException $e) {
+			$this->fail($e);
+		}
+	}
 }
 
 /**
@@ -1132,7 +1130,7 @@ class admin_controller_test extends \phpbb_database_test_case
  *
  * @return bool
  */
-function confirm_box()
+function confirm_box(): bool
 {
 	return \phpbb\ads\controller\admin_controller_test::$confirm;
 }

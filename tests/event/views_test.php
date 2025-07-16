@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\ads\ad\manager;
+
 class views_test extends main_listener_base
 {
 	/**
@@ -17,7 +19,7 @@ class views_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function views_with_bots_data()
+	public function views_with_bots_data(): array
 	{
 		return array(
 			array(true),
@@ -38,7 +40,7 @@ class views_test extends main_listener_base
 		$this->user->page['page_dir'] = '';
 		$this->config['phpbb_ads_enable_views'] = true;
 
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -62,13 +64,17 @@ class views_test extends main_listener_base
 
 		if (!$is_bot)
 		{
+			$expectations = [
+				['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false],
+				['S_INCREMENT_VIEWS' => true, 'U_PHPBB_ADS_VIEWS' => 'app.php/adsview/1']
+			];
 			$this->template
 				->expects(self::exactly(2))
 				->method('assign_vars')
-				->withConsecutive(
-					[['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false]],
-					[['S_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
-				);
+				->willReturnCallback(function($arg) use (&$expectations) {
+					$expectation = array_shift($expectations);
+					self::assertEquals($expectation, $arg);
+				});
 		}
 
 		$listener = $this->get_listener();

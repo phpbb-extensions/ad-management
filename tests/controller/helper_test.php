@@ -304,28 +304,29 @@ class helper_test extends \phpbb_database_test_case
 				),
 			));
 
+		$expectations = [
+			['ad_locations', ['CATEGORY_NAME' => 'CAT_TOP_OF_PAGE']],
+			['ad_locations', [
+				'LOCATION_ID' => 'top_of_page_1',
+				'LOCATION_DESC' => 'Location #1 desc',
+				'LOCATION_NAME' => 'Location #1',
+				'S_SELECTED' => $ad_locations && in_array('top_of_page_1', $ad_locations),
+			]],
+			['ad_locations', ['CATEGORY_NAME' => 'CAT_BOTTOM_OF_PAGE']],
+			['ad_locations', [
+				'LOCATION_ID' => 'bottom_of_page_1',
+				'LOCATION_DESC' => 'Location #2 desc',
+				'LOCATION_NAME' => 'Location #2',
+				'S_SELECTED' => $ad_locations && in_array('bottom_of_page_1', $ad_locations),
+			]]
+		];
 		$this->template->expects(self::exactly(4))
 			->method('assign_block_vars')
-			->withConsecutive(
-				['ad_locations', [
-					'CATEGORY_NAME'  => 'CAT_TOP_OF_PAGE',
-				]],
-				['ad_locations', [
-					'LOCATION_ID'   => 'top_of_page_1',
-					'LOCATION_DESC' => 'Location #1 desc',
-					'LOCATION_NAME' => 'Location #1',
-					'S_SELECTED'    => $ad_locations && in_array('top_of_page_1', $ad_locations),
-				]],
-				['ad_locations', [
-					'CATEGORY_NAME'  => 'CAT_BOTTOM_OF_PAGE',
-				]],
-				['ad_locations', [
-					'LOCATION_ID'   => 'bottom_of_page_1',
-					'LOCATION_DESC' => 'Location #2 desc',
-					'LOCATION_NAME' => 'Location #2',
-					'S_SELECTED'    => $ad_locations && in_array('bottom_of_page_1', $ad_locations),
-				]]
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$expectations) {
+				$expectation = array_shift($expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+			});
 
 		$helper->assign_locations($ad_locations);
 	}
@@ -352,26 +353,17 @@ class helper_test extends \phpbb_database_test_case
 				),
 			));
 
+		$expectations = [
+			['groups', ['ID' => 1, 'NAME' => 'Administrators', 'S_SELECTED' => true]],
+			['groups', ['ID' => 2, 'NAME' => 'Custom group name', 'S_SELECTED' => false]]
+		];
 		$this->template->expects(self::exactly(2))
 			->method('assign_block_vars')
-			->withConsecutive(
-				array(
-					'groups',
-					array(
-						'ID'			=> 1,
-						'NAME'			=> 'Administrators',
-						'S_SELECTED'	=> true,
-					),
-				),
-				array(
-					'groups',
-					array(
-						'ID'			=> 2,
-						'NAME'			=> 'Custom group name',
-						'S_SELECTED'	=> false,
-					),
-				)
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$expectations) {
+				$expectation = array_shift($expectations);
+				self::assertEquals($expectation[0], $arg1);
+				self::assertEquals($expectation[1], $arg2);
+			});
 
 		$helper->assign_groups();
 	}
