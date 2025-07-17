@@ -195,7 +195,7 @@ class manager
 		// add a row to ads table
 		$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
 		$this->db->sql_query($sql);
-		$ad_id = (int) $this->db->sql_nextid();
+		$ad_id = (int) $this->db->sql_last_inserted_id();
 
 		$this->insert_ad_group_data($ad_id, $ad_groups);
 
