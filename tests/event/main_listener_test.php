@@ -10,6 +10,9 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\ads\event\main_listener;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 class main_listener_test extends main_listener_base
 {
 	/**
@@ -17,8 +20,7 @@ class main_listener_test extends main_listener_base
 	*/
 	public function test_construct()
 	{
-		$listener = $this->get_listener();
-		self::assertInstanceOf('\Symfony\Component\EventDispatcher\EventSubscriberInterface', $listener);
+		self::assertInstanceOf(EventSubscriberInterface::class, $this->get_listener());
 	}
 
 	/**
@@ -35,6 +37,6 @@ class main_listener_test extends main_listener_base
 			'core.adm_page_header_after',
 			'core.group_add_user_after',
 			'core.group_delete_user_after',
-		), array_keys(\phpbb\ads\event\main_listener::getSubscribedEvents()));
+		), array_keys(main_listener::getSubscribedEvents()));
 	}
 }

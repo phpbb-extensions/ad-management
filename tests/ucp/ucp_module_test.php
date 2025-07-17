@@ -8,21 +8,36 @@
  *
  */
 
+namespace phpbb\ads\tests\ucp;
+
+use p_master;
+use phpbb\cache\driver\dummy;
+use phpbb\module\module_manager;
+use phpbb_mock_event_dispatcher;
+use phpbb_mock_extension_manager;
+use phpbb\db\driver\driver_interface;
+use phpbb_test_case;
+use phpbb\request\request;
+use phpbb\template\template;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use phpbb\ads\controller\ucp_controller;
+use phpbb\ads\ucp\main_module;
+
 require_once __DIR__ . '/../../../../../includes/functions_module.php';
 
-class ucp_module_test extends \phpbb_test_case
+class ucp_module_test extends phpbb_test_case
 {
-	/** @var \phpbb_mock_extension_manager */
-	protected $extension_manager;
+	/** @var phpbb_mock_extension_manager */
+	protected phpbb_mock_extension_manager $extension_manager;
 
-	/** @var \phpbb\module\module_manager */
-	protected $module_manager;
+	/** @var module_manager */
+	protected module_manager $module_manager;
 
 	protected function setUp(): void
 	{
 		global $phpbb_dispatcher, $phpbb_extension_manager, $phpbb_root_path, $phpEx;
 
-		$this->extension_manager = new \phpbb_mock_extension_manager(
+		$this->extension_manager = new phpbb_mock_extension_manager(
 			$phpbb_root_path,
 			array(
 				'phpbb/ads' => array(
@@ -33,16 +48,16 @@ class ucp_module_test extends \phpbb_test_case
 			));
 		$phpbb_extension_manager = $this->extension_manager;
 
-		$this->module_manager = new \phpbb\module\module_manager(
-			new \phpbb\cache\driver\dummy(),
-			$this->getMockBuilder('\phpbb\db\driver\driver_interface')->disableOriginalConstructor()->getMock(),
+		$this->module_manager = new module_manager(
+			new dummy(),
+			$this->getMockBuilder(driver_interface::class)->disableOriginalConstructor()->getMock(),
 			$this->extension_manager,
 			MODULES_TABLE,
 			$phpbb_root_path,
 			$phpEx
 		);
 
-		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
+		$phpbb_dispatcher = new phpbb_mock_event_dispatcher();
 	}
 
 	public function test_module_info()
@@ -62,7 +77,7 @@ class ucp_module_test extends \phpbb_test_case
 		), $this->module_manager->get_module_infos('ucp', 'ucp_main_module'));
 	}
 
-	public function module_auth_test_data()
+	public function module_auth_test_data(): array
 	{
 		return array(
 			// module_auth, expected result
@@ -88,16 +103,16 @@ class ucp_module_test extends \phpbb_test_case
 			define('IN_ADMIN', true);
 		}
 
-		$request = $this->getMockBuilder('\phpbb\request\request')
+		$request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$template = $this->getMockBuilder('\phpbb\template\template')
+		$template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$phpbb_container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')
+		$phpbb_container = $this->getMockBuilder(ContainerInterface::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$ucp_controller = $this->getMockBuilder('\phpbb\ads\controller\ucp_controller')
+		$ucp_controller = $this->getMockBuilder(ucp_controller::class)
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -118,6 +133,6 @@ class ucp_module_test extends \phpbb_test_case
 		$p_master = new p_master();
 		$p_master->module_ary[0]['is_duplicate'] = 0;
 		$p_master->module_ary[0]['url_extra'] = '';
-		$p_master->load('acp', '\phpbb\ads\ucp\main_module', 'stats');
+		$p_master->load('acp', main_module::class, 'stats');
 	}
 }

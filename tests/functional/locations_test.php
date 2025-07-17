@@ -21,7 +21,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above footer ad is directly before page footer
+		// Confirm the above footer ad is directly before the page footer
 		self::assertStringContainsString($ad_code, $crawler->filter('#page-footer')->previousAll()->html());
 	}
 
@@ -31,7 +31,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is the first child of body
+		// Confirm the above header ad is the first child of the body
 		self::assertStringContainsString($ad_code, $crawler->filter('body')->children()->first()->html());
 	}
 
@@ -41,7 +41,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
-		// Confirm after first post ad is NOT after first post when it's the only post
+		// Confirm after the first post ad is NOT after the first post when it's the only post
 		self::assertStringNotContainsString($ad_code, $crawler->filter('#p1')->nextAll()->eq(1)->html());
 
 		// Create a reply
@@ -69,7 +69,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm after header navbar ad is present on correct location
+		// Confirm after the header navbar ad is present on correct location
 		self::assertStringContainsString($ad_code, $crawler->filter('#nav-breadcrumbs')->nextAll()->eq(0)->html());
 	}
 
@@ -79,7 +79,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
-		// Confirm after not first post ad is after second post
+		// Confirm after not first post ad is after the second post
 		self::assertStringContainsString($ad_code, $crawler->filter('#p2')->nextAll()->eq(1)->html());
 	}
 
@@ -121,7 +121,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'viewtopic.php?t=1');
 
-		// Confirm before posts ad is before posts
+		// Confirm before post-ad is before posts
 		self::assertStringContainsString($ad_code, $crawler->filter('.action-bar.bar-top')->nextAll()->html());
 	}
 
@@ -153,7 +153,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm below footer ad is last visible body children
+		// Confirm below footer ad is the last visible body children
 		self::assertStringContainsString($ad_code, $crawler->filter('.phpbb-ads-center')->last()->html());
 	}
 
@@ -163,7 +163,7 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm below header ad is directly after header
+		// Confirm the below header ad is directly after header
 		self::assertStringContainsString($ad_code, $crawler->filter('.headerbar')->children()->last()->html());
 	}
 

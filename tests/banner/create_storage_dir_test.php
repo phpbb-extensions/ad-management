@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\banner;
 
+use phpbb\filesystem\exception\filesystem_exception;
+
 class create_storage_dir_test extends banner_base
 {
 	/**
@@ -17,7 +19,7 @@ class create_storage_dir_test extends banner_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function create_storage_dir_data()
+	public function create_storage_dir_data(): array
 	{
 		return array(
 			array(false, false),
@@ -51,7 +53,7 @@ class create_storage_dir_test extends banner_base
 			{
 				$mkdir->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('CANNOT_CREATE_DIRECTORY'));
 
-				$this->expectException('\phpbb\filesystem\exception\filesystem_exception');
+				$this->expectException(filesystem_exception::class);
 				$this->expectExceptionMessage('CANNOT_CREATE_DIRECTORY');
 			}
 		}

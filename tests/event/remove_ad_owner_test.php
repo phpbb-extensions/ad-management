@@ -10,11 +10,13 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\event\dispatcher;
+
 class remove_ad_owner_test extends main_listener_base
 {
 	public function test_ad_owner()
 	{
-		$dispatcher = new \phpbb\event\dispatcher();
+		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.delete_user_after', array($this->get_listener(), 'remove_ad_owner'));
 		$user_ids = array('999');
 		$event_data = array('user_ids');

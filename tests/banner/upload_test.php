@@ -10,6 +10,9 @@
 
 namespace phpbb\ads\tests\banner;
 
+use phpbb\files\filespec;
+use phpbb\exception\runtime_exception;
+
 class upload_test extends banner_base
 {
 	/**
@@ -17,7 +20,7 @@ class upload_test extends banner_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function upload_data()
+	public function upload_data(): array
 	{
 		return array(
 			array(false),
@@ -42,7 +45,7 @@ class upload_test extends banner_base
 			->with(array('gif', 'jpg', 'jpeg', 'png'));
 
 		// Mock filespec
-		$file = $this->getMockBuilder('\phpbb\files\filespec')
+		$file = $this->getMockBuilder(filespec::class)
 			->disableOriginalConstructor()
 			->getMock();
 		if (!$file_move_success)
@@ -70,7 +73,7 @@ class upload_test extends banner_base
 				->method('set_error')
 				->with('FILE_MOVE_UNSUCCESSFUL');
 
-			$this->expectException('\phpbb\exception\runtime_exception');
+			$this->expectException(runtime_exception::class);
 			$this->expectExceptionMessage('FILE_MOVE_UNSUCCESSFUL');
 
 			$manager->upload();

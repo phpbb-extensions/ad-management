@@ -27,11 +27,11 @@ class centering_test extends functional_base
 
 	public function test_centering_enabled()
 	{
-		$ad_code = $this->create_ad('above_header', '', false, true);
+		$ad_code = $this->create_ad('above_header');
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is present with the phpbb-ads-center class
+		// Confirm the above header ad is present with the phpbb-ads-center class
 		self::assertStringContainsString($ad_code, $crawler->html());
 		self::assertEquals(1, $crawler->filter('.phpbb-ads-center')->count());
 	}
@@ -45,7 +45,7 @@ class centering_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is present without the phpbb-ads-center class
+		// Confirm the above header ad is present without the phpbb-ads-center class
 		self::assertStringContainsString($ad_code, $crawler->html());
 		self::assertEquals(0, $crawler->filter('.phpbb-ads-center')->count());
 	}

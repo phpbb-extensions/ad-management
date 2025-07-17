@@ -17,7 +17,7 @@ class load_memberships_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function load_memberships_data()
+	public function load_memberships_data(): array
 	{
 		return array(
 			array(

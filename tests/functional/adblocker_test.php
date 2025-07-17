@@ -17,7 +17,7 @@ class adblocker_test extends functional_base
 {
 	public function test_adblocker_code_is_present()
 	{
-		// Enable ad blocker message
+		// Enable an ad blocker message
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid=$this->sid");
 		$form_data = [
 			'adblocker_message'	=> 1,

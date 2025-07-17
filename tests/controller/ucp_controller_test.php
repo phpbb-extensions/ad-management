@@ -8,35 +8,48 @@
  *
  */
 
-namespace phpbb\ads\controller;
+namespace phpbb\ads\tests\controller;
 
-class ucp_controller_test extends \phpbb_database_test_case
+use phpbb\ads\ad\manager;
+use phpbb\ads\controller\helper;
+use phpbb\ads\controller\ucp_controller;
+use phpbb\config\config;
+use phpbb\language\language;
+use phpbb\language\language_file_loader;
+use phpbb\template\template;
+use phpbb\user;
+use phpbb_database_test_case;
+use PHPUnit\DbUnit\DataSet\DefaultDataSet;
+use PHPUnit\DbUnit\DataSet\XmlDataSet;
+use PHPUnit\Framework\MockObject\MockObject;
+
+class ucp_controller_test extends phpbb_database_test_case
 {
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
-	protected $manager;
+	/** @var MockObject|manager */
+	protected manager|MockObject $manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\helper */
-	protected $helper;
+	/** @var MockObject|helper */
+	protected MockObject|helper $helper;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\user */
-	protected $user;
+	/** @var MockObject|user */
+	protected user|MockObject $user;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\language\language */
-	protected $language;
+	/** @var MockObject|language */
+	protected language|MockObject $language;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
-	protected $template;
+	/** @var MockObject|template */
+	protected template|MockObject $template;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
-	protected $config;
+	/** @var MockObject|config */
+	protected config|MockObject $config;
 
 	/** @var string Custom form action */
-	protected $u_action;
+	protected string $u_action;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -44,7 +57,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet()
+	public function getDataSet(): XmlDataSet|DefaultDataSet
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
@@ -58,22 +71,22 @@ class ucp_controller_test extends \phpbb_database_test_case
 
 		global $phpbb_root_path, $phpEx;
 
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
 
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->helper = $this->getMockBuilder('\phpbb\ads\controller\helper')
+		$this->helper = $this->getMockBuilder(helper::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->user = $this->getMockBuilder('\phpbb\user')
+		$this->user = $this->getMockBuilder(user::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->language = new \phpbb\language\language($lang_loader);
-		$this->template = $this->getMockBuilder('\phpbb\template\template')
+		$this->language = new language($lang_loader);
+		$this->template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config = new \phpbb\config\config(array(
+		$this->config = new config(array(
 			'phpbb_ads_enable_views'	=> 0,
 			'phpbb_ads_enable_clicks'	=> 0,
 		));
@@ -84,11 +97,11 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/**
 	 * Returns fresh new controller.
 	 *
-	 * @return	\phpbb\ads\controller\ucp_controller	UCP controller
+	 * @return	ucp_controller	UCP controller
 	 */
-	public function get_controller()
+	public function get_controller(): ucp_controller
 	{
-		$controller = new \phpbb\ads\controller\ucp_controller(
+		$controller = new ucp_controller(
 			$this->manager,
 			$this->helper,
 			$this->user,
@@ -106,7 +119,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function main_data()
+	public function main_data(): array
 	{
 		return array(
 			array(1, 1, array(

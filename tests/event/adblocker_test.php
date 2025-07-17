@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\event\dispatcher;
+
 class adblocker_test extends main_listener_base
 {
 	/**
@@ -17,7 +19,7 @@ class adblocker_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_adblocker()
+	public function data_adblocker(): array
 	{
 		return array(
 			array(0, false), // disabled; should not display
@@ -38,7 +40,7 @@ class adblocker_test extends main_listener_base
 			->method('assign_var')
 			->with('S_DISPLAY_ADBLOCKER', $expected);
 
-		$dispatcher = new \phpbb\event\dispatcher();
+		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'adblocker'));
 		$dispatcher->trigger_event('core.page_header_after');
 	}

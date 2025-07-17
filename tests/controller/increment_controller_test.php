@@ -8,20 +8,30 @@
  *
  */
 
-namespace phpbb\ads\controller;
+namespace phpbb\ads\tests\controller;
 
-class increment_controller_test extends \phpbb_database_test_case
+use phpbb\ads\ad\manager;
+use phpbb\ads\controller\increment_controller;
+use phpbb\exception\http_exception;
+use phpbb\request\request;
+use phpbb_database_test_case;
+use PHPUnit\DbUnit\DataSet\DefaultDataSet;
+use PHPUnit\DbUnit\DataSet\XmlDataSet;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+class increment_controller_test extends phpbb_database_test_case
 {
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
-	protected $manager;
+	/** @var MockObject|manager */
+	protected manager|MockObject $manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
-	protected $request;
+	/** @var MockObject|request */
+	protected MockObject|request $request;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -29,7 +39,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet()
+	public function getDataSet(): XmlDataSet|DefaultDataSet
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/clicks.xml');
 	}
@@ -41,10 +51,10 @@ class increment_controller_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
+		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
 	}
@@ -52,16 +62,14 @@ class increment_controller_test extends \phpbb_database_test_case
 	/**
 	 * Returns fresh new controller.
 	 *
-	 * @return	\phpbb\ads\controller\increment_controller	Increment controller
+	 * @return	increment_controller	Increment controller
 	 */
-	public function get_controller()
+	public function get_controller(): increment_controller
 	{
-		$controller = new \phpbb\ads\controller\increment_controller(
+		return new increment_controller(
 			$this->manager,
 			$this->request
 		);
-
-		return $controller;
 	}
 
 	/**
@@ -69,7 +77,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_clicks_data()
+	public function increment_clicks_data(): array
 	{
 		return array(
 			array(0, true),
@@ -93,9 +101,9 @@ class increment_controller_test extends \phpbb_database_test_case
 		try
 		{
 			$response = $controller->handle($ad_id, 'clicks');
-			self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+			self::assertInstanceOf(JsonResponse::class, $response);
 		}
-		catch (\phpbb\exception\http_exception $exception)
+		catch (http_exception $exception)
 		{
 			self::assertEquals(403, $exception->getStatusCode());
 			self::assertEquals('NOT_AUTHORISED', $exception->getMessage());
@@ -108,7 +116,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_views_data()
+	public function increment_views_data(): array
 	{
 		return array(
 			array('0', true),
@@ -138,9 +146,9 @@ class increment_controller_test extends \phpbb_database_test_case
 		{
 			$response = $controller->handle($ad_ids, 'views');
 
-			self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+			self::assertInstanceOf(JsonResponse::class, $response);
 		}
-		catch (\phpbb\exception\http_exception $exception)
+		catch (http_exception $exception)
 		{
 			self::assertEquals(403, $exception->getStatusCode());
 			self::assertEquals('NOT_AUTHORISED', $exception->getMessage());

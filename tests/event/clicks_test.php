@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\event\dispatcher;
+
 class clicks_test extends main_listener_base
 {
 	/**
@@ -17,7 +19,7 @@ class clicks_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_clicks()
+	public function data_clicks(): array
 	{
 		return array(
 			array('0'),
@@ -26,7 +28,7 @@ class clicks_test extends main_listener_base
 	}
 
 	/**
-	 * Test the clicks event
+	 * Test the click event
 	 *
 	 * @dataProvider data_clicks
 	 */
@@ -47,7 +49,7 @@ class clicks_test extends main_listener_base
 				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
 			));
 
-		$dispatcher = new \phpbb\event\dispatcher();
+		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'clicks'));
 		$dispatcher->trigger_event('core.page_header_after');
 	}

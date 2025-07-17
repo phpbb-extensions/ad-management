@@ -10,26 +10,33 @@
 
 namespace phpbb\ads\tests;
 
-class ext_test extends \phpbb_test_case
+use phpbb\ads\ext;
+use phpbb\finder\finder;
+use phpbb_test_case;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use phpbb\db\migrator;
+
+class ext_test extends phpbb_test_case
 {
 	public function test_ext()
 	{
-		/** @var \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\DependencyInjection\ContainerInterface */
-		$container = $this->getMockBuilder('\Symfony\Component\DependencyInjection\ContainerInterface')
+		/** @var MockObject|ContainerInterface $container */
+		$container = $this->getMockBuilder(ContainerInterface::class)
 			->disableOriginalConstructor()
 			->getMock();
 
-		/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\finder\finder */
-		$extension_finder = $this->getMockBuilder('\phpbb\finder\finder')
+		/** @var MockObject|finder $extension_finder */
+		$extension_finder = $this->getMockBuilder(finder::class)
 			->disableOriginalConstructor()
 			->getMock();
 
-		/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\db\migrator */
-		$migrator = $this->getMockBuilder('\phpbb\db\migrator')
+		/** @var MockObject|\phpbb\db\migrator $migrator */
+		$migrator = $this->getMockBuilder(migrator::class)
 			->disableOriginalConstructor()
 			->getMock();
 
-		$ext = new \phpbb\ads\ext(
+		$ext = new ext(
 			$container,
 			$extension_finder,
 			$migrator,

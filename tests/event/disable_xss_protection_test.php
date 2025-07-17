@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\event\data;
+
 class disable_xss_protection_test extends main_listener_base
 {
 	/**
@@ -17,13 +19,13 @@ class disable_xss_protection_test extends main_listener_base
 	 *
 	 * @return array
 	 */
-	public function disable_xss_protection_data()
+	public function disable_xss_protection_data(): array
 	{
 		return array(
-			// only add new header to chrome browsers on phpbb-ads acp page
+			// only add new header to Chrome browsers on the phpbb-ads acp page
 			array(array('foo-header' => 'foo-value'), 'chrome', 'phpbb-ads', true),
 			array(array(), 'chrome', 'phpbb-ads', true),
-			// do not add new header to any other browsers or acp pages
+			// do not add a new header to any other browsers or acp pages
 			array(array(), 'msie', 'phpbb-ads', false),
 			array(array(), 'chrome', 'acp-foo', false),
 			array(array(), '', 'phpbb-ads', false),
@@ -41,7 +43,7 @@ class disable_xss_protection_test extends main_listener_base
 		$this->user->browser = $browser;
 		$this->user->page['page'] = $page;
 
-		$event = new \phpbb\event\data(array('http_headers' => $data));
+		$event = new data(array('http_headers' => $data));
 		$listener = $this->get_listener();
 
 		$listener->disable_xss_protection($event);

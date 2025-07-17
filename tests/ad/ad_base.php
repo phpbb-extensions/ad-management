@@ -10,27 +10,34 @@
 
 namespace phpbb\ads\tests\ad;
 
-class ad_base extends \phpbb_database_test_case
+use phpbb\ads\ad\manager;
+use phpbb\config\config;
+use phpbb\db\driver\driver_interface;
+use phpbb_database_test_case;
+use PHPUnit\DbUnit\DataSet\DefaultDataSet;
+use PHPUnit\DbUnit\DataSet\XmlDataSet;
+
+class ad_base extends phpbb_database_test_case
 {
-	/** @var \phpbb\db\driver\driver_interface */
-	protected $db;
+	/** @var driver_interface */
+	protected driver_interface $db;
 
-	/** @var \phpbb\config\config */
-	protected $config;
-
-	/** @var string */
-	protected $ads_table;
+	/** @var config */
+	protected config $config;
 
 	/** @var string */
-	protected $ad_locations_table;
+	protected string $ads_table;
 
 	/** @var string */
-	protected $ad_group_table;
+	protected string $ad_locations_table;
+
+	/** @var string */
+	protected string $ad_group_table;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -38,7 +45,7 @@ class ad_base extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet()
+	public function getDataSet(): XmlDataSet|DefaultDataSet
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
@@ -51,7 +58,7 @@ class ad_base extends \phpbb_database_test_case
 		parent::setUp();
 
 		$this->db = $this->new_dbal();
-		$this->config = new \phpbb\config\config(array());
+		$this->config = new config(array());
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
 		$this->ad_group_table = 'phpbb_ad_group';
@@ -60,10 +67,10 @@ class ad_base extends \phpbb_database_test_case
 	/**
 	 * Returns fresh new ad manager.
 	 *
-	 * @return    \phpbb\ads\ad\manager    Ad manager
+	 * @return    manager    Ad manager
 	 */
-	public function get_manager()
+	public function get_manager(): manager
 	{
-		return new \phpbb\ads\ad\manager($this->db, $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
+		return new manager($this->db, $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 	}
 }

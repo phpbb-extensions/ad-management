@@ -10,30 +10,37 @@
 
 namespace phpbb\ads\controller;
 
-class admin_input_test extends \phpbb_database_test_case
+use DateTimeZone;
+use phpbb\ads\banner\banner;
+use phpbb\avatar\helper as avatar_helper;
+use phpbb\config\config;
+use phpbb\datetime;
+use phpbb\exception\runtime_exception;
+use phpbb\language\language;
+use phpbb\language\language_file_loader;
+use phpbb\request\request;
+use phpbb\symfony_request;
+use phpbb\user;
+use phpbb\user_loader;
+use phpbb_database_test_case;
+use phpbb_mock_request;
+use PHPUnit\DbUnit\DataSet\DefaultDataSet;
+use PHPUnit\DbUnit\DataSet\XmlDataSet;
+use PHPUnit\Framework\MockObject\MockObject;
+
+class admin_input_test extends phpbb_database_test_case
 {
-	/** @var bool A return value for check_form_key() */
-	public static $valid_form = true;
-
-	/** @var \phpbb\user */
-	protected $user;
-
-	/** @var \phpbb\user_loader */
-	protected $user_loader;
-
-	/** @var \phpbb\language\language */
-	protected $language;
-
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
-	protected $request;
-
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\banner\banner */
-	protected $banner;
+	public static bool $valid_form = true;
+	protected user $user;
+	protected user_loader $user_loader;
+	protected language $language;
+	protected MockObject|request $request;
+	protected banner|MockObject $banner;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -41,7 +48,7 @@ class admin_input_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet()
+	public function getDataSet(): XmlDataSet|DefaultDataSet
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
@@ -59,29 +66,29 @@ class admin_input_test extends \phpbb_database_test_case
 		$db = $this->new_dbal();
 
 		// Load/Mock classes required by the controller class
-		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
-		$this->user = $user = new \phpbb\user($this->language, '\phpbb\datetime');
-		$this->user->timezone = new \DateTimeZone('UTC');
-		$avatar_helper = $this->getMockBuilder('\phpbb\avatar\helper')
+		$this->language = new language(new language_file_loader($phpbb_root_path, $phpEx));
+		$this->user = $user = new user($this->language, datetime::class);
+		$this->user->timezone = new DateTimeZone('UTC');
+		$avatar_helper = $this->getMockBuilder(avatar_helper::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->user_loader = new \phpbb\user_loader($avatar_helper, $db, $phpbb_root_path, $phpEx, 'phpbb_users');
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
+		$this->user_loader = new user_loader($avatar_helper, $db, $phpbb_root_path, $phpEx, 'phpbb_users');
+		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
+		$this->banner = $this->getMockBuilder(banner::class)
 			->disableOriginalConstructor()
 			->getMock();
 
 		// Global objects required by generate_board_url()
-		$config = new \phpbb\config\config(array(
+		$config = new config(array(
 			'script_path'           => '/phpbb',
 			'server_name'           => 'localhost',
 			'server_port'           => 80,
 			'server_protocol'       => 'http://',
 		));
-		$request = new \phpbb_mock_request;
-		$symfony_request = new \phpbb\symfony_request($request);
+		$request = new phpbb_mock_request;
+		$symfony_request = new symfony_request($request);
 	}
 
 	/**
@@ -89,17 +96,15 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @return	\phpbb\ads\controller\admin_input	Admin input controller
 	 */
-	public function get_input_controller()
+	public function get_input_controller(): admin_input
 	{
-		$input = new \phpbb\ads\controller\admin_input(
+		return new \phpbb\ads\controller\admin_input(
 			$this->user,
 			$this->user_loader,
 			$this->language,
 			$this->request,
 			$this->banner
 		);
-
-		return $input;
 	}
 
 	/**
@@ -107,7 +112,7 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function get_form_data_data()
+	public function get_form_data_data(): array
 	{
 		return array(
 			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['FORM_INVALID']),
@@ -188,7 +193,7 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function banner_upload_data()
+	public function banner_upload_data(): array
 	{
 		return array(
 			array(false, false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),
@@ -214,7 +219,7 @@ class admin_input_test extends \phpbb_database_test_case
 			->method('create_storage_dir');
 		if (!$can_create_directory)
 		{
-			$create_storage_dir->willThrowException(new \phpbb\exception\runtime_exception('CANNOT_CREATE_DIRECTORY'));
+			$create_storage_dir->willThrowException(new runtime_exception('CANNOT_CREATE_DIRECTORY'));
 		}
 		else
 		{
@@ -222,7 +227,7 @@ class admin_input_test extends \phpbb_database_test_case
 				->method('upload');
 			if (!$can_move_file)
 			{
-				$upload->willThrowException(new \phpbb\exception\runtime_exception('FILE_MOVE_UNSUCCESSFUL'));
+				$upload->willThrowException(new runtime_exception('FILE_MOVE_UNSUCCESSFUL'));
 			}
 			else
 			{
@@ -263,7 +268,7 @@ class admin_input_test extends \phpbb_database_test_case
  *
  * @return bool
  */
-function check_form_key()
+function check_form_key(): bool
 {
 	return \phpbb\ads\controller\admin_input_test::$valid_form;
 }

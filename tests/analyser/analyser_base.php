@@ -10,21 +10,29 @@
 
 namespace phpbb\ads\tests\analyser;
 
-class analyser_base extends \phpbb_test_case
+use phpbb\ads\analyser\manager;
+use phpbb\language\language;
+use phpbb\language\language_file_loader;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb_test_case;
+use PHPUnit\Framework\MockObject\MockObject;
+
+class analyser_base extends phpbb_test_case
 {
 	/** @var array Ad code analysis tests */
-	protected $tests;
+	protected array $tests;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\request\request */
-	protected $request;
+	/** @var MockObject|request */
+	protected MockObject|request $request;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
-	protected $template;
+	/** @var MockObject|template */
+	protected template|MockObject $template;
 
-	/** @var \phpbb\language\language */
-	protected $lang;
+	/** @var language */
+	protected language $lang;
 
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -38,15 +46,15 @@ class analyser_base extends \phpbb_test_case
 
 		global $phpbb_root_path, $phpEx;
 
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
 
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
+		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->template = $this->getMockBuilder('\phpbb\template\template')
+		$this->template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->lang = new \phpbb\language\language($lang_loader);
+		$this->lang = new language($lang_loader);
 
 		// Tests
 		$tests = array(
@@ -75,11 +83,11 @@ class analyser_base extends \phpbb_test_case
 	/**
 	 * Returns fresh new ad code analyser manager.
 	 *
-	 * @return    \phpbb\ads\analyser\manager    Ad code analyser manager
+	 * @return    manager    Ad code analyser manager
 	 */
-	public function get_manager()
+	public function get_manager(): manager
 	{
-		return new \phpbb\ads\analyser\manager(
+		return new manager(
 			$this->tests,
 			$this->template,
 			$this->lang

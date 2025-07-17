@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\functional;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 /**
 * @group functional
 */
@@ -41,7 +43,7 @@ class acp_manage_test extends functional_base
 		// Load Advertisement management ACP page
 		$crawler = $this->get_manage_page();
 
-		// Jump to the add page
+		// Jump to the add ad page
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
 		$crawler = self::submit($form);
 		$this->assertContainsLang('ACP_ADS_ADD', $crawler->filter('#main h1')->text());
@@ -107,7 +109,7 @@ class acp_manage_test extends functional_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_CLICKS_LIMIT_INVALID'));
 
-		// Confirm error when submitting wrong username for ad owner
+		// Confirm error when submitting the wrong username for an ad owner
 		$form_data = array(
 			'ad_owner'	=> 'non-existent user',
 		);
@@ -135,7 +137,7 @@ class acp_manage_test extends functional_base
 		self::assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
 		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
 
-		// Confirm add
+		// Confirm ad added
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
 		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
@@ -148,7 +150,7 @@ class acp_manage_test extends functional_base
 		self::assertStringContainsString('2035-01-01', $crawler->text());
 
 		// Confirm the log entry has been added correctly
-		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");
 		self::assertStringContainsString(strip_tags($this->lang('ACP_PHPBB_ADS_ADD_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
@@ -160,7 +162,7 @@ class acp_manage_test extends functional_base
 		// Load Advertisement management ACP page
 		$crawler = $this->get_manage_page();
 
-		// Hit edit button
+		// Hit the edit button
 		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->ancestors()->first()->link();
 		$crawler = static::click($edit_link);
 		$this->assertContainsLang('ACP_ADS_EDIT', $crawler->filter('#main h1')->text());
@@ -225,7 +227,7 @@ class acp_manage_test extends functional_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_CLICKS_LIMIT_INVALID'));
 
-		// Confirm error when submitting wrong username for ad owner
+		// Confirm error when submitting the wrong username for an ad owner
 		$form_data = array(
 			'ad_owner'	=> 'non-existent user',
 		);
@@ -259,7 +261,7 @@ class acp_manage_test extends functional_base
 		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
 		$this->assertContainsLang('ACP_AD_EDIT_SUCCESS', $crawler->text());
 
-		// Confirm new ad appears in the list, is disabled and stard and end date is present and updated
+		// Confirm a new ad appears in the list, is disabled and start and end date is present and updated
 		$crawler = $this->get_manage_page();
 		self::assertStringContainsString('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
@@ -267,7 +269,7 @@ class acp_manage_test extends functional_base
 		self::assertStringContainsString('2035-01-02', $crawler->text());
 
 		// Confirm the log entry has been added correctly
-		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");
 		self::assertStringContainsString(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', $form_data['ad_name'])), $crawler->text());
 	}
 
@@ -279,7 +281,7 @@ class acp_manage_test extends functional_base
 		// Load Advertisement management ACP page
 		$crawler = $this->get_manage_page();
 
-		// Hit Disabled button
+		// Hit the Disabled button
 		$enable_link = $crawler->selectLink($this->lang('DISABLED'))->link();
 		$crawler = static::click($enable_link);
 		$this->assertContainsLang('ACP_AD_ENABLE_SUCCESS', $crawler->text());
@@ -287,7 +289,7 @@ class acp_manage_test extends functional_base
 		// Load Advertisement management ACP page again
 		$crawler = $this->get_manage_page();
 
-		// Hit Enabled button
+		// Hit the Enabled button
 		$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
 		$crawler = static::click($disable_link);
 		$this->assertContainsLang('ACP_AD_DISABLE_SUCCESS', $crawler->text());
@@ -314,26 +316,26 @@ class acp_manage_test extends functional_base
 		$crawler = self::submit($form, $form_data);
 		$this->assertContainsLang('ACP_AD_DELETE_SUCCESS', $crawler->text());
 
-		// Confirm ad list is empty
+		// Confirm an ad list is empty
 		$crawler = $this->get_manage_page();
 		$this->assertContainsLang('ACP_ADS_EMPTY', $crawler->filter('#main')->text());
 
 		// Confirm the log entry has been added correctly
-		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");
 		self::assertStringContainsString(strip_tags($this->lang('ACP_PHPBB_ADS_EDIT_LOG', 'Functional test name edited')), $crawler->text());
 	}
 
-	public static function click($link)
+	public static function click($link): Crawler
 	{
 		return self::$client->click($link);
 	}
 
-	protected function get_manage_page()
+	protected function get_manage_page(): Crawler
 	{
-		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid=$this->sid");
 	}
 
-	protected function submit_with_error($crawler, $form_data, $error_lang)
+	protected function submit_with_error($crawler, $form_data, $error_lang): void
 	{
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);

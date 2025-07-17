@@ -31,7 +31,7 @@ class end_date_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is present
+		// Confirm the above header ad is present
 		self::assertStringContainsString($ad_code, $crawler->html());
 	}
 
@@ -41,7 +41,7 @@ class end_date_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is present
+		// Confirm the above header ad is present
 		self::assertStringContainsString($ad_code, $crawler->html());
 
 		return $ad_code;
@@ -51,14 +51,14 @@ class end_date_test extends functional_base
 	{
 		$ad_code = $this->create_ad('below_header');
 
-		// Change the ads end date to a time long ago
+		// Change the ad end date to a time long ago
 		$sql = 'UPDATE phpbb_ads
 			SET ad_end_date = ' . strtotime('2000-01-01');
 		$this->db->sql_query($sql);
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm below header ad is not present
+		// Confirm the below header ad is not present
 		self::assertStringNotContainsString($ad_code, $crawler->html());
 	}
 }

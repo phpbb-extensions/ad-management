@@ -8,44 +8,70 @@
  *
  */
 
-namespace phpbb\ads\controller;
+namespace phpbb\ads\tests\controller;
 
-class helper_test extends \phpbb_database_test_case
+use DateTimeZone;
+use phpbb\ads\ad\manager;
+use phpbb\ads\controller\helper;
+use phpbb\ads\location\manager as location_manager;
+use phpbb\avatar\helper as avatar_helper;
+use phpbb\config\config;
+use phpbb\group\helper as group_helper;
+use phpbb\language\language;
+use phpbb\language\language_file_loader;
+use phpbb\log\log;
+use phpbb\path_helper;
+use phpbb\symfony_request;
+use phpbb\template\template;
+use phpbb\user;
+use phpbb\user_loader;
+use phpbb_database_test_case;
+use phpbb_mock_event_dispatcher;
+use phpbb_mock_request;
+use PHPUnit\DbUnit\DataSet\DefaultDataSet;
+use PHPUnit\DbUnit\DataSet\XmlDataSet;
+use PHPUnit\Framework\MockObject\MockObject;
+use phpbb\datetime;
+use phpbb\auth\auth;
+use phpbb\cache\service;
+use phpbb\request\request;
+
+class helper_test extends phpbb_database_test_case
 {
-	/** @var \phpbb\user */
-	protected $user;
+	/** @var user */
+	protected user $user;
 
-	/** @var \phpbb\user_loader */
-	protected $user_loader;
+	/** @var user_loader */
+	protected user_loader $user_loader;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\language\language */
-	protected $language;
+	/** @var MockObject|language */
+	protected language|MockObject $language;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
-	protected $template;
+	/** @var MockObject|template */
+	protected template|MockObject $template;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\log\log */
-	protected $log;
+	/** @var MockObject|log */
+	protected log|MockObject $log;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
-	protected $manager;
+	/** @var MockObject|manager */
+	protected manager|MockObject $manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\location\manager */
-	protected $location_manager;
+	/** @var MockObject|location_manager */
+	protected MockObject|location_manager $location_manager;
 
-	/** @var \phpbb\group\helper */
-	protected $group_helper;
-
-	/** @var string */
-	protected $root_path;
+	/** @var group_helper */
+	protected group_helper $group_helper;
 
 	/** @var string */
-	protected $php_ext;
+	protected string $root_path;
+
+	/** @var string */
+	protected string $php_ext;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -53,7 +79,7 @@ class helper_test extends \phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet()
+	public function getDataSet(): XmlDataSet|DefaultDataSet
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
@@ -69,43 +95,43 @@ class helper_test extends \phpbb_database_test_case
 
 		// Global variables
 		$db = $this->new_dbal();
-		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
+		$phpbb_dispatcher = new phpbb_mock_event_dispatcher();
 
 		// Load/Mock classes required by the controller class
-		$this->language = new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx));
-		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
-		$this->user->timezone = new \DateTimeZone('UTC');
-		$avatar_helper = $this->getMockBuilder('\phpbb\avatar\helper')
+		$this->language = new language(new language_file_loader($phpbb_root_path, $phpEx));
+		$this->user = new user($this->language, datetime::class);
+		$this->user->timezone = new DateTimeZone('UTC');
+		$avatar_helper = $this->getMockBuilder(avatar_helper::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->user_loader = new \phpbb\user_loader($avatar_helper, $db, $phpbb_root_path, $phpEx, 'phpbb_users');
-		$this->template = $this->getMockBuilder('\phpbb\template\template')
+		$this->user_loader = new user_loader($avatar_helper, $db, $phpbb_root_path, $phpEx, 'phpbb_users');
+		$this->template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->log = $this->getMockBuilder('\phpbb\log\log')
+		$this->log = $this->getMockBuilder(log::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
+		$this->location_manager = $this->getMockBuilder(location_manager::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$avatar_helper = $this->getMockBuilder('\phpbb\avatar\helper')
+		$avatar_helper = $this->getMockBuilder(avatar_helper::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->group_helper = new \phpbb\group\helper(
-			$this->getMockBuilder('\phpbb\auth\auth')->getMock(),
+		$this->group_helper = new group_helper(
+			$this->getMockBuilder(auth::class)->getMock(),
 			$avatar_helper,
-			$this->getMockBuilder('\phpbb\cache\service')->disableOriginalConstructor()->getMock(),
-			new \phpbb\config\config([]),
+			$this->getMockBuilder(service::class)->disableOriginalConstructor()->getMock(),
+			new config([]),
 			$this->language,
 			$phpbb_dispatcher,
-			new \phpbb\path_helper(
-				new \phpbb\symfony_request(
-					new \phpbb_mock_request()
+			new path_helper(
+				new symfony_request(
+					new phpbb_mock_request()
 				),
-				$this->getMockBuilder('\phpbb\request\request')->getMock(),
+				$this->getMockBuilder(request::class)->getMock(),
 				$phpbb_root_path,
 				$phpEx
 			),
@@ -119,11 +145,11 @@ class helper_test extends \phpbb_database_test_case
 	/**
 	 * Returns fresh new helper.
 	 *
-	 * @return	\phpbb\ads\controller\helper	Admin helper
+	 * @return	helper	Admin helper
 	 */
-	public function get_helper()
+	public function get_helper(): helper
 	{
-		$helper = new \phpbb\ads\controller\helper(
+		return new helper(
 			$this->user,
 			$this->user_loader,
 			$this->language,
@@ -135,8 +161,6 @@ class helper_test extends \phpbb_database_test_case
 			$this->root_path,
 			$this->php_ext
 		);
-
-		return $helper;
 	}
 
 	/**
@@ -144,7 +168,7 @@ class helper_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function assign_data_data()
+	public function assign_data_data(): array
 	{
 		return array(
 			array(array(
@@ -270,7 +294,7 @@ class helper_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function assign_locations_data()
+	public function assign_locations_data(): array
 	{
 		return array(
 			array(array()),
@@ -391,7 +415,7 @@ class helper_test extends \phpbb_database_test_case
 	{
 		$helper = $this->get_helper();
 		$result = $helper->get_find_username_link();
-		self::assertEquals("{$this->root_path}memberlist.{$this->php_ext}?mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true", $result);
+		self::assertEquals("{$this->root_path}memberlist.$this->php_ext?mode=searchuser&amp;form=acp_admanagement_add&amp;field=ad_owner&amp;select_single=true", $result);
 	}
 
 	/**
@@ -399,7 +423,7 @@ class helper_test extends \phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function is_expired_data()
+	public function is_expired_data(): array
 	{
 		return array(
 			array(array(

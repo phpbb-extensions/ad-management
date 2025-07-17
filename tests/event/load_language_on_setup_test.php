@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\event\dispatcher;
+
 class load_language_on_setup_test extends main_listener_base
 {
 	/**
@@ -17,13 +19,13 @@ class load_language_on_setup_test extends main_listener_base
 	*/
 	public function test_load_language_on_setup()
 	{
-		$dispatcher = new \phpbb\event\dispatcher();
+		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.user_setup', array($this->get_listener(), 'load_language_on_setup'));
 
 		$lang_set_ext = array();
 		$event_data = array('lang_set_ext');
 		$event_data_after = $dispatcher->trigger_event('core.user_setup', compact($event_data));
-		extract($event_data_after, EXTR_OVERWRITE);
+		extract($event_data_after);
 
 		self::assertEquals(array(
 			array(

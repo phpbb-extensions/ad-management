@@ -31,7 +31,7 @@ class content_only_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm above header ad is present
+		// Confirm the above header ad is present
 		self::assertStringContainsString($ad_code, $crawler->html());
 	}
 

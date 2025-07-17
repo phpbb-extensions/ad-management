@@ -10,21 +10,32 @@
 
 namespace phpbb\ads\tests\location;
 
-class location_base extends \phpbb_test_case
+use phpbb\ads\location\manager;
+use phpbb\config\config;
+use phpbb\language\language;
+use phpbb\language\language_file_loader;
+use phpbb\request\request;
+use phpbb\user;
+use phpbb_test_case;
+use PHPUnit\Framework\MockObject\MockObject;
+use phpbb\datetime;
+use phpbb\template\template;
+
+class location_base extends phpbb_test_case
 {
 	/** @var array */
-	protected $template_locations;
+	protected array $template_locations;
 
-	/** @var \phpbb\user */
-	protected $user;
+	/** @var user */
+	protected user $user;
 
-	/** @var \phpbb\language\language */
-	protected $language;
+	/** @var language */
+	protected language $language;
 
-	/** @var \phpbb\request\request|\PHPUnit\Framework\MockObject\MockObject */
-	protected $request;
+	/** @var request|MockObject */
+	protected MockObject|request $request;
 
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -38,14 +49,14 @@ class location_base extends \phpbb_test_case
 
 		global $phpbb_root_path, $phpEx;
 
-		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$this->language = new \phpbb\language\language($lang_loader);
-		$this->user = new \phpbb\user($this->language, '\phpbb\datetime');
-		$this->request = $this->getMockBuilder('\phpbb\request\request')
+		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
+		$this->language = new language($lang_loader);
+		$this->user = new user($this->language, datetime::class);
+		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$config = new \phpbb\config\config(array());
-		$template = $this->getMockBuilder('\phpbb\template\template')
+		$config = new config(array());
+		$template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
 		// Location types
@@ -88,10 +99,10 @@ class location_base extends \phpbb_test_case
 	/**
 	 * Returns fresh new location manager.
 	 *
-	 * @return    \phpbb\ads\location\manager    Location manager
+	 * @return    manager    Location manager
 	 */
-	public function get_manager()
+	public function get_manager(): manager
 	{
-		return new \phpbb\ads\location\manager($this->template_locations);
+		return new manager($this->template_locations);
 	}
 }

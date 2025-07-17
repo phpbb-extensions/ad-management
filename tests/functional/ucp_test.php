@@ -10,13 +10,15 @@
 
 namespace phpbb\ads\tests\functional;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 /**
  * @group functional
  */
 class ucp_test extends functional_base
 {
 	/**
-	 * Test that Advertisement management UCP module appears only when user owns an ad
+	 * Test that Advertisement management UCP module appears only when the user owns an ad
 	 */
 	public function test_ucp_module()
 	{
@@ -24,7 +26,7 @@ class ucp_test extends functional_base
 		$crawler = $this->get_ucp_module(false);
 		$this->assertContainsLang('MODULE_NOT_ACCESS', $crawler->text());
 
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid=$this->sid");
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
 		$crawler = self::submit($form);
 		$form_data = array(
@@ -54,8 +56,8 @@ class ucp_test extends functional_base
 		$this->assertContainsLang('AD_NAME', $crawler->filter('.table1')->text());
 	}
 
-	protected function get_ucp_module($assert_response_html = true)
+	protected function get_ucp_module($assert_response_html = true): Crawler
 	{
-		return self::request('GET', "ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats&sid={$this->sid}", array(), $assert_response_html);
+		return self::request('GET', "ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats&sid=$this->sid", array(), $assert_response_html);
 	}
 }

@@ -17,7 +17,7 @@ class increment_ads_views_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_ads_views_data()
+	public function increment_ads_views_data(): array
 	{
 		return array(
 			array(array(1)),

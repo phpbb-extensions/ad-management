@@ -10,15 +10,17 @@
 
 namespace phpbb\ads\tests\functional;
 
+use phpbb_functional_test_case;
+
 /**
 * @group functional
 */
-class functional_base extends \phpbb_functional_test_case
+class functional_base extends phpbb_functional_test_case
 {
 	/**
 	* {@inheritDoc}
 	*/
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -45,7 +47,7 @@ class functional_base extends \phpbb_functional_test_case
 	protected function create_ad($location, $end_date = '', $content_only = false, $centering = true, $start_date = '')
 	{
 		// Load Advertisement management ACP page
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid=$this->sid");
 
 		// Jump to the add page
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
@@ -74,16 +76,16 @@ class functional_base extends \phpbb_functional_test_case
 		return $form_data['ad_code'];
 	}
 
-	protected function disable_all_ads()
+	protected function disable_all_ads(): void
 	{
 		$sql = 'UPDATE phpbb_ads
 			SET ad_enabled = 0';
 		$this->db->sql_query($sql);
 	}
 
-	protected function enable_quick_reply()
+	protected function enable_quick_reply(): void
 	{
-		$crawler = self::request('GET', "adm/index.php?i=acp_board&mode=post&sid={$this->sid}");
+		$crawler = self::request('GET', "adm/index.php?i=acp_board&mode=post&sid=$this->sid");
 		$form = $crawler->selectButton('allow_quick_reply_enable')->form();
 		$crawler = self::submit($form);
 		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());

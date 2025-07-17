@@ -17,7 +17,7 @@ class update_ad_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function update_ad_data()
+	public function update_ad_data(): array
 	{
 		return array(
 			array(

@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\event;
 
+use phpbb\event\dispatcher;
+
 class setup_ads_test extends main_listener_base
 {
 	/**
@@ -22,13 +24,13 @@ class setup_ads_test extends main_listener_base
 		$this->user->page['page_dir'] = '';
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$location_ids = $this->location_manager->get_all_location_ids();
-		$ads = $this->manager->get_ads($location_ids, $user_groups, false);
+		$ads = $this->manager->get_ads($location_ids, $user_groups);
 
 		$this->template
 			->expects(self::exactly(count($ads)))
 			->method('assign_vars');
 
-		$dispatcher = new \phpbb\event\dispatcher();
+		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'setup_ads'));
 		$dispatcher->trigger_event('core.page_header_after');
 	}

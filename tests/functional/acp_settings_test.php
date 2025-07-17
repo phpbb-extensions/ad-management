@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\functional;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 /**
 * @group functional
 */
@@ -23,7 +25,7 @@ class acp_settings_test extends functional_base
 		// Load Advertisement management ACP page
 		$crawler = $this->get_settings_page();
 
-		// Confirm page contains proper heading
+		// Confirm page contains the proper heading
 		$this->assertContainsLang('SETTINGS', $crawler->text());
 
 		// Submit form
@@ -39,14 +41,14 @@ class acp_settings_test extends functional_base
 		// Load Advertisement management ACP page again
 		$crawler = $this->get_settings_page();
 
-		// Confirm Adblocker, views and clicks are enabled and admin group is selected
+		// Confirm Adblocker, views and clicks are enabled, and an admin group is selected
 		self::assertEquals('1', $crawler->filter('option[selected]')->attr('value'));
 		self::assertEquals('1', $crawler->filter('input[name="enable_views"][checked]')->attr('value'));
 		self::assertEquals('1', $crawler->filter('input[name="enable_clicks"][checked]')->attr('value'));
 	}
 
-	protected function get_settings_page()
+	protected function get_settings_page(): Crawler
 	{
-		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid={$this->sid}");
+		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=settings&sid=$this->sid");
 	}
 }

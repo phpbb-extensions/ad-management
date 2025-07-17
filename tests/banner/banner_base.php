@@ -10,21 +10,28 @@
 
 namespace phpbb\ads\tests\banner;
 
-class banner_base extends \phpbb_test_case
-{
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\upload */
-	protected $files_upload;
+use phpbb\ads\banner\banner;
+use phpbb\files\filespec;
+use phpbb\files\upload;
+use phpbb\filesystem\filesystem;
+use phpbb_test_case;
+use PHPUnit\Framework\MockObject\MockObject;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\filesystem\filesystem */
-	protected $filesystem;
+class banner_base extends phpbb_test_case
+{
+	/** @var MockObject|upload */
+	protected MockObject|upload $files_upload;
+
+	/** @var MockObject|filesystem */
+	protected filesystem|MockObject $filesystem;
 
 	/** @var string */
-	protected $root_path;
+	protected string $root_path;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\files\filespec */
-	protected $file;
+	/** @var MockObject|filespec */
+	protected MockObject|filespec $file;
 
-	protected static function setup_extensions()
+	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
 	}
@@ -38,10 +45,10 @@ class banner_base extends \phpbb_test_case
 
 		global $phpbb_root_path;
 
-		$this->files_upload = $this->getMockBuilder('\phpbb\files\upload')
+		$this->files_upload = $this->getMockBuilder(upload::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->filesystem = $this->getMockBuilder('\phpbb\filesystem\filesystem')
+		$this->filesystem = $this->getMockBuilder(filesystem::class)
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -51,11 +58,11 @@ class banner_base extends \phpbb_test_case
 	/**
 	 * Returns fresh new banner manager.
 	 *
-	 * @return    \phpbb\ads\banner\banner    Banner manager
+	 * @return    banner    Banner manager
 	 */
-	public function get_manager()
+	public function get_manager(): banner
 	{
-		return new \phpbb\ads\banner\banner(
+		return new banner(
 			$this->files_upload,
 			$this->filesystem,
 			$this->root_path

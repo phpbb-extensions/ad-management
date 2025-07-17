@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\tests\banner;
 
+use phpbb\files\filespec;
+
 class remove_test extends banner_base
 {
 	/**
@@ -20,7 +22,7 @@ class remove_test extends banner_base
 		$manager = $this->get_manager();
 
 		// Mock filespec
-		$file = $this->getMockBuilder('\phpbb\files\filespec')
+		$file = $this->getMockBuilder(filespec::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$manager->set_file($file);

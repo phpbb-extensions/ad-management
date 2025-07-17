@@ -27,7 +27,7 @@ class delete_ad_locations_test extends ad_base
 	}
 
 	/**
-	 * Test delete_ad_locations() method with non-existent ad
+	 * Test the delete_ad_locations () method with a non-existent ad
 	 */
 	public function test_delete_ad_locations_no_ad()
 	{
