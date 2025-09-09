@@ -20,11 +20,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class main_listener implements EventSubscriberInterface
 {
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	/** @var \phpbb\template\template */
 	protected $template;
-
-	/** @var \phpbb\template\context */
-	protected $template_context;
 
 	/** @var \phpbb\user */
 	protected $user;
@@ -58,7 +58,7 @@ class main_listener implements EventSubscriberInterface
 		return array(
 			'core.permissions'				=> 'set_permissions',
 			'core.user_setup'				=> 'load_language_on_setup',
-			'core.page_footer_after'		=> array(array('setup_ads'), array('visual_demo')),
+			'core.page_footer_after'		=> array(array('setup_ads'), array('visual_demo'), array('append_agreement')),
 			'core.page_header_after'		=> array(array('adblocker'), array('clicks')),
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
@@ -70,8 +70,8 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 *
+	 * @param \phpbb\language\language				$language			Language object
 	 * @param \phpbb\template\template				$template			Template object
-	 * @param \phpbb\template\context				$template_context	Template context object
 	 * @param \phpbb\user							$user				User object
 	 * @param \phpbb\config\config					$config				Config object
 	 * @param \phpbb\ads\ad\manager					$manager			Advertisement manager object
@@ -81,10 +81,10 @@ class main_listener implements EventSubscriberInterface
 	 * @param \phpbb\cache\driver\driver_interface	$cache				Cache driver object
 	 * @param string								$php_ext			PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\template\context $template_context, \phpbb\user $user, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, \phpbb\cache\driver\driver_interface $cache, $php_ext)
+	public function __construct(\phpbb\language\language $language, \phpbb\template\template $template, \phpbb\user $user, \phpbb\config\config $config, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager, \phpbb\controller\helper $controller_helper, \phpbb\request\request $request, \phpbb\cache\driver\driver_interface $cache, $php_ext)
 	{
+		$this->language = $language;
 		$this->template = $template;
-		$this->template_context = $template_context;
 		$this->user = $user;
 		$this->config = $config;
 		$this->manager = $manager;
@@ -131,10 +131,8 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function setup_ads()
 	{
-		// Reason we access template's root ref is to check for existence
-		// of 'MESSAGE_TEXT', which signals error page.
-		$rootref = $this->template_context->get_root_ref();
-		$non_content_page = !empty($rootref['MESSAGE_TEXT']) || $this->is_non_content_page();
+		// check for the existence of 'MESSAGE_TEXT', which signals it's an error page.
+		$non_content_page = $this->template->retrieve_var('MESSAGE_TEXT') || $this->is_non_content_page();
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ad_ids = array();
@@ -277,5 +275,22 @@ class main_listener implements EventSubscriberInterface
 			'mcp.' . $this->php_ext,
 			'adm',
 		])) > 0;
+	}
+
+	/**
+	 * Append additional agreement details to the privacy agreement.
+	 *
+	 * @return void
+	 */
+	public function append_agreement()
+	{
+		if (!$this->template->retrieve_var('S_AGREEMENT') || ($this->template->retrieve_var('AGREEMENT_TITLE') !== $this->language->lang('PRIVACY')))
+		{
+			return;
+		}
+
+		$this->language->add_lang('ucp', 'phpbb/ads');
+
+		$this->template->append_var('AGREEMENT_TEXT', $this->language->lang('PHPBB_ADS_PRIVACY_POLICY', $this->config['sitename']));
 	}
 }

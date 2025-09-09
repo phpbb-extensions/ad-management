@@ -54,6 +54,12 @@ class ucp_test extends functional_base
 		$this->assertContainsLang('AD_NAME', $crawler->filter('.table1')->text());
 	}
 
+	public function test_ucp_agreement()
+	{
+		$crawler = self::request('GET', 'ucp.php?mode=privacy');
+		$this->assertStringContainsString($this->lang('PHPBB_ADS_PRIVACY_POLICY', 'yourdomain.com'), $crawler->filter('.agreement')->html());
+	}
+
 	protected function get_ucp_module($assert_response_html = true)
 	{
 		return self::request('GET', "ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats&sid={$this->sid}", array(), $assert_response_html);
