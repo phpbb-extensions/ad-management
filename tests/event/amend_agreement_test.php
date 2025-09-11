@@ -37,6 +37,7 @@ class amend_agreement_test extends main_listener_base
 	public function test_append_agreement($s_agreement, $agreement_title, $expected_append_calls)
 	{
 		$this->config['sitename'] = 'Test Forum';
+		$this->user->page['page_name'] = 'ucp.php';
 
 		$this->template->expects(self::atMost(2))
 			->method('retrieve_var')
