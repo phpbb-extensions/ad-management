@@ -3,33 +3,18 @@
 	(() => {
 		'use strict';
 
-		const STORAGE_KEY = 'phpbb_ads_pop_up';
-		const SHOW_INTERVAL_DAYS = 1; // now set to 1 day
+		const key = 'phpbb_ads_pop_up';
+		const interval_days = 1;
+		const lastShown = localStorage.getItem(key);
 
-		const shouldShowAd = () => {
-			const lastShown = localStorage.getItem(STORAGE_KEY);
-
-			if (!lastShown) {
-				return true; // never shown before
-			}
-
-			const lastShownDate = new Date(parseInt(lastShown, 10));
-			const now = new Date();
-			const diffDays = (now - lastShownDate) / (1000 * 60 * 60 * 24);
-
-			return diffDays >= SHOW_INTERVAL_DAYS;
-		};
-
-		window.addEventListener('load', () => {
-			if (shouldShowAd()) {
-				// Save the current timestamp
-				localStorage.setItem(STORAGE_KEY, Date.now().toString());
-
+		if (!lastShown || Date.now() - parseInt(lastShown, 10) >= interval_days * 86400000) {
+			localStorage.setItem(key, Date.now());
+			window.addEventListener('load', () => {
 				phpbb.alert(
 					'{{ lang('ADVERTISEMENT')|upper|e('js') }}',
 					`{{ ad.renderAds(AD_POP_UP, AD_POP_UP_ID, AD_POP_UP_CENTER, 'margin: 0;') }}`
 				);
-			}
-		});
+			});
+		}
 	})();
 </script>
