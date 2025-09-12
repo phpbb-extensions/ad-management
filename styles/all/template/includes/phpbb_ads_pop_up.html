@@ -7,7 +7,7 @@
 		const interval_days = 1;
 		const lastShown = localStorage.getItem(key);
 
-		if (!lastShown || Date.now() - parseInt(lastShown, 10) >= interval_days * 86400000) {
+		if (!lastShown || Date.now() - +lastShown >= interval_days * 86400000) {
 			localStorage.setItem(key, Date.now());
 			window.addEventListener('load', () => {
 				phpbb.alert(
