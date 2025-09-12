@@ -1,13 +1,35 @@
 {% import '@phpbb_ads/phpbb_ads_macro.html' as ad %}
 <script>
-	(function($, window, document, phpbb) {
+	(() => {
 		'use strict';
 
-		$(window).on('load', function() {
-			if (!localStorage.getItem('phpbb_ads_pop_up')) {
-				localStorage.setItem('phpbb_ads_pop_up', 'true');
-				phpbb.alert('{{ lang('ADVERTISEMENT')|upper|e('js') }}', `{{ ad.renderAds(AD_POP_UP, AD_POP_UP_ID, AD_POP_UP_CENTER, 'margin: 0;') }}`);
+		const STORAGE_KEY = 'phpbb_ads_pop_up';
+		const SHOW_INTERVAL_DAYS = 1; // now set to 1 day
+
+		const shouldShowAd = () => {
+			const lastShown = localStorage.getItem(STORAGE_KEY);
+
+			if (!lastShown) {
+				return true; // never shown before
+			}
+
+			const lastShownDate = new Date(parseInt(lastShown, 10));
+			const now = new Date();
+			const diffDays = (now - lastShownDate) / (1000 * 60 * 60 * 24);
+
+			return diffDays >= SHOW_INTERVAL_DAYS;
+		};
+
+		window.addEventListener('load', () => {
+			if (shouldShowAd()) {
+				// Save the current timestamp
+				localStorage.setItem(STORAGE_KEY, Date.now().toString());
+
+				phpbb.alert(
+					'{{ lang('ADVERTISEMENT')|upper|e('js') }}',
+					`{{ ad.renderAds(AD_POP_UP, AD_POP_UP_ID, AD_POP_UP_CENTER, 'margin: 0;') }}`
+				);
 			}
 		});
-	})(jQuery, window, document, phpbb);
+	})();
 </script>
