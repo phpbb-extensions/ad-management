@@ -3,7 +3,7 @@
 	"type": "phpbb-extension",
 	"description": "An extension for phpBB that allows administrators to manage and display advertisements on their forums.",
 	"homepage": "https://www.phpbb.com/customise/db/extension/ads/",
-	"version": "3.0.0",
+	"version": "3.1.0-dev",
 	"keywords": ["phpbb", "extension", "advertisement"],
 	"license": "GPL-2.0-only",
 	"authors": [
@@ -25,7 +25,7 @@
 	],
 	"require": {
 		"php": ">=8.1",
-		"composer/installers": "~1.0"
+		"composer/installers": "^1.0 || ^2.0"
 	},
 	"require-dev": {
 		"phing/phing": "~2.4"
@@ -40,6 +40,9 @@
 			"directory": "/customise/db/extension/ads",
 			"filename": "version_check",
 			"ssl": true
+		},
+		"branch-alias": {
+			"dev-develop": "3.1.x-dev"
 		}
 	}
 }
