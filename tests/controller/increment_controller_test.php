@@ -15,8 +15,6 @@ use phpbb\ads\controller\increment_controller;
 use phpbb\exception\http_exception;
 use phpbb\request\request;
 use phpbb_database_test_case;
-use PHPUnit\DbUnit\DataSet\DefaultDataSet;
-use PHPUnit\DbUnit\DataSet\XmlDataSet;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -39,7 +37,7 @@ class increment_controller_test extends phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet(): XmlDataSet|DefaultDataSet
+	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/clicks.xml');
 	}

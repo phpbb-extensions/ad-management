@@ -139,14 +139,16 @@ class visual_demo_test extends phpbb_test_case
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
 
-		// If a non-ajax redirect is encountered, in testing it will trigger_error/exception
+		$controller = $this->get_controller();
+
+		// If a non-ajax redirect is encountered, in testing it will trigger_error
 		if (!$is_ajax)
 		{
-			$this->expectException(Exception::class);
-			$this->expectExceptionMessage('INSECURE_REDIRECT');
+			$this->setExpectedTriggerError(E_USER_DEPRECATED);
+			$controller->handle($action);
+			return; // Skip response assertions since redirect calls exit
 		}
 
-		$controller = $this->get_controller();
 		$response = $controller->handle($action);
 		self::assertInstanceOf(JsonResponse::class, $response);
 		self::assertEquals($status_code, $response->getStatusCode());

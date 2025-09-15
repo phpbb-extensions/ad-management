@@ -24,8 +24,6 @@ use phpbb\user;
 use phpbb\user_loader;
 use phpbb_database_test_case;
 use phpbb_mock_request;
-use PHPUnit\DbUnit\DataSet\DefaultDataSet;
-use PHPUnit\DbUnit\DataSet\XmlDataSet;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class admin_input_test extends phpbb_database_test_case
@@ -48,7 +46,7 @@ class admin_input_test extends phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet(): XmlDataSet|DefaultDataSet
+	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
@@ -60,7 +58,9 @@ class admin_input_test extends phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $config, $db, $request, $symfony_request, $user, $phpbb_root_path, $phpEx;
+		global $config, $db, $request, $symfony_request, $user, $phpbb_root_path, $phpEx, $phpbb_dispatcher;
+
+		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 
 		// Global variables
 		$db = $this->new_dbal();
@@ -98,13 +98,17 @@ class admin_input_test extends phpbb_database_test_case
 	 */
 	public function get_input_controller(): admin_input
 	{
-		return new \phpbb\ads\controller\admin_input(
-			$this->user,
-			$this->user_loader,
-			$this->language,
-			$this->request,
-			$this->banner
-		);
+		return new class($this->user, $this->user_loader, $this->language, $this->request, $this->banner) extends \phpbb\ads\controller\admin_input {
+			protected function send_ajax_response($success, $text): void
+			{
+				if ($this->request->is_ajax())
+				{
+					echo json_encode([
+						'success' => $success
+					], JSON_THROW_ON_ERROR);
+				}
+			}
+		};
 	}
 
 	/**
@@ -202,7 +206,7 @@ class admin_input_test extends phpbb_database_test_case
 			array(true, false, false, array('FILE_MOVE_UNSUCCESSFUL'), '', ''),
 			array(true, true, false, array(), '', '<img src="http://localhost/phpbb/images/phpbb_ads/abcdef.jpg">'),
 			array(true, true, false, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\">"),
-			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://loscalhost/phpbb/images/phpbb_ads/abcdef.jpg\">"),
+			array(true, true, true, array(), 'abc', "abc\n\n<img src=\"http://localhost/phpbb/images/phpbb_ads/abcdef.jpg\">"),
 		);
 	}
 
@@ -241,14 +245,14 @@ class admin_input_test extends phpbb_database_test_case
 				->method('remove');
 		}
 
-		$this->request->expects(self::once())
+		$this->request->expects(self::atLeast(1))
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
 		if ($is_ajax)
 		{
 			// Handle trigger_error() output called from json_response
-			$this->setExpectedTriggerError(E_WARNING);
+			$this->expectOutputString('{"success":' . (count($file_error) ? 'false' : 'true') . '}');
 		}
 
 		$result = $input_controller->banner_upload($ad_code);

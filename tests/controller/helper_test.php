@@ -28,8 +28,6 @@ use phpbb\user_loader;
 use phpbb_database_test_case;
 use phpbb_mock_event_dispatcher;
 use phpbb_mock_request;
-use PHPUnit\DbUnit\DataSet\DefaultDataSet;
-use PHPUnit\DbUnit\DataSet\XmlDataSet;
 use PHPUnit\Framework\MockObject\MockObject;
 use phpbb\datetime;
 use phpbb\auth\auth;
@@ -79,7 +77,7 @@ class helper_test extends phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet(): XmlDataSet|DefaultDataSet
+	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}

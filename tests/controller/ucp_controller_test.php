@@ -19,8 +19,6 @@ use phpbb\language\language_file_loader;
 use phpbb\template\template;
 use phpbb\user;
 use phpbb_database_test_case;
-use PHPUnit\DbUnit\DataSet\DefaultDataSet;
-use PHPUnit\DbUnit\DataSet\XmlDataSet;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ucp_controller_test extends phpbb_database_test_case
@@ -57,7 +55,7 @@ class ucp_controller_test extends phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet(): XmlDataSet|DefaultDataSet
+	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}

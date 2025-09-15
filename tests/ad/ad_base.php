@@ -14,8 +14,6 @@ use phpbb\ads\ad\manager;
 use phpbb\config\config;
 use phpbb\db\driver\driver_interface;
 use phpbb_database_test_case;
-use PHPUnit\DbUnit\DataSet\DefaultDataSet;
-use PHPUnit\DbUnit\DataSet\XmlDataSet;
 
 class ad_base extends phpbb_database_test_case
 {
@@ -45,7 +43,7 @@ class ad_base extends phpbb_database_test_case
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDataSet(): XmlDataSet|DefaultDataSet
+	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/../fixtures/ad.xml');
 	}
