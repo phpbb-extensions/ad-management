@@ -20,7 +20,7 @@ class increment_controller_test extends functional_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_controller_data(): array
+	public static function increment_controller_data(): array
 	{
 		return array(
 			array('app.php/adsclick/1'),

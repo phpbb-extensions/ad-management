@@ -88,7 +88,7 @@ class visual_demo_test extends phpbb_test_case
 	 *
 	 * @return array Test data
 	 */
-	public function controller_data(): array
+	public static function controller_data(): array
 	{
 		return array(
 			array(
@@ -159,7 +159,7 @@ class visual_demo_test extends phpbb_test_case
 	 *
 	 * @return array Test data
 	 */
-	public function controller_fails_data(): array
+	public static function controller_fails_data(): array
 	{
 		return array(
 			array(

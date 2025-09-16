@@ -17,7 +17,7 @@ class run_test extends analyser_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function run_data(): array
+	public static function run_data(): array
 	{
 		return array(
 			array('&lt;script async&gt;alert()&lt;/script&gt;', false, array(

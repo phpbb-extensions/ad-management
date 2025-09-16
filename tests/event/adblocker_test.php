@@ -19,7 +19,7 @@ class adblocker_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_adblocker(): array
+	public static function data_adblocker(): array
 	{
 		return array(
 			array(0, false), // disabled; should not display

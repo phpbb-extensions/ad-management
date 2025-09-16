@@ -195,7 +195,7 @@ class admin_controller_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_mode_settings(): array
+	public static function data_mode_settings(): array
 	{
 		return array(
 			array(false, 0, array(0)),
@@ -265,7 +265,7 @@ class admin_controller_test extends phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function data_mode_manage(): array
+	public static function data_mode_manage(): array
 	{
 		return array(
 			array('add', 'action_add'),
@@ -507,7 +507,7 @@ class admin_controller_test extends phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_add_data(): array
+	public static function action_add_data(): array
 	{
 		return array(
 			array(true, 0),
@@ -597,7 +597,7 @@ class admin_controller_test extends phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_edit_no_submit_data(): array
+	public static function action_edit_no_submit_data(): array
 	{
 		return array(
 			array(0),
@@ -763,7 +763,7 @@ class admin_controller_test extends phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_edit_data(): array
+	public static function action_edit_data(): array
 	{
 		return array(
 			array(true, false, 0),
@@ -901,7 +901,7 @@ class admin_controller_test extends phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function ad_enable_data(): array
+	public static function ad_enable_data(): array
 	{
 		return array(
 			array(0, true, false, 'ACP_AD_ENABLE_ERRORED'),
@@ -967,7 +967,7 @@ class admin_controller_test extends phpbb_database_test_case
 	*
 	* @return array Array of test data
 	*/
-	public function action_delete_data(): array
+	public static function action_delete_data(): array
 	{
 		return array(
 			array(999, 0, true, true),

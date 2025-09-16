@@ -77,7 +77,7 @@ class ucp_module_test extends phpbb_test_case
 		), $this->module_manager->get_module_infos('ucp', 'ucp_main_module'));
 	}
 
-	public function module_auth_test_data(): array
+	public static function module_auth_test_data(): array
 	{
 		return array(
 			// module_auth, expected result

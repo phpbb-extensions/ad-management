@@ -17,7 +17,7 @@ class get_ads_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function get_ads_data(): array
+	public static function get_ads_data(): array
 	{
 		return array(
 			array(array('after_profile'), array(

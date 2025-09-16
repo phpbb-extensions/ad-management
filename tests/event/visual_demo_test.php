@@ -20,7 +20,7 @@ class visual_demo_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_visual_demo(): array
+	public static function data_visual_demo(): array
 	{
 		return array(
 			array(true),

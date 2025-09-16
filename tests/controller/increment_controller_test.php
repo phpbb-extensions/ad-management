@@ -75,7 +75,7 @@ class increment_controller_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_clicks_data(): array
+	public static function increment_clicks_data(): array
 	{
 		return array(
 			array(0, true),
@@ -114,7 +114,7 @@ class increment_controller_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_views_data(): array
+	public static function increment_views_data(): array
 	{
 		return array(
 			array('0', true),

@@ -17,7 +17,7 @@ class get_all_location_ids_test extends location_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function get_all_location_ids_data(): array
+	public static function get_all_location_ids_data(): array
 	{
 		return array(
 			array('index', '', false, array(

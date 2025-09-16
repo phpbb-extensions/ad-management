@@ -20,7 +20,7 @@ class upload_test extends banner_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function upload_data(): array
+	public static function upload_data(): array
 	{
 		return array(
 			array(false),

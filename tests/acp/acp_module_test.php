@@ -82,7 +82,7 @@ class acp_module_test extends phpbb_test_case
 		), $this->module_manager->get_module_infos('acp', 'acp_main_module'));
 	}
 
-	public function module_auth_test_data(): array
+	public static function module_auth_test_data(): array
 	{
 		return array(
 			// module_auth, expected result
@@ -99,7 +99,7 @@ class acp_module_test extends phpbb_test_case
 		self::assertEquals($expected, p_master::module_auth($module_auth, 0));
 	}
 
-	public function main_module_test_data(): array
+	public static function main_module_test_data(): array
 	{
 		return array(
 			array('manage'),

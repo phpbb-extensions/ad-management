@@ -17,7 +17,7 @@ class remove_ad_owner_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function remove_ad_owner_data(): array
+	public static function remove_ad_owner_data(): array
 	{
 		return array(
 			array(array('2')),

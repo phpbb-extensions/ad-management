@@ -19,7 +19,7 @@ class disable_xss_protection_test extends main_listener_base
 	 *
 	 * @return array
 	 */
-	public function disable_xss_protection_data(): array
+	public static function disable_xss_protection_data(): array
 	{
 		return array(
 			// only add new header to Chrome browsers on the phpbb-ads acp page

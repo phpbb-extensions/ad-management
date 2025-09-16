@@ -17,7 +17,7 @@ class increment_ad_clicks_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_ad_clicks_data(): array
+	public static function increment_ad_clicks_data(): array
 	{
 		return array(
 			array(1),

@@ -19,7 +19,7 @@ class create_storage_dir_test extends banner_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function create_storage_dir_data(): array
+	public static function create_storage_dir_data(): array
 	{
 		return array(
 			array(false, false),

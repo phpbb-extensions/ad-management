@@ -117,7 +117,7 @@ class ucp_controller_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function main_data(): array
+	public static function main_data(): array
 	{
 		return array(
 			array(1, 1, array(

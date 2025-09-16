@@ -166,7 +166,7 @@ class helper_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function assign_data_data(): array
+	public static function assign_data_data(): array
 	{
 		return array(
 			array(array(
@@ -292,7 +292,7 @@ class helper_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function assign_locations_data(): array
+	public static function assign_locations_data(): array
 	{
 		return array(
 			array(array()),
@@ -421,7 +421,7 @@ class helper_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function is_expired_data(): array
+	public static function is_expired_data(): array
 	{
 		return array(
 			array(array(

@@ -116,7 +116,7 @@ class admin_input_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function get_form_data_data(): array
+	public static function get_form_data_data(): array
 	{
 		return array(
 			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['FORM_INVALID']),
@@ -197,7 +197,7 @@ class admin_input_test extends phpbb_database_test_case
 	 *
 	 * @return array Array of test data
 	 */
-	public function banner_upload_data(): array
+	public static function banner_upload_data(): array
 	{
 		return array(
 			array(false, false, false, array('CANNOT_CREATE_DIRECTORY'), '', ''),

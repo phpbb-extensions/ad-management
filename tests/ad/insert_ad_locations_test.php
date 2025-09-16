@@ -17,7 +17,7 @@ class insert_ad_locations_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function insert_ad_locations_data(): array
+	public static function insert_ad_locations_data(): array
 	{
 		return array(
 			array(

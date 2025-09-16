@@ -19,7 +19,7 @@ class views_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function views_with_bots_data(): array
+	public static function views_with_bots_data(): array
 	{
 		return array(
 			array(true),

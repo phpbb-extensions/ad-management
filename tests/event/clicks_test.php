@@ -19,7 +19,7 @@ class clicks_test extends main_listener_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function data_clicks(): array
+	public static function data_clicks(): array
 	{
 		return array(
 			array('0'),
