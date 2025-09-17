@@ -98,17 +98,13 @@ class admin_input_test extends phpbb_database_test_case
 	 */
 	public function get_input_controller(): admin_input
 	{
-		return new class($this->user, $this->user_loader, $this->language, $this->request, $this->banner) extends \phpbb\ads\controller\admin_input {
-			protected function send_ajax_response($success, $text): void
-			{
-				if ($this->request->is_ajax())
-				{
-					echo json_encode([
-						'success' => $success
-					], JSON_THROW_ON_ERROR);
-				}
-			}
-		};
+		return new \phpbb\ads\controller\admin_input(
+			$this->user,
+			$this->user_loader,
+			$this->language,
+			$this->request,
+			$this->banner
+		);
 	}
 
 	/**
@@ -245,14 +241,14 @@ class admin_input_test extends phpbb_database_test_case
 				->method('remove');
 		}
 
-		$this->request->expects(self::atLeast(1))
+		$this->request->expects(self::once())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
 		if ($is_ajax)
 		{
-			// Handle trigger_error() output called from json_response
-			$this->expectOutputString('{"success":' . (count($file_error) ? 'false' : 'true') . '}');
+			$text = !empty($file_error) ? '"CANNOT_CREATE_DIRECTORY"' : '"' . addcslashes(trim(substr($ad_code_expected, strpos($ad_code_expected, '<img'))), "/\"") . '"';
+			$this->expectOutputString('{"success":' . (count($file_error) ? 'false' : 'true') . ',"title":"Information","text":' . $text . '}');
 		}
 
 		$result = $input_controller->banner_upload($ad_code);

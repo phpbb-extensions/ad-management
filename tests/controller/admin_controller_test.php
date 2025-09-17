@@ -930,6 +930,15 @@ class admin_controller_test extends phpbb_database_test_case
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
+		if ($is_ajax)
+		{
+			$this->expectOutputString('{"text":"' . ($enable ? 'Enabled' : 'Disabled') . '","title":"AD_ENABLE_TITLE"}');
+		}
+		else
+		{
+			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
+		}
+
 		$variable_expectations = [['action', ''], ['id', 0]];
 		$return_values = [$enable ? 'enable' : 'disable', $ad_id];
 		$this->request
@@ -941,23 +950,6 @@ class admin_controller_test extends phpbb_database_test_case
 				self::assertEquals($expectation[1], $arg2);
 				return array_shift($return_values);
 			});
-
-		if ($is_ajax)
-		{
-			// Handle trigger_error() output called from json_response
-			if (version_compare(\PHPUnit\Runner\Version::id(), '10.0.0', '>='))
-			{
-				$this->markTestSkipped('setExpectedTriggerError not available in PHPUnit 10+');
-			}
-			else
-			{
-				$this->setExpectedTriggerError(E_WARNING);
-			}
-		}
-		else
-		{
-			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
-		}
 
 		$controller->mode_manage();
 	}
