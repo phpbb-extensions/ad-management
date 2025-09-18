@@ -926,7 +926,7 @@ class admin_controller_test extends phpbb_database_test_case
 			->method('update_ad')
 			->willReturn((bool) $ad_id);
 
-		$this->request->expects(self::once())
+		$this->request->expects($ad_id ? self::once() : self::never())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 

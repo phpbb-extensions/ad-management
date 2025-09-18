@@ -380,20 +380,20 @@ class admin_controller
 			'ad_enabled' => (int) $enable,
 		));
 
-		// If AJAX was used, show user a result message
-		if ($this->request->is_ajax())
-		{
-			$json_response = new \phpbb\json_response;
-			$json_response->send(array(
-				'text'  => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
-				'title' => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
-			));
-		}
-
-		// Otherwise, show traditional infobox
 		if ($success)
 		{
-			$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS');
+			if ($this->request->is_ajax())
+			{
+				$json_response = new \phpbb\json_response;
+				$json_response->send(array(
+					'text'  => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
+					'title' => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
+				));
+			}
+			else
+			{
+				$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS');
+			}
 		}
 		else
 		{
