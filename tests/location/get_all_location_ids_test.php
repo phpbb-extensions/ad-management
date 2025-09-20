@@ -20,7 +20,7 @@ class get_all_location_ids_test extends location_base
 	public function get_all_location_ids_data()
 	{
 		return array(
-			array('index', '', false, array(
+			array('index', '', array(
 				'above_header',
 				'after_header_navbar',
 				'below_header',
@@ -31,7 +31,7 @@ class get_all_location_ids_test extends location_base
 				'slide_up',
 				'scripts',
 			)),
-			array('viewtopic', '', false, array(
+			array('viewtopic', '', array(
 				'above_header',
 				'after_header_navbar',
 				'below_header',
@@ -48,7 +48,7 @@ class get_all_location_ids_test extends location_base
 				'slide_up',
 				'scripts',
 			)),
-			array('memberlist', 'viewprofile', false, array(
+			array('memberlist', 'viewprofile', array(
 				'above_header',
 				'after_header_navbar',
 				'below_header',
@@ -61,13 +61,14 @@ class get_all_location_ids_test extends location_base
 				'slide_up',
 				'scripts',
 			)),
-			array('index', '', true, array(
+			array('index', '', array(
 				'above_header',
 				'after_header_navbar',
 				'below_header',
 				'above_footer',
 				'after_footer_navbar',
 				'below_footer',
+				'pop_up',
 				'slide_up',
 				'scripts',
 			)),
@@ -79,15 +80,10 @@ class get_all_location_ids_test extends location_base
 	 *
 	 * @dataProvider get_all_location_ids_data
 	 */
-	public function test_get_all_location_ids($page_name, $query_string, $cookie, $expected)
+	public function test_get_all_location_ids($page_name, $query_string, $expected)
 	{
 		$this->user->page['page_name'] = $page_name;
 		$this->user->page['query_string'] = $query_string;
-
-		$this->request
-			->method('is_set')
-			->with('_pop_up')
-			->willReturn($cookie);
 
 		$manager = $this->get_manager();
 

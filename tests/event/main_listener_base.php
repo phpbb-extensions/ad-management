@@ -18,11 +18,11 @@ class main_listener_base extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\context */
-	protected $template_context;
-
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\user */
 	protected $user;
+
+	/** @var \phpbb\language\language */
+	protected $language;
 
 	/** @var string ads_table */
 	protected $ads_table;
@@ -87,8 +87,8 @@ class main_listener_base extends \phpbb_database_test_case
 			->getMock();
 		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
-		$lang = new \phpbb\language\language($lang_loader);
-		$user = new \phpbb\user($lang, '\phpbb\datetime');
+		$this->language = new \phpbb\language\language($lang_loader);
+		$user = new \phpbb\user($this->language, '\phpbb\datetime');
 		$request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -124,19 +124,16 @@ class main_listener_base extends \phpbb_database_test_case
 			$class = "\\phpbb\\ads\\location\\type\\$type";
 			if ($type === 'pop_up')
 			{
-				$location_types['phpbb.ads.location.type.' . $type] = new $class($user, $lang, $request, $config, $template);
+				$location_types['phpbb.ads.location.type.' . $type] = new $class($user, $this->language, $request, $config, $template);
 			}
 			else
 			{
-				$location_types['phpbb.ads.location.type.' . $type] = new $class($user, $lang);
+				$location_types['phpbb.ads.location.type.' . $type] = new $class($user, $this->language);
 			}
 		}
 
 		// Load/Mock classes required by the listener class
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->template_context = $this->getMockBuilder('\phpbb\template\context')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->user = $user;
@@ -161,8 +158,8 @@ class main_listener_base extends \phpbb_database_test_case
 	protected function get_listener()
 	{
 		return new \phpbb\ads\event\main_listener(
+			$this->language,
 			$this->template,
-			$this->template_context,
 			$this->user,
 			$this->config,
 			$this->manager,
