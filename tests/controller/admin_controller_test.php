@@ -1109,7 +1109,6 @@ class admin_controller_test extends phpbb_database_test_case
 		try {
 			$reflection = new ReflectionObject($controller);
 			$auth_admin_prop = $reflection->getProperty('auth_admin');
-			$auth_admin_prop->setAccessible(true);
 			$auth_admin = $auth_admin_prop->getValue($controller);
 			$auth_admin->acl_options['id']['u_'] = 0;
 			$auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
