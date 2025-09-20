@@ -17,7 +17,7 @@ class amend_agreement_test extends main_listener_base
 	 *
 	 * @return array
 	 */
-	public function append_agreement_data()
+	public static function append_agreement_data()
 	{
 		return [
 			[false, 'PRIVACY', 0], // No agreement
@@ -41,8 +41,10 @@ class amend_agreement_test extends main_listener_base
 
 		$this->template->expects(self::atMost(2))
 			->method('retrieve_var')
-			->withConsecutive(['S_AGREEMENT'], ['AGREEMENT_TITLE'])
-			->willReturnOnConsecutiveCalls($s_agreement, $this->language->lang($agreement_title));
+			->willReturnMap([
+				['S_AGREEMENT', $s_agreement],
+				['AGREEMENT_TITLE', $this->language->lang($agreement_title)]
+			]);
 
 		if ($expected_append_calls > 0)
 		{
