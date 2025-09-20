@@ -32,9 +32,6 @@ class location_base extends phpbb_test_case
 	/** @var language */
 	protected language $language;
 
-	/** @var request|MockObject */
-	protected MockObject|request $request;
-
 	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
@@ -52,13 +49,6 @@ class location_base extends phpbb_test_case
 		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
 		$this->language = new language($lang_loader);
 		$this->user = new user($this->language, datetime::class);
-		$this->request = $this->getMockBuilder(request::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$config = new config(array());
-		$template = $this->getMockBuilder(template::class)
-			->disableOriginalConstructor()
-			->getMock();
 		// Location types
 		$locations = array(
 			'above_footer',
@@ -83,14 +73,7 @@ class location_base extends phpbb_test_case
 		foreach ($locations as $type)
 		{
 			$class = "\\phpbb\\ads\\location\\type\\$type";
-			if ($type === 'pop_up')
-			{
-				$location_types['phpbb.ads.location.type.' . $type] = new $class($this->user, $this->language, $this->request, $config, $template);
-			}
-			else
-			{
-				$location_types['phpbb.ads.location.type.' . $type] = new $class($this->user, $this->language);
-			}
+			$location_types['phpbb.ads.location.type.' . $type] = new $class($this->user, $this->language);
 		}
 
 		$this->template_locations = $location_types;

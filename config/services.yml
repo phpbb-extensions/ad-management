@@ -47,8 +47,8 @@ services:
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
         arguments:
+            - '@language'
             - '@template'
-            - '@template_context'
             - '@user'
             - '@config'
             - '@phpbb.ads.ad.manager'
