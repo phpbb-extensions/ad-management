@@ -114,7 +114,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->controller_helper = $this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
+		$this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->root_path = $phpbb_root_path;
@@ -171,6 +171,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'AD_BLOCK_CONFIG'	=> $this->config['phpbb_ads_adblocker_message'],
 				'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
 				'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
+				'SHOW_AGREEMENT'	=> $this->config['phpbb_ads_show_agreement'],
 			));
 
 		$controller->mode_settings();
@@ -208,26 +209,29 @@ class admin_controller_test extends \phpbb_database_test_case
 		if ($valid_form)
 		{
 			$this->request
-				->expects(self::exactly(3))
+				->expects(self::exactly(4))
 				->method('variable')
 				->withConsecutive(
 					['adblocker_message', 0],
 					['enable_views', 0],
-					['enable_clicks', 0]
+					['enable_clicks', 0],
+					['show_agreement', 0]
 				)
 				->willReturnOnConsecutiveCalls(
 					$adblocker_data,
+					1,
 					1,
 					1
 				);
 
 			$this->config
-				->expects(self::exactly(3))
+				->expects(self::exactly(4))
 				->method('set')
 				->withConsecutive(
 					['phpbb_ads_adblocker_message', $adblocker_data],
 					['phpbb_ads_enable_views', 1],
-					['phpbb_ads_enable_clicks', 1]
+					['phpbb_ads_enable_clicks', 1],
+					['phpbb_ads_show_agreement', 1]
 				);
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_SETTINGS_SAVED');

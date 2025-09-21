@@ -31,7 +31,7 @@ $lang = array_merge($lang, array(
 	'AD_NOTE'					=> 'Notes',
 	'AD_NOTE_EXPLAIN'			=> 'Enter any notes for this advertisement. These notes are not shown anywhere except in the ACP and are optional.',
 	'AD_CODE'					=> 'Code',
-	'AD_CODE_EXPLAIN'			=> 'Enter the advertisement code here. All code must use HTML markup, BBCodes are not supported.',
+	'AD_CODE_EXPLAIN'			=> 'Enter the advertisement code here. All code must use HTML markup, BBCodes are not supported.<br><br>Note: If your ad code places cookies, collects user data, or tracks user behaviour (for example, ads from Google AdSense or other third-party ad networks), then you should enable the <strong>Advertising Disclosure</strong> in the <strong>Advertisement Management Settings</strong> panel to ensure compliance. If you are uncertain, it is recommended that you enable it.',
 	'ANALYSE_AD_CODE'			=> 'Analyse advertisement code',
 	'EVERYTHING_OK'				=> 'The code appears OK.',
 	'AD_BANNER'					=> 'Advertisement banner',
@@ -124,6 +124,8 @@ $lang = array_merge($lang, array(
 	'ENABLE_VIEWS_EXPLAIN'			=> 'This will enable counting how many times every ad has been displayed. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
 	'ENABLE_CLICKS'					=> 'Count clicks',
 	'ENABLE_CLICKS_EXPLAIN'			=> 'This will enable counting how many times every ad has been clicked. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
+	'SHOW_AGREEMENT'				=> 'Advertising disclosure',
+	'SHOW_AGREEMENT_EXPLAIN'		=> 'Show details in the Privacy Policy about how third-party advertising and tracking technologies are used on this forum. This disclosure must be enabled if advertisements on your forum collect or track user information.',
 	'HIDE_GROUPS'					=> 'Hide advertisement for groups',
 	'HIDE_GROUPS_EXPLAIN'			=> 'Members of selected groups will not see this advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
 
