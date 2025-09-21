@@ -31,6 +31,7 @@ class acp_settings_test extends functional_base
 			'adblocker_message'	=> 1,
 			'enable_views'		=> 1,
 			'enable_clicks'		=> 1,
+			'show_agreement'	=> 1,
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		$crawler = self::submit($form, $form_data);
@@ -43,6 +44,7 @@ class acp_settings_test extends functional_base
 		self::assertEquals('1', $crawler->filter('option[selected]')->attr('value'));
 		self::assertEquals('1', $crawler->filter('input[name="enable_views"][checked]')->attr('value'));
 		self::assertEquals('1', $crawler->filter('input[name="enable_clicks"][checked]')->attr('value'));
+		self::assertEquals('1', $crawler->filter('input[name="show_agreement"][checked]')->attr('value'));
 	}
 
 	protected function get_settings_page()

@@ -37,6 +37,11 @@
 			<dd><label><input type="radio" class="radio" id="enable_clicks" name="enable_clicks" value="1"{% if ENABLE_CLICKS %} checked{% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="enable_clicks" value="0"{% if not ENABLE_CLICKS %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
 		</dl>
+		<dl>
+			<dt><label for="show_agreement">{{ lang('SHOW_AGREEMENT') ~ lang('COLON') }}</label><br /><span>{{ lang('SHOW_AGREEMENT_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="show_agreement" name="show_agreement" value="1"{% if SHOW_AGREEMENT %} checked{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="show_agreement" value="0"{% if not SHOW_AGREEMENT %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
 	</fieldset>
 	<fieldset class="submit-buttons">
 		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;

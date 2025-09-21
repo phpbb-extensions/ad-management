@@ -284,7 +284,8 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function append_agreement()
 	{
-		if ((strpos($this->user->page['page_name'], 'ucp') !== 0)
+		if (!$this->config['phpbb_ads_show_agreement']
+			|| (strpos($this->user->page['page_name'], 'ucp') !== 0)
 			|| !$this->template->retrieve_var('S_AGREEMENT')
 			|| ($this->template->retrieve_var('AGREEMENT_TITLE') !== $this->language->lang('PRIVACY')))
 		{
