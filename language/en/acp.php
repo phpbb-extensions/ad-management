@@ -124,6 +124,8 @@ $lang = array_merge($lang, array(
 	'ENABLE_VIEWS_EXPLAIN'			=> 'This will enable counting how many times every ad has been displayed. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
 	'ENABLE_CLICKS'					=> 'Count clicks',
 	'ENABLE_CLICKS_EXPLAIN'			=> 'This will enable counting how many times every ad has been clicked. Note, that it adds extra load to the server, so if you do not need this feature, disable it.',
+	'SHOW_AGREEMENT'				=> 'Advertising disclosure',
+	'SHOW_AGREEMENT_EXPLAIN'		=> 'Show details in the Privacy Policy about how third-party advertising and tracking technologies are used on this forum. This disclosure must be enabled if advertisements on your forum collect or track user information.',
 	'HIDE_GROUPS'					=> 'Hide advertisement for groups',
 	'HIDE_GROUPS_EXPLAIN'			=> 'Members of selected groups will not see this advertisement. Use CTRL+CLICK (or CMD+CLICK on Mac) to select/deselect more than one group.',
 
