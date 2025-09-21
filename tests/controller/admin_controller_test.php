@@ -185,6 +185,7 @@ class admin_controller_test extends phpbb_database_test_case
 				'AD_BLOCK_CONFIG'	=> $this->config['phpbb_ads_adblocker_message'],
 				'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
 				'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
+				'SHOW_AGREEMENT'	=> $this->config['phpbb_ads_show_agreement'],
 			));
 
 		$controller->mode_settings();
@@ -224,10 +225,11 @@ class admin_controller_test extends phpbb_database_test_case
 			$variable_expectations = [
 				['adblocker_message', 0, $adblocker_data],
 				['enable_views', 0, 1],
-				['enable_clicks', 0, 1]
+				['enable_clicks', 0, 1],
+				['show_agreement', 0, 1]
 			];
 			$this->request
-				->expects(self::exactly(3))
+				->expects(self::exactly(4))
 				->method('variable')
 				->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations) {
 					$expectation = array_shift($variable_expectations);
@@ -239,10 +241,11 @@ class admin_controller_test extends phpbb_database_test_case
 			$config_expectations = [
 				['phpbb_ads_adblocker_message', $adblocker_data],
 				['phpbb_ads_enable_views', 1],
-				['phpbb_ads_enable_clicks', 1]
+				['phpbb_ads_enable_clicks', 1],
+				['phpbb_ads_show_agreement', 1]
 			];
 			$this->config
-				->expects(self::exactly(3))
+				->expects(self::exactly(4))
 				->method('set')
 				->willReturnCallback(function($arg1, $arg2) use (&$config_expectations) {
 					$expectation = array_shift($config_expectations);
