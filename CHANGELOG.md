@@ -1,5 +1,13 @@
 # Changelog
 
+### 3.0.1 - 2025-09-20
+
+- Added an amendment to the forum privacy policy regarding cookies and data from ads.
+- Update help description for Pop Up location.
+- Pop Up location now uses browser storage instead of cookies to keep track of when a user closed it.
+- Fixed potential PHP 8 issues.
+- Re-wrote some of the internal template logic to simplify and reduce code repetition.
+
 ### 3.0.0 - 2022-06-18
 
 - Dropped support for phpBB 3.2.x (new minimum requirements: phpBB 3.3.2 and PHP 7.1.3).
