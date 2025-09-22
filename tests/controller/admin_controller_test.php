@@ -936,6 +936,7 @@ class admin_controller_test extends phpbb_database_test_case
 		if ($is_ajax)
 		{
 			$this->expectOutputString('{"text":"' . ($enable ? 'Enabled' : 'Disabled') . '","title":"AD_ENABLE_TITLE"}');
+			$this->expectException(\RuntimeException::class);
 		}
 		else
 		{

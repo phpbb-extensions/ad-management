@@ -377,30 +377,20 @@ class admin_controller
 	protected function ad_enable($enable)
 	{
 		$ad_id = $this->request->variable('id', 0);
+		$success = $this->manager->update_ad($ad_id, ['ad_enabled' => (int) $enable]);
 
-		$success = $this->manager->update_ad($ad_id, array(
-			'ad_enabled' => (int) $enable,
-		));
-
-		if ($success)
+		if ($success && $this->request->is_ajax())
 		{
-			if ($this->request->is_ajax())
-			{
-				$json_response = new \phpbb\json_response;
-				$json_response->send(array(
-					'text'  => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
-					'title' => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
-				));
-			}
-			else
-			{
-				$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS');
-			}
+			$json_response = new \phpbb\json_response;
+			$json_response->send([
+				'text'  => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
+				'title' => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
+			]);
 		}
-		else
-		{
+
+		$success ?
+			$this->success($enable ? 'ACP_AD_ENABLE_SUCCESS' : 'ACP_AD_DISABLE_SUCCESS') :
 			$this->error($enable ? 'ACP_AD_ENABLE_ERRORED' : 'ACP_AD_DISABLE_ERRORED');
-		}
 	}
 
 	/**

@@ -249,6 +249,7 @@ class admin_input_test extends phpbb_database_test_case
 		{
 			$text = !empty($file_error) ? '"CANNOT_CREATE_DIRECTORY"' : '"' . addcslashes(trim(substr($ad_code_expected, strpos($ad_code_expected, '<img'))), "/\"") . '"';
 			$this->expectOutputString('{"success":' . (count($file_error) ? 'false' : 'true') . ',"title":"Information","text":' . $text . '}');
+			$this->expectException(\RuntimeException::class);
 		}
 
 		$result = $input_controller->banner_upload($ad_code);
