@@ -1,10 +1,18 @@
 # Changelog
 
+### 3.0.1 - 2025-09-21
+
+- Added a setting to display an amendment to the forum privacy policy regarding cookies and data collection from ads.
+- Pop Up location now uses browser storage instead of cookies to keep track of when a user closed it.
+- Updated the help description for Pop Up location.
+- Fixed potential PHP 8 issues.
+- Re-wrote some of the internal template logic to simplify and reduce code repetition.
+
 ### 3.0.0 - 2022-06-18
 
 - Dropped support for phpBB 3.2.x (new minimum requirements: phpBB 3.3.2 and PHP 7.1.3).
 - Added new Admin permissions for accessing the ad management and settings.
-- Fixed an issue where ad blocker warning message was on top of the Quick links drop down menu.
+- Fixed an issue where an ad blocker warning message was on top of the Quick links drop-down menu.
 - Support for ScaffoldBB style added.
 
 ### 2.0.6 - 2022-02-22
@@ -24,7 +32,7 @@
 ### 2.0.4 - 2021-01-21
 
 - Feature: Added new advertisement locations before and after the Quick Reply editor.
-- Fix: Title of the popup advertisement window will be properly displayed.
+- Fix: The Title of the popup advertisement window will be properly displayed.
 - Fix: Addressed potential PHP 8 compatibility issues.
 - Fix: Correctly handle advertisement priority in MSSQL and Oracle databases.
 
@@ -32,7 +40,7 @@
 
 - Fix: Updated the "Display on content pages only" option so ads will no longer appear when writing posts or viewing member lists. This is to improve compliance with rules from Google AdSense.
 - Fix: Addressed an issue where ad previews in the ACP could be hidden if your browser has Ad Blocking software.
-- Fix: Addressed an issue when previewing an ad and any selected groups in the "Hide advertisement for groups" field would be lost.
+- Fix: Addressed an issue when previewing an ad, and any selected groups in the "Hide advertisement for groups" field would be lost.
 - Fix: Minor code improvements and corrections.
 
 ### 2.0.2 - 2019-04-01
@@ -42,7 +50,7 @@
 
 ### 2.0.1 - 2018-09-17
 
-- Feature: Added a new "Special" location we call "Scripts" which can be used for adding specialised Javascript codes like AdSense Auto ads and tracking codes.
+- Feature: Added a new "Special" location we call "Scripts" which can be used for adding specialised JavaScript codes like AdSense Auto ads and tracking codes.
 
 ### 2.0.0 - 2018-06-28
 
@@ -54,10 +62,10 @@
 ### 1.0.5 - 2018-03-06
 
 - Feature: Added a new option to display ads on content pages only. When enabled, the ad will not be shown on the UCP, MCP, Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
-- Feature: Ad locations option has improved organisation to make it easier to pick the appropriate location. Also, a new Visual Demo has been added, so you can see where all the ad locations physically appear on your board.
-- Fix: My Advertisements tab in the UCP will no longer be shown to all users, and will only be visible to advertisement owners.
+- Feature: An Ad locations option has improved organisation to make it easier to pick the appropriate location. Also, a new Visual Demo has been added, so you can see where all the ad locations physically appear on your board.
+- Fix: My Advertisements tab in the UCP will no longer be shown to all users and will only be visible to advertisement owners.
 - Fix: Resolved an issue affecting some users where multiple ads assigned to the same location were not being randomly rotated.
-- Fix: Ads assigned to display after first post will only be visible now if there are replies after the first post.
+- Fix: Ads assigned to display after the first post will only be visible now if there are replies after the first post.
 
 ### 1.0.4 - 2017-12-23
 
@@ -66,7 +74,7 @@
 
 ### 1.0.3 - 2017-11-19
 
-- Update: UCP Advertisements page shows more information about your ads including click/view limits, expiration date and active status of the ad.
+- Update: UCP Advertisements page shows more information about your ads, including click/view limits, expiration date and active status of the ad.
 - Fix: Improve handling of Google's responsive ads and possibly other responsive ad content. 
 
 ### 1.0.2 - 2017-08-20
@@ -81,7 +89,7 @@
 ### 1.0.1 - 2017-07-28
 
 - Feature: Advertisement views and clicks statistics.
-- Feature: Ad owner - a user can be designated as an ad owner and can view ad statistics.
+- Feature: Ad owner—a user can be designated as an ad owner and can view ad statistics.
 - Feature: Banner image uploading added to the ACP advertisement creation form.
 - Code fixes and improvements.
 
