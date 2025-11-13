@@ -74,8 +74,8 @@ class acp_manage_test extends functional_base
 
 		// Confirm error when submitting older end date than start date
 		$form_data = array(
-			'ad_start_date'	=> '2018-01-01',
-			'ad_end_date'	=> '2017-01-01',
+			'ad_start_date'	=> '2035-01-01',
+			'ad_end_date'	=> '2034-01-01',
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('END_DATE_TOO_SOON'));
 
@@ -121,8 +121,8 @@ class acp_manage_test extends functional_base
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE -->',
 			'ad_enabled'	=> 1,
-			'ad_start_date'	=> '2030-01-01',
-			'ad_end_date'	=> '2035-01-01',
+			'ad_start_date'	=> '2035-01-01',
+			'ad_end_date'	=> '2036-01-01',
 			'ad_priority'	=> 1,
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
@@ -147,7 +147,7 @@ class acp_manage_test extends functional_base
 		$crawler = $this->get_manage_page();
 		self::assertStringContainsString('Functional test name', $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
-		self::assertStringContainsString('2035-01-01', $crawler->text());
+		self::assertStringContainsString('2036-01-01', $crawler->text());
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");
@@ -192,8 +192,8 @@ class acp_manage_test extends functional_base
 
 		// Confirm error when submitting older end date than start date
 		$form_data = array(
-			'ad_start_date'	=> '2018-01-01',
-			'ad_end_date'	=> '2017-01-01',
+			'ad_start_date'	=> '2035-01-01',
+			'ad_end_date'	=> '2034-01-01',
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('END_DATE_TOO_SOON'));
 
@@ -239,8 +239,8 @@ class acp_manage_test extends functional_base
 			'ad_note'		=> 'Functional test note',
 			'ad_code'		=> '<!-- SAMPLE ADD CODE EDITED -->',
 			'ad_enabled'	=> 0,
-			'ad_start_date'	=> '2030-01-02',
-			'ad_end_date'	=> '2035-01-02',
+			'ad_start_date'	=> '2035-01-02',
+			'ad_end_date'	=> '2036-01-02',
 			'ad_priority'	=> 2,
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
@@ -265,8 +265,8 @@ class acp_manage_test extends functional_base
 		$crawler = $this->get_manage_page();
 		self::assertStringContainsString('Functional test name edited', $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
-		self::assertStringContainsString('2030-01-02', $crawler->text());
 		self::assertStringContainsString('2035-01-02', $crawler->text());
+		self::assertStringContainsString('2036-01-02', $crawler->text());
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");

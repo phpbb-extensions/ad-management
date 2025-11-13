@@ -9,6 +9,7 @@ services:
         arguments:
             - '@dbal.conn'
             - '@config'
+            - '@user'
             - '%phpbb.ads.tables.ads%'
             - '%phpbb.ads.tables.ad_locations%'
             - '%phpbb.ads.tables.ad_group%'

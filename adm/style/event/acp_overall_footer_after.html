@@ -1,10 +1,4 @@
 {% if S_PHPBB_ADS %}
-	{% if not definition.INCLUDED_DATETIMEPICKERJS %}
-		{% INCLUDECSS '@phpbb_ads/datetimepicker/jquery.datetimepicker.min.css' %}
-		{% INCLUDEJS '@phpbb_ads/datetimepicker/jquery.datetimepicker.full.min.js' %}
-		{% DEFINE INCLUDED_DATETIMEPICKERJS = true %}
-	{% endif %}
-
 	<script>
 	/**
 	 * This callback replaces enable links with disable links and vice versa.
@@ -30,14 +24,6 @@
 	});
 
 	jQuery(function($) {
-		$('#ad_start_date, #ad_end_date').datetimepicker({
-			format:'{{ PICKER_DATE_FORMAT|e('js') }}',
-			validateOnBlur: false,
-			minDate: 0,
-			timepicker: false
-		});
-		$.datetimepicker.setLocale('{{ S_USER_LANG }}');
-
 		$('#upload_banner').on('click', function(e) {
 			e.preventDefault();
 

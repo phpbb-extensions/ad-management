@@ -186,9 +186,9 @@ class admin_controller
 			'S_ADD_AD'				=> true,
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
-			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable')),
+			'DATE_MINIMUM'			=> $this->helper->get_date('tomorrow'),
 		));
 	}
 
@@ -223,9 +223,9 @@ class admin_controller
 			'EDIT_ID'				=> $ad_id,
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
-			'PICKER_DATE_FORMAT'	=> ext::DATE_FORMAT,
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable')),
+			'DATE_MINIMUM'			=> $this->helper->get_date('tomorrow'),
 		));
 		$this->helper->assign_data($this->data, $this->input->get_errors());
 	}

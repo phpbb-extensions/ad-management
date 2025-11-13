@@ -417,6 +417,26 @@ class helper_test extends phpbb_database_test_case
 	}
 
 	/**
+	 * Test get_date()
+	 */
+	public function test_get_date()
+	{
+		$helper = $this->get_helper();
+
+		// Test 'now' returns today's date in Y-m-d format
+		$result = $helper->get_date('now');
+		$this->assertEquals(date('Y-m-d'), $result);
+
+		// Test 'today' returns today's date
+		$result = $helper->get_date('today');
+		$this->assertEquals(date('Y-m-d'), $result);
+
+		// Test 'tomorrow' returns tomorrow's date
+		$result = $helper->get_date('tomorrow');
+		$this->assertEquals(date('Y-m-d', strtotime('+1 day')), $result);
+	}
+
+	/**
 	 * Data for test_is_expired
 	 *
 	 * @return array Array of test data

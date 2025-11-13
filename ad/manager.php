@@ -18,6 +18,9 @@ class manager
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\user */
+	protected $user;
+
 	/** @var string */
 	protected $ads_table;
 
@@ -32,14 +35,16 @@ class manager
 	 *
 	 * @param    \phpbb\db\driver\driver_interface $db                 DB driver interface
 	 * @param    \phpbb\config\config              $config             Config object
+	 * @param    \phpbb\user                       $user               User object
 	 * @param    string                            $ads_table          Ads table
 	 * @param    string                            $ad_locations_table Ad locations table
 	 * @param    string                            $ad_group_table 	   Ad group table
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, $ads_table, $ad_locations_table, $ad_group_table)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, $ads_table, $ad_locations_table, $ad_group_table)
 	{
 		$this->db = $db;
 		$this->config = $config;
+		$this->user = $user;
 		$this->ads_table = $ads_table;
 		$this->ad_locations_table = $ad_locations_table;
 		$this->ad_group_table = $ad_group_table;
@@ -78,15 +83,19 @@ class manager
 		$sql_where_non_content = $non_content_page ? 'AND a.ad_content_only = 0' : '';
 		$sql_where_user_groups = !empty($user_groups) ? 'AND NOT EXISTS (SELECT ag.group_id FROM ' . $this->ad_group_table . ' ag WHERE ag.ad_id = a.ad_id AND ' . $this->db->sql_in_set('ag.group_id', $user_groups) . ')' : '';
 
+		// Get user's current time and convert to UTC equivalent for comparison
+		$user_now = $this->user->create_datetime();
+		$sql_time = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $user_now->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+
 		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
 				WHERE a.ad_enabled = 1
 					AND (a.ad_start_date = 0
-						OR a.ad_start_date < ' . time() . ')
+						OR a.ad_start_date <= ' . $sql_time . ')
 					AND (a.ad_end_date = 0
-						OR a.ad_end_date > ' . time() . ")
+						OR a.ad_end_date > ' . $sql_time . ")
 					$sql_where_views
 					$sql_where_clicks
 					$sql_where_non_content

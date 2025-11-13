@@ -100,7 +100,7 @@ class main_listener_base extends phpbb_database_test_case
 	{
 		parent::setUp();
 
-		global $user, $phpbb_path_helper, $phpbb_root_path, $phpEx, $phpbb_dispatcher;
+		global $config, $user, $phpbb_path_helper, $phpbb_root_path, $phpEx, $phpbb_dispatcher;
 
 		$phpbb_path_helper = $this->getMockBuilder(path_helper::class)
 			->disableOriginalConstructor()
@@ -112,7 +112,7 @@ class main_listener_base extends phpbb_database_test_case
 		$request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$config = new config(array());
+		$config = new config(['board_timezone' => '']);
 		$template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -158,7 +158,7 @@ class main_listener_base extends phpbb_database_test_case
 			->getMock();
 		$this->user = $user;
 		$this->config = new config(array('phpbb_ads_adblocker_message' => '0'));
-		$this->manager = new ad_manager($this->new_dbal(), $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
+		$this->manager = new ad_manager($this->new_dbal(), $this->config, $this->user, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 		$this->location_manager = new location_manager($location_types);
 		$this->controller_helper = $this->getMockBuilder(controller_helper::class)
 			->disableOriginalConstructor()

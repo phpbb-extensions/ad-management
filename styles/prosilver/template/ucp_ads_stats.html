@@ -31,10 +31,10 @@
 					{% for ad in list.loop %}
 						<tr class="{% if loop.index0 is even %}bg2{% else %}bg1{% endif %}">
 							<td>{{ ad.NAME }}</td>
-							<td class="center">{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}</td>
+							<td class="center">{{ ad.START_DATE ? ad.START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}</td>
 							<td class="center">
 								{% if ad.END_DATE < NOW %}<strong class="error">{% endif %}
-									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT')) }}
+									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}
 								{% if ad.END_DATE < NOW %}</strong>{% endif %}
 							</td>
 							{% if S_VIEWS_ENABLED %}

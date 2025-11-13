@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\controller;
 
+use phpbb\ads\ext;
+
 /**
  * Helper
  */
@@ -181,6 +183,17 @@ class helper
 	}
 
 	/**
+	 * Get a date in the current user's timezone and the correct format.
+	 *
+	 * @param string $time
+	 * @return string Formatted date time
+	 */
+	public function get_date($time = 'now')
+	{
+		return $this->user->create_datetime($time)->format(ext::DATE_FORMAT);
+	}
+
+	/**
 	 * Is an ad expired?
 	 *
 	 * @param	array	$row	Advertisement data
@@ -188,7 +201,8 @@ class helper
 	 */
 	public function is_expired($row)
 	{
-		if ((int) $row['ad_end_date'] > 0 && (int) $row['ad_end_date'] < time())
+		$latest_timezone_end = strtotime('now -12 hours'); // UTC-12 is the last timezone
+		if ((int) $row['ad_end_date'] > 0 && (int) $row['ad_end_date'] < $latest_timezone_end)
 		{
 			return true;
 		}

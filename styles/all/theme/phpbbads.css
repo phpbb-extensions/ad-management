@@ -78,3 +78,37 @@
 .phpbb-ads-button:active {
 	background: #c3c3c3;
 }
+
+/* Modern Date Picker Styling */
+.phpbb-ads-datepicker {
+	font-size: 13px;
+	background: #ffffff;
+	border: 2px solid #e1e1e1;
+	border-radius: 6px;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+	color: #333333;
+	width: 180px;
+	padding: 8px 12px;
+}
+
+.phpbb-ads-datepicker:focus,
+.phpbb-ads-datepicker:hover {
+	border: 2px solid #5c7099 !important;
+}
+
+.phpbb-ads-datepicker:focus {
+	outline: none;
+}
+
+.phpbb-ads-datepicker::-webkit-calendar-picker-indicator {
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%235C7099" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>') no-repeat center;
+	background-size: 14px 14px;
+	opacity: 0.7;
+	width: 14px;
+	height: 14px;
+	cursor: pointer;
+}
+
+.phpbb-ads-datepicker::-webkit-calendar-picker-indicator:hover {
+	opacity: 1;
+}

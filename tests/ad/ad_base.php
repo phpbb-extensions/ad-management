@@ -23,6 +23,9 @@ class ad_base extends phpbb_database_test_case
 	/** @var config */
 	protected config $config;
 
+	/** @var \phpbb\user */
+	protected $user;
+
 	/** @var string */
 	protected string $ads_table;
 
@@ -57,6 +60,11 @@ class ad_base extends phpbb_database_test_case
 
 		$this->db = $this->new_dbal();
 		$this->config = new config(array());
+		$this->user = $this->createMock('\phpbb\user');
+		$this->user->timezone = new \DateTimeZone('UTC');
+		$current_time = new \DateTime('now', new \DateTimeZone('UTC'));
+		$this->user->method('create_datetime')->willReturn($current_time);
+		$this->user->method('get_timestamp_from_format')->willReturn($current_time->getTimestamp());
 		$this->ads_table = 'phpbb_ads';
 		$this->ad_locations_table = 'phpbb_ad_locations';
 		$this->ad_group_table = 'phpbb_ad_group';
@@ -69,6 +77,6 @@ class ad_base extends phpbb_database_test_case
 	 */
 	public function get_manager(): manager
 	{
-		return new manager($this->db, $this->config, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
+		return new manager($this->db, $this->config, $this->user, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 	}
 }

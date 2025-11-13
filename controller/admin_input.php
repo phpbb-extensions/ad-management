@@ -116,7 +116,7 @@ class admin_input
 		}
 
 		// Make sure start date is sooner than end date
-		if ($data['ad_start_date'] != 0 && $data['ad_end_date'] != 0 && $data['ad_start_date'] > $data['ad_end_date'])
+		if ($data['ad_start_date'] != 0 && $data['ad_end_date'] != 0 && $data['ad_start_date'] >= $data['ad_end_date'])
 		{
 			$this->errors[] = $this->language->lang('END_DATE_TOO_SOON');
 		}
@@ -319,28 +319,33 @@ class admin_input
 	/**
 	 * Validate advertisement date
 	 *
-	 * The date must use the expected format of YYYY-MM-DD.
-	 * If the date is valid, convert it to a timestamp and then
-	 * make sure the timestamp is less than the current time.
-	 *
 	 * @param string $date Advertisement date
-	 * @return int The date converted to timestamp if valid, otherwise 0.
+	 * @param string $type Date type
+	 * @return int UTC midnight timestamp if valid, otherwise 0
 	 */
 	protected function validate_date($date, $type)
 	{
-		$timestamp = 0;
-		if (preg_match('#^\d{4}-\d{2}-\d{2}$#', $date))
+		if ($date === '')
 		{
-			$timestamp = (int) $this->user->get_timestamp_from_format(ext::DATE_FORMAT, $date);
-
-			if ($timestamp < time())
-			{
-				$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
-			}
+			return 0;
 		}
-		else if ($date !== '')
+
+		if (!preg_match('#^\d{4}-\d{2}-\d{2}$#', $date))
 		{
 			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
+			return 0;
+		}
+
+		// Create a UTC midnight timestamp for storage consistency
+		$datetime = \DateTime::createFromFormat(ext::DATE_FORMAT, $date, new \DateTimeZone('UTC'));
+		$datetime->setTime(0, 0, 0); // Ensure midnight (00:00:00)
+		$timestamp = $datetime->getTimestamp();
+
+		// Compare against user's current day to avoid timezone confusion
+		if ($timestamp < $this->user->create_datetime('today')->getTimestamp())
+		{
+			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
+			return 0;
 		}
 
 		return $timestamp;
