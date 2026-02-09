@@ -23,8 +23,8 @@ class increment_controller_test extends functional_base
 	public static function increment_controller_data(): array
 	{
 		return array(
-			array('app.php/adsclick/1'),
-			array('app.php/adsview/1')
+			array('index.php/adsclick/1'),
+			array('index.php/adsview/1')
 		);
 	}
 

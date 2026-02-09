@@ -60,13 +60,13 @@ class views_test extends main_listener_base
 		$this->controller_helper->expects(($is_bot ? self::never() : self::once()))
 			->method('route')
 			->with('phpbb_ads_view', array('data' => '1'))
-			->willReturn('app.php/adsview/1');
+			->willReturn('index.php/adsview/1');
 
 		if (!$is_bot)
 		{
 			$expectations = [
 				['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false],
-				['S_INCREMENT_VIEWS' => true, 'U_PHPBB_ADS_VIEWS' => 'app.php/adsview/1']
+				['S_INCREMENT_VIEWS' => true, 'U_PHPBB_ADS_VIEWS' => 'index.php/adsview/1']
 			];
 			$this->template
 				->expects(self::exactly(2))
