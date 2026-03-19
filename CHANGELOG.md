@@ -1,5 +1,13 @@
 # Changelog
 
+### 3.0.2 - 12-31-2025
+
+- Fixed timezone inconsistencies in advertisement start/end date handling.
+- Start and end dates are now stored as UTC midnight timestamps for consistency across all timezones.
+- Date comparisons now use a user's timezone-aware datetime to prevent ads from appearing expired prematurely.
+- Date inputs now use native HTML5 date pickers instead of the deprecated jQuery DateTimePicker library.
+- Fixed validation to ensure the start date cannot be the same as or later than the end date.
+
 ### 3.0.1 - 2025-09-21
 
 - Added a setting to display an amendment to the forum privacy policy regarding cookies and data collection from ads.
