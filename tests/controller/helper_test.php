@@ -121,6 +121,7 @@ class helper_test extends phpbb_database_test_case
 		$this->group_helper = new group_helper(
 			$this->getMockBuilder(auth::class)->getMock(),
 			$avatar_helper,
+			$db,
 			$this->getMockBuilder(service::class)->disableOriginalConstructor()->getMock(),
 			new config([]),
 			$this->language,
@@ -133,6 +134,7 @@ class helper_test extends phpbb_database_test_case
 				$phpbb_root_path,
 				$phpEx
 			),
+			$this->template,
 			$this->user
 		);
 
