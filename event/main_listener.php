@@ -268,6 +268,7 @@ class main_listener implements EventSubscriberInterface
 	protected function is_non_content_page()
 	{
 		return count(array_intersect([$this->user->page['page_name'], $this->user->page['page_dir']], [
+			'index.' . $this->php_ext . '/members/online',
 			'memberlist.' . $this->php_ext,
 			'viewonline.' . $this->php_ext,
 			'posting.' . $this->php_ext,
