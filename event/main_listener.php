@@ -64,6 +64,7 @@ class main_listener implements EventSubscriberInterface
 			'core.adm_page_header_after'	=> 'disable_xss_protection',
 			'core.group_add_user_after'		=> 'destroy_user_group_cache',
 			'core.group_delete_user_after'	=> 'destroy_user_group_cache',
+			'phpbb.consentmanager.collect_registrations' => 'register_ads',
 		);
 	}
 
@@ -133,16 +134,18 @@ class main_listener implements EventSubscriberInterface
 	{
 		// check for the existence of 'MESSAGE_TEXT', which signals it's an error page.
 		$non_content_page = $this->template->retrieve_var('MESSAGE_TEXT') || $this->is_non_content_page();
+		$consent_enabled = (bool) $this->template->retrieve_var('S_CONSENTMANAGER_MARKETING_ENABLED');
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ad_ids = array();
+		$ads = $this->manager->get_ads($location_ids, $user_groups, $non_content_page);
 
-		foreach ($this->manager->get_ads($location_ids, $user_groups, $non_content_page) as $row)
+		foreach ($ads as $row)
 		{
 			$ad_ids[] = $row['ad_id'];
 
 			$this->template->assign_vars(array(
-				'AD_' . strtoupper($row['location_id']) => htmlspecialchars_decode($row['ad_code'], ENT_COMPAT),
+				'AD_' . strtoupper($row['location_id']) => $this->manager->prepare_ad_code($row['ad_code'], $consent_enabled),
 				'AD_' . strtoupper($row['location_id']) . '_ID' => (int) $row['ad_id'],
 				'AD_' . strtoupper($row['location_id']) . '_CENTER' => (bool) $row['ad_centering'],
 			));
@@ -295,5 +298,20 @@ class main_listener implements EventSubscriberInterface
 		$this->language->add_lang('ucp', 'phpbb/ads');
 
 		$this->template->append_var('AGREEMENT_TEXT', $this->language->lang('PHPBB_ADS_PRIVACY_POLICY', $this->config['sitename']));
+	}
+
+	/**
+	 * Register the advertisement extension with Consent Manager.
+	 *
+	 * @param \phpbb\event\data|array $event The event object or event data
+	 * @return void
+	 */
+	public function register_ads($event)
+	{
+		$event['consent_manager']->register('phpbb.ads', array(
+			'label' => $this->language->lang('PHPBB_ADS_CONSENT_LABEL'),
+			'category' => \phpbb\ads\ad\manager::CONSENT_CATEGORY,
+			'description' => $this->language->lang('PHPBB_ADS_CONSENT_DESCRIPTION'),
+		));
 	}
 }

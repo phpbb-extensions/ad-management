@@ -42,7 +42,7 @@ class functional_base extends \phpbb_functional_test_case
 		$this->admin_login();
 	}
 
-	protected function create_ad($location, $end_date = '', $content_only = false, $centering = true, $start_date = '')
+	protected function create_ad($location, $end_date = '', $content_only = false, $centering = true, $start_date = '', $ad_code = '')
 	{
 		// Load Advertisement management ACP page
 		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
@@ -51,11 +51,16 @@ class functional_base extends \phpbb_functional_test_case
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
 		$crawler = self::submit($form);
 
+		if ($ad_code === '')
+		{
+			$ad_code = '<!-- SAMPLE ADD CODE ' . $location . ' -->';
+		}
+
 		// Create ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test template location ' . $location,
 			'ad_note'		=> '',
-			'ad_code'		=> '<!-- SAMPLE ADD CODE ' . $location . ' -->',
+			'ad_code'		=> $ad_code,
 			'ad_enabled'	=> 1,
 			'ad_locations'	=> array($location),
 			'ad_start_date'	=> $start_date,

@@ -12,6 +12,8 @@ namespace phpbb\ads\ad;
 
 class manager
 {
+	public const CONSENT_CATEGORY = 'marketing';
+
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
@@ -370,6 +372,90 @@ class manager
 		$this->db->sql_freeresult($result);
 
 		return $groups;
+	}
+
+	/**
+	 * Prepare ad code for output, applying consent-manager deferrals when enabled.
+	 *
+	 * @param string $ad_code         Stored advertisement code
+	 * @param bool   $consent_enabled Whether marketing consent is required
+	 * @return string
+	 */
+	public function prepare_ad_code($ad_code, $consent_enabled)
+	{
+		$ad_code = htmlspecialchars_decode($ad_code, ENT_COMPAT);
+		$original_ad_code = $ad_code;
+
+		if (!$consent_enabled || $ad_code === '')
+		{
+			return $ad_code;
+		}
+
+		$ad_code = preg_replace_callback('#<script\b([^>]*)>(.*?)</script\s*>#is', function ($matches)
+		{
+			$attributes = $matches[1] ?? '';
+			$content = $matches[2] ?? '';
+
+			if (!$this->should_defer_script_tag($attributes))
+			{
+				return $matches[0];
+			}
+
+			return '<script' . $this->inject_consent_attributes($attributes) . '>' . $content . '</script>';
+		}, $ad_code);
+
+		return $ad_code ?? $original_ad_code;
+	}
+
+	/**
+	 * Determine whether a script tag is executable and should be deferred.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @return bool
+	 */
+	protected function should_defer_script_tag($attributes)
+	{
+		if (preg_match('/\bdata-consent-category\s*=/i', $attributes))
+		{
+			return false;
+		}
+
+		if (!preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches))
+		{
+			return true;
+		}
+
+		$type = strtolower(trim(explode(';', $matches[2])[0]));
+		return $type === ''
+			|| $type === 'text/plain'
+			|| $type === 'module'
+			|| strpos($type, 'javascript') !== false
+			|| strpos($type, 'ecmascript') !== false;
+	}
+
+	/**
+	 * Replace script tag attributes with consent-aware placeholders.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @return string
+	 */
+	protected function inject_consent_attributes($attributes)
+	{
+		if (preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes))
+		{
+			$attributes = preg_replace('/\btype\s*=\s*([\'"])(.*?)\1/i', 'type="text/plain"', $attributes, 1);
+		}
+		else
+		{
+			$attributes .= ' type="text/plain"';
+		}
+
+		if (!preg_match('/\bdata-consent-category\s*=/i', $attributes))
+		{
+			$attributes .= ' data-consent-category="' . self::CONSENT_CATEGORY . '"';
+		}
+
+		return $attributes;
 	}
 
 	/**
