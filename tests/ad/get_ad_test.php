@@ -36,6 +36,7 @@ class get_ad_test extends ad_base
 				'ad_owner'	=> '2',
 				'ad_content_only' => '0',
 				'ad_centering' => '1',
+				'ad_consent' => '1',
 			)),
 			array(0, array()),
 		);

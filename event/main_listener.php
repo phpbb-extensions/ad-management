@@ -143,9 +143,10 @@ class main_listener implements EventSubscriberInterface
 		foreach ($ads as $row)
 		{
 			$ad_ids[] = $row['ad_id'];
+			$ad_consent_enabled = $consent_enabled && (bool) ($row['ad_consent'] ?? true);
 
 			$this->template->assign_vars(array(
-				'AD_' . strtoupper($row['location_id']) => $this->manager->prepare_ad_code($row['ad_code'], $consent_enabled),
+				'AD_' . strtoupper($row['location_id']) => $this->manager->prepare_ad_code($row['ad_code'], $ad_consent_enabled),
 				'AD_' . strtoupper($row['location_id']) . '_ID' => (int) $row['ad_id'],
 				'AD_' . strtoupper($row['location_id']) . '_CENTER' => (bool) $row['ad_centering'],
 			));

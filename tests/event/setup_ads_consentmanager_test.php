@@ -187,4 +187,64 @@ class setup_ads_consentmanager_test extends main_listener_base
 
 		$this->get_listener()->setup_ads();
 	}
+
+	public function test_setup_ads_does_not_defer_when_ad_consent_is_disabled()
+	{
+		$stored_ad_code = htmlspecialchars(
+			'<script src="https://ads.example.com/tag.js"></script>',
+			ENT_COMPAT
+		);
+
+		$this->user->data['user_id'] = 1;
+		$this->user->page['page_name'] = 'index.' . $this->php_ext;
+		$this->user->page['page_dir'] = '';
+
+		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+			->disableOriginalConstructor()
+			->setMethods(array('load_memberships', 'get_ads'))
+			->getMock();
+		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
+			->disableOriginalConstructor()
+			->setMethods(array('get_all_location_ids'))
+			->getMock();
+
+		$this->location_manager->expects(self::once())
+			->method('get_all_location_ids')
+			->willReturn(array('above_header'));
+
+		$this->manager->expects(self::once())
+			->method('load_memberships')
+			->with(1)
+			->willReturn(array());
+
+		$this->manager->expects(self::once())
+			->method('get_ads')
+			->with(array('above_header'), array(), false)
+			->willReturn(array(array(
+				'location_id' => 'above_header',
+				'ad_id' => 78,
+				'ad_code' => $stored_ad_code,
+				'ad_centering' => 0,
+				'ad_consent' => 0,
+			)));
+
+		$this->template->expects(self::exactly(2))
+			->method('retrieve_var')
+			->willReturnCallback(function ($var_name)
+			{
+				return $var_name === 'S_CONSENTMANAGER_MARKETING_ENABLED';
+			});
+
+		$this->template->expects(self::once())
+			->method('assign_vars')
+			->with(self::callback(function ($vars)
+			{
+				return $vars['AD_ABOVE_HEADER_ID'] === 78
+					&& strpos($vars['AD_ABOVE_HEADER'], 'type="text/plain"') === false
+					&& strpos($vars['AD_ABOVE_HEADER'], 'data-consent-category="marketing"') === false
+					&& strpos($vars['AD_ABOVE_HEADER'], 'src="https://ads.example.com/tag.js"') !== false;
+			}));
+
+		$this->get_listener()->setup_ads();
+	}
 }

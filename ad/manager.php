@@ -89,7 +89,7 @@ class manager
 		$user_now = $this->user->create_datetime();
 		$sql_time = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $user_now->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
 
-		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering
+		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering, a.ad_consent
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
@@ -479,6 +479,7 @@ class manager
 			'ad_owner'			=> '',
 			'ad_content_only'	=> '',
 			'ad_centering'		=> '',
+			'ad_consent'		=> '',
 		]);
 	}
 

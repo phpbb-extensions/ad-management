@@ -115,6 +115,15 @@
 		</fieldset>
 		<fieldset>
 			<legend>{{ lang('AD_OPTIONS') }}</legend>
+			{% if S_ADS_CONSENTMANAGER_AVAILABLE %}
+				<dl>
+					<dt><label for="ad_consent">{{ lang('AD_CONSENT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CONSENT_EXPLAIN') }}</span></dt>
+					<dd><label><input type="radio" class="radio" id="ad_consent" name="ad_consent" value="1"{% if AD_CONSENT is not defined or AD_CONSENT %} checked{% endif %} /> {{ lang('YES') }}</label>
+						<label><input type="radio" class="radio" name="ad_consent" value="0"{% if AD_CONSENT is defined and not AD_CONSENT %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+				</dl>
+			{% else %}
+				<input type="hidden" name="ad_consent" value="{{ AD_CONSENT is defined ? AD_CONSENT : 1 }}" />
+			{% endif %}
 			<dl>
 				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}" /></dd>

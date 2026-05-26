@@ -152,6 +152,7 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_clicks_limit'	=> 0,
 					  'ad_owner'		=> 0,
 					  'ad_centering'	=> false,
+					  'ad_consent'		=> 1,
 					  'ad_locations'	=> [],
 				  ), '', array('AD_PRIORITY_INVALID'), true, 'AD_PRIORITY_INVALID'),
 			array(array(
@@ -167,6 +168,7 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_clicks_limit'	=> 0,
 					  'ad_owner'		=> 0,
 					  'ad_centering'	=> 0,
+					  'ad_consent'		=> 1,
 					  'ad_locations'	=> [],
 				  ), '', array('AD_PRIORITY_INVALID', 'AD_NAME_REQUIRED'), true, 'AD_PRIORITY_INVALID<br />AD_NAME_REQUIRED'),
 			array(array(
@@ -182,6 +184,7 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_clicks_limit'	=> 0,
 					  'ad_owner'		=> 99,
 					  'ad_centering'	=> 0,
+					  'ad_consent'		=> 1,
 					  'ad_locations'	=> [],
 				  ), 'Anonymous', array(), false, ''),
 			array(array(
@@ -197,6 +200,7 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_clicks_limit'	=> 0,
 					  'ad_owner'		=> 99,
 					  'ad_centering'	=> 0,
+					  'ad_consent'		=> 1,
 					  'ad_locations'	=> [],
 				  ), 'Anonymous', array(), false, ''),
 			array(array(
@@ -212,6 +216,7 @@ class helper_test extends \phpbb_database_test_case
 					  'ad_clicks_limit'	=> 0,
 					  'ad_owner'		=> 2,
 					  'ad_centering'	=> 0,
+					  'ad_consent'		=> 0,
 					  'ad_locations'	=> [],
 				  ), 'admin', array(), false, ''),
 		);
@@ -252,6 +257,7 @@ class helper_test extends \phpbb_database_test_case
 				'AD_CLICKS_LIMIT' => $data['ad_clicks_limit'],
 				'AD_OWNER'        => $owner,
 				'AD_CENTERING'    => $data['ad_centering'],
+				'AD_CONSENT'      => $data['ad_consent'],
 			));
 
 		$helper->assign_data($data, $errors);
