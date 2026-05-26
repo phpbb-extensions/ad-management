@@ -30,27 +30,59 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame('', $this->get_manager()->prepare_ad_code('', true));
 	}
 
-	public function test_defers_script_tag_when_consent_enabled()
+	public function executable_script_type_data()
 	{
-		$raw = htmlspecialchars('<script src="https://ads.example.com/tag.js"></script>', ENT_COMPAT);
-		$result = $this->get_manager()->prepare_ad_code($raw, true);
-		self::assertStringContainsString('type="text/plain"', $result);
-		self::assertStringContainsString('data-consent-category="marketing"', $result);
-		self::assertStringContainsString('src="https://ads.example.com/tag.js"', $result);
+		return [
+			'normal script' => [
+				'<script src="https://ads.example.com/tag.js"></script>',
+				'<script src="https://ads.example.com/tag.js" type="text/plain" data-consent-category="marketing"></script>',
+			],
+			'empty type' => [
+				'<script type="" src="https://ads.example.com/legacy.js"></script>',
+				'<script type="text/plain" src="https://ads.example.com/legacy.js" data-consent-category="marketing"></script>',
+			],
+			'text/plain type' => [
+				'<script type="text/plain" src="https://ads.example.com/legacy.js"></script>',
+				'<script type="text/plain" src="https://ads.example.com/legacy.js" data-consent-category="marketing"></script>',
+			],
+			'module type' => [
+				'<script type="module" src="https://ads.example.com/legacy.js"></script>',
+				'<script type="text/plain" src="https://ads.example.com/legacy.js" data-consent-category="marketing"></script>',
+			],
+			'javascript type with charset' => [
+				'<script type="application/javascript; charset=utf-8" src="https://ads.example.com/legacy.js"></script>',
+				'<script type="text/plain" src="https://ads.example.com/legacy.js" data-consent-category="marketing"></script>',
+			],
+			'ecmascript type' => [
+				'<script type="text/ecmascript" src="https://ads.example.com/legacy.js"></script>',
+				'<script type="text/plain" src="https://ads.example.com/legacy.js" data-consent-category="marketing"></script>',
+			],
+		];
 	}
 
-	public function test_adds_consent_category_to_existing_text_plain_script()
+	/**
+	 * @dataProvider executable_script_type_data
+	 */
+	public function test_defers_executable_script_types($input, $expected)
 	{
-		$raw = htmlspecialchars('<script type="text/plain" src="https://ads.example.com/legacy.js"></script>', ENT_COMPAT);
+		$raw = htmlspecialchars($input, ENT_COMPAT);
 		$result = $this->get_manager()->prepare_ad_code($raw, true);
-		self::assertStringContainsString('type="text/plain"', $result);
-		self::assertStringContainsString('data-consent-category="marketing"', $result);
+		self::assertSame($expected, $result);
+	}
+
+	public function test_preserves_non_executable_script_type()
+	{
+		$raw = htmlspecialchars('<script type="application/json">{"slot":"ad"}</script>', ENT_COMPAT);
+		$result = $this->get_manager()->prepare_ad_code($raw, true);
+		self::assertSame('<script type="application/json">{"slot":"ad"}</script>', $result);
 	}
 
 	public function test_does_not_double_wrap_already_tagged_script()
 	{
-		$raw = htmlspecialchars('<script type="text/plain" data-consent-category="marketing" src="https://ads.example.com/tag.js"></script>', ENT_COMPAT);
+		$script = '<script type="text/plain" data-consent-category="marketing" src="https://ads.example.com/tag.js"></script>';
+		$raw = htmlspecialchars($script, ENT_COMPAT);
 		$result = $this->get_manager()->prepare_ad_code($raw, true);
+		self::assertSame($script, $result);
 		self::assertSame(1, substr_count($result, 'data-consent-category='));
 	}
 
