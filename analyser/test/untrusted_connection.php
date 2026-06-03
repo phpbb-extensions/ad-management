@@ -32,7 +32,7 @@ class untrusted_connection implements test_interface
 	 * When board runs on HTTPS and ad tries to load a file from
 	 * HTTP source, browser throws a warning. We should prevent that.
 	 */
-	public function run($ad_code)
+	public function run($ad_code, array $context = array())
 	{
 		$is_https = $this->request->server('HTTPS', false);
 		if ($is_https && preg_match('/http[^s]/', $ad_code))

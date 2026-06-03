@@ -39,13 +39,14 @@ class manager
 	 * Test the ad code for potential problems.
 	 *
 	 * @param	string	$ad_code	Advertisement code
+	 * @param	array	$context	Optional form context
 	 */
-	public function run($ad_code)
+	public function run($ad_code, array $context = array())
 	{
 		$results = array();
 		foreach ($this->tests as $test)
 		{
-			$result = $test->run($ad_code);
+			$result = $test->run($ad_code, $context);
 			if ($result !== false)
 			{
 				$results[] = $result;

@@ -479,7 +479,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->analyser->expects(self::once())
 			->method('run')
-			->with($data['ad_code']);
+			->with($data['ad_code'], $data);
 
 		$this->input->expects(self::once())
 			->method('get_errors')

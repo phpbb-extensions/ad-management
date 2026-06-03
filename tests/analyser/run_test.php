@@ -20,64 +20,64 @@ class run_test extends analyser_base
 	public function run_data()
 	{
 		return array(
-			array('&lt;script async&gt;alert()&lt;/script&gt;', false, array(
+			array('&lt;script async&gt;alert()&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'ALERT_USAGE',
 				),
 			)),
-			array('&lt;script async&gt;alert ()&lt;/script&gt;', false, array(
+			array('&lt;script async&gt;alert ()&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'ALERT_USAGE',
 				),
 			)),
-			array('&lt;script async&gt;window.location.href = "new url"&lt;/script&gt;', false, array(
+			array('&lt;script async&gt;window.location.href = "new url"&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'LOCATION_CHANGE',
 				),
 			)),
-			array('&lt;script async&gt;window.location.href= "new url"&lt;/script&gt;', false, array(
+			array('&lt;script async&gt;window.location.href= "new url"&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'LOCATION_CHANGE',
 				),
 			)),
-			array('&lt;script&gt;&lt;/script&gt;', false, array()),
-			array('&lt;script src="script src"&gt;&lt;/script&gt;', false, array(
+			array('&lt;script&gt;&lt;/script&gt;', false, array(), array()),
+			array('&lt;script src="script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(
+			array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script async src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(
+			array('&lt;script async src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script async src="another script src"&gt;&lt;/script&gt;', false, array(
+			array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script async src="another script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', false, array()),
-			array('&lt;script async src="https://some.url"&gt;&lt;/script&gt;', true, array()),
-			array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', true, array(
+			array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', false, array(), array()),
+			array('&lt;script async src="https://some.url"&gt;&lt;/script&gt;', true, array(), array()),
+			array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', true, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'UNSECURE_CONNECTION',
 				),
 			)),
-			array('&lt;script src="http://some.url"&gt;&lt;/script&gt;&lt;script&gt;alert("e");window.location.href="new url"&lt;/script&gt;', true, array(
+			array('&lt;script src="http://some.url"&gt;&lt;/script&gt;&lt;script&gt;alert("e");window.location.href="new url"&lt;/script&gt;', true, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'ALERT_USAGE',
@@ -95,6 +95,58 @@ class run_test extends analyser_base
 					'lang_key'	=> 'UNSECURE_CONNECTION',
 				),
 			)),
+			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_CONSENT_RECOMMENDED',
+				),
+			)),
+			array('<script>document.cookie = "ad=1";</script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_CONSENT_RECOMMENDED',
+				),
+			)),
+			array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_CONSENT_VENDOR_RECOMMENDED',
+				),
+			)),
+			array('<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_CONSENT_VENDOR_RECOMMENDED',
+				),
+			)),
+			array('<script type="application/ld+json">{"@context":"https://schema.org"}</script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array()),
+			array('<iframe src="https://googleads.g.doubleclick.net/pagead/ads"></iframe>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array()),
+			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'ad_consent' => 1,
+				'consentmanager_marketing_enabled' => 1,
+			), array()),
+			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 0,
+			), array()),
 		);
 	}
 
@@ -103,9 +155,10 @@ class run_test extends analyser_base
 	 *
 	 * @dataProvider run_data
 	 */
-	public function test_run($ad_code, $is_https, $expected)
+	public function test_run($ad_code, $is_https, $context, $expected)
 	{
 		$manager = $this->get_manager();
+		$this->config['consentmanager_marketing_enabled'] = $context['consentmanager_marketing_enabled'] ?? 0;
 
 		$this->request
 			->method('server')
@@ -132,6 +185,6 @@ class run_test extends analyser_base
 				->method('assign_block_vars');
 		}
 
-		$manager->run($ad_code);
+		$manager->run($ad_code, $context);
 	}
 }
