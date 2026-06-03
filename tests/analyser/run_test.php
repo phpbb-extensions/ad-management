@@ -95,6 +95,13 @@ class run_test extends analyser_base
 					'lang_key'	=> 'UNSECURE_CONNECTION',
 				),
 			)),
+			array('&lt;iframe src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'IFRAME_USAGE',
+				),
+			)),
+			array('&lt;iframe data-consent-src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array()),
 			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,

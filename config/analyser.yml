@@ -42,3 +42,9 @@ services:
             - '@request'
         tags:
             - { name: phpbb.ads.analyser.test }
+
+    phpbb.ads.analyser.test.iframe:
+        class: phpbb\ads\analyser\test\iframe
+        tags:
+            - { name: phpbb.ads.analyser.test }
+

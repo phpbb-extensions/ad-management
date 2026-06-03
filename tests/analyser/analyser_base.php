@@ -61,6 +61,7 @@ class analyser_base extends \phpbb_test_case
 			'script_without_async',
 			'marketing_consent',
 			'untrusted_connection',
+			'iframe',
 		);
 		$analyser_tests = array();
 		foreach ($tests as $test)
@@ -70,7 +71,7 @@ class analyser_base extends \phpbb_test_case
 			{
 				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->request);
 			}
-			elseif ($test === 'marketing_consent')
+			else if ($test === 'marketing_consent')
 			{
 				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->config);
 			}
