@@ -31,7 +31,7 @@ $lang = array_merge($lang, array(
 	'AD_NOTE'					=> 'Notes',
 	'AD_NOTE_EXPLAIN'			=> 'Enter any notes for this advertisement. These notes are not shown anywhere except in the ACP and are optional.',
 	'AD_CODE'					=> 'Code',
-	'AD_CODE_EXPLAIN'			=> 'Enter the advertisement code here. All code must use HTML markup, BBCodes are not supported.<br><br>If the Consent Manager extension is enabled, ads with script tags can be held back until a visitor allows marketing. Normal HTML, such as images and links, will still display, so you usually do not need to change your ad code manually.<br><br>Note: If your advertisement code places cookies, collects user data, or tracks user behaviour (for example, ads from Google AdSense or other third-party ad networks), then you should enable the <strong>Advertising Disclosure</strong> in the <strong>Advertisement Management Settings</strong> panel to ensure compliance. If you are uncertain, it is recommended that you enable it.',
+	'AD_CODE_EXPLAIN'			=> 'Enter the advertisement code here. All code must use HTML markup, BBCodes are not supported.<br><br>Note: If your advertisement code places cookies, collects user data, or tracks user behaviour (for example, ads from Google AdSense or other third-party ad networks), then you should enable the <strong>Advertising Disclosure</strong> in the <strong>Advertisement Management Settings</strong> panel to ensure compliance. If you are uncertain, it is recommended that you enable it.',
 	'ANALYSE_AD_CODE'			=> 'Analyse advertisement code',
 	'EVERYTHING_OK'				=> 'The code appears OK.',
 	'AD_BANNER'					=> 'Advertisement banner',
@@ -105,7 +105,7 @@ $lang = array_merge($lang, array(
 	'MARKETING_CONSENT_VENDOR_RECOMMENDED'	=> '<strong>Known ad vendor detected</strong><br />This advertisement contains executable <samp>&lt;script&gt;</samp> tags from a known advertising or marketing vendor. Enable <strong>Require marketing consent</strong> below for this ad so its scripts are deferred until the visitor allows marketing in Privacy Settings.',
 	'ALERT_USAGE'			=> '<strong>Usage of <samp>alert()</samp></strong><br />Your code uses the <samp>alert()</samp> function which is not a good practice and can distract users. Some browsers may also block page load and display additional warnings to the user.',
 	'LOCATION_CHANGE'		=> '<strong>Redirection</strong><br />Your code appears it can redirect a user to another page or site. Redirects can sometimes send users to unintended, often malicious, destinations. Please verify the integrity of your advertisement code’s redirection destination.',
-	'IFRAME_USAGE'			=> '<strong>Usage of <samp>&lt;iframe&gt;</samp></strong><br />Your code contains HTML-encoded <samp>&lt;iframe&gt;</samp> tags. Because iframes can introduce third-party tracking or data collection, please review this advertisement snippet to ensure it complies with your user consent policies.',
+	'IFRAME_USAGE'			=> '<strong>Usage of <samp>&lt;iframe&gt;</samp></strong><br />Your code contains HTML-encoded <samp>&lt;iframe&gt;</samp> tags. Because iframes can introduce third-party tracking or data collection, please review this advertisement snippet to ensure it complies with your user privacy policies.',
 
 	// Template location categories
 	'CAT_TOP_OF_PAGE'		=> 'Top of page',
