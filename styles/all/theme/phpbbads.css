@@ -1,5 +1,16 @@
 .phpbb-ads {
+	overflow: hidden;
 	margin: 10px 0;
+}
+
+.phpbb-ads img {
+	max-width: 100%;
+	height: auto;
+}
+
+.phpbb-ads iframe,
+.phpbb-ads video {
+	max-width: 100%;
 }
 
 .phpbb-ads-center {
