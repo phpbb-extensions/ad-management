@@ -19,12 +19,8 @@ class marketing_consent implements test_interface
 	 * host hints should not expand warnings to iframe-only or image-only embeds.
 	 */
 	protected const MARKETING_HOST_PATTERNS = array(
-		'/(^|[\/.])pagead2\.googlesyndication\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])partner\.googleadservices\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])googleads\.g\.doubleclick\.net(?=[:\/]|$)/i',
-		'/(^|[\/.])securepubads\.g\.doubleclick\.net(?=[:\/]|$)/i',
-		'/(^|[\/.])www\.googletagservices\.com(?=[:\/]|$)/i',
-		'/(^|[\/.])www\.googletagmanager\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])c\.amazon-adsystem\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])aax\.amazon-adsystem\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])trc\.taboola\.com(?=[:\/]|$)/i',
@@ -35,6 +31,20 @@ class marketing_consent implements test_interface
 		'/(^|[\/.])gum\.criteo\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])secure\.adnxs\.com(?=[:\/]|$)/i',
 		'/(^|[\/.])ib\.adnxs\.com(?=[:\/]|$)/i',
+	);
+
+	/**
+	 * Google ad/tag scripts that support Google Consent Mode.
+	 *
+	 * Ads extension does not recommend script deferral for these tags because
+	 * Consent Manager communicates the marketing consent state through Google
+	 * Consent Mode instead.
+	 */
+	protected const GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS = array(
+		'~(^|[/.])pagead2\.googlesyndication\.com/pagead/js/adsbygoogle\.js(?:[?#]|$)~i',
+		'~(^|[/.])securepubads\.g\.doubleclick\.net/tag/js/gpt\.js(?:[?#]|$)~i',
+		'~(^|[/.])www\.googletagservices\.com/tag/js/gpt\.js(?:[?#]|$)~i',
+		'~(^|[/.])www\.googletagmanager\.com/(?:gtag/js|gtm\.js)(?:[?#]|$)~i',
 	);
 
 	/** @var \phpbb\config\config */
@@ -91,14 +101,21 @@ class marketing_consent implements test_interface
 			return false;
 		}
 
+		$google_consent_aware_sources = $this->get_google_consent_aware_script_sources($ad_code);
+
 		foreach ($matches[1] as $index => $attributes)
 		{
+			$content = $matches[2][$index] ?? '';
 			if (!$this->should_flag_script_tag($attributes))
 			{
 				continue;
 			}
 
-			$content = $matches[2][$index] ?? '';
+			if ($this->is_google_consent_aware_script($attributes, $content, $google_consent_aware_sources))
+			{
+				continue;
+			}
+
 			if ($this->contains_marketing_host_hint($attributes, $content))
 			{
 				return 'MARKETING_CONSENT_VENDOR_RECOMMENDED';
@@ -108,6 +125,96 @@ class marketing_consent implements test_interface
 		}
 
 		return false;
+	}
+
+	/**
+	 * Determine whether a script should run under Google Consent Mode.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @param string $content Script tag content
+	 * @param array $google_consent_aware_sources Known Google loader sources in this ad block
+	 * @return bool
+	 */
+	protected function is_google_consent_aware_script($attributes, $content, array $google_consent_aware_sources)
+	{
+		$source = $this->extract_script_source($attributes);
+		if ($source !== '')
+		{
+			return isset($google_consent_aware_sources[$this->normalize_script_source($source)]);
+		}
+
+		return !empty($google_consent_aware_sources)
+			&& preg_match('/\b(?:adsbygoogle|googletag|gtag|dataLayer)\b/', $content);
+	}
+
+	/**
+	 * Return known Google Consent Mode-aware loader sources in an ad block.
+	 *
+	 * @param string $ad_code Advertisement code
+	 * @return array
+	 */
+	protected function get_google_consent_aware_script_sources($ad_code)
+	{
+		$sources = array();
+
+		if (!preg_match_all('#<script\b([^>]*)>#is', $ad_code, $matches))
+		{
+			return $sources;
+		}
+
+		foreach ($matches[1] as $attributes)
+		{
+			$source = $this->extract_script_source($attributes);
+			if ($source !== '' && $this->is_google_consent_aware_script_source($source))
+			{
+				$sources[$this->normalize_script_source($source)] = true;
+			}
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * Extract the src attribute from a script tag attribute string.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @return string
+	 */
+	protected function extract_script_source($attributes)
+	{
+		return preg_match('/\bsrc\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches) ? $matches[2] : '';
+	}
+
+	/**
+	 * Check whether a script source is a known Google Consent Mode-aware loader.
+	 *
+	 * @param string $source Script source URL
+	 * @return bool
+	 */
+	protected function is_google_consent_aware_script_source($source)
+	{
+		$source = $this->normalize_script_source($source);
+
+		foreach (self::GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS as $pattern)
+		{
+			if (preg_match($pattern, $source))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Normalize a script source before comparing against allowlisted loaders.
+	 *
+	 * @param string $source Script source URL
+	 * @return string
+	 */
+	protected function normalize_script_source($source)
+	{
+		return preg_replace('#^//#', 'https://', trim($source));
 	}
 
 	/**
@@ -121,9 +228,10 @@ class marketing_consent implements test_interface
 	{
 		$haystacks = array($attributes, $content);
 
-		if (preg_match('/\bsrc\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches))
+		$source = $this->extract_script_source($attributes);
+		if ($source !== '')
 		{
-			$haystacks[] = $matches[2];
+			$haystacks[] = $source;
 		}
 
 		foreach ($haystacks as $haystack)

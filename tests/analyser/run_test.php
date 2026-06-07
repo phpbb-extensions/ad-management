@@ -123,21 +123,15 @@ class run_test extends analyser_base
 			array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
-			), array(
-				array(
-					'severity'	=> 'notice',
-					'lang_key'	=> 'MARKETING_CONSENT_VENDOR_RECOMMENDED',
-				),
-			)),
+			), array()),
+			array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123" crossorigin="anonymous"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-123" data-ad-slot="456" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array()),
 			array('<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
-			), array(
-				array(
-					'severity'	=> 'notice',
-					'lang_key'	=> 'MARKETING_CONSENT_VENDOR_RECOMMENDED',
-				),
-			)),
+			), array()),
 			array('<script type="application/ld+json">{"@context":"https://schema.org"}</script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,

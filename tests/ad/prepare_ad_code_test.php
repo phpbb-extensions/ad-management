@@ -86,6 +86,57 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame(1, substr_count($result, 'data-consent-category='));
 	}
 
+	public function google_consent_aware_script_data()
+	{
+		return [
+			'adsense loader' => [
+				'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script>',
+			],
+			'gpt loader' => [
+				'<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script>',
+			],
+			'gtag loader' => [
+				'<script async src="https://www.googletagmanager.com/gtag/js?id=AW-123"></script>',
+			],
+			'gtm loader' => [
+				'<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-ABC123"></script>',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider google_consent_aware_script_data
+	 */
+	public function test_does_not_defer_google_consent_aware_loaders($script)
+	{
+		$raw = htmlspecialchars($script, ENT_COMPAT);
+		$result = $this->get_manager()->prepare_ad_code($raw, true);
+		self::assertSame($script, $result);
+	}
+
+	public function test_does_not_defer_adsense_inline_script_when_adsense_loader_is_present()
+	{
+		$script = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script><ins class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>';
+		$raw = htmlspecialchars($script, ENT_COMPAT);
+		$result = $this->get_manager()->prepare_ad_code($raw, true);
+		self::assertSame($script, $result);
+	}
+
+	public function test_does_not_defer_gpt_inline_script_when_gpt_loader_is_present()
+	{
+		$script = '<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script><script>window.googletag = window.googletag || {cmd: []}; googletag.cmd.push(function() {});</script>';
+		$raw = htmlspecialchars($script, ENT_COMPAT);
+		$result = $this->get_manager()->prepare_ad_code($raw, true);
+		self::assertSame($script, $result);
+	}
+
+	public function test_defers_google_named_inline_script_without_google_loader()
+	{
+		$raw = htmlspecialchars('<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>', ENT_COMPAT);
+		$result = $this->get_manager()->prepare_ad_code($raw, true);
+		self::assertSame('<script type="text/plain" data-consent-category="marketing">(adsbygoogle = window.adsbygoogle || []).push({});</script>', $result);
+	}
+
 	public function test_non_script_html_is_preserved()
 	{
 		$raw = htmlspecialchars('<div class="ad-slot">Ad</div><iframe src="https://ads.example.com/frame"></iframe>', ENT_COMPAT);

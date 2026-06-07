@@ -14,6 +14,19 @@ class manager
 {
 	public const CONSENT_CATEGORY = 'marketing';
 
+	/**
+	 * Google ad/tag scripts that support Google Consent Mode.
+	 *
+	 * These should run immediately so Consent Mode can control storage and
+	 * personalization instead of blocking the ad tag entirely.
+	 */
+	protected const GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS = array(
+		'~(^|[/.])pagead2\.googlesyndication\.com/pagead/js/adsbygoogle\.js(?:[?#]|$)~i',
+		'~(^|[/.])securepubads\.g\.doubleclick\.net/tag/js/gpt\.js(?:[?#]|$)~i',
+		'~(^|[/.])www\.googletagservices\.com/tag/js/gpt\.js(?:[?#]|$)~i',
+		'~(^|[/.])www\.googletagmanager\.com/(?:gtag/js|gtm\.js)(?:[?#]|$)~i',
+	);
+
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
@@ -391,12 +404,14 @@ class manager
 			return $ad_code;
 		}
 
-		$ad_code = preg_replace_callback('#<script\b([^>]*)>(.*?)</script\s*>#is', function ($matches)
+		$google_consent_aware_sources = $this->get_google_consent_aware_script_sources($ad_code);
+
+		$ad_code = preg_replace_callback('#<script\b([^>]*)>(.*?)</script\s*>#is', function ($matches) use ($google_consent_aware_sources)
 		{
 			$attributes = $matches[1] ?? '';
 			$content = $matches[2] ?? '';
 
-			if (!$this->should_defer_script_tag($attributes))
+			if (!$this->should_defer_script_tag($attributes, $content, $google_consent_aware_sources))
 			{
 				return $matches[0];
 			}
@@ -411,26 +426,128 @@ class manager
 	 * Determine whether a script tag is executable and should be deferred.
 	 *
 	 * @param string $attributes Script tag attributes
+	 * @param string $content Script tag content
+	 * @param array $google_consent_aware_sources Known Google loader sources in this ad block
 	 * @return bool
 	 */
-	protected function should_defer_script_tag($attributes)
+	protected function should_defer_script_tag($attributes, $content = '', array $google_consent_aware_sources = array())
 	{
 		if (preg_match('/\bdata-consent-category\s*=/i', $attributes))
 		{
 			return false;
 		}
 
-		if (!preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches))
+		if (preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches))
 		{
-			return true;
+			$type = strtolower(trim(explode(';', $matches[2])[0]));
+		}
+		else
+		{
+			$type = '';
 		}
 
-		$type = strtolower(trim(explode(';', $matches[2])[0]));
-		return $type === ''
+		$is_executable = $type === ''
 			|| $type === 'text/plain'
 			|| $type === 'module'
 			|| strpos($type, 'javascript') !== false
 			|| strpos($type, 'ecmascript') !== false;
+
+		if (!$is_executable)
+		{
+			return false;
+		}
+
+		return !$this->is_google_consent_aware_script($attributes, $content, $google_consent_aware_sources);
+	}
+
+	/**
+	 * Determine whether a script should run under Google Consent Mode.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @param string $content Script tag content
+	 * @param array $google_consent_aware_sources Known Google loader sources in this ad block
+	 * @return bool
+	 */
+	protected function is_google_consent_aware_script($attributes, $content, array $google_consent_aware_sources)
+	{
+		$source = $this->extract_script_source($attributes);
+		if ($source !== '')
+		{
+			return isset($google_consent_aware_sources[$this->normalize_script_source($source)]);
+		}
+
+		return !empty($google_consent_aware_sources)
+			&& preg_match('/\b(?:adsbygoogle|googletag|gtag|dataLayer)\b/', $content);
+	}
+
+	/**
+	 * Return known Google Consent Mode-aware loader sources in an ad block.
+	 *
+	 * @param string $ad_code Advertisement code
+	 * @return array
+	 */
+	protected function get_google_consent_aware_script_sources($ad_code)
+	{
+		$sources = array();
+
+		if (!preg_match_all('#<script\b([^>]*)>#is', $ad_code, $matches))
+		{
+			return $sources;
+		}
+
+		foreach ($matches[1] as $attributes)
+		{
+			$source = $this->extract_script_source($attributes);
+			if ($source !== '' && $this->is_google_consent_aware_script_source($source))
+			{
+				$sources[$this->normalize_script_source($source)] = true;
+			}
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * Extract the src attribute from a script tag attribute string.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @return string
+	 */
+	protected function extract_script_source($attributes)
+	{
+		return preg_match('/\bsrc\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches) ? $matches[2] : '';
+	}
+
+	/**
+	 * Check whether a script source is a known Google Consent Mode-aware loader.
+	 *
+	 * @param string $source Script source URL
+	 * @return bool
+	 */
+	protected function is_google_consent_aware_script_source($source)
+	{
+		$source = $this->normalize_script_source($source);
+
+		foreach (self::GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS as $pattern)
+		{
+			if (preg_match($pattern, $source))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Normalize a script source before comparing against allowlisted loaders.
+	 *
+	 * @param string $source Script source URL
+	 * @return string
+	 */
+	protected function normalize_script_source($source)
+	{
+		return preg_replace('#^//#', 'https://', trim($source));
 	}
 
 	/**
