@@ -137,6 +137,11 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame('<script type="text/plain" data-consent-category="marketing">(adsbygoogle = window.adsbygoogle || []).push({});</script>', $result);
 	}
 
+	public function test_google_consent_aware_source_lookup_returns_empty_without_script_tags()
+	{
+		self::assertSame(array(), \phpbb\ads\ad\manager::get_google_consent_aware_script_sources('<div class="ad-slot">No scripts</div>'));
+	}
+
 	public function test_non_script_html_is_preserved()
 	{
 		$raw = htmlspecialchars('<div class="ad-slot">Ad</div><iframe src="https://ads.example.com/frame"></iframe>', ENT_COMPAT);

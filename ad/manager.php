@@ -404,7 +404,7 @@ class manager
 			return $ad_code;
 		}
 
-		$google_consent_aware_sources = $this->get_google_consent_aware_script_sources($ad_code);
+		$google_consent_aware_sources = self::get_google_consent_aware_script_sources($ad_code);
 
 		$ad_code = preg_replace_callback('#<script\b([^>]*)>(.*?)</script\s*>#is', function ($matches) use ($google_consent_aware_sources)
 		{
@@ -457,7 +457,7 @@ class manager
 			return false;
 		}
 
-		return !$this->is_google_consent_aware_script($attributes, $content, $google_consent_aware_sources);
+		return !self::is_google_consent_aware_script($attributes, $content, $google_consent_aware_sources);
 	}
 
 	/**
@@ -468,12 +468,12 @@ class manager
 	 * @param array $google_consent_aware_sources Known Google loader sources in this ad block
 	 * @return bool
 	 */
-	protected function is_google_consent_aware_script($attributes, $content, array $google_consent_aware_sources)
+	public static function is_google_consent_aware_script($attributes, $content, array $google_consent_aware_sources)
 	{
-		$source = $this->extract_script_source($attributes);
+		$source = self::extract_script_source($attributes);
 		if ($source !== '')
 		{
-			return isset($google_consent_aware_sources[$this->normalize_script_source($source)]);
+			return isset($google_consent_aware_sources[self::normalize_script_source($source)]);
 		}
 
 		return !empty($google_consent_aware_sources)
@@ -486,7 +486,7 @@ class manager
 	 * @param string $ad_code Advertisement code
 	 * @return array
 	 */
-	protected function get_google_consent_aware_script_sources($ad_code)
+	public static function get_google_consent_aware_script_sources($ad_code)
 	{
 		$sources = array();
 
@@ -497,10 +497,10 @@ class manager
 
 		foreach ($matches[1] as $attributes)
 		{
-			$source = $this->extract_script_source($attributes);
-			if ($source !== '' && $this->is_google_consent_aware_script_source($source))
+			$source = self::extract_script_source($attributes);
+			if ($source !== '' && self::is_google_consent_aware_script_source($source))
 			{
-				$sources[$this->normalize_script_source($source)] = true;
+				$sources[self::normalize_script_source($source)] = true;
 			}
 		}
 
@@ -513,7 +513,7 @@ class manager
 	 * @param string $attributes Script tag attributes
 	 * @return string
 	 */
-	protected function extract_script_source($attributes)
+	public static function extract_script_source($attributes)
 	{
 		return preg_match('/\bsrc\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches) ? $matches[2] : '';
 	}
@@ -524,9 +524,9 @@ class manager
 	 * @param string $source Script source URL
 	 * @return bool
 	 */
-	protected function is_google_consent_aware_script_source($source)
+	protected static function is_google_consent_aware_script_source($source)
 	{
-		$source = $this->normalize_script_source($source);
+		$source = self::normalize_script_source($source);
 
 		foreach (self::GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS as $pattern)
 		{
@@ -545,7 +545,7 @@ class manager
 	 * @param string $source Script source URL
 	 * @return string
 	 */
-	protected function normalize_script_source($source)
+	protected static function normalize_script_source($source)
 	{
 		return preg_replace('#^//#', 'https://', trim($source));
 	}

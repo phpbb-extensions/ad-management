@@ -201,13 +201,4 @@ class run_test extends analyser_base
 
 		$manager->run($ad_code, $context);
 	}
-
-	public function test_google_consent_aware_source_lookup_returns_empty_without_script_tags()
-	{
-		$test = new \phpbb\ads\analyser\test\marketing_consent($this->config);
-		$method = new \ReflectionMethod($test, 'get_google_consent_aware_script_sources');
-		$method->setAccessible(true);
-
-		self::assertSame(array(), $method->invoke($test, '<div class="ad-slot">No scripts</div>'));
-	}
 }
