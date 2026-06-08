@@ -20,64 +20,64 @@ class run_test extends analyser_base
 	public function run_data()
 	{
 		return array(
-			array('&lt;script async&gt;alert()&lt;/script&gt;', false, array(), array(
+			'warns on alert call' => array('&lt;script async&gt;alert()&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'ALERT_USAGE',
 				),
 			)),
-			array('&lt;script async&gt;alert ()&lt;/script&gt;', false, array(), array(
+			'warns on spaced alert call' => array('&lt;script async&gt;alert ()&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'ALERT_USAGE',
 				),
 			)),
-			array('&lt;script async&gt;window.location.href = "new url"&lt;/script&gt;', false, array(), array(
+			'warns on location href assignment' => array('&lt;script async&gt;window.location.href = "new url"&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'LOCATION_CHANGE',
 				),
 			)),
-			array('&lt;script async&gt;window.location.href= "new url"&lt;/script&gt;', false, array(), array(
+			'warns on compact location href assignment' => array('&lt;script async&gt;window.location.href= "new url"&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'LOCATION_CHANGE',
 				),
 			)),
-			array('&lt;script&gt;&lt;/script&gt;', false, array(), array()),
-			array('&lt;script src="script src"&gt;&lt;/script&gt;', false, array(), array(
+			'allows empty script without src' => array('&lt;script&gt;&lt;/script&gt;', false, array(), array()),
+			'notices script without async' => array('&lt;script src="script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(), array(
+			'notices first of multiple scripts without async' => array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script async src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(), array(
+			'notices second script without async' => array('&lt;script async src="script src"&gt;&lt;/script&gt;&lt;script src="another script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script async src="another script src"&gt;&lt;/script&gt;', false, array(), array(
+			'notices first script without async before async script' => array('&lt;script src="script src"&gt;&lt;/script&gt;&lt;script async src="another script src"&gt;&lt;/script&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'SCRIPT_WITHOUT_ASYNC',
 				),
 			)),
-			array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', false, array(), array()),
-			array('&lt;script async src="https://some.url"&gt;&lt;/script&gt;', true, array(), array()),
-			array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', true, array(), array(
+			'allows http script on http page' => array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', false, array(), array()),
+			'allows https script on https page' => array('&lt;script async src="https://some.url"&gt;&lt;/script&gt;', true, array(), array()),
+			'warns on http script on https page' => array('&lt;script async src="http://some.url"&gt;&lt;/script&gt;', true, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'UNSECURE_CONNECTION',
 				),
 			)),
-			array('&lt;script src="http://some.url"&gt;&lt;/script&gt;&lt;script&gt;alert("e");window.location.href="new url"&lt;/script&gt;', true, array(), array(
+			'collects multiple analyser warnings' => array('&lt;script src="http://some.url"&gt;&lt;/script&gt;&lt;script&gt;alert("e");window.location.href="new url"&lt;/script&gt;', true, array(), array(
 				array(
 					'severity'	=> 'warning',
 					'lang_key'	=> 'ALERT_USAGE',
@@ -95,14 +95,14 @@ class run_test extends analyser_base
 					'lang_key'	=> 'UNSECURE_CONNECTION',
 				),
 			)),
-			array('&lt;iframe src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array(
+			'notices iframe usage' => array('&lt;iframe src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array(
 				array(
 					'severity'	=> 'notice',
 					'lang_key'	=> 'IFRAME_USAGE',
 				),
 			)),
-			array('&lt;iframe data-consent-src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array()),
-			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+			'allows consent-aware iframe placeholder' => array('&lt;iframe data-consent-src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array()),
+			'recommends marketing consent for generic ad script' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array(
@@ -111,7 +111,7 @@ class run_test extends analyser_base
 					'lang_key'	=> 'MARKETING_CONSENT_RECOMMENDED',
 				),
 			)),
-			array('<script>document.cookie = "ad=1";</script>', false, array(
+			'recommends marketing consent for inline cookie script' => array('<script>document.cookie = "ad=1";</script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array(
@@ -120,33 +120,46 @@ class run_test extends analyser_base
 					'lang_key'	=> 'MARKETING_CONSENT_RECOMMENDED',
 				),
 			)),
-			array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script>', false, array(
+			'recommends marketing consent for known non-Google vendor script' => array('<script src="https://cdn.taboola.com/tag.js" async></script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_CONSENT_VENDOR_RECOMMENDED',
+				),
+			)),
+			'allows AdSense loader under Google Consent Mode' => array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
-			array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123" crossorigin="anonymous"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-123" data-ad-slot="456" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>', false, array(
+			'allows full AdSense snippet under Google Consent Mode' => array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123" crossorigin="anonymous"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-123" data-ad-slot="456" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
-			array('<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script>', false, array(
+			'allows GPT loader under Google Consent Mode' => array('<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
-			array('<script type="application/ld+json">{"@context":"https://schema.org"}</script>', false, array(
+			'allows non-executable json script' => array('<script type="application/ld+json">{"@context":"https://schema.org"}</script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
-			array('<iframe src="https://googleads.g.doubleclick.net/pagead/ads"></iframe>', false, array(
+			'allows Google ad iframe because marketing consent analyser only handles scripts' => array('<iframe src="https://googleads.g.doubleclick.net/pagead/ads"></iframe>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
-			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+			'allows generic ad script when ad consent is already enabled' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
 				'ad_consent' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
-			array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+			'allows generic ad script when Consent Manager marketing category is disabled' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
 				'ad_consent' => 0,
 				'consentmanager_marketing_enabled' => 0,
+			), array()),
+			'allows already consent-tagged script' => array('<script type="text/plain" data-consent-category="marketing" src="https://ads.example.com/tag.js"></script>', false, array(
+				'ad_consent' => 0,
+				'consentmanager_marketing_enabled' => 1,
 			), array()),
 		);
 	}
@@ -187,5 +200,14 @@ class run_test extends analyser_base
 		}
 
 		$manager->run($ad_code, $context);
+	}
+
+	public function test_google_consent_aware_source_lookup_returns_empty_without_script_tags()
+	{
+		$test = new \phpbb\ads\analyser\test\marketing_consent($this->config);
+		$method = new \ReflectionMethod($test, 'get_google_consent_aware_script_sources');
+		$method->setAccessible(true);
+
+		self::assertSame(array(), $method->invoke($test, '<div class="ad-slot">No scripts</div>'));
 	}
 }
