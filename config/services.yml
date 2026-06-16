@@ -20,7 +20,6 @@ services:
             - '@files.upload'
             - '@filesystem'
             - '%core.root_path%'
-            - '%phpbb.ads.tables.ad_locations%'
 
     phpbb.ads.helper:
         class: phpbb\ads\controller\helper
