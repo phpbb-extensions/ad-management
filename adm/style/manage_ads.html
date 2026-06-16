@@ -86,14 +86,16 @@
 					</span>
 				</dt>
 				<dd><select id="ad_locations" name="ad_locations[]" multiple size="10">
+					{% set open_optgroup = false %}
 					{% for location in loops.ad_locations %}
 						{% if location.CATEGORY_NAME %}
-							{% if not loop.first %}</optgroup>{% endif %}
+							{% if open_optgroup %}</optgroup>{% endif %}
 							<optgroup label="{{ location.CATEGORY_NAME }}" style="border:none;">
+							{% set open_optgroup = true %}
 						{% else %}
 							<option value="{{ location.LOCATION_ID }}"{% if location.S_SELECTED %} selected{% endif %} title="{{ location.LOCATION_DESC }}">{{ location.LOCATION_NAME }}</option>
 						{% endif %}
-						</optgroup>
+						{% if loop.last and open_optgroup %}</optgroup>{% endif %}
 					{% endfor %}
 					</select>
 				</dd>
@@ -122,19 +124,19 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" size="20" min="0"></dd>
+				<dd><input class="text narrow" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" min="0"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" size="20" min="0"></dd>
+				<dd><input class="text narrow" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" min="0"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="phpbb-ads-datepicker" id="ad_start_date" name="ad_start_date" type="date" min="{{ DATE_MINIMUM }}" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}" size="20" maxlength="20"></dd>
+				<dd><input class="phpbb-ads-datepicker" id="ad_start_date" name="ad_start_date" type="date" min="{{ DATE_MINIMUM }}" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="phpbb-ads-datepicker" id="ad_end_date" name="ad_end_date" type="date" min="{{ DATE_MINIMUM }}" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}" size="20" maxlength="20"></dd>
+				<dd><input class="phpbb-ads-datepicker" id="ad_end_date" name="ad_end_date" type="date" min="{{ DATE_MINIMUM }}" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>

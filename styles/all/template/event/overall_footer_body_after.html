@@ -20,7 +20,9 @@
 
 {% if S_DISPLAY_ADBLOCKER %}
 <script>
-	justDetectAdblock.detectAnyAdblocker().then(function(detected) {
+	phpbbAdsDetectAdblock.detect({
+		baitUrl: '{{ (ROOT_PATH ~ 'ext/phpbb/ads/styles/all/template/js/adsbygoogle.js?assets_version=' ~ T_ASSETS_VERSION)|e('js') }}'
+	}).then(function(detected) {
 		if (detected) {
 			document.getElementById('phpbb-aJHwDeoSqLhW').style.display='block';
 			{% if S_DISPLAY_ADBLOCKER === 2 %}document.getElementById('darkenwrapper').style.display='block';{% endif %}
