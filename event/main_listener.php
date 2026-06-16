@@ -189,9 +189,15 @@ class main_listener implements EventSubscriberInterface
 			$all_locations = $this->location_manager->get_all_locations(false);
 			foreach ($this->location_manager->get_all_location_ids() as $location_id)
 			{
+				$ad_var = 'AD_' . strtoupper($location_id);
+
 				$this->template->assign_vars(array(
-					'AD_' . strtoupper($location_id) . '_ID'	=> $location_id,
-					'AD_' . strtoupper($location_id)			=> '<div class="phpbb-ads-visual-demo" title="' . $all_locations[$location_id]['desc'] . '">' . $all_locations[$location_id]['name'] . '</div>',
+					$ad_var . '_ID'	=> $location_id,
+					$ad_var			=> array(
+						'visual_demo'	=> true,
+						'name'			=> $all_locations[$location_id]['name'],
+						'desc'			=> $all_locations[$location_id]['desc'],
+					),
 				));
 			}
 
