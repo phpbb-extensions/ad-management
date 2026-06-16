@@ -1,0 +1,1 @@
+/* phpBB Ads local ad blocker detection bait. */
