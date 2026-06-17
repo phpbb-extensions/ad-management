@@ -53,7 +53,7 @@ class functional_base extends \phpbb_functional_test_case
 
 		if ($ad_code === '')
 		{
-			$ad_code = '<!-- SAMPLE ADD CODE ' . $location . ' -->';
+			$ad_code = '<!-- SAMPLE AD CODE ' . $location . ' -->';
 		}
 
 		// Create ad
