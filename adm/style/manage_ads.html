@@ -41,7 +41,7 @@
 				<dd><textarea id="ad_note" name="ad_note" rows="5" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
+				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}{% if S_ADS_CONSENTMANAGER_AVAILABLE %}{{ lang('AD_CODE_CONSENT_EXPLAIN') }}{% endif %}</span></dt>
 				<dd>
 					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
 					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code"><i class="icon fa-fw fa-stethoscope"></i> <span>{{ lang('ANALYSE_AD_CODE') }}</span></button>
