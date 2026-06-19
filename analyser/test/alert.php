@@ -20,7 +20,7 @@ class alert implements test_interface
 	 * There is no reason why ad would trigger alert, so it's
 	 * categorized as warning.
 	 */
-	public function run($ad_code, array $context = array())
+	public function run($ad_code)
 	{
 		if (preg_match('/alert\s*\(/U', $ad_code))
 		{

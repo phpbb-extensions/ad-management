@@ -430,13 +430,13 @@ class admin_controller
 
 	/**
 	 * Submit action "analyse_ad_code".
-	 * Analyse submitted ad code with current form state.
+	 * Analyse submitted ad code.
 	 *
 	 * @return	void
 	 */
 	protected function analyse_ad_code()
 	{
-		$this->analyser->run($this->data['ad_code'], $this->data);
+		$this->analyser->run($this->data['ad_code']);
 	}
 
 	/**

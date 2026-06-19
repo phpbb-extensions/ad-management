@@ -20,7 +20,7 @@ class script_without_async implements test_interface
 	 * to load itself asynchronously. Such scripts slow down page rendering
 	 * time and should be made asynchronous.
 	 */
-	public function run($ad_code, array $context = array())
+	public function run($ad_code)
 	{
 		if (preg_match_all('/&lt;script(.*)src(.*)&gt;/U', $ad_code, $matches))
 		{

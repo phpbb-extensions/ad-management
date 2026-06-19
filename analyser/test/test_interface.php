@@ -19,8 +19,7 @@ interface test_interface
 	 * Test ad code for potential problems.
 	 *
 	 * @param	string	$ad_code	Advertisement code
-	 * @param	array	$context	Optional form context
 	 * @return	mixed	List of notices and warnings or false when there are none.
 	 */
-	public function run($ad_code, array $context = array());
+	public function run($ad_code);
 }

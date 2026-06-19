@@ -47,16 +47,13 @@ class marketing_consent implements test_interface
 	/**
 	 * {@inheritDoc}
 	 *
-	 * Suggest enabling Require marketing consent when executable script tags are
-	 * present, Consent Manager marketing is available, and the ad-level consent
-	 * toggle is currently disabled.
+	 * Recommend reviewing Require marketing consent when executable script tags
+	 * are present and Consent Manager marketing is available.
 	 */
-	public function run($ad_code, array $context = array())
+	public function run($ad_code)
 	{
 		if (!$this->config->offsetExists('consentmanager_marketing_enabled')
-			|| empty($this->config['consentmanager_marketing_enabled'])
-			|| !isset($context['ad_consent'])
-			|| !empty($context['ad_consent']))
+			|| empty($this->config['consentmanager_marketing_enabled']))
 		{
 			return false;
 		}

@@ -19,7 +19,7 @@ class iframe implements test_interface
 	 * This test looks for iframe tags with src attributes. Such scripts could introduce
 	 * external trackers and data collectors that could require user consent.
 	 */
-	public function run($ad_code, array $context = array())
+	public function run($ad_code)
 	{
 		if (preg_match('/&lt;iframe(?>(?!&gt;).)*?(?<=\s|&quot;)src\s*=\s*&quot;.*?&gt;/is', $ad_code))
 		{
