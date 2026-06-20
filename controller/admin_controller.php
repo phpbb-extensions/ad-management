@@ -47,6 +47,9 @@ class admin_controller
 	/** @var \phpbb\ads\analyser\manager */
 	protected $analyser;
 
+	/** @var \phpbb\extension\manager */
+	protected $extension_manager;
+
 	/** @var \phpbb\controller\helper */
 	protected $controller_helper;
 
@@ -68,11 +71,12 @@ class admin_controller
 	 * @param \phpbb\ads\controller\admin_input $input             Admin input object
 	 * @param \phpbb\ads\controller\helper      $helper            Helper object
 	 * @param \phpbb\ads\analyser\manager       $analyser          Ad code analyser object
+	 * @param \phpbb\extension\manager          $extension_manager Extension manager object
 	 * @param \phpbb\controller\helper          $controller_helper Controller helper object
 	 * @param string                            $root_path         phpBB root path
 	 * @param string                            $php_ext           PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -83,6 +87,7 @@ class admin_controller
 		$this->input = $input;
 		$this->helper = $helper;
 		$this->analyser = $analyser;
+		$this->extension_manager = $extension_manager;
 		$this->controller_helper = $controller_helper;
 
 		$this->language->add_lang('posting'); // Used by banner_upload() file errors
@@ -527,7 +532,8 @@ class admin_controller
 	 */
 	protected function is_consent_manager_available()
 	{
-		return $this->config->offsetExists('consentmanager_marketing_enabled')
+		return $this->extension_manager->is_enabled('phpbb/consentmanager')
+			&& $this->config->offsetExists('consentmanager_marketing_enabled')
 			&& (bool) $this->config['consentmanager_marketing_enabled'];
 	}
 }

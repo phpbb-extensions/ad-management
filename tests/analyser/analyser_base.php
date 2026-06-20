@@ -35,6 +35,9 @@ class analyser_base extends phpbb_test_case
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\extension\manager */
+	protected $extension_manager;
+
 	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
@@ -61,6 +64,15 @@ class analyser_base extends phpbb_test_case
 		$this->config = new \phpbb\config\config(array(
 			'consentmanager_marketing_enabled' => 0,
 		));
+		$this->extension_manager = $this->getMockBuilder('\phpbb\extension\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->extension_manager->method('is_enabled')
+			->with('phpbb/consentmanager')
+			->willReturnCallback(function ()
+			{
+				return (bool) $this->config['consentmanager_extension_enabled'];
+			});
 
 		// Tests
 		$tests = array(
@@ -81,7 +93,7 @@ class analyser_base extends phpbb_test_case
 			}
 			else if ($test === 'marketing_consent')
 			{
-				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->config);
+				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->config, $this->extension_manager);
 			}
 			else
 			{
