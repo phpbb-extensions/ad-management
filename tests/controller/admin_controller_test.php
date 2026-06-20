@@ -179,7 +179,7 @@ class admin_controller_test extends phpbb_database_test_case
 		return $controller;
 	}
 
-	public function consent_manager_available_data()
+	public static function consent_manager_available_data(): array
 	{
 		return array(
 			'extension disabled, config enabled' => array(false, true, true, false),
