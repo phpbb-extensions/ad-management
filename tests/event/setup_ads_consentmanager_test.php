@@ -25,11 +25,11 @@ class setup_ads_consentmanager_test extends main_listener_base
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('load_memberships', 'get_ads'))
+			->onlyMethods(array('load_memberships', 'get_ads'))
 			->getMock();
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('get_all_location_ids'))
+			->onlyMethods(array('get_all_location_ids'))
 			->getMock();
 
 		$this->location_manager->expects(self::once())
@@ -87,11 +87,11 @@ class setup_ads_consentmanager_test extends main_listener_base
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('load_memberships', 'get_ads'))
+			->onlyMethods(array('load_memberships', 'get_ads'))
 			->getMock();
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('get_all_location_ids'))
+			->onlyMethods(array('get_all_location_ids'))
 			->getMock();
 
 		$this->location_manager->expects(self::once())
@@ -146,11 +146,11 @@ class setup_ads_consentmanager_test extends main_listener_base
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('load_memberships', 'get_ads'))
+			->onlyMethods(array('load_memberships', 'get_ads'))
 			->getMock();
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('get_all_location_ids'))
+			->onlyMethods(array('get_all_location_ids'))
 			->getMock();
 
 		$this->location_manager->expects(self::once())
@@ -201,11 +201,11 @@ class setup_ads_consentmanager_test extends main_listener_base
 
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('load_memberships', 'get_ads'))
+			->onlyMethods(array('load_memberships', 'get_ads'))
 			->getMock();
 		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
 			->disableOriginalConstructor()
-			->setMethods(array('get_all_location_ids'))
+			->onlyMethods(array('get_all_location_ids'))
 			->getMock();
 
 		$this->location_manager->expects(self::once())

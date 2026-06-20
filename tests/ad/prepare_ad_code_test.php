@@ -30,7 +30,7 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame('', $this->get_manager()->prepare_ad_code('', true));
 	}
 
-	public function executable_script_type_data()
+	public static function executable_script_type_data()
 	{
 		return [
 			'normal script' => [
@@ -86,7 +86,7 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame(1, substr_count($result, 'data-consent-category='));
 	}
 
-	public function google_consent_aware_script_data()
+	public static function google_consent_aware_script_data()
 	{
 		return [
 			'adsense loader' => [
