@@ -1,5 +1,15 @@
 # Changelog
 
+### 3.1.0 - 2026-06-20
+
+- Added support for integration with phpBB's Consent Manager extension.
+  - Added a per-ad "Require marketing consent" option to defer advertisement scripts until a visitor grants marketing consent (when Consent Manager is co-installed).
+  - Added Consent Manager-aware handling for supported Google AdSense, Google Publisher Tag (GPT), Google tag (gtag.js), and Google Tag Manager snippets through Google Consent Mode.
+- Updated the advertisement code analyser to warn about scripts and iframes that may require marketing consent.
+- Improved handling of oversized advertisement images, iframes, and videos.
+- Replaced the third-party ad blocker detection library with a simple bundled detector (the old detector made calls to an external site, raising privacy and security concerns).
+- Improved visual demo markup generation and fixed markup errors in the ACP advertisement settings forms.
+
 ### 3.0.2 - 12-31-2025
 
 - Fixed timezone inconsistencies in advertisement start/end date handling.
@@ -69,7 +79,7 @@
 
 ### 1.0.5 - 2018-03-06
 
-- Feature: Added a new option to display ads on content pages only. When enabled, the ad will not be shown on the UCP, MCP, Registration and Profile pages. This will help comply with certain rules, such as Google AdSense which does not allow their ads to be shown on such pages.
+- Feature: Added a new option to display ads on content pages only. When enabled, the ad will not be shown on the UCP, MCP, Registration, and Profile pages. This will help comply with certain rules, such as Google AdSense, which does not allow their ads to be shown on such pages.
 - Feature: An Ad locations option has improved organisation to make it easier to pick the appropriate location. Also, a new Visual Demo has been added, so you can see where all the ad locations physically appear on your board.
 - Fix: My Advertisements tab in the UCP will no longer be shown to all users and will only be visible to advertisement owners.
 - Fix: Resolved an issue affecting some users where multiple ads assigned to the same location were not being randomly rotated.
@@ -77,12 +87,12 @@
 
 ### 1.0.4 - 2017-12-23
 
-- Fix: Improve handling of responsive advertisements.
+- Fix: Improve the handling of responsive advertisements.
 - Fix: Added additional statistics to the "My advertisements" tab, including expiration info and active/inactive status.
 
 ### 1.0.3 - 2017-11-19
 
-- Update: UCP Advertisements page shows more information about your ads, including click/view limits, expiration date and active status of the ad.
+- Update: UCP Advertisements page shows more information about your ads, including click/view limits, expiration date, and active status of the ad.
 - Fix: Improve handling of Google's responsive ads and possibly other responsive ad content. 
 
 ### 1.0.2 - 2017-08-20
