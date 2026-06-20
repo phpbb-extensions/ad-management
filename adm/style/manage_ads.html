@@ -41,7 +41,7 @@
 				<dd><textarea id="ad_note" name="ad_note" rows="5" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}</span></dt>
+				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}{% if S_ADS_CONSENTMANAGER_AVAILABLE %}{{ lang('AD_CODE_CONSENT_EXPLAIN') }}{% endif %}</span></dt>
 				<dd>
 					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
 					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code"><i class="icon fa-fw fa-stethoscope"></i> <span>{{ lang('ANALYSE_AD_CODE') }}</span></button>
@@ -117,6 +117,15 @@
 		</fieldset>
 		<fieldset>
 			<legend>{{ lang('AD_OPTIONS') }}</legend>
+			{% if S_ADS_CONSENTMANAGER_AVAILABLE %}
+				<dl>
+					<dt><label for="ad_consent">{{ lang('AD_CONSENT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CONSENT_EXPLAIN') }}</span></dt>
+					<dd><label><input type="radio" class="radio" id="ad_consent" name="ad_consent" value="1"{% if AD_CONSENT is not defined or AD_CONSENT %} checked{% endif %} /> {{ lang('YES') }}</label>
+						<label><input type="radio" class="radio" name="ad_consent" value="0"{% if AD_CONSENT is defined and not AD_CONSENT %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
+				</dl>
+			{% else %}
+				<input type="hidden" name="ad_consent" value="{{ AD_CONSENT is defined ? AD_CONSENT : 1 }}" />
+			{% endif %}
 			<dl>
 				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}"></dd>

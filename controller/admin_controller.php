@@ -88,7 +88,10 @@ class admin_controller
 		$this->language->add_lang('posting'); // Used by banner_upload() file errors
 		$this->language->add_lang('acp', 'phpbb/ads');
 
-		$this->template->assign_var('S_PHPBB_ADS', true);
+		$this->template->assign_vars([
+			'S_PHPBB_ADS' => true,
+			'S_ADS_CONSENTMANAGER_AVAILABLE' => $this->is_consent_manager_available()
+		]);
 
 		if (!class_exists('auth_admin'))
 		{
@@ -427,7 +430,7 @@ class admin_controller
 
 	/**
 	 * Submit action "analyse_ad_code".
-	 * Upload banner and append it to the ad code.
+	 * Analyse submitted ad code.
 	 *
 	 * @return	void
 	 */
@@ -525,5 +528,16 @@ class admin_controller
 
 			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => (int) $has_ads));
 		}
+	}
+
+	/**
+	 * Check whether Consent Manager's marketing category is available.
+	 *
+	 * @return bool
+	 */
+	protected function is_consent_manager_available()
+	{
+		return $this->config->offsetExists('consentmanager_marketing_enabled')
+			&& (bool) $this->config['consentmanager_marketing_enabled'];
 	}
 }

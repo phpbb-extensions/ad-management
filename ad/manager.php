@@ -12,6 +12,21 @@ namespace phpbb\ads\ad;
 
 class manager
 {
+	public const CONSENT_CATEGORY = 'marketing';
+
+	/**
+	 * Google ad/tag scripts that support Google Consent Mode.
+	 *
+	 * These should run immediately so Consent Mode can control storage and
+	 * personalization instead of blocking the ad tag entirely.
+	 */
+	protected const GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS = array(
+		'~(^|[/.])pagead2\.googlesyndication\.com/pagead/js/adsbygoogle\.js(?:[?#]|$)~i',
+		'~(^|[/.])securepubads\.g\.doubleclick\.net/tag/js/gpt\.js(?:[?#]|$)~i',
+		'~(^|[/.])www\.googletagservices\.com/tag/js/gpt\.js(?:[?#]|$)~i',
+		'~(^|[/.])www\.googletagmanager\.com/(?:gtag/js|gtm\.js)(?:[?#]|$)~i',
+	);
+
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
@@ -87,7 +102,7 @@ class manager
 		$user_now = $this->user->create_datetime();
 		$sql_time = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $user_now->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
 
-		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering
+		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering, a.ad_consent
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
@@ -373,6 +388,194 @@ class manager
 	}
 
 	/**
+	 * Prepare ad code for output, applying consent-manager deferrals when enabled.
+	 *
+	 * @param string $ad_code         Stored advertisement code
+	 * @param bool   $consent_enabled Whether marketing consent is required
+	 * @return string
+	 */
+	public function prepare_ad_code($ad_code, $consent_enabled)
+	{
+		$ad_code = htmlspecialchars_decode($ad_code, ENT_COMPAT);
+		$original_ad_code = $ad_code;
+
+		if (!$consent_enabled || $ad_code === '')
+		{
+			return $ad_code;
+		}
+
+		$google_consent_aware_sources = self::get_google_consent_aware_script_sources($ad_code);
+
+		$ad_code = preg_replace_callback('#<script\b([^>]*)>(.*?)</script\s*>#is', function ($matches) use ($google_consent_aware_sources)
+		{
+			$attributes = $matches[1] ?? '';
+			$content = $matches[2] ?? '';
+
+			if (!$this->should_defer_script_tag($attributes, $content, $google_consent_aware_sources))
+			{
+				return $matches[0];
+			}
+
+			return '<script' . $this->inject_consent_attributes($attributes) . '>' . $content . '</script>';
+		}, $ad_code);
+
+		return $ad_code ?? $original_ad_code;
+	}
+
+	/**
+	 * Determine whether a script tag is executable and should be deferred.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @param string $content Script tag content
+	 * @param array $google_consent_aware_sources Known Google loader sources in this ad block
+	 * @return bool
+	 */
+	protected function should_defer_script_tag($attributes, $content = '', array $google_consent_aware_sources = array())
+	{
+		if (preg_match('/\bdata-consent-category\s*=/i', $attributes))
+		{
+			return false;
+		}
+
+		if (preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches))
+		{
+			$type = strtolower(trim(explode(';', $matches[2])[0]));
+		}
+		else
+		{
+			$type = '';
+		}
+
+		$is_executable = $type === ''
+			|| $type === 'text/plain'
+			|| $type === 'module'
+			|| strpos($type, 'javascript') !== false
+			|| strpos($type, 'ecmascript') !== false;
+
+		if (!$is_executable)
+		{
+			return false;
+		}
+
+		return !self::is_google_consent_aware_script($attributes, $content, $google_consent_aware_sources);
+	}
+
+	/**
+	 * Determine whether a script should run under Google Consent Mode.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @param string $content Script tag content
+	 * @param array $google_consent_aware_sources Known Google loader sources in this ad block
+	 * @return bool
+	 */
+	public static function is_google_consent_aware_script($attributes, $content, array $google_consent_aware_sources)
+	{
+		$source = self::extract_script_source($attributes);
+		if ($source !== '')
+		{
+			return isset($google_consent_aware_sources[self::normalize_script_source($source)]);
+		}
+
+		return !empty($google_consent_aware_sources)
+			&& preg_match('/\b(?:adsbygoogle|googletag|gtag|dataLayer)\b/', $content);
+	}
+
+	/**
+	 * Return known Google Consent Mode-aware loader sources in an ad block.
+	 *
+	 * @param string $ad_code Advertisement code
+	 * @return array
+	 */
+	public static function get_google_consent_aware_script_sources($ad_code)
+	{
+		$sources = array();
+
+		if (!preg_match_all('#<script\b([^>]*)>#is', $ad_code, $matches))
+		{
+			return $sources;
+		}
+
+		foreach ($matches[1] as $attributes)
+		{
+			$source = self::extract_script_source($attributes);
+			if ($source !== '' && self::is_google_consent_aware_script_source($source))
+			{
+				$sources[self::normalize_script_source($source)] = true;
+			}
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * Extract the src attribute from a script tag attribute string.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @return string
+	 */
+	public static function extract_script_source($attributes)
+	{
+		return preg_match('/\bsrc\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches) ? $matches[2] : '';
+	}
+
+	/**
+	 * Check whether a script source is a known Google Consent Mode-aware loader.
+	 *
+	 * @param string $source Script source URL
+	 * @return bool
+	 */
+	protected static function is_google_consent_aware_script_source($source)
+	{
+		$source = self::normalize_script_source($source);
+
+		foreach (self::GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS as $pattern)
+		{
+			if (preg_match($pattern, $source))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Normalize a script source before comparing against allowlisted loaders.
+	 *
+	 * @param string $source Script source URL
+	 * @return string
+	 */
+	protected static function normalize_script_source($source)
+	{
+		return preg_replace('#^//#', 'https://', trim($source));
+	}
+
+	/**
+	 * Replace script tag attributes with consent-aware placeholders.
+	 *
+	 * @param string $attributes Script tag attributes
+	 * @return string
+	 */
+	protected function inject_consent_attributes($attributes)
+	{
+		if (preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes))
+		{
+			$attributes = preg_replace('/\btype\s*=\s*([\'"])(.*?)\1/i', 'type="text/plain"', $attributes, 1);
+		}
+		else
+		{
+			$attributes .= ' type="text/plain"';
+		}
+
+		if (!preg_match('/\bdata-consent-category\s*=/i', $attributes))
+		{
+			$attributes .= ' data-consent-category="' . self::CONSENT_CATEGORY . '"';
+		}
+
+		return $attributes;
+	}
+
+	/**
 	 * Make sure only necessary data make their way to SQL query
 	 *
 	 * @param	array	$data	List of data to query the database
@@ -393,6 +596,7 @@ class manager
 			'ad_owner'			=> '',
 			'ad_content_only'	=> '',
 			'ad_centering'		=> '',
+			'ad_consent'		=> '',
 		]);
 	}
 

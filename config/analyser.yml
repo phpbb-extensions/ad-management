@@ -29,9 +29,22 @@ services:
         tags:
             - { name: phpbb.ads.analyser.test }
 
+    phpbb.ads.analyser.test.marketing_consent:
+        class: phpbb\ads\analyser\test\marketing_consent
+        arguments:
+            - '@config'
+        tags:
+            - { name: phpbb.ads.analyser.test }
+
     phpbb.ads.analyser.test.untrusted_connection:
         class: phpbb\ads\analyser\test\untrusted_connection
         arguments:
             - '@request'
         tags:
             - { name: phpbb.ads.analyser.test }
+
+    phpbb.ads.analyser.test.iframe:
+        class: phpbb\ads\analyser\test\iframe
+        tags:
+            - { name: phpbb.ads.analyser.test }
+

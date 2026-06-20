@@ -35,6 +35,40 @@ class main_listener_test extends main_listener_base
 			'core.adm_page_header_after',
 			'core.group_add_user_after',
 			'core.group_delete_user_after',
+			'phpbb.consentmanager.collect_registrations',
 		), array_keys(\phpbb\ads\event\main_listener::getSubscribedEvents()));
+	}
+
+	public function test_register_ads()
+	{
+		$this->language->add_lang('common', 'phpbb/ads');
+		$listener = $this->get_listener();
+		$consent_manager = new consent_manager_double();
+
+		$listener->register_ads(array(
+			'consent_manager' => $consent_manager,
+		));
+
+		self::assertCount(1, $consent_manager->registrations);
+		self::assertSame('phpbb.ads', $consent_manager->registrations[0]['id']);
+		self::assertSame(array(
+			'label' => $this->language->lang('PHPBB_ADS_CONSENT_LABEL'),
+			'category' => \phpbb\ads\ad\manager::CONSENT_CATEGORY,
+			'description' => $this->language->lang('PHPBB_ADS_CONSENT_DESCRIPTION'),
+		), $consent_manager->registrations[0]['definition']);
+	}
+}
+
+class consent_manager_double
+{
+	/** @var array */
+	public $registrations = array();
+
+	public function register($id, array $definition)
+	{
+		$this->registrations[] = array(
+			'id' => $id,
+			'definition' => $definition,
+		);
 	}
 }
