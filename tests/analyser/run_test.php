@@ -103,6 +103,7 @@ class run_test extends analyser_base
 			)),
 			'allows consent-aware iframe placeholder' => array('&lt;iframe data-consent-src=&quot;https://some.url&quot; width=&quot;640&quot; height=&quot;360&quot; allowfullscreen&gt;&lt;/iframe&gt;', false, array(), array()),
 			'recommends marketing consent for generic ad script' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array(
 				array(
@@ -111,6 +112,7 @@ class run_test extends analyser_base
 				),
 			)),
 			'recommends marketing consent for inline cookie script' => array('<script>document.cookie = "ad=1";</script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array(
 				array(
@@ -119,6 +121,7 @@ class run_test extends analyser_base
 				),
 			)),
 			'recommends marketing consent for known non-Google vendor script' => array('<script src="https://cdn.taboola.com/tag.js" async></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array(
 				array(
@@ -127,21 +130,27 @@ class run_test extends analyser_base
 				),
 			)),
 			'allows AdSense loader under Google Consent Mode' => array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123"></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
 			'allows full AdSense snippet under Google Consent Mode' => array('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-123" crossorigin="anonymous"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-123" data-ad-slot="456" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
 			'allows GPT loader under Google Consent Mode' => array('<script async src="//securepubads.g.doubleclick.net/tag/js/gpt.js"></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
 			'allows non-executable json script' => array('<script type="application/ld+json">{"@context":"https://schema.org"}</script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
 			'allows Google ad iframe because marketing consent analyser only handles scripts' => array('<iframe src="https://googleads.g.doubleclick.net/pagead/ads"></iframe>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
 			'recommends marketing consent regardless of ad consent form value' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array(
 				array(
@@ -150,9 +159,29 @@ class run_test extends analyser_base
 				),
 			)),
 			'allows generic ad script when Consent Manager marketing category is disabled' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 0,
 			), array()),
+			'recommends review when Consent Manager extension is disabled' => array('<script src="https://ads.example.com/tag.js" async></script>', false, array(
+				'consentmanager_extension_enabled' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_REVIEW_RECOMMENDED',
+				),
+			)),
+			'recommends vendor review when Consent Manager extension is disabled' => array('<script src="https://cdn.taboola.com/tag.js" async></script>', false, array(
+				'consentmanager_extension_enabled' => 0,
+				'consentmanager_marketing_enabled' => 1,
+			), array(
+				array(
+					'severity'	=> 'notice',
+					'lang_key'	=> 'MARKETING_VENDOR_REVIEW_RECOMMENDED',
+				),
+			)),
 			'allows already consent-tagged script' => array('<script type="text/plain" data-consent-category="marketing" src="https://ads.example.com/tag.js"></script>', false, array(
+				'consentmanager_extension_enabled' => 1,
 				'consentmanager_marketing_enabled' => 1,
 			), array()),
 		);
@@ -166,6 +195,7 @@ class run_test extends analyser_base
 	public function test_run($ad_code, $is_https, $config, $expected)
 	{
 		$manager = $this->get_manager();
+		$this->config['consentmanager_extension_enabled'] = $config['consentmanager_extension_enabled'] ?? 0;
 		$this->config['consentmanager_marketing_enabled'] = $config['consentmanager_marketing_enabled'] ?? 0;
 
 		$this->request

@@ -36,19 +36,23 @@ class marketing_consent implements test_interface
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\extension\manager */
+	protected $extension_manager;
+
 	/**
-	 * @param \phpbb\config\config $config Config object
+	 * @param \phpbb\config\config     $config            Config object
+	 * @param \phpbb\extension\manager $extension_manager Extension manager object
 	 */
-	public function __construct(\phpbb\config\config $config)
+	public function __construct(\phpbb\config\config $config, \phpbb\extension\manager $extension_manager)
 	{
 		$this->config = $config;
+		$this->extension_manager = $extension_manager;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 *
-	 * Recommend reviewing Require marketing consent when executable script tags
-	 * are present and Consent Manager marketing is available.
+	 * Recommend reviewing consent requirements when executable script tags are present.
 	 */
 	public function run($ad_code)
 	{
@@ -85,6 +89,7 @@ class marketing_consent implements test_interface
 		}
 
 		$google_consent_aware_sources = \phpbb\ads\ad\manager::get_google_consent_aware_script_sources($ad_code);
+		$consent_manager_available = $this->is_consent_manager_available();
 
 		foreach ($matches[1] as $index => $attributes)
 		{
@@ -101,13 +106,25 @@ class marketing_consent implements test_interface
 
 			if ($this->contains_marketing_host_hint($attributes, $content))
 			{
-				return 'MARKETING_CONSENT_VENDOR_RECOMMENDED';
+				return $consent_manager_available ? 'MARKETING_CONSENT_VENDOR_RECOMMENDED' : 'MARKETING_VENDOR_REVIEW_RECOMMENDED';
 			}
 
-			return 'MARKETING_CONSENT_RECOMMENDED';
+			return $consent_manager_available ? 'MARKETING_CONSENT_RECOMMENDED' : 'MARKETING_REVIEW_RECOMMENDED';
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check whether Consent Manager marketing controls are available.
+	 *
+	 * @return bool
+	 */
+	protected function is_consent_manager_available()
+	{
+		return $this->extension_manager->is_enabled('phpbb/consentmanager')
+			&& $this->config->offsetExists('consentmanager_marketing_enabled')
+			&& (bool) $this->config['consentmanager_marketing_enabled'];
 	}
 
 	/**

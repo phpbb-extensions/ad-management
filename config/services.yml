@@ -73,6 +73,7 @@ services:
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.helper'
             - '@phpbb.ads.analyser.manager'
+            - '@ext.manager'
             - '@controller.helper'
             - '%core.root_path%'
             - '%core.php_ext%'

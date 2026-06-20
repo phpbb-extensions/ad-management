@@ -47,6 +47,9 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\analyser\manager */
 	protected $analyser;
 
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\extension\manager */
+	protected $extension_manager;
+
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\controller\helper */
 	protected $controller_helper;
 
@@ -114,6 +117,13 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->analyser = $this->getMockBuilder('\phpbb\ads\analyser\manager')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->extension_manager = $this->getMockBuilder('\phpbb\extension\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->extension_manager
+			->method('is_enabled')
+			->with('phpbb/consentmanager')
+			->willReturn(false);
 		$this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()
 			->getMock();
@@ -145,6 +155,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->input,
 			$this->helper,
 			$this->analyser,
+			$this->extension_manager,
 			$this->controller_helper,
 			$this->root_path,
 			$this->php_ext
@@ -152,6 +163,50 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller->set_page_url($this->u_action);
 
 		return $controller;
+	}
+
+	public function consent_manager_available_data()
+	{
+		return array(
+			'extension disabled, config enabled' => array(false, true, true, false),
+			'extension enabled, config enabled' => array(true, true, true, true),
+			'extension enabled, config disabled' => array(true, true, false, false),
+			'extension enabled, config missing' => array(true, false, false, false),
+		);
+	}
+
+	/**
+	 * @dataProvider consent_manager_available_data
+	 */
+	public function test_consent_manager_available_flag($extension_enabled, $config_exists, $config_enabled, $expected)
+	{
+		if ($config_exists)
+		{
+			$this->config['consentmanager_marketing_enabled'] = $config_enabled ? '1' : '0';
+		}
+		$this->config->method('offsetExists')
+			->with('consentmanager_marketing_enabled')
+			->willReturn($config_exists);
+		$this->config->method('offsetGet')
+			->with('consentmanager_marketing_enabled')
+			->willReturn($config_enabled ? '1' : '0');
+
+		$this->extension_manager = $this->getMockBuilder('\phpbb\extension\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->extension_manager->expects(self::once())
+			->method('is_enabled')
+			->with('phpbb/consentmanager')
+			->willReturn($extension_enabled);
+
+		$this->template->expects(self::once())
+			->method('assign_vars')
+			->with(array(
+				'S_PHPBB_ADS' => true,
+				'S_ADS_CONSENTMANAGER_AVAILABLE' => $expected,
+			));
+
+		$this->get_controller();
 	}
 
 	/**
@@ -281,6 +336,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->input,
 				$this->helper,
 				$this->analyser,
+				$this->extension_manager,
 				$this->controller_helper,
 				$this->root_path,
 				$this->php_ext
