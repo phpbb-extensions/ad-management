@@ -103,6 +103,7 @@ class helper
 			'AD_CLICKS_LIMIT' 	=> $data['ad_clicks_limit'],
 			'AD_OWNER'        	=> $this->get_username($data['ad_owner']),
 			'AD_CENTERING'      => $data['ad_centering'],
+			'AD_CONSENT'      	=> $data['ad_consent'] ?? 1,
 		));
 	}
 

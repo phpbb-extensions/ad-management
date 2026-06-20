@@ -115,22 +115,22 @@ class admin_input_test extends phpbb_database_test_case
 	public static function get_form_data_data(): array
 	{
 		return array(
-			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['FORM_INVALID']),
-			array(true, ['', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['AD_NAME_REQUIRED']),
-			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['AD_NAME_TOO_LONG']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', 0, '', '', '', 5, 0, 0, 0, '', [], false], 0, ['AD_CODE_ILLEGAL_CHARS']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', '', 5, 0, 0, 0, '', [], false], 0, ['AD_START_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', 'blah', 5, 0, 0, 0, '', [], false], 0, ['AD_END_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '1970-01-01', '', 5, 0, 0, 0, '', [], false], 0, ['AD_START_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '1970-01-01', 5, 0, 0, 0, '', [], false], 0, ['AD_END_DATE_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '2060-01-01', '2050-01-01', 5, 0, 0, 0, '', [], false], 0, ['END_DATE_TOO_SOON']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 0, 0, 0, 0, '', [], false], 0, ['AD_PRIORITY_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 11, 0, 0, 0, '', [], false], 0, ['AD_PRIORITY_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, -1, 0, '', [], false], 0, ['AD_VIEWS_LIMIT_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, -1, '', [], false], 0, ['AD_CLICKS_LIMIT_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, 'adm', [], false], 0, ['AD_OWNER_INVALID']),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, 'adm', [], false], 0, ['AD_OWNER_INVALID']),
-			array(false, ['', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', 'blah', 0, 0, -1, -1, 'adm', [], false], 0, [
+			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['FORM_INVALID']),
+			array(true, ['', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_NAME_REQUIRED']),
+			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_NAME_TOO_LONG']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_CODE_ILLEGAL_CHARS']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', 'blah', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '1970-01-01', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '1970-01-01', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '2060-01-01', '2050-01-01', 5, 0, 0, 0, '', [], false, 1], 0, ['END_DATE_TOO_SOON']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 0, 0, 0, 0, '', [], false, 1], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 11, 0, 0, 0, '', [], false, 1], 0, ['AD_PRIORITY_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, -1, 0, '', [], false, 1], 0, ['AD_VIEWS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, -1, '', [], false, 1], 0, ['AD_CLICKS_LIMIT_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, 'adm', [], false, 1], 0, ['AD_OWNER_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, 'adm', [], false, 1], 0, ['AD_OWNER_INVALID']),
+			array(false, ['', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', 'blah', 0, 0, -1, -1, 'adm', [], false, 1], 0, [
 				'FORM_INVALID',
 				'AD_NAME_REQUIRED',
 				'AD_START_DATE_INVALID',
@@ -140,7 +140,7 @@ class admin_input_test extends phpbb_database_test_case
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
 			]),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2033-01-01', '4', '1', '50', '30', 'admin', ['5'], 0], 2, []),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2033-01-01', '4', '1', '50', '30', 'admin', ['5'], 0, 0], 2, []),
 		);
 	}
 
@@ -151,14 +151,14 @@ class admin_input_test extends phpbb_database_test_case
 	 */
 	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors)
 	{
-		[$ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering] = $data;
+		[$ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent] = $data;
 
 		self::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
-		$this->request->expects(self::exactly(14))
+		$this->request->expects(self::exactly(15))
 			->method('variable')
-			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering));
+			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent));
 
 		$result = $input_controller->get_form_data();
 
@@ -184,6 +184,7 @@ class admin_input_test extends phpbb_database_test_case
 				'ad_owner'        => $ad_owner_expected,
 				'ad_groups'		  => $ad_groups,
 				'ad_centering'	  => $ad_centering,
+				'ad_consent'	  => $ad_consent,
 			), $result);
 		}
 	}

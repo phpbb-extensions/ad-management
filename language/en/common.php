@@ -26,6 +26,8 @@ $lang = array_merge($lang, array(
 	],
 	'ADVERTISEMENT'		=> 'Advertisement',
 	'HIDE_AD'			=> 'Hide advertisement',
+	'PHPBB_ADS_CONSENT_LABEL'		=> 'Advertisements',
+	'PHPBB_ADS_CONSENT_DESCRIPTION'	=> 'Advertising features that may use cookies or similar technologies to collect data.',
 
 	'VISUAL_DEMO'			=> 'Visual demo for ad locations is active',
 	'DISABLE_VISUAL_DEMO'	=> 'Click to disable visual demo',

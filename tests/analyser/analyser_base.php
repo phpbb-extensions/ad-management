@@ -32,6 +32,9 @@ class analyser_base extends phpbb_test_case
 	/** @var language */
 	protected language $lang;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	protected static function setup_extensions(): array
 	{
 		return array('phpbb/ads');
@@ -55,13 +58,18 @@ class analyser_base extends phpbb_test_case
 			->disableOriginalConstructor()
 			->getMock();
 		$this->lang = new language($lang_loader);
+		$this->config = new \phpbb\config\config(array(
+			'consentmanager_marketing_enabled' => 0,
+		));
 
 		// Tests
 		$tests = array(
 			'alert',
 			'location_href',
 			'script_without_async',
+			'marketing_consent',
 			'untrusted_connection',
+			'iframe',
 		);
 		$analyser_tests = array();
 		foreach ($tests as $test)
@@ -70,6 +78,10 @@ class analyser_base extends phpbb_test_case
 			if ($test === 'untrusted_connection')
 			{
 				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->request);
+			}
+			else if ($test === 'marketing_consent')
+			{
+				$analyser_tests['phpbb.ads.analyser.test.' . $test] = new $class($this->config);
 			}
 			else
 			{
