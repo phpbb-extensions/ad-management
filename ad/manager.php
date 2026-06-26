@@ -100,7 +100,14 @@ class manager
 
 		// Get user's current time and convert to UTC equivalent for comparison
 		$user_now = $this->user->create_datetime();
-		$sql_time = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $user_now->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+		$sql_time = (int) gmmktime(
+			(int) $user_now->format('H'),
+			(int) $user_now->format('i'),
+			(int) $user_now->format('s'),
+			(int) $user_now->format('m'),
+			(int) $user_now->format('d'),
+			(int) $user_now->format('Y')
+		);
 
 		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering, a.ad_consent
 				FROM ' . $this->ad_locations_table . ' al
