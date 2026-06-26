@@ -66,7 +66,7 @@ class manager
 	}
 
 	/**
-	 * Get specific ad
+	 * Get a specific ad
 	 *
 	 * @param	int	$ad_id	Advertisement ID
 	 * @return	array	Array with advertisement data
@@ -134,13 +134,11 @@ class manager
 		}
 
 		$current_location_id = '';
-		$data = array_filter($data, function ($row) use (&$current_location_id) {
+		return array_filter($data, static function ($row) use (&$current_location_id) {
 			$return = $current_location_id !== $row['location_id'];
 			$current_location_id = $row['location_id'];
 			return $return;
 		});
-
-		return $data;
 	}
 
 	/**
@@ -180,7 +178,7 @@ class manager
 	/**
 	 * Increment views for specified ads
 	 *
-	 * Note, that views are incremented only by one even when
+	 * Note that views are incremented only by one even when
 	 * an ad is displayed multiple times on the same page.
 	 *
 	 * @param    array $ad_ids IDs of ads to increment views
@@ -198,7 +196,7 @@ class manager
 	}
 
 	/**
-	 * Increment clicks for specified ad
+	 * Increment clicks for a specified ad
 	 *
 	 * @param    int $ad_id ID of an ad to increment clicks
 	 * @return    void
@@ -212,7 +210,7 @@ class manager
 	}
 
 	/**
-	 * Insert new advertisement to the database
+	 * Insert a new advertisement to the database
 	 *
 	 * @param  array $data New ad data
 	 * @return int        New advertisement ID
@@ -223,7 +221,7 @@ class manager
 		$ad_groups = $data['ad_groups'];
 		$data = $this->intersect_ad_data($data);
 
-		// add a row to ads table
+		// add a row to the ad table
 		$sql = 'INSERT INTO ' . $this->ads_table . ' ' . $this->db->sql_build_array('INSERT', $data);
 		$this->db->sql_query($sql);
 		$ad_id = (int) $this->db->sql_nextid();
@@ -293,7 +291,7 @@ class manager
 	}
 
 	/**
-	 * Get all locations for specified advertisement
+	 * Get all locations for a specified advertisement
 	 *
 	 * @param	int		$ad_id	Advertisement ID
 	 * @return	array	List of template locations for specified ad
@@ -497,7 +495,7 @@ class manager
 	{
 		$sources = array();
 
-		if (!preg_match_all('#<script\b([^>]*)>#is', $ad_code, $matches))
+		if (!preg_match_all('#<script\b([^>]*)>#i', $ad_code, $matches))
 		{
 			return $sources;
 		}
@@ -640,7 +638,7 @@ class manager
 	}
 
 	/**
-	 * Add rows to ad_group table.
+	 * Add rows to the ad_group table.
 	 *
 	 * @param int   $ad_id     Advertisement ID
 	 * @param array $ad_groups List of groups that should not see this ad
@@ -660,7 +658,7 @@ class manager
 	}
 
 	/**
-	 * Remove all rows of specified ad in ad_group table
+	 * Remove all rows of the specified ad in the ad_group table
 	 *
 	 * @param int	$ad_id	Advertisement ID
 	 * @return void
