@@ -75,4 +75,37 @@ class update_ad_test extends ad_base
 			self::assertEmpty($ad);
 		}
 	}
+
+	/**
+	 * Test partial scalar updates preserve existing group restrictions.
+	 */
+	public function test_partial_update_preserves_ad_groups()
+	{
+		$manager = $this->get_manager();
+		$manager->update_ad(1, array(
+			'ad_name' => 'Primary ad',
+			'ad_groups' => array(2),
+		));
+
+		$manager->update_ad(1, array('ad_enabled' => 0));
+
+		$groups = $manager->load_groups(1);
+		$selected_groups = array_filter($groups, static function ($group) {
+			return !empty($group['group_selected']);
+		});
+
+		self::assertCount(1, $selected_groups);
+		self::assertEquals(2, reset($selected_groups)['group_id']);
+
+		$manager->update_ad(1, array(
+			'ad_name' => 'Primary ad',
+			'ad_groups' => array(),
+		));
+		$groups = $manager->load_groups(1);
+		$selected_groups = array_filter($groups, static function ($group) {
+			return !empty($group['group_selected']);
+		});
+
+		self::assertEmpty($selected_groups);
+	}
 }

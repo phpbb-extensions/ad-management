@@ -241,7 +241,8 @@ class manager
 	public function update_ad($ad_id, $data)
 	{
 		// extract ad groups here because it gets filtered in intersect_ad_data()
-		$ad_groups = $data['ad_groups'] ?? [];
+		$update_ad_groups = array_key_exists('ad_groups', $data);
+		$ad_groups = $update_ad_groups ? $data['ad_groups'] : [];
 		$data = $this->intersect_ad_data($data);
 
 		$sql = 'UPDATE ' . $this->ads_table . '
@@ -250,8 +251,11 @@ class manager
 		$this->db->sql_query($sql);
 		$result = $this->db->sql_affectedrows();
 
-		$this->remove_ad_group_data($ad_id);
-		$this->insert_ad_group_data($ad_id, $ad_groups);
+		if ($update_ad_groups)
+		{
+			$this->remove_ad_group_data($ad_id);
+			$this->insert_ad_group_data($ad_id, $ad_groups);
+		}
 
 		return $result;
 	}
