@@ -218,7 +218,10 @@ class admin_controller
 		$action = $this->get_submitted_action();
 		if ($action !== false)
 		{
-			$this->data = $this->input->get_form_data($this->existing_ad['ad_start_date'] ?? 0);
+			$this->data = $this->input->get_form_data(
+				$this->existing_ad['ad_start_date'] ?? 0,
+				$this->existing_ad['ad_end_date'] ?? 0
+			);
 			$this->{$action}();
 		}
 		else

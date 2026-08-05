@@ -834,11 +834,14 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->manager->expects(self::once())
 			->method('get_ad')
 			->with(1)
-			->willReturn(array('ad_start_date' => 1514764800));
+			->willReturn(array(
+				'ad_start_date' => 1514764800,
+				'ad_end_date' => 1546300800,
+			));
 
 		$this->input->expects(self::once())
 			->method('get_form_data')
-			->with(1514764800)
+			->with(1514764800, 1546300800)
 			->willReturn($data);
 
 		$this->helper->expects(self::once())
@@ -935,6 +938,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_locations'	=> array(),
 			'ad_owner'		=> $ad_owner,
 			'ad_start_date'	=> 1514764800,
+			'ad_end_date'	=> 1546300800,
 		);
 
 		$data = array(
@@ -951,7 +955,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$this->input->expects(self::once())
 			->method('get_form_data')
-			->with(1514764800)
+			->with(1514764800, 1546300800)
 			->willReturn($data);
 
 		$this->input->expects(self::once())
