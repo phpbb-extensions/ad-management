@@ -4,7 +4,7 @@
 			'use strict';
 
 			$(window).on('load', function() {
-				$.get('{{ U_PHPBB_ADS_VIEWS|e('js') }}');
+				$.post('{{ U_PHPBB_ADS_VIEWS|e('js') }}');
 			});
 		})(jQuery);
 	</script>

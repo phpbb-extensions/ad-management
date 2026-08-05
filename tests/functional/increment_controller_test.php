@@ -35,7 +35,7 @@ class increment_controller_test extends functional_base
 	 */
 	public function test_increment_controller($url)
 	{
-		$crawler = self::request('GET', $url, [], false);
+		$crawler = self::request('POST', $url, [], false);
 		$this->assertContainsLang('NOT_AUTHORISED', $crawler->text());
 	}
 }
