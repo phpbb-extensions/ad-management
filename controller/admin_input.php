@@ -302,12 +302,12 @@ class admin_input
 	}
 
 	/**
-	 * Send ajax response
+	 * Send AJAX response and terminate the request.
 	 *
 	 * @param bool $success Is request successful?
 	 * @param string $text Text to return
 	 */
-	protected function send_ajax_response($success, $text)
+	public function send_ajax_response($success, $text)
 	{
 		$json_response = new \phpbb\json_response;
 		$json_response->send(array(

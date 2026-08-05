@@ -32,9 +32,6 @@ class admin_controller
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \phpbb\config\db_text */
-	protected $config_text;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -66,7 +63,6 @@ class admin_controller
 	 * @param \phpbb\language\language          $language          Language object
 	 * @param \phpbb\request\request            $request           Request object
 	 * @param \phpbb\ads\ad\manager             $manager           Advertisement manager object
-	 * @param \phpbb\config\db_text             $config_text       Config text object
 	 * @param \phpbb\config\config              $config            Config object
 	 * @param \phpbb\ads\controller\admin_input $input             Admin input object
 	 * @param \phpbb\ads\controller\helper      $helper            Helper object
@@ -76,13 +72,12 @@ class admin_controller
 	 * @param string                            $root_path         phpBB root path
 	 * @param string                            $php_ext           PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
 		$this->request = $request;
 		$this->manager = $manager;
-		$this->config_text = $config_text;
 		$this->config = $config;
 		$this->input = $input;
 		$this->helper = $helper;
@@ -272,6 +267,10 @@ class admin_controller
 			{
 				// Get ad data so that we can log ad name
 				$ad_data = $this->manager->get_ad($ad_id);
+				if (empty($ad_data))
+				{
+					$this->error('ACP_AD_DOES_NOT_EXIST');
+				}
 
 				// Delete ad and it's template locations
 				$this->manager->delete_ad_locations($ad_id);
@@ -430,6 +429,17 @@ class admin_controller
 	 */
 	protected function upload_banner()
 	{
+		if (in_array('FORM_INVALID', $this->input->get_errors(), true))
+		{
+			// Form validation fails before banner_upload() can send its own AJAX response.
+			if ($this->request->is_ajax())
+			{
+				$this->input->send_ajax_response(false, $this->language->lang('FORM_INVALID'));
+			}
+
+			$this->error('FORM_INVALID');
+		}
+
 		$this->data['ad_code'] = $this->input->banner_upload($this->data['ad_code']);
 	}
 

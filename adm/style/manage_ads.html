@@ -209,7 +209,9 @@
 				}
 			] %}
 				{% if list.loop %}
-					<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					<tr>
+						<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					</tr>
 					{% for ad in list.loop %}
 						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
 							<td><strong>{{ ad.NAME }}</strong></td>

@@ -27,11 +27,15 @@
 		$('#upload_banner').on('click', function(e) {
 			e.preventDefault();
 
-			var file = $('#banner')[0].files[0];
+			var $form = $(this).closest('form'),
+				file = $('#banner')[0].files[0];
 			if (file) {
 				var formData = new FormData();
 				formData.append('banner', file);
 				formData.append('upload_banner', true);
+				$form.find('input[name="creation_time"], input[name="form_token"]').each(function() {
+					formData.append(this.name, this.value);
+				});
 				$.ajax({
 					method: 'POST',
 					url: window.location.href,

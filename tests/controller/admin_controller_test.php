@@ -32,9 +32,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\db_text */
-	protected $config_text;
-
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
 	protected $config;
 
@@ -102,9 +99,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
-			->disableOriginalConstructor()
-			->getMock();
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
 			->disableOriginalConstructor()
 			->getMock();
@@ -150,7 +144,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->language,
 			$this->request,
 			$this->manager,
-			$this->config_text,
 			$this->config,
 			$this->input,
 			$this->helper,
@@ -331,7 +324,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->language,
 				$this->request,
 				$this->manager,
-				$this->config_text,
 				$this->config,
 				$this->input,
 				$this->helper,
@@ -487,7 +479,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$data['ad_code'] = $banner_ad_code;
 
-		$this->input->expects(self::once())
+		$this->input->expects(self::exactly(2))
 			->method('get_errors')
 			->willReturn(array());
 
@@ -499,6 +491,50 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
+
+		$controller->mode_manage();
+	}
+
+	/**
+	 * Test action_add() rejects a banner upload with an invalid form token
+	 */
+	public function test_action_add_upload_banner_invalid_form()
+	{
+		$controller = $this->get_controller();
+
+		$this->request
+			->expects(self::exactly(2))
+			->method('is_set_post')
+			->withConsecutive(
+				['preview'],
+				['upload_banner']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				true
+			);
+
+		$this->input->expects(self::once())
+			->method('get_form_data')
+			->willReturn(array('ad_code' => ''));
+		$this->input->expects(self::once())
+			->method('get_errors')
+			->willReturn(array('FORM_INVALID'));
+		$this->input->expects(self::never())
+			->method('banner_upload');
+		$this->request->expects(self::once())
+			->method('is_ajax')
+			->willReturn(true);
+		$this->input->expects(self::once())
+			->method('send_ajax_response')
+			->with(false, 'The submitted form was invalid. Try submitting again.');
+
+		$this->request->expects(self::once())
+			->method('variable')
+			->with('action', '')
+			->willReturn('add');
+
+		$this->setExpectedTriggerError(E_USER_WARNING, 'The submitted form was invalid. Try submitting again.');
 
 		$controller->mode_manage();
 	}
@@ -1129,6 +1165,35 @@ class admin_controller_test extends \phpbb_database_test_case
 		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
 		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
 		$reflection_controller_mode_manage_method->invoke($controller);
+	}
+
+	/**
+	 * Test action_delete() with a missing advertisement
+	 */
+	public function test_action_delete_missing_ad()
+	{
+		self::$confirm = true;
+
+		$controller = $this->get_controller();
+
+		$this->request
+			->expects(self::exactly(2))
+			->method('variable')
+			->withConsecutive(['action', ''], ['id', 0])
+			->willReturnOnConsecutiveCalls('delete', 999);
+
+		$this->manager->expects(self::once())
+			->method('get_ad')
+			->with(999)
+			->willReturn(array());
+		$this->manager->expects(self::never())
+			->method('delete_ad_locations');
+		$this->manager->expects(self::never())
+			->method('delete_ad');
+
+		$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DOES_NOT_EXIST');
+
+		$controller->mode_manage();
 	}
 
 	/**

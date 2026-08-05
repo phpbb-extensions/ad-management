@@ -12,9 +12,6 @@ namespace phpbb\ads\tests\event;
 
 class main_listener_base extends \phpbb_database_test_case
 {
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\db_text */
-	protected $config_text;
-
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
