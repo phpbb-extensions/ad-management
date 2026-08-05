@@ -339,6 +339,13 @@ class admin_input
 
 		// Create a UTC midnight timestamp for storage consistency
 		$datetime = \DateTime::createFromFormat(ext::DATE_FORMAT, $date, new \DateTimeZone('UTC'));
+		$date_errors = \DateTime::getLastErrors();
+		if ($datetime === false || ($date_errors !== false && ($date_errors['warning_count'] || $date_errors['error_count'])))
+		{
+			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
+			return 0;
+		}
+
 		$datetime->setTime(0, 0, 0); // Ensure midnight (00:00:00)
 		$timestamp = $datetime->getTimestamp();
 

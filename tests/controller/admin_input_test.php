@@ -113,6 +113,8 @@ class admin_input_test extends \phpbb_database_test_case
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_CODE_ILLEGAL_CHARS']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', 'blah', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_END_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '2060-02-30', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '2060-02-30', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_END_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '1970-01-01', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '1970-01-01', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_END_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '2060-01-01', '2050-01-01', 5, 0, 0, 0, '', [], false, 1], 0, ['END_DATE_TOO_SOON']),
