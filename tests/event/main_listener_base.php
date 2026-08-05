@@ -86,6 +86,7 @@ class main_listener_base extends \phpbb_database_test_case
 		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
 		$this->language = new \phpbb\language\language($lang_loader);
 		$user = new \phpbb\user($this->language, '\phpbb\datetime');
+		$user->data['user_form_salt'] = 'test-salt';
 		$request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();

@@ -71,6 +71,11 @@ class visual_demo_controller
 			throw new \phpbb\exception\http_exception(403, 'NO_AUTH_OPERATION');
 		}
 
+		if (!check_link_hash($this->request->variable('hash', ''), 'phpbb_ads_visual_demo_' . $action))
+		{
+			throw new \phpbb\exception\http_exception(403, 'FORM_INVALID');
+		}
+
 		if ($action === 'disable')
 		{
 			// Destroy our cookie and redirect user to previous page viewed.
