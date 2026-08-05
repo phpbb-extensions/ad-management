@@ -228,12 +228,12 @@ class main_listener implements EventSubscriberInterface
 	{
 		if ($this->config['phpbb_ads_enable_views'] && empty($this->user->data['is_bot']) && count($ad_ids))
 		{
-			$ad_ids = implode('-', $ad_ids);
+			$ad_id_string = implode('-', $ad_ids);
 			$this->template->assign_vars(array(
-				'S_INCREMENT_VIEWS'	=> true,
+				'S_PHPBB_ADS_INCREMENT_VIEWS'	=> true,
 				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array(
-					'data' => $ad_ids,
-					'hash' => generate_link_hash('phpbb_ads_views_' . $ad_ids),
+					'data' => $ad_id_string,
+					'hash' => generate_link_hash('phpbb_ads_views_' . $ad_id_string),
 				), true, ''),
 			));
 		}

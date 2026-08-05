@@ -70,7 +70,7 @@ class views_test extends main_listener_base
 				->method('assign_vars')
 				->withConsecutive(
 					[['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false]],
-					[['S_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
+					[['S_PHPBB_ADS_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
 				);
 		}
 
