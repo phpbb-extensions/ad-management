@@ -35,6 +35,9 @@ class admin_input
 	/** @var array Form validation errors */
 	protected $errors = array();
 
+	/** @var int Existing start date allowed during an edit */
+	protected $existing_start_date = 0;
+
 	/**
 	 * Constructor
 	 *
@@ -80,8 +83,10 @@ class admin_input
 	 *
 	 * @return	array	Form data
 	 */
-	public function get_form_data()
+	public function get_form_data($existing_start_date = 0)
 	{
+		$this->existing_start_date = (int) $existing_start_date;
+
 		$data = array(
 			'ad_name'         	=> $this->request->variable('ad_name', '', true),
 			'ad_note'         	=> $this->request->variable('ad_note', '', true),
@@ -350,7 +355,10 @@ class admin_input
 		$timestamp = $datetime->getTimestamp();
 
 		// Compare against user's current day to avoid timezone confusion
-		if ($timestamp < $this->user->create_datetime('today')->getTimestamp())
+		$existing_start_date = $type === 'START'
+			&& $this->existing_start_date > 0
+			&& $date === gmdate(ext::DATE_FORMAT, $this->existing_start_date);
+		if ($timestamp < $this->user->create_datetime('today')->getTimestamp() && !$existing_start_date)
 		{
 			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
 			return 0;

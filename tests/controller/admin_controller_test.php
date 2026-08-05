@@ -725,7 +725,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$ad_id
 			);
 
-		$this->request->expects(self::exactly(5))
+		$this->request->expects($ad_id ? self::exactly(5) : self::never())
 			->method('is_set_post')
 			->withConsecutive(
 				['preview'],
@@ -778,11 +778,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_find_username_link')
 				->willReturn('u_find_username');
 
-			$this->helper->expects(self::once())
-				->method('get_date')
-				->with('tomorrow')
-				->willReturn('2000-12-16');
-
 			$this->template->expects(self::once())
 				->method('assign_vars')
 				->with(array(
@@ -792,7 +787,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
-					'DATE_MINIMUM'			=> '2000-12-16',
+					'DATE_MINIMUM'			=> '',
 				));
 
 			$this->input->expects(self::once())
@@ -836,8 +831,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_locations'	=> array(),
 		);
 
+		$this->manager->expects(self::once())
+			->method('get_ad')
+			->with(1)
+			->willReturn(array('ad_start_date' => 1514764800));
+
 		$this->input->expects(self::once())
 			->method('get_form_data')
+			->with(1514764800)
 			->willReturn($data);
 
 		$this->helper->expects(self::once())
@@ -848,11 +849,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_var')
 			->with('PREVIEW', 'Ad Code #1');
 
-		$this->helper->expects(self::once())
-			->method('get_date')
-			->with('tomorrow')
-			->willReturn('2000-12-16');
-
 		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
@@ -862,7 +858,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
-				'DATE_MINIMUM'			=> '2000-12-16',
+				'DATE_MINIMUM'			=> '',
 			));
 
 		$this->input->expects(self::once())
@@ -938,6 +934,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_code'		=> 'Old Ad Code #1',
 			'ad_locations'	=> array(),
 			'ad_owner'		=> $ad_owner,
+			'ad_start_date'	=> 1514764800,
 		);
 
 		$data = array(
@@ -947,8 +944,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_owner'		=> $ad_owner,
 		);
 
+		$this->manager->expects(self::once())
+			->method('get_ad')
+			->with(1)
+			->willReturn($old_data);
+
 		$this->input->expects(self::once())
 			->method('get_form_data')
+			->with(1514764800)
 			->willReturn($data);
 
 		$this->input->expects(self::once())
@@ -961,11 +964,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_find_username_link')
 				->willReturn('u_find_username');
 
-			$this->helper->expects(self::once())
-				->method('get_date')
-				->with('tomorrow')
-				->willReturn('2000-12-16');
-
 			$this->template->expects(self::once())
 				->method('assign_vars')
 				->with(array(
@@ -975,7 +973,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
-					'DATE_MINIMUM'			=>'2000-12-16',
+					'DATE_MINIMUM'			=> '',
 				));
 
 			$this->input->expects(self::once())
@@ -988,11 +986,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 		else
 		{
-			$this->manager->expects((self::once()))
-				->method('get_ad')
-				->with(1)
-				->willReturn($old_data);
-
 			$this->manager->expects(self::once())
 				->method('update_ad')
 				->with(1, $data)

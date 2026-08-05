@@ -134,7 +134,7 @@ class admin_input_test extends \phpbb_database_test_case
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
 			]),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2033-01-01', '4', '1', '50', '30', 'admin', ['5'], 0, 0], 2, []),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2033-01-01', '4', '1', '50', '30', 'admin', ['5'], 0, 0], 2, [], strtotime('2018-01-01 12:34:56 UTC')),
 		);
 	}
 
@@ -143,7 +143,7 @@ class admin_input_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider get_form_data_data
 	 */
-	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors)
+	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors, $existing_start_date = 0)
 	{
 		[$ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent] = $data;
 
@@ -154,7 +154,7 @@ class admin_input_test extends \phpbb_database_test_case
 			->method('variable')
 			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent));
 
-		$result = $input_controller->get_form_data();
+		$result = $input_controller->get_form_data($existing_start_date);
 
 		if (!empty($errors))
 		{

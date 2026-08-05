@@ -20,6 +20,9 @@ class admin_controller
 	/** @var array Form data */
 	protected $data = array();
 
+	/** @var array Existing advertisement data during an edit */
+	protected $existing_ad = array();
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -206,19 +209,21 @@ class admin_controller
 	protected function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
+		$this->existing_ad = $this->manager->get_ad($ad_id);
+		if (empty($this->existing_ad))
+		{
+			$this->error('ACP_AD_DOES_NOT_EXIST');
+		}
+
 		$action = $this->get_submitted_action();
 		if ($action !== false)
 		{
-			$this->data = $this->input->get_form_data();
+			$this->data = $this->input->get_form_data($this->existing_ad['ad_start_date'] ?? 0);
 			$this->{$action}();
 		}
 		else
 		{
-			$this->data = $this->manager->get_ad($ad_id);
-			if (empty($this->data))
-			{
-				$this->error('ACP_AD_DOES_NOT_EXIST');
-			}
+			$this->data = $this->existing_ad;
 			// Load ad template locations
 			$this->data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
 		}
@@ -234,7 +239,7 @@ class admin_controller
 				'action' => 'enable',
 				'hash' => generate_link_hash('phpbb_ads_visual_demo_enable'),
 			)),
-			'DATE_MINIMUM'			=> $this->helper->get_date('tomorrow'),
+			'DATE_MINIMUM'			=> '',
 		));
 		$this->helper->assign_data($this->data, $this->input->get_errors());
 	}
@@ -493,7 +498,7 @@ class admin_controller
 		$ad_id = $this->request->variable('id', 0);
 		if ($ad_id && !$this->input->has_errors())
 		{
-			$old_data = $this->manager->get_ad($ad_id);
+			$old_data = $this->existing_ad;
 			$success = $this->manager->update_ad($ad_id, $this->data);
 			if ($success)
 			{
