@@ -102,6 +102,7 @@ class m1_hide_ad_for_group extends \phpbb\db\migration\container_aware_migration
 				);
 			}
 		}
+		$this->db->sql_freeresult($result);
 
 		$this->db->sql_multi_insert($this->table_prefix . 'ad_group', $sql_ary);
 	}
