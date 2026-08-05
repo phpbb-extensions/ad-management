@@ -93,6 +93,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			->getMock();
 		$this->language = new \phpbb\language\language($lang_loader);
 		$user = new \phpbb\user($this->language, '\phpbb\datetime');
+		$user->data['user_form_salt'] = 'test-salt';
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -1059,6 +1060,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_ad_enable($ad_id, $enable, $is_ajax, $err_msg)
 	{
 		$controller = $this->get_controller();
+		$action = $enable ? 'enable' : 'disable';
+		$hash = generate_link_hash('phpbb_ads_' . $action . '_' . $ad_id);
 
 		$this->manager->expects(self::once())
 			->method('update_ad')
@@ -1079,16 +1082,43 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$this->request
-			->expects(self::exactly(2))
+			->expects(self::exactly(3))
 			->method('variable')
 			->withConsecutive(
 				['action', ''],
-				['id', 0]
+				['id', 0],
+				['hash', '']
 			)
 			->willReturnOnConsecutiveCalls(
-				$enable ? 'enable' : 'disable',
-				$ad_id
+				$action,
+				$ad_id,
+				$hash
 			);
+
+		$controller->mode_manage();
+	}
+
+	/**
+	 * Test enable/disable rejects an invalid link hash.
+	 */
+	public function test_ad_enable_invalid_hash()
+	{
+		$controller = $this->get_controller();
+
+		$this->manager->expects(self::never())
+			->method('update_ad');
+
+		$this->request
+			->expects(self::exactly(3))
+			->method('variable')
+			->withConsecutive(
+				['action', ''],
+				['id', 0],
+				['hash', '']
+			)
+			->willReturnOnConsecutiveCalls('enable', 1, 'invalid');
+
+		$this->setExpectedTriggerError(E_USER_WARNING, 'The submitted form was invalid. Try submitting again.');
 
 		$controller->mode_manage();
 	}

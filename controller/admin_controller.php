@@ -337,7 +337,7 @@ class admin_controller
 				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
 				'S_EXPIRED'    => $ad_expired,
 				'S_ENABLED'    => $ad_enabled,
-				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'] . '&amp;hash=' . generate_link_hash('phpbb_ads_' . ($ad_enabled ? 'disable' : 'enable') . '_' . $row['ad_id']),
 				'U_EDIT'       => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
 				'U_DELETE'     => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
@@ -384,6 +384,11 @@ class admin_controller
 	protected function ad_enable($enable)
 	{
 		$ad_id = $this->request->variable('id', 0);
+		$action = $enable ? 'enable' : 'disable';
+		if (!check_link_hash($this->request->variable('hash', ''), 'phpbb_ads_' . $action . '_' . $ad_id))
+		{
+			$this->error('FORM_INVALID');
+		}
 
 		$success = $this->manager->update_ad($ad_id, array(
 			'ad_enabled' => (int) $enable,
