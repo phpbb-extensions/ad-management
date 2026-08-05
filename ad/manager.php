@@ -236,10 +236,15 @@ class manager
 	 *
 	 * @param    int   $ad_id Advertisement ID
 	 * @param    array $data  List of data to update in the database
-	 * @return    int        Number of affected rows. Can be used to determine if any ad has been updated.
+	 * @return   int          1 when the advertisement exists, otherwise 0.
 	 */
 	public function update_ad($ad_id, $data)
 	{
+		if (empty($this->get_ad($ad_id)))
+		{
+			return 0;
+		}
+
 		// extract ad groups here because it gets filtered in intersect_ad_data()
 		$update_ad_groups = array_key_exists('ad_groups', $data);
 		$ad_groups = $update_ad_groups ? $data['ad_groups'] : [];
@@ -249,15 +254,14 @@ class manager
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
 			WHERE ad_id = ' . (int) $ad_id;
 		$this->db->sql_query($sql);
-		$result = $this->db->sql_affectedrows();
 
 		if ($update_ad_groups)
 		{
-			$this->remove_ad_group_data($ad_id);
+			$this->delete_ad_groups($ad_id);
 			$this->insert_ad_group_data($ad_id, $ad_groups);
 		}
 
-		return $result;
+		return 1;
 	}
 
 	/**
@@ -667,7 +671,7 @@ class manager
 	 * @param int	$ad_id	Advertisement ID
 	 * @return void
 	 */
-	protected function remove_ad_group_data($ad_id)
+	public function delete_ad_groups($ad_id)
 	{
 		$sql = 'DELETE FROM ' . $this->ad_group_table . '
 			WHERE ad_id = ' . (int) $ad_id;

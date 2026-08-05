@@ -82,10 +82,11 @@ class update_ad_test extends ad_base
 	public function test_partial_update_preserves_ad_groups()
 	{
 		$manager = $this->get_manager();
-		$manager->update_ad(1, array(
+		$updated = $manager->update_ad(1, array(
 			'ad_name' => 'Primary ad',
 			'ad_groups' => array(2),
 		));
+		self::assertEquals(1, $updated);
 
 		$manager->update_ad(1, array('ad_enabled' => 0));
 

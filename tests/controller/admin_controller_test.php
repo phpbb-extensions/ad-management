@@ -1131,7 +1131,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_delete_data()
 	{
 		return array(
-			array(999, 0, true, true),
+			array(999, 2, true, true),
 			array(1, 0, false, false),
 			array(1, 0, false, true),
 			array(1, 2, false, true),
@@ -1169,6 +1169,20 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_ad')
 				->with($ad_id)
 				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
+			$this->manager->expects(self::once())
+				->method('delete_ad')
+				->with($ad_id)
+				->willReturn(false);
+			$this->manager->expects(self::never())
+				->method('delete_ad_locations')
+				->with($ad_id);
+			$this->manager->expects(self::never())
+				->method('delete_ad_groups')
+				->with($ad_id);
+			$this->manager->expects(self::never())
+				->method('get_ads_by_owner');
+			$this->helper->expects(self::never())
+				->method('log');
 		}
 		else
 		{
@@ -1177,12 +1191,22 @@ class admin_controller_test extends \phpbb_database_test_case
 				->with($ad_id)
 				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
 			$this->manager->expects(self::once())
+				->method('delete_ad_locations')
+				->with($ad_id);
+			$this->manager->expects(self::once())
+				->method('delete_ad_groups')
+				->with($ad_id);
+			$this->manager->expects(self::once())
 				->method('delete_ad')
+				->with($ad_id)
 				->willReturn((bool) $ad_id);
 			$this->manager->expects(($ad_owner ? self::once() : self::never()))
 				->method('get_ads_by_owner')
 				->with($ad_owner)
 				->willReturn(array());
+			$this->helper->expects(self::once())
+				->method('log')
+				->with('DELETE', '');
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 		}
@@ -1218,6 +1242,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			->willReturn(array());
 		$this->manager->expects(self::never())
 			->method('delete_ad_locations');
+		$this->manager->expects(self::never())
+			->method('delete_ad_groups');
 		$this->manager->expects(self::never())
 			->method('delete_ad');
 

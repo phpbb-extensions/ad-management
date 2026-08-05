@@ -278,25 +278,22 @@ class admin_controller
 					$this->error('ACP_AD_DOES_NOT_EXIST');
 				}
 
-				// Delete ad and it's template locations
-				$this->manager->delete_ad_locations($ad_id);
+				// Delete the ad before removing its related data
 				$success = $this->manager->delete_ad($ad_id);
-
-				$this->toggle_permission($ad_data['ad_owner']);
-
-				// Only notify user on error or if not ajax
 				if (!$success)
 				{
 					$this->error('ACP_AD_DELETE_ERRORED');
 				}
-				else
-				{
-					$this->helper->log('DELETE', $ad_data['ad_name']);
 
-					if (!$this->request->is_ajax())
-					{
-						$this->success('ACP_AD_DELETE_SUCCESS');
-					}
+				$this->manager->delete_ad_locations($ad_id);
+				$this->manager->delete_ad_groups($ad_id);
+				$this->toggle_permission($ad_data['ad_owner']);
+				$this->helper->log('DELETE', $ad_data['ad_name']);
+
+				// Only notify user if AJAX was not used
+				if (!$this->request->is_ajax())
+				{
+					$this->success('ACP_AD_DELETE_SUCCESS');
 				}
 			}
 			else
