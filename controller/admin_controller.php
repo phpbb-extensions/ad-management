@@ -127,8 +127,6 @@ class admin_controller
 			if (check_form_key('phpbb_ads'))
 			{
 				$this->config->set('phpbb_ads_adblocker_message', $this->request->variable('adblocker_message', 0));
-				$this->config->set('phpbb_ads_enable_views', $this->request->variable('enable_views', 0));
-				$this->config->set('phpbb_ads_enable_clicks', $this->request->variable('enable_clicks', 0));
 				$this->config->set('phpbb_ads_show_agreement', $this->request->variable('show_agreement', 0));
 
 				$this->success('ACP_AD_SETTINGS_SAVED');
@@ -141,8 +139,6 @@ class admin_controller
 			'U_ACTION'          => $this->u_action,
 			'AD_BLOCK_MODES'	=> ext::AD_BLOCK_MODES,
 			'AD_BLOCK_CONFIG'	=> $this->config['phpbb_ads_adblocker_message'],
-			'ENABLE_VIEWS'      => $this->config['phpbb_ads_enable_views'],
-			'ENABLE_CLICKS'     => $this->config['phpbb_ads_enable_clicks'],
 			'SHOW_AGREEMENT'    => $this->config['phpbb_ads_show_agreement'],
 		));
 	}
@@ -333,8 +329,8 @@ class admin_controller
 
 			if ($ad_expired && $ad_enabled)
 			{
+				$this->manager->disable_expired_ad($row);
 				$ad_enabled = 0;
-				$this->manager->update_ad($row['ad_id'], array('ad_enabled' => 0));
 			}
 
 			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
@@ -346,6 +342,8 @@ class admin_controller
 				'CLICKS'       => $row['ad_clicks'],
 				'VIEWS_LIMIT'  => $row['ad_views_limit'],
 				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
+				'S_VIEWS_ENABLED' => (bool) $row['ad_views_enabled'],
+				'S_CLICKS_ENABLED' => (bool) $row['ad_clicks_enabled'],
 				'S_EXPIRED'    => $ad_expired,
 				'S_ENABLED'    => $ad_enabled,
 				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'] . '&amp;hash=' . generate_link_hash('phpbb_ads_' . ($ad_enabled ? 'disable' : 'enable') . '_' . $row['ad_id']),
@@ -356,9 +354,7 @@ class admin_controller
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'U_ACTION_ADD'     => $this->u_action . '&amp;action=add',
-			'S_VIEWS_ENABLED'  => $this->config['phpbb_ads_enable_views'],
-			'S_CLICKS_ENABLED' => $this->config['phpbb_ads_enable_clicks'],
+			'U_ACTION_ADD' => $this->u_action . '&amp;action=add',
 		));
 	}
 

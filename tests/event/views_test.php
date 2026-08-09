@@ -36,8 +36,6 @@ class views_test extends main_listener_base
 		$this->user->data['is_bot'] = $is_bot;
 		$this->user->page['page_name'] = 'viewtopic';
 		$this->user->page['page_dir'] = '';
-		$this->config['phpbb_ads_enable_views'] = true;
-
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
@@ -53,6 +51,9 @@ class views_test extends main_listener_base
 				'ad_code'		=> '',
 				'location_id'	=> '',
 				'ad_centering'	=> '',
+				'ad_consent' => 1,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 0,
 			)));
 
 		$this->controller_helper->expects(($is_bot ? self::never() : self::once()))
@@ -69,12 +70,58 @@ class views_test extends main_listener_base
 				->expects(self::exactly(2))
 				->method('assign_vars')
 				->withConsecutive(
-					[['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false]],
+					[['AD_' => null, 'AD__ID' => 1, 'AD__CENTER' => false, 'AD__CLICK_URL' => '']],
 					[['S_PHPBB_ADS_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
 				);
 		}
 
 		$listener = $this->get_listener();
 		$listener->setup_ads();
+	}
+
+	/**
+	 * Same ad in multiple placements counts once in page batch.
+	 */
+	public function test_duplicate_ad_ids_are_deduplicated()
+	{
+		$this->user->data['user_id'] = 10;
+		$this->user->data['is_bot'] = false;
+		$this->user->page['page_name'] = 'viewtopic';
+		$this->user->page['page_dir'] = '';
+
+		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->manager->method('load_memberships')->willReturn(array());
+		$this->manager->method('get_ads')->willReturn(array(
+			array(
+				'ad_id' => 5,
+				'ad_code' => '',
+				'location_id' => 'above_header',
+				'ad_centering' => false,
+				'ad_consent' => 1,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 0,
+			),
+			array(
+				'ad_id' => 5,
+				'ad_code' => '',
+				'location_id' => 'below_header',
+				'ad_centering' => false,
+				'ad_consent' => 1,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 0,
+			),
+		));
+
+		$this->controller_helper->expects(self::once())
+			->method('route')
+			->with('phpbb_ads_view', array(
+				'data' => '5',
+				'hash' => generate_link_hash('phpbb_ads_views_5'),
+			), true, '')
+			->willReturn('app.php/adsview/5');
+
+		$this->get_listener()->setup_ads();
 	}
 }

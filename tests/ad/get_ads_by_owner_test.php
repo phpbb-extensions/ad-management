@@ -32,6 +32,9 @@ class get_ads_by_owner_test extends ad_base
 					'ad_views_limit'	=> '0',
 					'ad_clicks'			=> '0',
 					'ad_clicks_limit'	=> '0',
+					'ad_views_enabled'	=> '1',
+					'ad_clicks_enabled'	=> '1',
+					'ad_owner'			=> '2',
 				),
 				array(
 					'ad_id'				=> '2',
@@ -43,6 +46,9 @@ class get_ads_by_owner_test extends ad_base
 					'ad_views_limit'	=> '0',
 					'ad_clicks'			=> '0',
 					'ad_clicks_limit'	=> '0',
+					'ad_views_enabled'	=> '1',
+					'ad_clicks_enabled'	=> '1',
+					'ad_owner'			=> '2',
 				),
 			)),
 		);

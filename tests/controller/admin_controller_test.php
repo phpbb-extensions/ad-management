@@ -218,8 +218,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_ACTION'			=> $this->u_action,
 				'AD_BLOCK_MODES'	=> ext::AD_BLOCK_MODES,
 				'AD_BLOCK_CONFIG'	=> $this->config['phpbb_ads_adblocker_message'],
-				'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
-				'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
 				'SHOW_AGREEMENT'	=> $this->config['phpbb_ads_show_agreement'],
 			));
 
@@ -258,28 +256,22 @@ class admin_controller_test extends \phpbb_database_test_case
 		if ($valid_form)
 		{
 			$this->request
-				->expects(self::exactly(4))
+				->expects(self::exactly(2))
 				->method('variable')
 				->withConsecutive(
 					['adblocker_message', 0],
-					['enable_views', 0],
-					['enable_clicks', 0],
 					['show_agreement', 0]
 				)
 				->willReturnOnConsecutiveCalls(
 					$adblocker_data,
-					1,
-					1,
 					1
 				);
 
 			$this->config
-				->expects(self::exactly(4))
+				->expects(self::exactly(2))
 				->method('set')
 				->withConsecutive(
 					['phpbb_ads_adblocker_message', $adblocker_data],
-					['phpbb_ads_enable_views', 1],
-					['phpbb_ads_enable_clicks', 1],
 					['phpbb_ads_show_agreement', 1]
 				);
 
@@ -1268,6 +1260,8 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_clicks'		=> 0,
 				'ad_views_limit'	=> 0,
 				'ad_clicks_limit'	=> 0,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 1,
 
 			),
 			array(
@@ -1281,6 +1275,8 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_clicks'		=> 0,
 				'ad_views_limit'	=> 0,
 				'ad_clicks_limit'	=> 0,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 1,
 			),
 		);
 
@@ -1301,8 +1297,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			);
 
 		$this->manager->expects(self::once())
-			->method('update_ad')
-			->with(2, array('ad_enabled' => 0));
+			->method('disable_expired_ad')
+			->with($rows[1]);
 
 		$this->template->expects(self::atLeastOnce())
 			->method('assign_block_vars');
@@ -1311,8 +1307,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
-				'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
-				'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
 			));
 
 		$this->request->expects(self::once())

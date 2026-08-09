@@ -1,6 +1,6 @@
-{% macro renderAds(PHPBB_ADS_CODE, PHPBB_ADS_ID, S_PHPBB_ADS_CENTER = false, PHPBB_ADS_STYLE = '') %}
+{% macro renderAds(PHPBB_ADS_CODE, PHPBB_ADS_ID, S_PHPBB_ADS_CENTER = false, PHPBB_ADS_STYLE = '', PHPBB_ADS_CLICK_URL = '') %}
 	{% if PHPBB_ADS_CODE %}
-		<div class="phpbb-ads{% if S_PHPBB_ADS_CENTER %} phpbb-ads-center{% endif %}" style="{{ PHPBB_ADS_STYLE }}" data-phpbb-ads-id="{{ PHPBB_ADS_ID|e('html_attr') }}">
+		<div class="phpbb-ads{% if S_PHPBB_ADS_CENTER %} phpbb-ads-center{% endif %}" style="{{ PHPBB_ADS_STYLE }}" data-phpbb-ads-id="{{ PHPBB_ADS_ID|e('html_attr') }}"{% if PHPBB_ADS_CLICK_URL %} data-phpbb-ads-click-url="{{ PHPBB_ADS_CLICK_URL|e('html_attr') }}"{% endif %}>
 			{% if PHPBB_ADS_CODE is iterable and PHPBB_ADS_CODE.visual_demo %}
 				<div class="phpbb-ads-visual-demo" title="{{ PHPBB_ADS_CODE.desc|e('html_attr') }}">{{ PHPBB_ADS_CODE.name|e }}</div>
 			{% else %}

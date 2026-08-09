@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * Pages extension for the phpBB Forum Software package.
+ * Advertisement management. An extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2014 phpBB Limited <https://www.phpbb.com>
+ * @copyright (c) 2026 phpBB Limited <https://www.phpbb.com>
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -13,45 +13,54 @@ namespace phpbb\ads\tests\event;
 class clicks_test extends main_listener_base
 {
 	/**
-	 * Data for test_clicks
+	 * Test per-ad click tracking setup.
 	 *
-	 * @return array Array of test data
+	 * @dataProvider data_clicks
+	 */
+	public function test_clicks($enabled)
+	{
+		$this->user->data['user_id'] = 10;
+		$this->user->data['is_bot'] = false;
+		$this->user->page['page_name'] = 'viewtopic';
+		$this->user->page['page_dir'] = '';
+
+		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->manager->method('load_memberships')->willReturn(array());
+		$this->manager->method('get_ads')->willReturn(array(array(
+			'ad_id' => 7,
+			'ad_code' => '',
+			'location_id' => 'above_header',
+			'ad_centering' => false,
+			'ad_consent' => 1,
+			'ad_views_enabled' => 0,
+			'ad_clicks_enabled' => $enabled,
+		)));
+
+		$this->controller_helper->expects($enabled ? self::once() : self::never())
+			->method('route')
+			->with('phpbb_ads_click', array(
+				'data' => 7,
+				'hash' => generate_link_hash('phpbb_ads_click_7'),
+			), true, '')
+			->willReturn('app.php/adsclick/7');
+
+		$this->template->expects($enabled ? self::once() : self::never())
+			->method('assign_var')
+			->with('S_PHPBB_ADS_ENABLE_CLICKS', true);
+
+		$this->get_listener()->setup_ads();
+	}
+
+	/**
+	 * @return array Test data
 	 */
 	public function data_clicks()
 	{
 		return array(
-			array('0'),
-			array('1'),
+			array(false),
+			array(true),
 		);
-	}
-
-	/**
-	 * Test the clicks event
-	 *
-	 * @dataProvider data_clicks
-	 */
-	public function test_clicks($enable_clicks)
-	{
-		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
-
-		$this->controller_helper->expects($enable_clicks ? self::once() : self::never())
-			->method('route')
-			->with('phpbb_ads_click', array(
-				'data' => 0,
-				'hash' => generate_link_hash('phpbb_ads_click'),
-			))
-			->willReturn('app.php/adsclick/0');
-
-		$this->template
-			->expects($enable_clicks ? self::once() : self::never())
-			->method('assign_vars')
-			->with(array(
-				'U_PHPBB_ADS_CLICK'		=> 'app.php/adsclick/0',
-				'S_PHPBB_ADS_ENABLE_CLICKS'	=> true,
-			));
-
-		$dispatcher = new \phpbb\event\dispatcher();
-		$dispatcher->addListener('core.page_header_after', array($this->get_listener(), 'clicks'));
-		$dispatcher->trigger_event('core.page_header_after');
 	}
 }

@@ -20,8 +20,8 @@ class increment_ads_views_test extends ad_base
 	public function increment_ads_views_data()
 	{
 		return array(
-			array(array(1)),
-			array(array(2,3)),
+			array(array(1), 1),
+			array(array(2, 3), 0),
 		);
 	}
 
@@ -30,7 +30,7 @@ class increment_ads_views_test extends ad_base
 	 *
 	 * @dataProvider increment_ads_views_data
 	 */
-	public function test_increment_ads_views($ad_ids)
+	public function test_increment_ads_views($ad_ids, $expected)
 	{
 		$manager = $this->get_manager();
 
@@ -40,7 +40,7 @@ class increment_ads_views_test extends ad_base
 		{
 			$ad = $manager->get_ad($ad_id);
 
-			self::assertEquals(1, $ad['ad_views']);
+			self::assertEquals($expected, $ad['ad_views']);
 		}
 	}
 }

@@ -12,6 +12,9 @@ namespace phpbb\ads\ad;
 
 class manager
 {
+	public const DISABLED_END_DATE = 'end_date';
+	public const DISABLED_VIEWS_LIMIT = 'views_limit';
+	public const DISABLED_CLICKS_LIMIT = 'clicks_limit';
 	public const CONSENT_CATEGORY = 'marketing';
 
 	/**
@@ -30,11 +33,11 @@ class manager
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
-	/** @var \phpbb\config\config */
-	protected $config;
-
 	/** @var \phpbb\user */
 	protected $user;
+
+	/** @var \phpbb\notification\manager */
+	protected $notification_manager;
 
 	/** @var string */
 	protected $ads_table;
@@ -49,17 +52,17 @@ class manager
 	 * Constructor
 	 *
 	 * @param    \phpbb\db\driver\driver_interface $db                 DB driver interface
-	 * @param    \phpbb\config\config              $config             Config object
 	 * @param    \phpbb\user                       $user               User object
 	 * @param    string                            $ads_table          Ads table
 	 * @param    string                            $ad_locations_table Ad locations table
 	 * @param    string                            $ad_group_table 	   Ad group table
+	 * @param    \phpbb\notification\manager|null $notification_manager Notification manager
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, $ads_table, $ad_locations_table, $ad_group_table)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $ads_table, $ad_locations_table, $ad_group_table, \phpbb\notification\manager $notification_manager = null)
 	{
 		$this->db = $db;
-		$this->config = $config;
 		$this->user = $user;
+		$this->notification_manager = $notification_manager;
 		$this->ads_table = $ads_table;
 		$this->ad_locations_table = $ad_locations_table;
 		$this->ad_group_table = $ad_group_table;
@@ -93,23 +96,12 @@ class manager
 	 */
 	public function get_ads($ad_locations, $user_groups, $non_content_page = false)
 	{
-		$sql_where_views = $this->config['phpbb_ads_enable_views'] ? 'AND (a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)' : '';
-		$sql_where_clicks = $this->config['phpbb_ads_enable_clicks'] ? 'AND (a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)' : '';
 		$sql_where_non_content = $non_content_page ? 'AND a.ad_content_only = 0' : '';
 		$sql_where_user_groups = !empty($user_groups) ? 'AND NOT EXISTS (SELECT ag.group_id FROM ' . $this->ad_group_table . ' ag WHERE ag.ad_id = a.ad_id AND ' . $this->db->sql_in_set('ag.group_id', $user_groups) . ')' : '';
 
-		// Get user's current time and convert to UTC equivalent for comparison
-		$user_now = $this->user->create_datetime();
-		$sql_time = (int) gmmktime(
-			(int) $user_now->format('H'),
-			(int) $user_now->format('i'),
-			(int) $user_now->format('s'),
-			(int) $user_now->format('m'),
-			(int) $user_now->format('d'),
-			(int) $user_now->format('Y')
-		);
+		$sql_time = $this->get_current_time();
 
-		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering, a.ad_consent
+		$sql = 'SELECT al.location_id, a.ad_id, a.ad_code, a.ad_centering, a.ad_consent, a.ad_views_enabled, a.ad_clicks_enabled
 				FROM ' . $this->ad_locations_table . ' al
 				LEFT JOIN ' . $this->ads_table . ' a
 					ON (al.ad_id = a.ad_id)
@@ -118,8 +110,8 @@ class manager
 						OR a.ad_start_date <= ' . $sql_time . ')
 					AND (a.ad_end_date = 0
 						OR a.ad_end_date > ' . $sql_time . ")
-					$sql_where_views
-					$sql_where_clicks
+					AND (a.ad_views_enabled = 0 OR a.ad_views_limit = 0 OR a.ad_views_limit > a.ad_views)
+					AND (a.ad_clicks_enabled = 0 OR a.ad_clicks_limit = 0 OR a.ad_clicks_limit > a.ad_clicks)
 					$sql_where_non_content
 					$sql_where_user_groups
 					AND " . $this->db->sql_in_set('al.location_id', $ad_locations) . '
@@ -148,7 +140,7 @@ class manager
 	 */
 	public function get_all_ads()
 	{
-		$sql = 'SELECT ad_id, ad_priority, ad_name, ad_enabled, ad_start_date, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit
+		$sql = 'SELECT ad_id, ad_priority, ad_name, ad_enabled, ad_start_date, ad_end_date, ad_views, ad_clicks, ad_views_limit, ad_clicks_limit, ad_views_enabled, ad_clicks_enabled, ad_owner
 			FROM ' . $this->ads_table;
 		$result = $this->db->sql_query($sql);
 		$data = $this->db->sql_fetchrowset($result);
@@ -165,7 +157,7 @@ class manager
 	 */
 	public function get_ads_by_owner($user_id)
 	{
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_start_date, ad_end_date, ad_views, ad_views_limit, ad_clicks, ad_clicks_limit
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_start_date, ad_end_date, ad_views, ad_views_limit, ad_clicks, ad_clicks_limit, ad_views_enabled, ad_clicks_enabled, ad_owner
 			FROM ' . $this->ads_table . '
 			WHERE ad_owner = ' . (int) $user_id;
 		$result = $this->db->sql_query($sql);
@@ -186,13 +178,27 @@ class manager
 	 */
 	public function increment_ads_views($ad_ids)
 	{
-		if (!empty($ad_ids))
+		$ad_ids = array_values(array_unique(array_filter(array_map('intval', $ad_ids), function($ad_id)
 		{
-			$sql = 'UPDATE ' . $this->ads_table . '
-				SET ad_views = ad_views + 1
-				WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids);
-			$this->db->sql_query($sql);
+			return $ad_id > 0;
+		})));
+		if (empty($ad_ids))
+		{
+			return;
 		}
+
+		$sql_time = $this->get_current_time();
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_views = ad_views + 1
+			WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids) . '
+				AND ad_enabled = 1
+				AND ad_views_enabled = 1
+				AND (ad_start_date = 0 OR ad_start_date <= ' . $sql_time . ')
+				AND (ad_end_date = 0 OR ad_end_date > ' . $sql_time . ')
+				AND (ad_views_limit = 0 OR ad_views < ad_views_limit)
+				AND (ad_clicks_enabled = 0 OR ad_clicks_limit = 0 OR ad_clicks < ad_clicks_limit)';
+		$this->db->sql_query($sql);
+		$this->disable_expired_ads($ad_ids);
 	}
 
 	/**
@@ -203,10 +209,186 @@ class manager
 	 */
 	public function increment_ad_clicks($ad_id)
 	{
+		$sql_time = $this->get_current_time();
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ad_clicks = ad_clicks + 1
-			WHERE ad_id = ' . (int) $ad_id;
+			WHERE ad_id = ' . (int) $ad_id . '
+				AND ad_enabled = 1
+				AND ad_clicks_enabled = 1
+				AND (ad_start_date = 0 OR ad_start_date <= ' . $sql_time . ')
+				AND (ad_end_date = 0 OR ad_end_date > ' . $sql_time . ')
+				AND (ad_clicks_limit = 0 OR ad_clicks < ad_clicks_limit)
+				AND (ad_views_enabled = 0 OR ad_views_limit = 0 OR ad_views < ad_views_limit)';
 		$this->db->sql_query($sql);
+		$this->disable_expired_ads(array($ad_id));
+	}
+
+	/**
+	 * Disable an ad which reached an enabled limit or its end date.
+	 *
+	 * @param int|array $ad Advertisement ID or previously loaded advertisement data
+	 * @return bool True when this call disabled the ad
+	 */
+	public function disable_expired_ad($ad)
+	{
+		if (!is_array($ad))
+		{
+			$ad_id = (int) $ad;
+			if ($ad_id <= 0)
+			{
+				return false;
+			}
+
+			$expired_ads = $this->get_expired_ads(array($ad_id));
+			$ad = reset($expired_ads);
+		}
+
+		$reason = $this->get_expiration_reason($ad);
+		if (!$reason || empty($ad['ad_enabled']))
+		{
+			return false;
+		}
+
+		switch ($reason)
+		{
+			case self::DISABLED_END_DATE:
+				$sql_where_reason = 'ad_end_date > 0 AND ad_end_date < ' . $this->get_expiration_time();
+			break;
+
+			case self::DISABLED_VIEWS_LIMIT:
+				$sql_where_reason = 'ad_views_enabled = 1 AND ad_views_limit > 0 AND ad_views >= ad_views_limit';
+			break;
+
+			default:
+				$sql_where_reason = 'ad_clicks_enabled = 1 AND ad_clicks_limit > 0 AND ad_clicks >= ad_clicks_limit';
+		}
+
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_enabled = 0
+			WHERE ad_id = ' . (int) $ad['ad_id'] . '
+				AND ad_enabled = 1
+				AND ' . $sql_where_reason;
+		$this->db->sql_query($sql);
+
+		if (!$this->db->sql_affectedrows())
+		{
+			return false;
+		}
+
+		if (!empty($ad['ad_owner']) && $this->notification_manager)
+		{
+			$this->notification_manager->delete_notifications(
+				\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED,
+				(int) $ad['ad_id'],
+				false,
+				(int) $ad['ad_owner']
+			);
+			$this->notification_manager->add_notifications(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED, array(
+				'ad_id' => (int) $ad['ad_id'],
+				'ad_name' => $ad['ad_name'],
+				'ad_owner' => (int) $ad['ad_owner'],
+				'reason' => $reason,
+			));
+		}
+
+		return true;
+	}
+
+	/**
+	 * Disable every currently expired enabled ad.
+	 *
+	 * @param array $ad_ids Optional advertisement IDs to restrict the sweep
+	 * @return int Number of ads disabled
+	 */
+	public function disable_expired_ads($ad_ids = array())
+	{
+		$disabled = 0;
+		foreach ($this->get_expired_ads($ad_ids) as $ad)
+		{
+			if ($this->disable_expired_ad($ad))
+			{
+				$disabled++;
+			}
+		}
+
+		return $disabled;
+	}
+
+	/**
+	 * Get enabled advertisements which reached an enabled limit or end date.
+	 *
+	 * @param array $ad_ids Optional advertisement IDs to restrict the query
+	 * @return array Expired advertisement data
+	 */
+	protected function get_expired_ads($ad_ids = array())
+	{
+		$restrict_ids = !empty($ad_ids);
+		$ad_ids = array_values(array_unique(array_filter(array_map('intval', $ad_ids), function($ad_id)
+		{
+			return $ad_id > 0;
+		})));
+		if ($restrict_ids && empty($ad_ids))
+		{
+			return array();
+		}
+
+		$sql_where_ids = !empty($ad_ids) ? '
+				AND ' . $this->db->sql_in_set('ad_id', $ad_ids) : '';
+		$expiration_time = $this->get_expiration_time();
+		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_views, ad_views_limit, ad_views_enabled, ad_clicks, ad_clicks_limit, ad_clicks_enabled, ad_owner
+			FROM ' . $this->ads_table . '
+			WHERE ad_enabled = 1
+				AND (
+					(ad_end_date > 0 AND ad_end_date < ' . $expiration_time . ')
+					OR (ad_views_enabled = 1 AND ad_views_limit > 0 AND ad_views >= ad_views_limit)
+					OR (ad_clicks_enabled = 1 AND ad_clicks_limit > 0 AND ad_clicks >= ad_clicks_limit)
+				)' . $sql_where_ids;
+		$result = $this->db->sql_query($sql);
+		$ads = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+
+		return $ads;
+	}
+
+	/**
+	 * Determine why an advertisement is expired.
+	 *
+	 * @param array $ad Advertisement data
+	 * @return string|false Expiration reason or false
+	 */
+	protected function get_expiration_reason($ad)
+	{
+		if (empty($ad))
+		{
+			return false;
+		}
+
+		if (!empty($ad['ad_end_date']) && $ad['ad_end_date'] < $this->get_expiration_time())
+		{
+			return self::DISABLED_END_DATE;
+		}
+
+		if (!empty($ad['ad_views_enabled']) && !empty($ad['ad_views_limit']) && $ad['ad_views'] >= $ad['ad_views_limit'])
+		{
+			return self::DISABLED_VIEWS_LIMIT;
+		}
+
+		if (!empty($ad['ad_clicks_enabled']) && !empty($ad['ad_clicks_limit']) && $ad['ad_clicks'] >= $ad['ad_clicks_limit'])
+		{
+			return self::DISABLED_CLICKS_LIMIT;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get expiration boundary after every timezone finished the end date.
+	 *
+	 * @return int Timestamp
+	 */
+	protected function get_expiration_time()
+	{
+		return time() - \phpbb\ads\ext::EXPIRATION_GRACE_PERIOD;
 	}
 
 	/**
@@ -628,11 +810,32 @@ class manager
 			'ad_priority'		=> '',
 			'ad_views_limit'	=> '',
 			'ad_clicks_limit'	=> '',
+			'ad_views_enabled'	=> '',
+			'ad_clicks_enabled'	=> '',
 			'ad_owner'			=> '',
 			'ad_content_only'	=> '',
 			'ad_centering'		=> '',
 			'ad_consent'		=> '',
 		]);
+	}
+
+	/**
+	 * Get user's current time converted to its UTC equivalent.
+	 *
+	 * @return int Timestamp
+	 */
+	protected function get_current_time()
+	{
+		$user_now = $this->user->create_datetime();
+
+		return (int) gmmktime(
+			(int) $user_now->format('H'),
+			(int) $user_now->format('i'),
+			(int) $user_now->format('s'),
+			(int) $user_now->format('m'),
+			(int) $user_now->format('d'),
+			(int) $user_now->format('Y')
+		);
 	}
 
 	/**

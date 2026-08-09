@@ -124,6 +124,8 @@ class acp_manage_test extends functional_base
 			'ad_priority'	=> 1,
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
+			'ad_views_enabled' => 1,
+			'ad_clicks_enabled' => 0,
 			'ad_owner'	=> 'admin',
 			'ad_groups'	=> [],
 			'ad_centering'	=> 1,
@@ -164,6 +166,8 @@ class acp_manage_test extends functional_base
 		$edit_link = $crawler->filter('[title="' . $this->lang('EDIT') . '"]')->parents()->first()->link();
 		$crawler = static::click($edit_link);
 		$this->assertContainsLang('ACP_ADS_EDIT', $crawler->filter('#main h1')->text());
+		self::assertEquals('1', $crawler->filter('input[name="ad_views_enabled"][checked]')->attr('value'));
+		self::assertEquals('0', $crawler->filter('input[name="ad_clicks_enabled"][checked]')->attr('value'));
 
 		// Confirm error when submitting without required field data
 		$form_data = array(
@@ -242,6 +246,8 @@ class acp_manage_test extends functional_base
 			'ad_priority'	=> 2,
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
+			'ad_views_enabled' => 0,
+			'ad_clicks_enabled' => 1,
 			'ad_owner'	=> 'admin',
 			'ad_groups'	=> [],
 			'ad_centering'	=> 1,

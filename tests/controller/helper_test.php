@@ -258,6 +258,8 @@ class helper_test extends \phpbb_database_test_case
 				'AD_OWNER'        => $owner,
 				'AD_CENTERING'    => $data['ad_centering'],
 				'AD_CONSENT'      => $data['ad_consent'],
+				'AD_VIEWS_ENABLED' => $data['ad_views_enabled'] ?? 0,
+				'AD_CLICKS_ENABLED' => $data['ad_clicks_enabled'] ?? 0,
 			));
 
 		$helper->assign_data($data, $errors);
@@ -435,6 +437,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '',
 				'ad_clicks_limit'	=> '',
 				'ad_clicks'			=> '',
+				'ad_views_enabled' => 0,
+				'ad_clicks_enabled' => 0,
 			), true),
 			array(array(
 				'ad_start_date'		=> '0',
@@ -443,6 +447,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '2',
 				'ad_clicks_limit'	=> '',
 				'ad_clicks'			=> '',
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 0,
 			), true),
 			array(array(
 				'ad_start_date'		=> '0',
@@ -451,6 +457,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '0',
 				'ad_clicks_limit'	=> '1',
 				'ad_clicks'			=> '2',
+				'ad_views_enabled' => 0,
+				'ad_clicks_enabled' => 1,
 			), true),
 			array(array(
 				'ad_start_date'		=> '9999999999',
@@ -459,6 +467,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '0',
 				'ad_clicks_limit'	=> '0',
 				'ad_clicks'			=> '0',
+				'ad_views_enabled' => 0,
+				'ad_clicks_enabled' => 0,
 			), false),
 			array(array(
 				'ad_start_date'		=> '0',
@@ -467,6 +477,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '1',
 				'ad_clicks_limit'	=> '0',
 				'ad_clicks'			=> '0',
+				'ad_views_enabled' => 0,
+				'ad_clicks_enabled' => 0,
 			), false),
 			array(array(
 				'ad_start_date'		=> '0',
@@ -475,6 +487,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '0',
 				'ad_clicks_limit'	=> '0',
 				'ad_clicks'			=> '1',
+				'ad_views_enabled' => 0,
+				'ad_clicks_enabled' => 0,
 			), false),
 			array(array(
 				'ad_start_date'		=> '0',
@@ -483,6 +497,8 @@ class helper_test extends \phpbb_database_test_case
 				'ad_views'			=> '0',
 				'ad_clicks_limit'	=> '0',
 				'ad_clicks'			=> '0',
+				'ad_views_enabled' => 0,
+				'ad_clicks_enabled' => 0,
 			), false),
 		);
 	}

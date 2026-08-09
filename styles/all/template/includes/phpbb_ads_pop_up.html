@@ -12,7 +12,7 @@
 			window.addEventListener('load', () => {
 				phpbb.alert(
 					'{{ lang('ADVERTISEMENT')|upper|e('js') }}',
-					'{{ ad.renderAds(AD_POP_UP, AD_POP_UP_ID, AD_POP_UP_CENTER, 'margin: 0;')|e('js') }}'
+					'{{ ad.renderAds(AD_POP_UP, AD_POP_UP_ID, AD_POP_UP_CENTER, 'margin: 0;', AD_POP_UP_CLICK_URL)|e('js') }}'
 				);
 			});
 		}

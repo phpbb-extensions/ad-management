@@ -26,17 +26,7 @@
 		</dl>
 	</fieldset>
 	<fieldset>
-		<legend>{{ lang('CLICKS_VIEWS_LEGEND') }}</legend>
-		<dl>
-			<dt><label for="enable_views">{{ lang('ENABLE_VIEWS') ~ lang('COLON') }}</label><br /><span>{{ lang('ENABLE_VIEWS_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="enable_views" name="enable_views" value="1"{% if ENABLE_VIEWS %} checked{% endif %} /> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="enable_views" value="0"{% if not ENABLE_VIEWS %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
-		</dl>
-		<dl>
-			<dt><label for="enable_clicks">{{ lang('ENABLE_CLICKS') ~ lang('COLON') }}</label><br /><span>{{ lang('ENABLE_CLICKS_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="enable_clicks" name="enable_clicks" value="1"{% if ENABLE_CLICKS %} checked{% endif %} /> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="enable_clicks" value="0"{% if not ENABLE_CLICKS %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
-		</dl>
+		<legend>{{ lang('PRIVACY_LEGEND') }}</legend>
 		<dl>
 			<dt><label for="show_agreement">{{ lang('SHOW_AGREEMENT') ~ lang('COLON') }}</label><br /><span>{{ lang('SHOW_AGREEMENT_EXPLAIN') }}</span></dt>
 			<dd><label><input type="radio" class="radio" id="show_agreement" name="show_agreement" value="1"{% if SHOW_AGREEMENT %} checked{% endif %} /> {{ lang('YES') }}</label>
