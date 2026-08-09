@@ -13,7 +13,7 @@
 		<fieldset>
 			<legend>{{ lang('PREVIEW') }}</legend>
 			{% import '@phpbb_ads/phpbb_ads_macro.html' as preview %}
-			{{ preview.renderAds(PREVIEW, 0, AD_CENTERING) }}
+			{{ preview.renderAd({'CODE': PREVIEW, 'ID': 0, 'CENTER': AD_CENTERING, 'CLICK_URL': ''}) }}
 		</fieldset>
 	{% endif %}
 

@@ -137,44 +137,26 @@ class main_listener implements EventSubscriberInterface
 		$consent_enabled = (bool) $this->template->retrieve_var('S_CONSENTMANAGER_MARKETING_ENABLED');
 		$location_ids = $this->location_manager->get_all_location_ids();
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
-		$ad_ids = array();
-		$clicks_enabled = false;
 		$ads = $this->manager->get_ads($location_ids, $user_groups, $non_content_page);
+		$click_urls = $this->prepare_click_tracking($ads);
 
 		foreach ($ads as $row)
 		{
-			if (!empty($row['ad_views_enabled']))
-			{
-				$ad_ids[] = (int) $row['ad_id'];
-			}
-
-			$click_url = '';
-			if (!empty($row['ad_clicks_enabled']))
-			{
-				$clicks_enabled = true;
-				$click_url = $this->controller_helper->route('phpbb_ads_click', array(
-					'data' => (int) $row['ad_id'],
-					'hash' => generate_link_hash('phpbb_ads_click_' . (int) $row['ad_id']),
-				), true, '');
-			}
-
 			$ad_consent_enabled = $consent_enabled && (bool) ($row['ad_consent'] ?? true);
 			$ad_var = 'AD_' . strtoupper($row['location_id']);
+			$ad_id = (int) $row['ad_id'];
 
 			$this->template->assign_vars(array(
-				$ad_var => $this->manager->prepare_ad_code($row['ad_code'], $ad_consent_enabled),
-				$ad_var . '_ID' => (int) $row['ad_id'],
-				$ad_var . '_CENTER' => (bool) $row['ad_centering'],
-				$ad_var . '_CLICK_URL' => $click_url,
+				$ad_var => array(
+					'CODE' => $this->manager->prepare_ad_code($row['ad_code'], $ad_consent_enabled),
+					'ID' => $ad_id,
+					'CENTER' => (bool) $row['ad_centering'],
+					'CLICK_URL' => $click_urls[$ad_id] ?? '',
+				),
 			));
 		}
 
-		if ($clicks_enabled)
-		{
-			$this->template->assign_var('S_PHPBB_ADS_ENABLE_CLICKS', true);
-		}
-
-		$this->views(array_values(array_unique($ad_ids)));
+		$this->prepare_view_tracking($ads);
 	}
 
 	/**
@@ -202,11 +184,15 @@ class main_listener implements EventSubscriberInterface
 				$ad_var = 'AD_' . strtoupper($location_id);
 
 				$this->template->assign_vars(array(
-					$ad_var . '_ID'	=> $location_id,
-					$ad_var			=> array(
-						'visual_demo'	=> true,
-						'name'			=> $all_locations[$location_id]['name'],
-						'desc'			=> $all_locations[$location_id]['desc'],
+					$ad_var => array(
+						'CODE' => array(
+							'visual_demo' => true,
+							'name' => $all_locations[$location_id]['name'],
+							'desc' => $all_locations[$location_id]['desc'],
+						),
+						'ID' => $location_id,
+						'CENTER' => false,
+						'CLICK_URL' => '',
 					),
 				));
 			}
@@ -222,24 +208,81 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
+	 * Prepare click counter templates
+	 *
+	 * @param	array	$ads	Ads that will be displayed on current request's page
+	 * @return	array	Click URLs indexed by advertisement ID
+	 */
+	protected function prepare_click_tracking(array $ads)
+	{
+		$click_urls = array();
+
+		foreach ($this->get_tracking_ad_ids($ads, 'ad_clicks_enabled') as $ad_id)
+		{
+			$click_urls[$ad_id] = $this->controller_helper->route('phpbb_ads_click', array(
+				'data' => $ad_id,
+				'hash' => generate_link_hash('phpbb_ads_click_' . $ad_id),
+			), true, '');
+		}
+
+		if ($click_urls)
+		{
+			$this->template->assign_var('S_PHPBB_ADS_ENABLE_CLICKS', true);
+		}
+
+		return $click_urls;
+	}
+
+	/**
 	 * Prepare views counter template
 	 *
-	 * @param	array	$ad_ids	List of ads that will be displayed on current request's page
+	 * @param	array	$ads	Ads that will be displayed on current request's page
 	 * @return	void
 	 */
-	protected function views($ad_ids)
+	protected function prepare_view_tracking(array $ads)
 	{
-		if (empty($this->user->data['is_bot']) && count($ad_ids))
+		if (!empty($this->user->data['is_bot']))
 		{
-			$ad_id_string = implode('-', $ad_ids);
-			$this->template->assign_vars(array(
-				'S_PHPBB_ADS_INCREMENT_VIEWS'	=> true,
-				'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array(
-					'data' => $ad_id_string,
-					'hash' => generate_link_hash('phpbb_ads_views_' . $ad_id_string),
-				), true, ''),
-			));
+			return;
 		}
+
+		$ad_ids = $this->get_tracking_ad_ids($ads, 'ad_views_enabled');
+		if (!$ad_ids)
+		{
+			return;
+		}
+
+		$ad_id_string = implode('-', $ad_ids);
+		$this->template->assign_vars(array(
+			'S_PHPBB_ADS_INCREMENT_VIEWS'	=> true,
+			'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array(
+				'data' => $ad_id_string,
+				'hash' => generate_link_hash('phpbb_ads_views_' . $ad_id_string),
+			), true, ''),
+		));
+	}
+
+	/**
+	 * Get unique IDs of ads with a tracking counter enabled
+	 *
+	 * @param	array	$ads			Ads that will be displayed on current request's page
+	 * @param	string	$enabled_column	Tracking enabled column
+	 * @return	array	Advertisement IDs
+	 */
+	protected function get_tracking_ad_ids(array $ads, $enabled_column)
+	{
+		$ad_ids = array();
+
+		foreach ($ads as $ad)
+		{
+			if (!empty($ad[$enabled_column]))
+			{
+				$ad_id = (int) $ad['ad_id'];
+				$ad_ids[$ad_id] = $ad_id;
+			}
+		}
+
+		return array_values($ad_ids);
 	}
 
 	/**
