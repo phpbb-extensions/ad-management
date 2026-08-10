@@ -178,10 +178,7 @@ class manager
 	 */
 	public function increment_ads_views($ad_ids)
 	{
-		$ad_ids = array_values(array_unique(array_filter(array_map('intval', $ad_ids), function($ad_id)
-		{
-			return $ad_id > 0;
-		})));
+		$ad_ids = $this->normalize_ad_ids($ad_ids);
 		if (empty($ad_ids))
 		{
 			return;
@@ -323,10 +320,7 @@ class manager
 	protected function get_expired_ads($ad_ids = array())
 	{
 		$restrict_ids = !empty($ad_ids);
-		$ad_ids = array_values(array_unique(array_filter(array_map('intval', $ad_ids), function($ad_id)
-		{
-			return $ad_id > 0;
-		})));
+		$ad_ids = $this->normalize_ad_ids($ad_ids);
 		if ($restrict_ids && empty($ad_ids))
 		{
 			return array();
@@ -348,6 +342,20 @@ class manager
 		$this->db->sql_freeresult($result);
 
 		return $ads;
+	}
+
+	/**
+	 * Normalize advertisement IDs.
+	 *
+	 * @param array $ad_ids Advertisement IDs
+	 * @return array Unique positive integer IDs
+	 */
+	protected function normalize_ad_ids($ad_ids)
+	{
+		return array_values(array_unique(array_filter(array_map('intval', $ad_ids), static function($ad_id)
+		{
+			return $ad_id > 0;
+		})));
 	}
 
 	/**

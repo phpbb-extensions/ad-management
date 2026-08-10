@@ -16,10 +16,10 @@ namespace phpbb\ads\controller;
 class increment_controller
 {
 	/** @var int Maximum ads accepted in one view batch */
-	const MAX_VIEW_BATCH = 50;
+	public const MAX_VIEW_BATCH = 50;
 
 	/** @var int Click cooldown in seconds */
-	const CLICK_COOLDOWN = 10;
+	public const CLICK_COOLDOWN = 10;
 
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
