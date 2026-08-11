@@ -26,9 +26,9 @@ $lang = array_merge($lang, array(
 	'AD_CLICKS'		=> 'Clicks',
 	'AD_STATUS'		=> 'Status',
 	'EXPIRED'		=> 'Expired',
-	'ACTIVE_ADS'	=> 'Active ads',
+	'ACTIVE_ADS'	=> 'Current ads',
 	'EXPIRED_ADS'	=> 'Expired ads',
-	'NO_ADS'		=> '<strong>You do not have any advertisements displayed on this board.</strong>',
+	'NO_ADS'		=> '<strong>You do not have any ads assigned to you on this board.</strong>',
 
 	'PHPBB_ADS_PRIVACY_POLICY' => '
 		<br><br>
