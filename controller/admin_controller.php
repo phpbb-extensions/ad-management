@@ -152,7 +152,7 @@ class admin_controller
 	{
 		// Trigger specific action
 		$action = $this->request->variable('action', '');
-		if (in_array($action, array('add', 'edit', 'enable', 'disable', 'delete')))
+		if (in_array($action, array('add', 'edit', 'analyse', 'enable', 'disable', 'delete')))
 		{
 			$this->{'action_' . $action}();
 		}
@@ -188,6 +188,7 @@ class admin_controller
 			'S_ADD_AD'				=> true,
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
+			'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array(
 				'action' => 'enable',
@@ -233,6 +234,7 @@ class admin_controller
 			'EDIT_ID'				=> $ad_id,
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
+			'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
 			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array(
 				'action' => 'enable',
@@ -363,14 +365,13 @@ class admin_controller
 	 * Possible options are:
 	 *  - preview ad code
 	 *  - upload banner to display in an ad code
-	 *  - analyse ad code
 	 *  - submit form (either add or edit an ad)
 	 *
 	 * @return	string|false	Action name or false when no action was submitted
 	 */
 	protected function get_submitted_action()
 	{
-		$actions = array('preview', 'upload_banner', 'analyse_ad_code', 'submit_add', 'submit_edit');
+		$actions = array('preview', 'upload_banner', 'submit_add', 'submit_edit');
 		foreach ($actions as $action)
 		{
 			if ($this->request->is_set_post($action))
@@ -456,14 +457,34 @@ class admin_controller
 	}
 
 	/**
-	 * Submit action "analyse_ad_code".
-	 * Analyse submitted ad code.
+	 * Analyse submitted ad code and return results as JSON.
 	 *
-	 * @return	void
+	 * @return void
 	 */
-	protected function analyse_ad_code()
+	protected function action_analyse()
 	{
-		$this->analyser->run($this->data['ad_code']);
+		if (!check_form_key('phpbb_ads'))
+		{
+			$this->input->send_ajax_response(false, $this->language->lang('FORM_INVALID'));
+			return;
+		}
+
+		$results = $this->analyser->run($this->request->variable('ad_code', '', true));
+		$response_results = array();
+		foreach ($results as $result)
+		{
+			$response_results[] = array(
+				'severity' => $result['severity'],
+				'message' => $this->language->lang($result['message']),
+			);
+		}
+
+		$json_response = new \phpbb\json_response;
+		$json_response->send(array(
+			'success' => true,
+			'results' => $response_results,
+			'everything_ok' => $this->language->lang('EVERYTHING_OK'),
+		));
 	}
 
 	/**

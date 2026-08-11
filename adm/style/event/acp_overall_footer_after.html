@@ -24,6 +24,52 @@
 	});
 
 	jQuery(function($) {
+		$('#analyse_ad_code').on('click', function(e) {
+			e.preventDefault();
+
+			var $button = $(this),
+				$form = $('#acp_ad_code_analyser'),
+				$results = $('#analyser_results'),
+				formData = new FormData($form[0]);
+
+			formData.append('ad_code', $('#ad_code').val());
+
+			$button.prop('disabled', true);
+			$.ajax({
+				method: 'POST',
+				url: $form.attr('action'),
+				data: formData,
+				processData: false,
+				cache: false,
+				contentType: false,
+				success: function(data) {
+					if (!data.success) {
+						phpbb.alert(data.title, data.text);
+						return;
+					}
+
+					$results.empty();
+					if (!data.results.length) {
+						$('<p>').addClass('successbox').text(data.everything_ok).appendTo($results);
+						return;
+					}
+
+					$.each(data.results, function(i, result) {
+						$('<p>')
+							.addClass(result.severity === 'warning' ? 'errorbox' : 'warningbox')
+							.html(result.message)
+							.appendTo($results);
+					});
+				},
+				error: function() {
+					phpbb.alert('{{ lang('AJAX_ERROR_TITLE')|e('js') }}', '{{ lang('AJAX_ERROR_TEXT')|e('js') }}');
+				},
+				complete: function() {
+					$button.prop('disabled', false);
+				}
+			});
+		});
+
 		$('#upload_banner').on('click', function(e) {
 			e.preventDefault();
 

@@ -295,6 +295,7 @@ class admin_controller_test extends \phpbb_database_test_case
 		return array(
 			array('add', 'action_add'),
 			array('edit', 'action_edit'),
+			array('analyse', 'action_analyse'),
 			array('enable', 'ad_enable'),
 			array('disable', 'ad_enable'),
 			array('delete', 'action_delete'),
@@ -311,7 +312,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\controller\admin_controller $controller */
 		$controller = $this->getMockBuilder('\phpbb\ads\controller\admin_controller')
-			->setMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
+			->setMethods(array('action_add', 'action_edit', 'action_analyse', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->template,
 				$this->language,
@@ -346,17 +347,15 @@ class admin_controller_test extends \phpbb_database_test_case
 		$controller = $this->get_controller();
 
 		$this->request
-			->expects(self::exactly(5))
+			->expects(self::exactly(4))
 			->method('is_set_post')
 			->withConsecutive(
 				['preview'],
 				['upload_banner'],
-				['analyse_ad_code'],
 				['submit_add'],
 				['submit_edit']
 			)
 			->willReturnOnConsecutiveCalls(
-				false,
 				false,
 				false,
 				false,
@@ -381,6 +380,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'S_ADD_AD'				=> true,
 				'U_BACK'				=> $this->u_action,
 				'U_ACTION'				=> "{$this->u_action}&amp;action=add",
+				'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
 				'DATE_MINIMUM'			=> '2000-12-16',
@@ -533,52 +533,34 @@ class admin_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * Test action_add() method with analyse_ad_code submitted data
+	 * Test analysis uses its dedicated action without advertisement validation.
 	 */
-	public function test_action_add_analyse_ad_code()
+	public function test_action_analyse()
 	{
 		$controller = $this->get_controller();
 
 		$this->request
-			->expects(self::exactly(3))
-			->method('is_set_post')
+			->expects(self::exactly(2))
+			->method('variable')
 			->withConsecutive(
-				['preview'],
-				['upload_banner'],
-				['analyse_ad_code']
+				['action', ''],
+				['ad_code', '', true]
 			)
 			->willReturnOnConsecutiveCalls(
-				false,
-				false,
-				true
+				'analyse',
+				'<!-- AD CODE SAMPLE -->'
 			);
 
-		$data = array(
-			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
-			'ad_locations'	=> array(),
-		);
-
-		$this->input->expects(self::once())
-			->method('get_form_data')
-			->willReturn($data);
-
+		$this->input->expects(self::never())
+			->method('get_form_data');
+		$this->helper->expects(self::never())
+			->method('assign_data');
 		$this->analyser->expects(self::once())
 			->method('run')
-			->with($data['ad_code']);
-
-		$this->input->expects(self::once())
-			->method('get_errors')
+			->with('<!-- AD CODE SAMPLE -->')
 			->willReturn(array());
 
-		$this->helper->expects(self::once())
-			->method('assign_data')
-			->with($data, array());
-
-		$this->request->expects(self::once())
-			->method('variable')
-			->with('action', '')
-			->willReturn('add');
-
+		$this->setExpectedTriggerError(E_WARNING);
 		$controller->mode_manage();
 	}
 
@@ -606,16 +588,14 @@ class admin_controller_test extends \phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$this->request->expects(self::exactly(4))
+		$this->request->expects(self::exactly(3))
 			->method('is_set_post')
 			->withConsecutive(
 				['preview'],
 				['upload_banner'],
-				['analyse_ad_code'],
 				['submit_add']
 			)
 			->willReturnOnConsecutiveCalls(
-				false,
 				false,
 				false,
 				true
@@ -717,17 +697,15 @@ class admin_controller_test extends \phpbb_database_test_case
 				$ad_id
 			);
 
-		$this->request->expects($ad_id ? self::exactly(5) : self::never())
+		$this->request->expects($ad_id ? self::exactly(4) : self::never())
 			->method('is_set_post')
 			->withConsecutive(
 				['preview'],
 				['upload_banner'],
-				['analyse_ad_code'],
 				['submit_add'],
 				['submit_edit']
 			)
 			->willReturnOnConsecutiveCalls(
-				false,
 				false,
 				false,
 				false,
@@ -777,6 +755,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'EDIT_ID'				=> $ad_id,
 					'U_BACK'				=> $this->u_action,
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
+					'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
 					'DATE_MINIMUM'			=> '',
@@ -851,6 +830,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'EDIT_ID'				=> 1,
 				'U_BACK'				=> $this->u_action,
 				'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
+				'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
 				'DATE_MINIMUM'			=> '',
@@ -907,17 +887,15 @@ class admin_controller_test extends \phpbb_database_test_case
 			);
 
 		$this->request
-			->expects(self::exactly(5))
+			->expects(self::exactly(4))
 			->method('is_set_post')
 			->withConsecutive(
 				['preview'],
 				['upload_banner'],
-				['analyse_ad_code'],
 				['submit_add'],
 				['submit_edit']
 			)
 			->willReturnOnConsecutiveCalls(
-				false,
 				false,
 				false,
 				false,
@@ -967,6 +945,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'EDIT_ID'				=> 1,
 					'U_BACK'				=> $this->u_action,
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
+					'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
 					'DATE_MINIMUM'			=> '',

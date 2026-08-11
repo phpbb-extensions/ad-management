@@ -24,6 +24,10 @@
 		</div>
 	{% endif %}
 
+	<form id="acp_ad_code_analyser" method="post" action="{{ U_ANALYSE_AD_CODE }}">
+		{{ S_FORM_TOKEN }}
+	</form>
+
 	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 		<fieldset>
 			<legend>{{ lang('AD_DETAILS') }}</legend>
@@ -47,8 +51,8 @@
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}{% if S_ADS_CONSENTMANAGER_AVAILABLE %}{{ lang('AD_CODE_CONSENT_EXPLAIN') }}{% endif %}</span></dt>
 				<dd>
 					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
-					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code"><i class="icon fa-fw fa-stethoscope"></i> <span>{{ lang('ANALYSE_AD_CODE') }}</span></button>
-					<div class="analyser-results">
+					<button class="button2 phpbb-ads-button" type="button" id="analyse_ad_code" form="acp_ad_code_analyser" aria-controls="analyser_results"><i class="icon fa-fw fa-stethoscope"></i> <span>{{ lang('ANALYSE_AD_CODE') }}</span></button>
+					<div class="analyser-results" id="analyser_results">
 						{% if loops.analyser_results_notice or loops.analyser_results_warning %}
 							{% if loops.analyser_results_notice %}
 								{% for notice in loops.analyser_results_notice %}
