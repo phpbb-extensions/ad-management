@@ -27,8 +27,8 @@ class tracking_test extends ad_base
 		$manager->increment_ad_clicks(1);
 
 		$ad = $manager->get_ad(1);
-		self::assertSame('0', $ad['ad_views']);
-		self::assertSame('0', $ad['ad_clicks']);
+		self::assertEquals(0, $ad['ad_views']);
+		self::assertEquals(0, $ad['ad_clicks']);
 	}
 
 	/**
@@ -56,8 +56,8 @@ class tracking_test extends ad_base
 		$manager->increment_ad_clicks(1);
 
 		$ad = $manager->get_ad(1);
-		self::assertSame('1', $ad['ad_clicks']);
-		self::assertSame('0', $ad['ad_enabled']);
+		self::assertEquals(1, $ad['ad_clicks']);
+		self::assertEquals(0, $ad['ad_enabled']);
 	}
 
 	/**
@@ -76,8 +76,8 @@ class tracking_test extends ad_base
 		self::assertSame(2, $this->db->sql_num_queries() - $query_count);
 
 		$ad = $manager->get_ad(1);
-		self::assertSame('1', $ad['ad_views']);
-		self::assertSame('1', $ad['ad_enabled']);
+		self::assertEquals(1, $ad['ad_views']);
+		self::assertEquals(1, $ad['ad_enabled']);
 	}
 
 	/**
@@ -104,8 +104,8 @@ class tracking_test extends ad_base
 		$manager->increment_ads_views(array(1));
 
 		$ad = $manager->get_ad(1);
-		self::assertSame('1', $ad['ad_views']);
-		self::assertSame('0', $ad['ad_enabled']);
+		self::assertEquals(1, $ad['ad_views']);
+		self::assertEquals(0, $ad['ad_enabled']);
 	}
 
 	/**
@@ -126,9 +126,9 @@ class tracking_test extends ad_base
 		$manager = $this->get_manager_with_notifications($notifications);
 
 		$query_count = $this->db->sql_num_queries();
-		self::assertSame(1, $manager->disable_expired_ads());
-		self::assertSame(2, $this->db->sql_num_queries() - $query_count);
-		self::assertSame('0', $manager->get_ad(3)['ad_enabled']);
+		self::assertEquals(1, $manager->disable_expired_ads());
+		self::assertEquals(2, $this->db->sql_num_queries() - $query_count);
+		self::assertEquals(0, $manager->get_ad(3)['ad_enabled']);
 	}
 
 	/**

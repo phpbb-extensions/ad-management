@@ -72,8 +72,8 @@ class notification_test extends functional_base
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
-		self::assertSame('1', $row['ad_clicks']);
-		self::assertSame('0', $row['ad_enabled']);
+		self::assertEquals(1, $row['ad_clicks']);
+		self::assertEquals(0, $row['ad_enabled']);
 
 		$crawler = self::request('GET', 'ucp.php?i=ucp_notifications&mode=notification_list');
 		$notification_text = $crawler->filter('#cp-main')->text();

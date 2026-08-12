@@ -48,12 +48,15 @@ class acp_manage_test extends functional_base
 
 		// Confirm ad code analysis
 		$form = $crawler->selectButton($this->lang('ANALYSE_AD_CODE'))->form();
-		$crawler = self::submit($form, array(
+		self::$client->request('POST', $form->getUri(), array_merge($form->getValues(), array(
 			'ad_code'	=> '<script src="">alert();window.location.href=""</script>',
-		));
-		self::assertStringContainsString('Non-asynchronous javascript', $crawler->filter('.analyser-results')->html());
-		self::assertStringContainsString('Usage of <samp>alert()</samp>', $crawler->filter('.analyser-results')->html());
-		self::assertStringContainsString('Redirection', $crawler->filter('.analyser-results')->html());
+		)));
+		$response = json_decode(self::get_content(), true);
+		self::assertTrue($response['success']);
+		$messages = implode(' ', array_column($response['results'], 'message'));
+		self::assertStringContainsString('Non-asynchronous javascript', $messages);
+		self::assertStringContainsString('Usage of <samp>alert()</samp>', $messages);
+		self::assertStringContainsString('Redirection', $messages);
 
 		// Confirm error when submitting without required field data
 		$this->submit_with_error($crawler, array(), $this->lang('AD_NAME_REQUIRED'));
@@ -134,8 +137,8 @@ class acp_manage_test extends functional_base
 		// Confirm preview
 		$form = $crawler->selectButton($this->lang('PREVIEW'))->form();
 		$crawler = self::submit($form, $form_data);
-		self::assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
-		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
+		self::assertGreaterThan(0, $crawler->filter('.acp-preview-center')->count());
+		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('#phpbb-preview-content')->html());
 
 		// Confirm add
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
@@ -256,8 +259,8 @@ class acp_manage_test extends functional_base
 		// Confirm preview
 		$form = $crawler->selectButton($this->lang('PREVIEW'))->form();
 		$crawler = self::submit($form, $form_data);
-		self::assertGreaterThan(0, $crawler->filter('.phpbb-ads-center')->count());
-		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('.phpbb-ads-center')->html());
+		self::assertGreaterThan(0, $crawler->filter('.acp-preview-center')->count());
+		self::assertStringContainsString($form_data['ad_code'], $crawler->filter('#phpbb-preview-content')->html());
 
 		// Confirm edit
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
