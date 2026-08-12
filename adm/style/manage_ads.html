@@ -12,8 +12,13 @@
 	{% if PREVIEW %}
 		<fieldset>
 			<legend>{{ lang('PREVIEW') }}</legend>
-			{% import '@phpbb_ads/phpbb_ads_macro.html' as preview %}
-			{{ preview.renderAd({'CODE': PREVIEW, 'ID': 0, 'CENTER': AD_CENTERING, 'CLICK_URL': ''}) }}
+			<p id="phpbb-preview-notice" class="warningbox" role="status" aria-live="polite" style="display: none;">
+				<strong id="phpbb-preview-notice-title"></strong><br>
+				<span id="phpbb-preview-notice-text"></span>
+			</p>
+			<div id="phpbb-preview-output">
+				<div id="phpbb-preview-content"{% if AD_CENTERING %} class="acp-preview-center"{% endif %}>{{ PREVIEW }}</div>
+			</div>
 		</fieldset>
 	{% endif %}
 

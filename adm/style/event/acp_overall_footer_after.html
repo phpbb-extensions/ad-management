@@ -24,6 +24,99 @@
 	});
 
 	jQuery(function($) {
+		var $previewOutput = $('#phpbb-preview-output'),
+			$previewNotice = $('#phpbb-preview-notice'),
+			previewChecks = 0,
+			previewTimer;
+
+		if ($previewOutput.length && $previewNotice.length) {
+			function hasVisibleBox(element) {
+				var elementStyle = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle,
+					elementRect = element.getBoundingClientRect();
+
+				return (!elementStyle || (
+					elementStyle.display !== 'none' &&
+					elementStyle.visibility !== 'hidden' &&
+					parseFloat(elementStyle.opacity) !== 0
+				)) && elementRect.width > 2 && elementRect.height > 2;
+			}
+
+			previewTimer = window.setInterval(function() {
+				var preview = document.getElementById('phpbb-preview-content'),
+					isBlocked = !preview,
+					isVisible = false,
+					children,
+					hasFailedImage = false,
+					hasLoadedImage = false,
+					i,
+					images,
+					style,
+					tagName;
+
+				previewChecks++;
+				if (preview) {
+					style = window.getComputedStyle ? window.getComputedStyle(preview) : preview.currentStyle;
+					isBlocked = !document.documentElement.contains(preview) || (style && (
+						style.display === 'none' ||
+						style.visibility === 'hidden' ||
+						parseFloat(style.opacity) === 0
+					));
+
+					// A failed image can still give its wrapper visible dimensions.
+					// Treat an image-only preview with no successfully loaded image as blocked.
+					images = preview.getElementsByTagName('img');
+					for (i = 0; i < images.length; i++) {
+						if (images[i].complete && images[i].naturalWidth === 0) {
+							hasFailedImage = true;
+						} else if (images[i].complete && images[i].naturalWidth > 0) {
+							hasLoadedImage = true;
+						}
+					}
+
+					if (hasFailedImage && !hasLoadedImage && !$.trim(preview.textContent || preview.innerText || '') &&
+						!preview.querySelector('iframe, video, canvas, svg, object, embed')) {
+						isBlocked = true;
+					}
+
+					isVisible = !isBlocked && hasVisibleBox(preview);
+
+					// Some previews position visible content outside a zero-height wrapper.
+					if (!isBlocked && !isVisible) {
+						children = preview.querySelectorAll('*');
+						for (i = 0; i < children.length; i++) {
+							tagName = children[i].tagName;
+							if (tagName !== 'SCRIPT' && tagName !== 'STYLE' && tagName !== 'LINK' && hasVisibleBox(children[i])) {
+								isVisible = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (isVisible) {
+					$previewNotice.hide();
+					window.clearInterval(previewTimer);
+					return;
+				}
+
+				// Allow asynchronous ad code time to produce visible output.
+				if (previewChecks >= 6) {
+					$('#phpbb-preview-notice-title').text(isBlocked
+						? '{{ lang('AD_PREVIEW_BLOCKED')|e('js') }}'
+						: '{{ lang('AD_PREVIEW_EMPTY')|e('js') }}');
+					$('#phpbb-preview-notice-text').text(isBlocked
+						? '{{ lang('AD_PREVIEW_BLOCKED_EXPLAIN')|e('js') }}'
+						: '{{ lang('AD_PREVIEW_EMPTY_EXPLAIN')|e('js') }}');
+					$previewNotice.show();
+				}
+
+				// Keep checking in case a slow asynchronous preview appears later.
+				if (previewChecks >= 30) {
+					window.clearInterval(previewTimer);
+				}
+			}, 500);
+		}
+
 		$('#analyse_ad_code').on('click', function(e) {
 			e.preventDefault();
 
