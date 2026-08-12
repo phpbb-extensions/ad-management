@@ -18,10 +18,10 @@ use phpbb\request\request;
 use phpbb\user;
 use phpbb_mock_event_dispatcher;
 use phpbb_test_case;
-use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use phpbb\path_helper;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class visual_demo_test extends phpbb_test_case
 {
@@ -55,8 +55,6 @@ class visual_demo_test extends phpbb_test_case
 		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->request->method('variable')
-			->willReturnArgument(0);
 
 		$user = $this->user = $this->getMockBuilder(user::class)
 			->disableOriginalConstructor()
@@ -94,7 +92,7 @@ class visual_demo_test extends phpbb_test_case
 			array(
 				'enable',
 				false,
-				200,
+				302,
 				0,
 			),
 			array(
@@ -112,7 +110,7 @@ class visual_demo_test extends phpbb_test_case
 			array(
 				'disable',
 				false,
-				200,
+				302,
 				1,
 			),
 		);
@@ -145,15 +143,9 @@ class visual_demo_test extends phpbb_test_case
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
 
-		// If a non-ajax redirect is encountered, in testing it will trigger_error
-		if (!$is_ajax)
-		{
-			$this->setExpectedTriggerError(E_USER_DEPRECATED);
-		}
-
 		$controller = $this->get_controller();
 		$response = $controller->handle($action);
-		self::assertInstanceOf(JsonResponse::class, $response);
+		self::assertInstanceOf($is_ajax ? JsonResponse::class : RedirectResponse::class, $response);
 		self::assertEquals($status_code, $response->getStatusCode());
 	}
 

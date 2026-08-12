@@ -35,7 +35,7 @@ class visual_demo_test extends main_listener_base
 	 */
 	public function test_visual_demo($in_visual_demo)
 	{
-		$location_indexes = count($this->locations) - 1;
+		$assign_vars_calls = count($this->locations) - 1;
 		$hash = generate_link_hash('phpbb_ads_visual_demo_disable');
 
 		$this->user->page['page_name'] = 'viewtopic';
@@ -61,20 +61,23 @@ class visual_demo_test extends main_listener_base
 				return $route . '#' . serialize($params);
 			});
 
+		$call_count = 0;
 		$this->template
-			->expects(self::exactly($in_visual_demo ? $location_indexes : 0))
-			->method('assign_vars');
-
-		$this->template
-			->expects(self::exactly($in_visual_demo ? $location_indexes : 0))
+			->expects(self::exactly($in_visual_demo ? $assign_vars_calls : 0))
 			->method('assign_vars')
-			->with(array(
-				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array(
-					'action' => 'disable',
-					'hash' => $hash,
-				)),
-			));
+			->willReturnCallback(function($params) use ($assign_vars_calls, $hash, &$call_count) {
+				$call_count++;
+				if ($call_count === $assign_vars_calls)
+				{
+					self::assertEquals(array(
+						'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
+						'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array(
+							'action' => 'disable',
+							'hash' => $hash,
+						)),
+					), $params);
+				}
+			});
 
 		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.page_footer_after', array($this->get_listener(), 'visual_demo'));

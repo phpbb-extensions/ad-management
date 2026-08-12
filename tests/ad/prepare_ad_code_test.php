@@ -161,7 +161,7 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame($script, $result);
 	}
 
-	public function google_inline_identifier_data()
+	public static function google_inline_identifier_data(): array
 	{
 		return [
 			['adsbygoogle'],

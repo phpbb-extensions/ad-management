@@ -60,7 +60,7 @@ class visual_demo_controller
 	 * and direct them to an appropriate forum page to view.
 	 *
 	 * @param string $action enable|disable
-	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse
 	 * @throws \phpbb\exception\http_exception http exception
 	 */
 	public function handle($action)
@@ -98,10 +98,6 @@ class visual_demo_controller
 		}
 
 		// Redirect user to a page
-		$redirect = reapply_sid($redirect);
-		redirect($redirect);
-
-		// We shouldn't get here, but throw http exception just in case
-		throw new \phpbb\exception\http_exception(500, 'GENERAL_ERROR');
+		return new \Symfony\Component\HttpFoundation\RedirectResponse(reapply_sid($redirect));
 	}
 }

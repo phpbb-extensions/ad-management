@@ -15,7 +15,6 @@ require_once __DIR__ . '/../../../../../includes/functions_acp.php';
 use phpbb\ads\ad\manager;
 use phpbb\ads\ext;
 use phpbb\config\config;
-use phpbb\config\db_text;
 use phpbb\language\language;
 use phpbb\language\language_file_loader;
 use phpbb\request\request;
@@ -105,8 +104,8 @@ class admin_controller_test extends phpbb_database_test_case
 		$this->template = $this->getMockBuilder(template::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->language = new language($lang_loader);
-		$user =new user($this->language, datetime::class);
+		$language = $this->language = new language($lang_loader);
+		$user = new user($this->language, datetime::class);
 		$user->data['user_form_salt'] = 'test-salt';
 		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
@@ -519,17 +518,15 @@ class admin_controller_test extends phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
+		$post_expectations = ['preview', 'upload_banner'];
+		$return_values = [false, true];
 		$this->request
 			->expects(self::exactly(2))
 			->method('is_set_post')
-			->withConsecutive(
-				['preview'],
-				['upload_banner']
-			)
-			->willReturnOnConsecutiveCalls(
-				false,
-				true
-			);
+			->willReturnCallback(function($arg) use (&$post_expectations, &$return_values) {
+				self::assertEquals(array_shift($post_expectations), $arg);
+				return array_shift($return_values);
+			});
 
 		$this->input->expects(self::once())
 			->method('get_form_data')
@@ -1055,21 +1052,15 @@ class admin_controller_test extends phpbb_database_test_case
 			$this->setExpectedTriggerError($ad_id ? E_USER_NOTICE : E_USER_WARNING, $err_msg);
 		}
 
-		$variable_expectations = [['action', ''], ['id', 0]];
-		$return_values = [$enable ? 'enable' : 'disable', $ad_id];
+		$variable_expectations = [['action', ''], ['id', 0], ['hash', '']];
+		$return_values = [$action, $ad_id, $hash];
 		$this->request
 			->expects(self::exactly(3))
 			->method('variable')
-			->withConsecutive(
-				['action', ''],
-				['id', 0],
-				['hash', '']
-			)
-			->willReturnOnConsecutiveCalls(
-				$action,
-				$ad_id,
-				$hash
-			);
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				self::assertEquals(array_shift($variable_expectations), [$arg1, $arg2]);
+				return array_shift($return_values);
+			});
 
 		$controller->mode_manage();
 	}
@@ -1084,15 +1075,15 @@ class admin_controller_test extends phpbb_database_test_case
 		$this->manager->expects(self::never())
 			->method('update_ad');
 
+		$variable_expectations = [['action', ''], ['id', 0], ['hash', '']];
+		$return_values = ['enable', 1, 'invalid'];
 		$this->request
 			->expects(self::exactly(3))
 			->method('variable')
-			->withConsecutive(
-				['action', ''],
-				['id', 0],
-				['hash', '']
-			)
-			->willReturnOnConsecutiveCalls('enable', 1, 'invalid');
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				self::assertEquals(array_shift($variable_expectations), [$arg1, $arg2]);
+				return array_shift($return_values);
+			});
 
 		$this->setExpectedTriggerError(E_USER_WARNING, 'The submitted form was invalid. Try submitting again.');
 
@@ -1205,11 +1196,15 @@ class admin_controller_test extends phpbb_database_test_case
 
 		$controller = $this->get_controller();
 
+		$variable_expectations = [['action', ''], ['id', 0]];
+		$return_values = ['delete', 999];
 		$this->request
 			->expects(self::exactly(2))
 			->method('variable')
-			->withConsecutive(['action', ''], ['id', 0])
-			->willReturnOnConsecutiveCalls('delete', 999);
+			->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations, &$return_values) {
+				self::assertEquals(array_shift($variable_expectations), [$arg1, $arg2]);
+				return array_shift($return_values);
+			});
 
 		$this->manager->expects(self::once())
 			->method('get_ad')

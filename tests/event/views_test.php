@@ -62,22 +62,21 @@ class views_test extends main_listener_base
 			->with('phpbb_ads_view', array(
 				'data' => '1',
 				'hash' => generate_link_hash('phpbb_ads_views_1'),
-			))
+			), true, '')
 			->willReturn('app.php/adsview/1');
 
 		if (!$is_bot)
 		{
-			$expectations = [
+			$expectations = array(
 				['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false],
-				['S_INCREMENT_VIEWS' => true, 'U_PHPBB_ADS_VIEWS' => 'index.php/adsview/1']
-			];
+				['S_PHPBB_ADS_INCREMENT_VIEWS' => true, 'U_PHPBB_ADS_VIEWS' => 'app.php/adsview/1'],
+			);
 			$this->template
 				->expects(self::exactly(2))
 				->method('assign_vars')
-				->withConsecutive(
-					[['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false]],
-					[['S_PHPBB_ADS_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
-				);
+				->willReturnCallback(function($arg) use (&$expectations) {
+					self::assertEquals(array_shift($expectations), $arg);
+				});
 		}
 
 		$listener = $this->get_listener();

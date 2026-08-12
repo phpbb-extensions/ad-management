@@ -15,7 +15,6 @@ use phpbb\ads\event\main_listener;
 use phpbb\ads\location\manager as location_manager;
 use phpbb\cache\driver\driver_interface as cache;
 use phpbb\config\config;
-use phpbb\config\db_text;
 use phpbb\controller\helper as controller_helper;
 use phpbb\language\language;
 use phpbb\language\language_file_loader;
