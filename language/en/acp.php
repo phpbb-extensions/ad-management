@@ -66,7 +66,6 @@ $lang = array_merge($lang, array(
 	'AD_CENTERING'				=> 'Center this advertisement automatically',
 	'AD_CENTERING_EXPLAIN'		=> 'Set to yes to let this extension center your advertisement automatically. If this leads to undesired results, use CSS directly in the code to center your advertisement accordingly.',
 
-	'AD_PREVIEW'				=> 'Preview this advertisement',
 	'AD_ENABLE_TITLE'			=> array( // Plural rule doesn't apply here! Just translate the values.
 		0 => 'Click to enable',
 		1 => 'Click to disable',

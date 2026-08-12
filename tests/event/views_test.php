@@ -59,8 +59,11 @@ class views_test extends main_listener_base
 
 		$this->controller_helper->expects(($is_bot ? self::never() : self::once()))
 			->method('route')
-			->with('phpbb_ads_view', array('data' => '1'))
-			->willReturn('index.php/adsview/1');
+			->with('phpbb_ads_view', array(
+				'data' => '1',
+				'hash' => generate_link_hash('phpbb_ads_views_1'),
+			))
+			->willReturn('app.php/adsview/1');
 
 		if (!$is_bot)
 		{
@@ -71,10 +74,10 @@ class views_test extends main_listener_base
 			$this->template
 				->expects(self::exactly(2))
 				->method('assign_vars')
-				->willReturnCallback(function($arg) use (&$expectations) {
-					$expectation = array_shift($expectations);
-					self::assertEquals($expectation, $arg);
-				});
+				->withConsecutive(
+					[['AD_' => '', 'AD__ID' => '1', 'AD__CENTER' => false]],
+					[['S_PHPBB_ADS_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
+				);
 		}
 
 		$listener = $this->get_listener();

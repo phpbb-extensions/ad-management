@@ -38,8 +38,11 @@ class clicks_test extends main_listener_base
 
 		$this->controller_helper->expects($enable_clicks ? self::once() : self::never())
 			->method('route')
-			->with('phpbb_ads_click', array('data' => 0))
-			->willReturn('index.php/adsclick/0');
+			->with('phpbb_ads_click', array(
+				'data' => 0,
+				'hash' => generate_link_hash('phpbb_ads_click'),
+			))
+			->willReturn('app.php/adsclick/0');
 
 		$this->template
 			->expects($enable_clicks ? self::once() : self::never())

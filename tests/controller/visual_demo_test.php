@@ -63,7 +63,7 @@ class visual_demo_test extends phpbb_test_case
 			->getMock();
 		$this->user->data['session_page'] = "index.$phpEx";
 		$this->user->page['page_dir'] = '';
-
+		$this->user->data['user_form_salt'] = 'test-salt';
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->phpEx = $phpEx;
 	}
@@ -125,6 +125,12 @@ class visual_demo_test extends phpbb_test_case
 	 */
 	public function test_controller($action, $is_ajax, $status_code, $cookie_time)
 	{
+		$hash = generate_link_hash('phpbb_ads_visual_demo_' . $action);
+		$this->request->method('variable')
+			->willReturnCallback(function ($name, $default) use ($hash) {
+				return $name === 'hash' ? $hash : $default;
+			});
+
 		// User is an admin
 		$this->auth->expects(self::once())
 			->method('acl_get')
@@ -149,6 +155,33 @@ class visual_demo_test extends phpbb_test_case
 		$response = $controller->handle($action);
 		self::assertInstanceOf(JsonResponse::class, $response);
 		self::assertEquals($status_code, $response->getStatusCode());
+	}
+
+	/**
+	 * Test controller rejects an invalid link hash.
+	 */
+	public function test_controller_rejects_invalid_hash()
+	{
+		$this->auth->expects(self::once())
+			->method('acl_get')
+			->willReturn(true);
+		$this->request->expects(self::once())
+			->method('variable')
+			->with('hash', '')
+			->willReturn('invalid');
+		$this->user->expects(self::never())
+			->method('set_cookie');
+
+		try
+		{
+			$this->get_controller()->handle('enable');
+			self::fail('The expected \\phpbb\\exception\\http_exception was not thrown');
+		}
+		catch (\phpbb\exception\http_exception $exception)
+		{
+			self::assertEquals(403, $exception->getStatusCode());
+			self::assertEquals('FORM_INVALID', $exception->getMessage());
+		}
 	}
 
 	/**

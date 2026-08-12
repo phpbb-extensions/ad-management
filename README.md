@@ -17,6 +17,7 @@ The Advertisement Management extension allows phpBB board administrators to add 
 - Option to hide ads for specific member group(s).
 - Ad-Blocker detection option politely notifies users to disable ad blocking on the board.
 - Ad code analysis can check for troublesome code such as JS alert() or making HTTP requests from a secure server.
+- Combined with phpBB's Consent Manager extension, advertisement trackers and data collectors can be deferred until users grant consent.
 
 📦 [Download](https://www.phpbb.com/customise/db/extension/ads/) the latest release of this extension.
 

@@ -7,11 +7,11 @@
 			<thead>
 			<tr>
 				<th class="name">{{ lang('AD_NAME') }}</th>
-				<th style="width: 15%"class="center text-center">{{ lang('AD_START_DATE') }}</th>
-				<th style="width: 15%"class="center text-center">{{ lang('AD_END_DATE') }}</th>
+				<th style="width: 15%" class="center text-center">{{ lang('AD_START_DATE') }}</th>
+				<th style="width: 15%" class="center text-center">{{ lang('AD_END_DATE') }}</th>
 				{% if S_VIEWS_ENABLED %}<th class="center text-center" style="width: 15%">{{ lang('AD_VIEWS') }}</th>{% endif %}
 				{% if S_CLICKS_ENABLED %}<th class="center text-center" style="width: 15%">{{ lang('AD_CLICKS') }}</th>{% endif %}
-				<th style="width: 15%"class="center text-center">{{ lang('AD_STATUS') }}</th>
+				<th style="width: 15%" class="center text-center">{{ lang('AD_STATUS') }}</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -27,7 +27,9 @@
 				}
 			] %}
 				{% if list.loop %}
-					<td class="row3" colspan="{{ 4 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					<tr>
+						<td class="row3" colspan="{{ 4 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					</tr>
 					{% for ad in list.loop %}
 						<tr class="{% if loop.index0 is even %}bg2 bg-secondary bg-opacity-25{% else %}bg1 bg-secondary bg-opacity-10{% endif %}">
 							<td>{{ ad.NAME }}</td>

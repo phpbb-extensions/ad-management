@@ -1,11 +1,13 @@
 phpbb_ads_click:
     path: /adsclick/{data}
+    methods: [POST]
     defaults: { _controller: phpbb.ads.increment.controller:handle, mode: clicks }
     requirements:
         data: \d+
 
 phpbb_ads_view:
     path: /adsview/{data}
+    methods: [POST]
     defaults: { _controller: phpbb.ads.increment.controller:handle, mode: views }
     requirements:
         data: (\d+-)*\d+

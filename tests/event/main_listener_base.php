@@ -32,9 +32,6 @@ use phpbb\cache\driver\dummy;
 
 class main_listener_base extends phpbb_database_test_case
 {
-	/** @var db_text|MockObject */
-	protected db_text|MockObject $config_text;
-
 	/** @var template|MockObject */
 	protected template|MockObject $template;
 
@@ -109,6 +106,7 @@ class main_listener_base extends phpbb_database_test_case
 		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
 		$this->language = new language($lang_loader);
 		$user = new user($this->language, datetime::class);
+		$user->data['user_form_salt'] = 'test-salt';
 		$request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();

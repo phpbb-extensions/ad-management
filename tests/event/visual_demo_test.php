@@ -36,6 +36,7 @@ class visual_demo_test extends main_listener_base
 	public function test_visual_demo($in_visual_demo)
 	{
 		$location_indexes = count($this->locations) - 1;
+		$hash = generate_link_hash('phpbb_ads_visual_demo_disable');
 
 		$this->user->page['page_name'] = 'viewtopic';
 
@@ -67,18 +68,13 @@ class visual_demo_test extends main_listener_base
 		$this->template
 			->expects(self::exactly($in_visual_demo ? $location_indexes : 0))
 			->method('assign_vars')
-			->willReturnCallback(function($params) use ($location_indexes) {
-				static $callCount = 0;
-				$callCount++;
-				if ($callCount === $location_indexes) {
-					$this->assertEquals([
-						'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-						'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(['action' => 'disable']),
-					], $params);
-					return true;
-				}
-				return true;
-			});
+			->with(array(
+				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
+				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array(
+					'action' => 'disable',
+					'hash' => $hash,
+				)),
+			));
 
 		$dispatcher = new dispatcher();
 		$dispatcher->addListener('core.page_footer_after', array($this->get_listener(), 'visual_demo'));
