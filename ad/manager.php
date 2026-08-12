@@ -20,11 +20,11 @@ class manager
 	 * These should run immediately so Consent Mode can control storage and
 	 * personalization instead of blocking the ad tag entirely.
 	 */
-	protected const GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS = array(
-		'~(^|[/.])pagead2\.googlesyndication\.com/pagead/js/adsbygoogle\.js(?:[?#]|$)~i',
-		'~(^|[/.])securepubads\.g\.doubleclick\.net/tag/js/gpt\.js(?:[?#]|$)~i',
-		'~(^|[/.])www\.googletagservices\.com/tag/js/gpt\.js(?:[?#]|$)~i',
-		'~(^|[/.])www\.googletagmanager\.com/(?:gtag/js|gtm\.js)(?:[?#]|$)~i',
+	protected const GOOGLE_CONSENT_AWARE_SCRIPT_SOURCES = array(
+		'pagead2.googlesyndication.com' => array('/pagead/js/adsbygoogle.js' => 'adsense'),
+		'securepubads.g.doubleclick.net' => array('/tag/js/gpt.js' => 'gpt'),
+		'www.googletagservices.com' => array('/tag/js/gpt.js' => 'gpt'),
+		'www.googletagmanager.com' => array('/gtag/js' => 'gtag', '/gtm.js' => 'gtm'),
 	);
 
 	/** @var \phpbb\db\driver\driver_interface */
@@ -236,24 +236,32 @@ class manager
 	 *
 	 * @param    int   $ad_id Advertisement ID
 	 * @param    array $data  List of data to update in the database
-	 * @return    int        Number of affected rows. Can be used to determine if any ad has been updated.
+	 * @return   int          1 when the advertisement exists, otherwise 0.
 	 */
 	public function update_ad($ad_id, $data)
 	{
+		if (empty($this->get_ad($ad_id)))
+		{
+			return 0;
+		}
+
 		// extract ad groups here because it gets filtered in intersect_ad_data()
-		$ad_groups = $data['ad_groups'] ?? [];
+		$update_ad_groups = array_key_exists('ad_groups', $data);
+		$ad_groups = $update_ad_groups ? $data['ad_groups'] : [];
 		$data = $this->intersect_ad_data($data);
 
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
 			WHERE ad_id = ' . (int) $ad_id;
 		$this->db->sql_query($sql);
-		$result = $this->db->sql_affectedrows();
 
-		$this->remove_ad_group_data($ad_id);
-		$this->insert_ad_group_data($ad_id, $ad_groups);
+		if ($update_ad_groups)
+		{
+			$this->delete_ad_groups($ad_id);
+			$this->insert_ad_group_data($ad_id, $ad_groups);
+		}
 
-		return $result;
+		return 1;
 	}
 
 	/**
@@ -437,11 +445,6 @@ class manager
 	 */
 	protected function should_defer_script_tag($attributes, $content = '', array $google_consent_aware_sources = array())
 	{
-		if (preg_match('/\bdata-consent-category\s*=/i', $attributes))
-		{
-			return false;
-		}
-
 		if (preg_match('/\btype\s*=\s*([\'"])(.*?)\1/i', $attributes, $matches))
 		{
 			$type = strtolower(trim(explode(';', $matches[2])[0]));
@@ -449,6 +452,13 @@ class manager
 		else
 		{
 			$type = '';
+		}
+
+		// Only an actual placeholder is already deferred. A consent category on
+		// an executable script does not prevent the browser from running it.
+		if ($type === 'text/plain' && preg_match('/\bdata-consent-category\s*=/i', $attributes))
+		{
+			return false;
 		}
 
 		$is_executable = $type === ''
@@ -481,8 +491,23 @@ class manager
 			return isset($google_consent_aware_sources[self::normalize_script_source($source)]);
 		}
 
-		return !empty($google_consent_aware_sources)
-			&& preg_match('/\b(?:adsbygoogle|googletag|gtag|dataLayer)\b/', $content);
+		$source_types = array();
+		foreach ($google_consent_aware_sources as $source_type)
+		{
+			if ($source_type !== '')
+			{
+				$source_types[$source_type] = true;
+			}
+		}
+
+		// Ad code is administrator-authored. These checks identify supported
+		// Google API usage; they are not a JavaScript security boundary.
+		return (isset($source_types['adsense'])
+				&& preg_match('/\b(?:window\s*\.\s*)?adsbygoogle\s*(?:=|\.\s*push\s*\()/', $content))
+			|| (isset($source_types['gpt'])
+				&& preg_match('/\b(?:window\s*\.\s*)?googletag\s*(?:=|\.\s*[A-Za-z_$][A-Za-z0-9_$]*\s*[.(])/', $content))
+			|| ((isset($source_types['gtag']) || isset($source_types['gtm']))
+				&& preg_match('/\b(?:(?:window\s*\.\s*)?(?:gtag|dataLayer)\s*=|gtag\s*\(|dataLayer\s*\.\s*push\s*\()/', $content));
 	}
 
 	/**
@@ -503,9 +528,10 @@ class manager
 		foreach ($matches[1] as $attributes)
 		{
 			$source = self::extract_script_source($attributes);
-			if ($source !== '' && self::is_google_consent_aware_script_source($source))
+			$source_type = $source !== '' ? self::get_google_consent_aware_script_source_type($source) : '';
+			if ($source_type !== '')
 			{
-				$sources[self::normalize_script_source($source)] = true;
+				$sources[self::normalize_script_source($source)] = $source_type;
 			}
 		}
 
@@ -524,24 +550,28 @@ class manager
 	}
 
 	/**
-	 * Check whether a script source is a known Google Consent Mode-aware loader.
+	 * Return the supported Google loader type for a script source.
 	 *
 	 * @param string $source Script source URL
-	 * @return bool
+	 * @return string
 	 */
-	protected static function is_google_consent_aware_script_source($source)
+	protected static function get_google_consent_aware_script_source_type($source)
 	{
 		$source = self::normalize_script_source($source);
+		$parts = parse_url($source);
 
-		foreach (self::GOOGLE_CONSENT_AWARE_SCRIPT_SOURCE_PATTERNS as $pattern)
+		if ($parts === false
+			|| empty($parts['host'])
+			|| empty($parts['path'])
+			|| empty($parts['scheme'])
+			|| !in_array(strtolower($parts['scheme']), array('http', 'https'), true))
 		{
-			if (preg_match($pattern, $source))
-			{
-				return true;
-			}
+			return '';
 		}
 
-		return false;
+		$host = strtolower($parts['host']);
+
+		return self::GOOGLE_CONSENT_AWARE_SCRIPT_SOURCES[$host][$parts['path']] ?? '';
 	}
 
 	/**
@@ -663,7 +693,7 @@ class manager
 	 * @param int	$ad_id	Advertisement ID
 	 * @return void
 	 */
-	protected function remove_ad_group_data($ad_id)
+	public function delete_ad_groups($ad_id)
 	{
 		$sql = 'DELETE FROM ' . $this->ad_group_table . '
 			WHERE ad_id = ' . (int) $ad_id;

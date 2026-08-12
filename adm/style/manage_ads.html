@@ -141,11 +141,11 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="phpbb-ads-datepicker" id="ad_start_date" name="ad_start_date" type="date" min="{{ DATE_MINIMUM }}" value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
+				<dd><input class="phpbb-ads-datepicker" id="ad_start_date" name="ad_start_date" type="date"{% if DATE_MINIMUM %} min="{{ DATE_MINIMUM }}"{% endif %} value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="phpbb-ads-datepicker" id="ad_end_date" name="ad_end_date" type="date" min="{{ DATE_MINIMUM }}" value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
+				<dd><input class="phpbb-ads-datepicker" id="ad_end_date" name="ad_end_date" type="date"{% if DATE_MINIMUM %} min="{{ DATE_MINIMUM }}"{% endif %} value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>
@@ -209,7 +209,9 @@
 				}
 			] %}
 				{% if list.loop %}
-					<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					<tr>
+						<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					</tr>
 					{% for ad in list.loop %}
 						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
 							<td><strong>{{ ad.NAME }}</strong></td>

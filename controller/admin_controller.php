@@ -20,6 +20,9 @@ class admin_controller
 	/** @var array Form data */
 	protected $data = array();
 
+	/** @var array Existing advertisement data during an edit */
+	protected $existing_ad = array();
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -31,9 +34,6 @@ class admin_controller
 
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
-
-	/** @var \phpbb\config\db_text */
-	protected $config_text;
 
 	/** @var \phpbb\config\config */
 	protected $config;
@@ -66,7 +66,6 @@ class admin_controller
 	 * @param \phpbb\language\language          $language          Language object
 	 * @param \phpbb\request\request            $request           Request object
 	 * @param \phpbb\ads\ad\manager             $manager           Advertisement manager object
-	 * @param \phpbb\config\db_text             $config_text       Config text object
 	 * @param \phpbb\config\config              $config            Config object
 	 * @param \phpbb\ads\controller\admin_input $input             Admin input object
 	 * @param \phpbb\ads\controller\helper      $helper            Helper object
@@ -76,13 +75,12 @@ class admin_controller
 	 * @param string                            $root_path         phpBB root path
 	 * @param string                            $php_ext           PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\db_text $config_text, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
 		$this->request = $request;
 		$this->manager = $manager;
-		$this->config_text = $config_text;
 		$this->config = $config;
 		$this->input = $input;
 		$this->helper = $helper;
@@ -195,7 +193,10 @@ class admin_controller
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=add",
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
-			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable')),
+			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array(
+				'action' => 'enable',
+				'hash' => generate_link_hash('phpbb_ads_visual_demo_enable'),
+			)),
 			'DATE_MINIMUM'			=> $this->helper->get_date('tomorrow'),
 		));
 	}
@@ -208,19 +209,24 @@ class admin_controller
 	protected function action_edit()
 	{
 		$ad_id = $this->request->variable('id', 0);
+		$this->existing_ad = $this->manager->get_ad($ad_id);
+		if (empty($this->existing_ad))
+		{
+			$this->error('ACP_AD_DOES_NOT_EXIST');
+		}
+
 		$action = $this->get_submitted_action();
 		if ($action !== false)
 		{
-			$this->data = $this->input->get_form_data();
+			$this->data = $this->input->get_form_data(
+				$this->existing_ad['ad_start_date'] ?? 0,
+				$this->existing_ad['ad_end_date'] ?? 0
+			);
 			$this->{$action}();
 		}
 		else
 		{
-			$this->data = $this->manager->get_ad($ad_id);
-			if (empty($this->data))
-			{
-				$this->error('ACP_AD_DOES_NOT_EXIST');
-			}
+			$this->data = $this->existing_ad;
 			// Load ad template locations
 			$this->data['ad_locations'] = $this->manager->get_ad_locations($ad_id);
 		}
@@ -232,8 +238,11 @@ class admin_controller
 			'U_BACK'				=> $this->u_action,
 			'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=$ad_id",
 			'U_FIND_USERNAME'		=> $this->helper->get_find_username_link(),
-			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array('action' => 'enable')),
-			'DATE_MINIMUM'			=> $this->helper->get_date('tomorrow'),
+			'U_ENABLE_VISUAL_DEMO'	=> $this->controller_helper->route('phpbb_ads_visual_demo', array(
+				'action' => 'enable',
+				'hash' => generate_link_hash('phpbb_ads_visual_demo_enable'),
+			)),
+			'DATE_MINIMUM'			=> '',
 		));
 		$this->helper->assign_data($this->data, $this->input->get_errors());
 	}
@@ -272,26 +281,27 @@ class admin_controller
 			{
 				// Get ad data so that we can log ad name
 				$ad_data = $this->manager->get_ad($ad_id);
+				if (empty($ad_data))
+				{
+					$this->error('ACP_AD_DOES_NOT_EXIST');
+				}
 
-				// Delete ad and it's template locations
-				$this->manager->delete_ad_locations($ad_id);
+				// Delete the ad before removing its related data
 				$success = $this->manager->delete_ad($ad_id);
-
-				$this->toggle_permission($ad_data['ad_owner']);
-
-				// Only notify user on error or if not ajax
 				if (!$success)
 				{
 					$this->error('ACP_AD_DELETE_ERRORED');
 				}
-				else
-				{
-					$this->helper->log('DELETE', $ad_data['ad_name']);
 
-					if (!$this->request->is_ajax())
-					{
-						$this->success('ACP_AD_DELETE_SUCCESS');
-					}
+				$this->manager->delete_ad_locations($ad_id);
+				$this->manager->delete_ad_groups($ad_id);
+				$this->toggle_permission($ad_data['ad_owner']);
+				$this->helper->log('DELETE', $ad_data['ad_name']);
+
+				// Only notify user if AJAX was not used
+				if (!$this->request->is_ajax())
+				{
+					$this->success('ACP_AD_DELETE_SUCCESS');
 				}
 			}
 			else
@@ -338,7 +348,7 @@ class admin_controller
 				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
 				'S_EXPIRED'    => $ad_expired,
 				'S_ENABLED'    => $ad_enabled,
-				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'],
+				'U_ENABLE'     => $this->u_action . '&amp;action=' . ($ad_enabled ? 'disable' : 'enable') . '&amp;id=' . $row['ad_id'] . '&amp;hash=' . generate_link_hash('phpbb_ads_' . ($ad_enabled ? 'disable' : 'enable') . '_' . $row['ad_id']),
 				'U_EDIT'       => $this->u_action . '&amp;action=edit&amp;id=' . $row['ad_id'],
 				'U_DELETE'     => $this->u_action . '&amp;action=delete&amp;id=' . $row['ad_id'],
 			));
@@ -385,6 +395,11 @@ class admin_controller
 	protected function ad_enable($enable)
 	{
 		$ad_id = $this->request->variable('id', 0);
+		$action = $enable ? 'enable' : 'disable';
+		if (!check_link_hash($this->request->variable('hash', ''), 'phpbb_ads_' . $action . '_' . $ad_id))
+		{
+			$this->error('FORM_INVALID');
+		}
 
 		$success = $this->manager->update_ad($ad_id, array(
 			'ad_enabled' => (int) $enable,
@@ -430,6 +445,17 @@ class admin_controller
 	 */
 	protected function upload_banner()
 	{
+		if (in_array('FORM_INVALID', $this->input->get_errors(), true))
+		{
+			// Form validation fails before banner_upload() can send its own AJAX response.
+			if ($this->request->is_ajax())
+			{
+				$this->input->send_ajax_response(false, $this->language->lang('FORM_INVALID'));
+			}
+
+			$this->error('FORM_INVALID');
+		}
+
 		$this->data['ad_code'] = $this->input->banner_upload($this->data['ad_code']);
 	}
 
@@ -475,7 +501,7 @@ class admin_controller
 		$ad_id = $this->request->variable('id', 0);
 		if ($ad_id && !$this->input->has_errors())
 		{
-			$old_data = $this->manager->get_ad($ad_id);
+			$old_data = $this->existing_ad;
 			$success = $this->manager->update_ad($ad_id, $this->data);
 			if ($success)
 			{

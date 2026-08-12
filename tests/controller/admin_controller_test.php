@@ -32,9 +32,6 @@ class admin_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
 	protected $manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\db_text */
-	protected $config_text;
-
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
 	protected $config;
 
@@ -96,13 +93,11 @@ class admin_controller_test extends \phpbb_database_test_case
 			->getMock();
 		$this->language = new \phpbb\language\language($lang_loader);
 		$user = new \phpbb\user($this->language, '\phpbb\datetime');
+		$user->data['user_form_salt'] = 'test-salt';
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->config_text = $this->getMockBuilder('\phpbb\config\db_text')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->config = $this->getMockBuilder('\phpbb\config\config')
@@ -150,7 +145,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			$this->language,
 			$this->request,
 			$this->manager,
-			$this->config_text,
 			$this->config,
 			$this->input,
 			$this->helper,
@@ -331,7 +325,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->language,
 				$this->request,
 				$this->manager,
-				$this->config_text,
 				$this->config,
 				$this->input,
 				$this->helper,
@@ -487,7 +480,7 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		$data['ad_code'] = $banner_ad_code;
 
-		$this->input->expects(self::once())
+		$this->input->expects(self::exactly(2))
 			->method('get_errors')
 			->willReturn(array());
 
@@ -499,6 +492,50 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('variable')
 			->with('action', '')
 			->willReturn('add');
+
+		$controller->mode_manage();
+	}
+
+	/**
+	 * Test action_add() rejects a banner upload with an invalid form token
+	 */
+	public function test_action_add_upload_banner_invalid_form()
+	{
+		$controller = $this->get_controller();
+
+		$this->request
+			->expects(self::exactly(2))
+			->method('is_set_post')
+			->withConsecutive(
+				['preview'],
+				['upload_banner']
+			)
+			->willReturnOnConsecutiveCalls(
+				false,
+				true
+			);
+
+		$this->input->expects(self::once())
+			->method('get_form_data')
+			->willReturn(array('ad_code' => ''));
+		$this->input->expects(self::once())
+			->method('get_errors')
+			->willReturn(array('FORM_INVALID'));
+		$this->input->expects(self::never())
+			->method('banner_upload');
+		$this->request->expects(self::once())
+			->method('is_ajax')
+			->willReturn(true);
+		$this->input->expects(self::once())
+			->method('send_ajax_response')
+			->with(false, 'The submitted form was invalid. Try submitting again.');
+
+		$this->request->expects(self::once())
+			->method('variable')
+			->with('action', '')
+			->willReturn('add');
+
+		$this->setExpectedTriggerError(E_USER_WARNING, 'The submitted form was invalid. Try submitting again.');
 
 		$controller->mode_manage();
 	}
@@ -688,7 +725,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				$ad_id
 			);
 
-		$this->request->expects(self::exactly(5))
+		$this->request->expects($ad_id ? self::exactly(5) : self::never())
 			->method('is_set_post')
 			->withConsecutive(
 				['preview'],
@@ -741,11 +778,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_find_username_link')
 				->willReturn('u_find_username');
 
-			$this->helper->expects(self::once())
-				->method('get_date')
-				->with('tomorrow')
-				->willReturn('2000-12-16');
-
 			$this->template->expects(self::once())
 				->method('assign_vars')
 				->with(array(
@@ -755,7 +787,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
-					'DATE_MINIMUM'			=> '2000-12-16',
+					'DATE_MINIMUM'			=> '',
 				));
 
 			$this->input->expects(self::once())
@@ -799,8 +831,17 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_locations'	=> array(),
 		);
 
+		$this->manager->expects(self::once())
+			->method('get_ad')
+			->with(1)
+			->willReturn(array(
+				'ad_start_date' => 1514764800,
+				'ad_end_date' => 1546300800,
+			));
+
 		$this->input->expects(self::once())
 			->method('get_form_data')
+			->with(1514764800, 1546300800)
 			->willReturn($data);
 
 		$this->helper->expects(self::once())
@@ -811,11 +852,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			->method('assign_var')
 			->with('PREVIEW', 'Ad Code #1');
 
-		$this->helper->expects(self::once())
-			->method('get_date')
-			->with('tomorrow')
-			->willReturn('2000-12-16');
-
 		$this->template->expects(self::once())
 			->method('assign_vars')
 			->with(array(
@@ -825,7 +861,7 @@ class admin_controller_test extends \phpbb_database_test_case
 				'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
-				'DATE_MINIMUM'			=> '2000-12-16',
+				'DATE_MINIMUM'			=> '',
 			));
 
 		$this->input->expects(self::once())
@@ -901,6 +937,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_code'		=> 'Old Ad Code #1',
 			'ad_locations'	=> array(),
 			'ad_owner'		=> $ad_owner,
+			'ad_start_date'	=> 1514764800,
+			'ad_end_date'	=> 1546300800,
 		);
 
 		$data = array(
@@ -910,8 +948,14 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_owner'		=> $ad_owner,
 		);
 
+		$this->manager->expects(self::once())
+			->method('get_ad')
+			->with(1)
+			->willReturn($old_data);
+
 		$this->input->expects(self::once())
 			->method('get_form_data')
+			->with(1514764800, 1546300800)
 			->willReturn($data);
 
 		$this->input->expects(self::once())
@@ -924,11 +968,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_find_username_link')
 				->willReturn('u_find_username');
 
-			$this->helper->expects(self::once())
-				->method('get_date')
-				->with('tomorrow')
-				->willReturn('2000-12-16');
-
 			$this->template->expects(self::once())
 				->method('assign_vars')
 				->with(array(
@@ -938,7 +977,7 @@ class admin_controller_test extends \phpbb_database_test_case
 					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
-					'DATE_MINIMUM'			=>'2000-12-16',
+					'DATE_MINIMUM'			=> '',
 				));
 
 			$this->input->expects(self::once())
@@ -951,11 +990,6 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 		else
 		{
-			$this->manager->expects((self::once()))
-				->method('get_ad')
-				->with(1)
-				->willReturn($old_data);
-
 			$this->manager->expects(self::once())
 				->method('update_ad')
 				->with(1, $data)
@@ -1023,6 +1057,8 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function test_ad_enable($ad_id, $enable, $is_ajax, $err_msg)
 	{
 		$controller = $this->get_controller();
+		$action = $enable ? 'enable' : 'disable';
+		$hash = generate_link_hash('phpbb_ads_' . $action . '_' . $ad_id);
 
 		$this->manager->expects(self::once())
 			->method('update_ad')
@@ -1043,16 +1079,43 @@ class admin_controller_test extends \phpbb_database_test_case
 		}
 
 		$this->request
-			->expects(self::exactly(2))
+			->expects(self::exactly(3))
 			->method('variable')
 			->withConsecutive(
 				['action', ''],
-				['id', 0]
+				['id', 0],
+				['hash', '']
 			)
 			->willReturnOnConsecutiveCalls(
-				$enable ? 'enable' : 'disable',
-				$ad_id
+				$action,
+				$ad_id,
+				$hash
 			);
+
+		$controller->mode_manage();
+	}
+
+	/**
+	 * Test enable/disable rejects an invalid link hash.
+	 */
+	public function test_ad_enable_invalid_hash()
+	{
+		$controller = $this->get_controller();
+
+		$this->manager->expects(self::never())
+			->method('update_ad');
+
+		$this->request
+			->expects(self::exactly(3))
+			->method('variable')
+			->withConsecutive(
+				['action', ''],
+				['id', 0],
+				['hash', '']
+			)
+			->willReturnOnConsecutiveCalls('enable', 1, 'invalid');
+
+		$this->setExpectedTriggerError(E_USER_WARNING, 'The submitted form was invalid. Try submitting again.');
 
 		$controller->mode_manage();
 	}
@@ -1065,7 +1128,7 @@ class admin_controller_test extends \phpbb_database_test_case
 	public function action_delete_data()
 	{
 		return array(
-			array(999, 0, true, true),
+			array(999, 2, true, true),
 			array(1, 0, false, false),
 			array(1, 0, false, true),
 			array(1, 2, false, true),
@@ -1103,6 +1166,20 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('get_ad')
 				->with($ad_id)
 				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
+			$this->manager->expects(self::once())
+				->method('delete_ad')
+				->with($ad_id)
+				->willReturn(false);
+			$this->manager->expects(self::never())
+				->method('delete_ad_locations')
+				->with($ad_id);
+			$this->manager->expects(self::never())
+				->method('delete_ad_groups')
+				->with($ad_id);
+			$this->manager->expects(self::never())
+				->method('get_ads_by_owner');
+			$this->helper->expects(self::never())
+				->method('log');
 		}
 		else
 		{
@@ -1111,12 +1188,22 @@ class admin_controller_test extends \phpbb_database_test_case
 				->with($ad_id)
 				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
 			$this->manager->expects(self::once())
+				->method('delete_ad_locations')
+				->with($ad_id);
+			$this->manager->expects(self::once())
+				->method('delete_ad_groups')
+				->with($ad_id);
+			$this->manager->expects(self::once())
 				->method('delete_ad')
+				->with($ad_id)
 				->willReturn((bool) $ad_id);
 			$this->manager->expects(($ad_owner ? self::once() : self::never()))
 				->method('get_ads_by_owner')
 				->with($ad_owner)
 				->willReturn(array());
+			$this->helper->expects(self::once())
+				->method('log')
+				->with('DELETE', '');
 
 			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
 		}
@@ -1129,6 +1216,37 @@ class admin_controller_test extends \phpbb_database_test_case
 		$reflection_controller_auth_admin->acl_options['id']['u_phpbb_ads'] = 0;
 		$reflection_controller_mode_manage_method = $reflection_controller->getMethod('mode_manage');
 		$reflection_controller_mode_manage_method->invoke($controller);
+	}
+
+	/**
+	 * Test action_delete() with a missing advertisement
+	 */
+	public function test_action_delete_missing_ad()
+	{
+		self::$confirm = true;
+
+		$controller = $this->get_controller();
+
+		$this->request
+			->expects(self::exactly(2))
+			->method('variable')
+			->withConsecutive(['action', ''], ['id', 0])
+			->willReturnOnConsecutiveCalls('delete', 999);
+
+		$this->manager->expects(self::once())
+			->method('get_ad')
+			->with(999)
+			->willReturn(array());
+		$this->manager->expects(self::never())
+			->method('delete_ad_locations');
+		$this->manager->expects(self::never())
+			->method('delete_ad_groups');
+		$this->manager->expects(self::never())
+			->method('delete_ad');
+
+		$this->setExpectedTriggerError(E_USER_WARNING, 'ACP_AD_DOES_NOT_EXIST');
+
+		$controller->mode_manage();
 	}
 
 	/**

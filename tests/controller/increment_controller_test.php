@@ -41,6 +41,10 @@ class increment_controller_test extends \phpbb_database_test_case
 	{
 		parent::setUp();
 
+		global $user;
+		$user = new \stdClass();
+		$user->data = array('user_form_salt' => 'test-form-salt');
+
 		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
 			->disableOriginalConstructor()
 			->getMock();
@@ -72,9 +76,10 @@ class increment_controller_test extends \phpbb_database_test_case
 	public function increment_clicks_data()
 	{
 		return array(
-			array(0, true),
-			array(1, false),
-			array(1, true),
+			array(0, true, true),
+			array(1, false, true),
+			array(1, true, false),
+			array(1, true, true),
 		);
 	}
 	/**
@@ -82,13 +87,22 @@ class increment_controller_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider increment_clicks_data
 	 */
-	public function test_increment_clicks($ad_id, $is_ajax)
+	public function test_increment_clicks($ad_id, $is_ajax, $valid_hash)
 	{
 		$controller = $this->get_controller();
 
 		$this->request->expects($ad_id ? self::once() : self::never())
 			->method('is_ajax')
 			->willReturn($is_ajax);
+
+		$this->request->expects(($ad_id && $is_ajax) ? self::once() : self::never())
+			->method('variable')
+			->with('hash', '')
+			->willReturn($valid_hash ? generate_link_hash('phpbb_ads_click') : 'invalid');
+
+		$this->manager->expects(($ad_id && $is_ajax && $valid_hash) ? self::once() : self::never())
+			->method('increment_ad_clicks')
+			->with($ad_id);
 
 		try
 		{
@@ -111,10 +125,11 @@ class increment_controller_test extends \phpbb_database_test_case
 	public function increment_views_data()
 	{
 		return array(
-			array('0', true),
-			array('1', false),
-			array('1', true),
-			array('1-2', true),
+			array('0', true, true),
+			array('1', false, true),
+			array('1', true, false),
+			array('1', true, true),
+			array('1-2', true, true),
 		);
 	}
 	/**
@@ -122,7 +137,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider increment_views_data
 	 */
-	public function test_increment_views($ad_ids, $is_ajax)
+	public function test_increment_views($ad_ids, $is_ajax, $valid_hash)
 	{
 		$controller = $this->get_controller();
 
@@ -130,7 +145,12 @@ class increment_controller_test extends \phpbb_database_test_case
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
-		$this->manager->expects(($is_ajax && !empty($ad_ids)) ? self::once() : self::never())
+		$this->request->expects(($is_ajax && !empty($ad_ids)) ? self::once() : self::never())
+			->method('variable')
+			->with('hash', '')
+			->willReturn($valid_hash ? generate_link_hash('phpbb_ads_views_' . $ad_ids) : 'invalid');
+
+		$this->manager->expects(($is_ajax && !empty($ad_ids) && $valid_hash) ? self::once() : self::never())
 			->method('increment_ads_views')
 			->with(explode('-', $ad_ids));
 

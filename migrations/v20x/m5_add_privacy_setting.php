@@ -20,7 +20,7 @@ class m5_add_privacy_setting extends \phpbb\db\migration\migration
 	 */
 	public function effectively_installed()
 	{
-		$this->config->offsetExists('phpbb_ads_show_agreement');
+		return $this->config->offsetExists('phpbb_ads_show_agreement');
 	}
 
 	/**

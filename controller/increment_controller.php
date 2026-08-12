@@ -43,7 +43,10 @@ class increment_controller
 	 */
 	public function handle($data, $mode)
 	{
-		if (!empty($data) && $this->request->is_ajax())
+		$link_name = $mode === 'views' ? 'phpbb_ads_views_' . $data : 'phpbb_ads_click';
+		if (!empty($data)
+			&& $this->request->is_ajax()
+			&& check_link_hash($this->request->variable('hash', ''), $link_name))
 		{
 			$this->{$mode}($data);
 

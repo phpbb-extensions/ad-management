@@ -173,8 +173,10 @@ class locations_test extends functional_base
 
 		$crawler = self::request('GET', 'index.php');
 
-		// Confirm pop-up ad is present
-		self::assertStringContainsString($ad_code, $crawler->filter('script')->last()->html());
+		// Confirm pop-up ad is present and safely escaped for its JavaScript string context
+		$twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader());
+		$escaped_ad_code = \twig_escape_filter($twig, $ad_code, 'js');
+		self::assertStringContainsString($escaped_ad_code, $crawler->filter('script')->last()->html());
 	}
 
 	public function test_location_scripts()

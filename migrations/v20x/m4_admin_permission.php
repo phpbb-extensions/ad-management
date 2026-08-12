@@ -20,13 +20,14 @@ class m4_admin_permission extends \phpbb\db\migration\container_aware_migration
 	 */
 	public function effectively_installed()
 	{
-		$sql = 'SELECT * FROM ' . $this->table_prefix . "acl_options
+		$sql = 'SELECT COUNT(DISTINCT auth_option) AS permission_count
+			FROM ' . $this->table_prefix . "acl_options
 			WHERE auth_option = 'a_phpbb_ads_m' OR auth_option = 'a_phpbb_ads_s'";
-		$result = $this->db->sql_query_limit($sql, 1);
+		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		return $row !== false;
+		return (int) ($row['permission_count'] ?? 0) === 2;
 	}
 
 	/**

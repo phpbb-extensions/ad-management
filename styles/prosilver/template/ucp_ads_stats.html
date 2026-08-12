@@ -27,7 +27,9 @@
 				}
 			] %}
 				{% if list.loop %}
-					<td class="row3" colspan="{{ 4 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					<tr>
+						<td class="row3" colspan="{{ 4 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+					</tr>
 					{% for ad in list.loop %}
 						<tr class="{% if loop.index0 is even %}bg2{% else %}bg1{% endif %}">
 							<td>{{ ad.NAME }}</td>

@@ -1,10 +1,10 @@
-{% if S_INCREMENT_VIEWS %}
+{% if S_PHPBB_ADS_INCREMENT_VIEWS %}
 	<script>
 		(function($) {
 			'use strict';
 
 			$(window).on('load', function() {
-				$.get('{{ U_PHPBB_ADS_VIEWS|e('js') }}');
+				$.post('{{ U_PHPBB_ADS_VIEWS|e('js') }}');
 			});
 		})(jQuery);
 	</script>

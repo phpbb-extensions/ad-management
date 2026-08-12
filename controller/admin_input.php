@@ -35,6 +35,9 @@ class admin_input
 	/** @var array Form validation errors */
 	protected $errors = array();
 
+	/** @var array Existing dates allowed during an edit */
+	protected $existing_dates = array();
+
 	/**
 	 * Constructor
 	 *
@@ -80,8 +83,13 @@ class admin_input
 	 *
 	 * @return	array	Form data
 	 */
-	public function get_form_data()
+	public function get_form_data($existing_start_date = 0, $existing_end_date = 0)
 	{
+		$this->existing_dates = array(
+			'START' => (int) $existing_start_date,
+			'END' => (int) $existing_end_date,
+		);
+
 		$data = array(
 			'ad_name'         	=> $this->request->variable('ad_name', '', true),
 			'ad_note'         	=> $this->request->variable('ad_note', '', true),
@@ -302,12 +310,12 @@ class admin_input
 	}
 
 	/**
-	 * Send ajax response
+	 * Send AJAX response and terminate the request.
 	 *
 	 * @param bool $success Is request successful?
 	 * @param string $text Text to return
 	 */
-	protected function send_ajax_response($success, $text)
+	public function send_ajax_response($success, $text)
 	{
 		$json_response = new \phpbb\json_response;
 		$json_response->send(array(
@@ -339,11 +347,21 @@ class admin_input
 
 		// Create a UTC midnight timestamp for storage consistency
 		$datetime = \DateTime::createFromFormat(ext::DATE_FORMAT, $date, new \DateTimeZone('UTC'));
+		$date_errors = \DateTime::getLastErrors();
+		if ($datetime === false || ($date_errors !== false && ($date_errors['warning_count'] || $date_errors['error_count'])))
+		{
+			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
+			return 0;
+		}
+
 		$datetime->setTime(0, 0, 0); // Ensure midnight (00:00:00)
 		$timestamp = $datetime->getTimestamp();
 
 		// Compare against user's current day to avoid timezone confusion
-		if ($timestamp < $this->user->create_datetime('today')->getTimestamp())
+		$existing_date = $this->existing_dates[$type] ?? 0;
+		$unchanged_existing_date = $existing_date > 0
+			&& $date === gmdate(ext::DATE_FORMAT, $existing_date);
+		if ($timestamp < $this->user->create_datetime('today')->getTimestamp() && !$unchanged_existing_date)
 		{
 			$this->errors[] = 'AD_' . $type . '_DATE_INVALID';
 			return 0;
