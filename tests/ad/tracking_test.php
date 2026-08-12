@@ -12,6 +12,30 @@ namespace phpbb\ads\tests\ad;
 
 class tracking_test extends ad_base
 {
+	public function invalid_view_ids_data()
+	{
+		return array(
+			'empty list' => array(array()),
+			'non-positive values' => array(array(0, -1, '0')),
+		);
+	}
+
+	/**
+	 * Invalid IDs cause no view update and leave advertisements unchanged.
+	 *
+	 * @dataProvider invalid_view_ids_data
+	 */
+	public function test_invalid_view_ids_do_not_increment($ad_ids)
+	{
+		$manager = $this->get_manager();
+		$query_count = $this->db->sql_num_queries();
+
+		$manager->increment_ads_views($ad_ids);
+
+		self::assertSame($query_count, $this->db->sql_num_queries());
+		self::assertEquals(0, $manager->get_ad(1)['ad_views']);
+	}
+
 	/**
 	 * Disabled counters reject otherwise valid increments.
 	 */
@@ -129,6 +153,45 @@ class tracking_test extends ad_base
 		self::assertEquals(1, $manager->disable_expired_ads());
 		self::assertEquals(2, $this->db->sql_num_queries() - $query_count);
 		self::assertEquals(0, $manager->get_ad(3)['ad_enabled']);
+	}
+
+	public function expired_ad_id_data()
+	{
+		return array(
+			'invalid ID' => array(0, false),
+			'missing ad' => array(999, false),
+			'active ad' => array(1, false),
+			'expired ad' => array(3, true),
+		);
+	}
+
+	/**
+	 * Scalar IDs are loaded and disabled only when currently expired.
+	 *
+	 * @dataProvider expired_ad_id_data
+	 */
+	public function test_disable_expired_ad_by_id($ad_id, $expected)
+	{
+		$manager = $this->get_manager();
+
+		self::assertSame($expected, $manager->disable_expired_ad($ad_id));
+		if ($ad_id === 3)
+		{
+			self::assertEquals(0, $manager->get_ad($ad_id)['ad_enabled']);
+		}
+	}
+
+	/**
+	 * Atomic update rejects stale data which no longer meets expiry condition.
+	 */
+	public function test_disable_expired_ad_rechecks_condition_in_database()
+	{
+		$manager = $this->get_manager();
+		$stale_ad = $manager->get_ad(1);
+		$stale_ad['ad_end_date'] = 1;
+
+		self::assertFalse($manager->disable_expired_ad($stale_ad));
+		self::assertEquals(1, $manager->get_ad(1)['ad_enabled']);
 	}
 
 	/**

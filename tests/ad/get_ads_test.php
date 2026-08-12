@@ -49,6 +49,61 @@ class get_ads_test extends ad_base
 		self::assertEquals($expected, $ads);
 	}
 
+	public function sql_random_data()
+	{
+		return array(
+			'oracle' => array('oracle', 'DBMS_RANDOM.VALUE'),
+			'postgres' => array('postgres', 'RANDOM()'),
+			'sqlite' => array('sqlite', '(0.5 - RANDOM() / CAST(-9223372036854775808 AS REAL) / 2)'),
+			'sqlite3' => array('sqlite3', '(0.5 - RANDOM() / CAST(-9223372036854775808 AS REAL) / 2)'),
+			'mssql' => array('mssql', 'RAND(CAST(NEWID() AS VARBINARY))'),
+			'mssql ODBC' => array('mssql_odbc', 'RAND(CAST(NEWID() AS VARBINARY))'),
+			'mssql native' => array('mssqlnative', 'RAND(CAST(NEWID() AS VARBINARY))'),
+			'mysql default' => array('mysqli', 'RAND()'),
+		);
+	}
+
+	/**
+	 * Each supported DBMS uses its valid random expression in weighted ad selection.
+	 *
+	 * @dataProvider sql_random_data
+	 */
+	public function test_get_ads_uses_dbms_random_expression($sql_layer, $random_expression)
+	{
+		$db = $this->getMockBuilder('\phpbb\db\driver\driver_interface')->getMock();
+		$db->expects(self::once())
+			->method('get_sql_layer')
+			->willReturn($sql_layer);
+		$db->expects(self::once())
+			->method('sql_in_set')
+			->with('al.location_id', array('above_header'))
+			->willReturn("al.location_id = 'above_header'");
+		$db->expects(self::once())
+			->method('sql_query')
+			->with(self::callback(function ($sql) use ($random_expression)
+			{
+				return strpos($sql, 'ORDER BY al.location_id, (' . $random_expression . ' * a.ad_priority) DESC') !== false;
+			}))
+			->willReturn('result');
+		$db->expects(self::once())
+			->method('sql_fetchrowset')
+			->with('result')
+			->willReturn(array());
+		$db->expects(self::once())
+			->method('sql_freeresult')
+			->with('result');
+
+		$manager = new \phpbb\ads\ad\manager(
+			$db,
+			$this->user,
+			$this->ads_table,
+			$this->ad_locations_table,
+			$this->ad_group_table
+		);
+
+		self::assertSame(array(), $manager->get_ads(array('above_header'), array()));
+	}
+
 	/**
 	 * Test get_ads() priority feature is working as expected.
 	 * Higher priority ads should occur more frequently in the results.

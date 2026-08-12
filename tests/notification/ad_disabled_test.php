@@ -28,7 +28,9 @@ class ad_disabled_test extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path, $phpEx;
+		global $phpbb_dispatcher, $phpbb_root_path, $phpEx;
+
+		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 
 		$this->db = $this->getMockBuilder('\phpbb\db\driver\driver_interface')->getMock();
 		$this->language = $this->getMockBuilder('\phpbb\language\language')->disableOriginalConstructor()->getMock();
@@ -118,6 +120,29 @@ class ad_disabled_test extends \phpbb_test_case
 	{
 		self::assertSame('', $this->notification->get_reference());
 		self::assertSame('@phpbb_ads/ad_disabled', $this->notification->get_email_template());
+		self::assertSame(array(), $this->notification->users_to_query());
+	}
+
+	public function url_data()
+	{
+		return array(
+			'relative URL' => array(\Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_PATH, false),
+			'absolute URL' => array(\Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL, true),
+		);
+	}
+
+	/**
+	 * @dataProvider url_data
+	 */
+	public function test_url($reference_type, $absolute)
+	{
+		global $phpbb_root_path;
+
+		$root = $absolute ? generate_board_url() . '/' : $phpbb_root_path;
+		self::assertSame(
+			$root . 'ucp.php?i=-phpbb-ads-ucp-main_module&amp;mode=stats',
+			$this->notification->get_url($reference_type)
+		);
 	}
 
 	public function test_email_template_variables()
@@ -138,6 +163,25 @@ class ad_disabled_test extends \phpbb_test_case
 			'REASON' => 'Click limit reached',
 			'U_VIEW_ADS' => 'https://example.com/ucp.php?i=ads&mode=stats',
 		), $notification->get_email_template_variables());
+	}
+
+	public function test_create_insert_array_preserves_ad_data()
+	{
+		$type_data = array(
+			'ad_id' => 42,
+			'ad_name' => 'Example ad',
+			'reason' => \phpbb\ads\ad\manager::DISABLED_END_DATE,
+		);
+
+		$this->notification->create_insert_array($type_data);
+		$insert = $this->notification->get_insert_array();
+
+		self::assertSame(42, $insert['item_id']);
+		self::assertSame(0, $insert['item_parent_id']);
+		self::assertSame(array(
+			'ad_name' => 'Example ad',
+			'reason' => \phpbb\ads\ad\manager::DISABLED_END_DATE,
+		), unserialize($insert['notification_data']));
 	}
 
 	protected function set_data($key, $value, $notification = null)

@@ -558,10 +558,35 @@ class admin_controller_test extends \phpbb_database_test_case
 		$this->analyser->expects(self::once())
 			->method('run')
 			->with('<!-- AD CODE SAMPLE -->')
-			->willReturn(array());
+			->willReturn(array(
+				array('severity' => 'warning', 'message' => 'AD_SCRIPT_NOT_ASYNC'),
+				array('severity' => 'notice', 'message' => 'AD_MARKETING_CONSENT'),
+			));
 
 		$this->setExpectedTriggerError(E_WARNING);
 		$controller->mode_manage();
+	}
+
+	/**
+	 * Test analysis rejects an invalid form token before running analysers.
+	 */
+	public function test_action_analyse_invalid_form()
+	{
+		input::$valid_form = false;
+		$controller = $this->get_controller();
+
+		$this->request->expects(self::once())
+			->method('variable')
+			->with('action', '')
+			->willReturn('analyse');
+		$this->analyser->expects(self::never())
+			->method('run');
+		$this->input->expects(self::once())
+			->method('send_ajax_response')
+			->with(false, 'The submitted form was invalid. Try submitting again.');
+
+		$controller->mode_manage();
+		input::$valid_form = true;
 	}
 
 	/**
