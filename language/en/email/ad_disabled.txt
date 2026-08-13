@@ -1,0 +1,10 @@
+Subject: Advertisement disabled - "{AD_NAME}"
+
+Hello {USERNAME},
+
+Your advertisement "{AD_NAME}" at "{SITENAME}" was automatically disabled. {REASON}
+
+You can view your advertisement statistics here:
+{U_VIEW_ADS}
+
+{EMAIL_SIG}

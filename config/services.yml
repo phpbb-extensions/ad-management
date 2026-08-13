@@ -1,5 +1,6 @@
 imports:
     - { resource: tables.yml }
+    - { resource: cron.yml }
     - { resource: analyser.yml }
     - { resource: location.yml }
 
@@ -8,11 +9,11 @@ services:
         class: phpbb\ads\ad\manager
         arguments:
             - '@dbal.conn'
-            - '@config'
             - '@user'
             - '%phpbb.ads.tables.ads%'
             - '%phpbb.ads.tables.ad_locations%'
             - '%phpbb.ads.tables.ad_group%'
+            - '@notification_manager'
 
     phpbb.ads.banner.banner:
         class: phpbb\ads\banner\banner
@@ -82,6 +83,8 @@ services:
         arguments:
             - '@phpbb.ads.ad.manager'
             - '@request'
+            - '@cache.driver'
+            - '@user'
 
     phpbb.ads.ucp.controller:
         class: phpbb\ads\controller\ucp_controller
@@ -91,7 +94,14 @@ services:
             - '@user'
             - '@language'
             - '@template'
-            - '@config'
+
+# -------- Notifications -------- #
+    phpbb.ads.notification.type.ad_disabled:
+        class: phpbb\ads\notification\type\ad_disabled
+        parent: notification.type.base
+        shared: false
+        tags:
+            - { name: notification.type }
 
     phpbb.ads.visual_demo.controller:
         class: phpbb\ads\controller\visual_demo_controller

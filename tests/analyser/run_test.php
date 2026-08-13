@@ -223,6 +223,12 @@ class run_test extends analyser_base
 				->method('assign_block_vars');
 		}
 
-		$manager->run($ad_code);
+		$actual = $manager->run($ad_code);
+		self::assertEquals(array_map(function ($result) {
+			return array(
+				'severity' => $result['severity'],
+				'message' => $result['lang_key'],
+			);
+		}, $expected), $actual);
 	}
 }

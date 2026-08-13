@@ -21,13 +21,17 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ADBLOCKER_TITLE'	=> 'Ad blocker detected',
 	'ADBLOCKER_MESSAGE'	=> [
-		1 => 'Our website is made possible by displaying online advertisements to our visitors. Please consider supporting us by disabling your ad blocker on our website.',
-		2 => 'Our website is made possible by displaying online advertisements to our visitors. Disable your ad blocker to continue using our website.',
+		1 => 'Our website is made possible by showing ads to visitors. Please consider supporting us by disabling your ad blocker on our website.',
+		2 => 'Our website is made possible by showing ads to visitors. Disable your ad blocker to continue using our website.',
 	],
 	'ADVERTISEMENT'		=> 'Advertisement',
-	'HIDE_AD'			=> 'Hide advertisement',
-	'PHPBB_ADS_CONSENT_LABEL'		=> 'Advertisements',
+	'HIDE_AD'			=> 'Hide ad',
+	'PHPBB_ADS_CONSENT_LABEL'		=> 'Advertising',
 	'PHPBB_ADS_CONSENT_DESCRIPTION'	=> 'Advertising features that may use cookies or similar technologies to collect data.',
+	'PHPBB_ADS_NOTIFICATION_DISABLED' => 'Advertisement “%s” was disabled',
+	'PHPBB_ADS_NOTIFICATION_REASON_END_DATE' => 'Its expiration date was reached.',
+	'PHPBB_ADS_NOTIFICATION_REASON_VIEWS_LIMIT' => 'Its view limit was reached.',
+	'PHPBB_ADS_NOTIFICATION_REASON_CLICKS_LIMIT' => 'Its click limit was reached.',
 
 	'VISUAL_DEMO'			=> 'Visual demo for ad locations is active',
 	'DISABLE_VISUAL_DEMO'	=> 'Click to disable visual demo',
@@ -63,9 +67,9 @@ $lang = array_merge($lang, array(
 	'AD_AFTER_FOOTER_NAVBAR'		=> 'After footer navbar',
 	'AD_AFTER_FOOTER_NAVBAR_DESC'	=> 'Displays on every page after footer navigation bar.',
 	'AD_POP_UP'						=> 'Pop-up',
-	'AD_POP_UP_DESC'				=> 'Displays once per day when user visits this board as overlaying box. User need to close this box to continue to the content. Please, be aware, that this kind of advertisement is very obtrusive to the user! This location does not support JavaScript code.',
+	'AD_POP_UP_DESC'				=> 'Displays once per day as an overlay when a user visits this board. The user must close it to continue to the content. This type of ad can be very obtrusive. This location does not support JavaScript code.',
 	'AD_SLIDE_UP'					=> 'Slide up',
 	'AD_SLIDE_UP_DESC'				=> 'Displays on every page after user scrolls below main content. Slides up from the bottom.',
 	'AD_SCRIPTS'					=> 'Scripts',
-	'AD_SCRIPTS_DESC'				=> 'This location is for specialty JavaScript code like AdSense Auto ads, tracking codes, etc. The code entered here will be inserted into the page’s HEAD tag and is not intended for ad placement, but only for helper scripts.',
+	'AD_SCRIPTS_DESC'				=> 'This location is for specialty JavaScript such as AdSense Auto ads and tracking code. Code entered here will be inserted into the page’s HEAD tag and is intended for helper scripts, not ad placement.',
 ));

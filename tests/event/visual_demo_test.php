@@ -34,6 +34,7 @@ class visual_demo_test extends main_listener_base
 	{
 		$location_indeces = count($this->locations) - 1;
 		$hash = generate_link_hash('phpbb_ads_visual_demo_disable');
+		$assigned_vars = array();
 
 		$this->user->page['page_name'] = 'viewtopic';
 
@@ -54,21 +55,33 @@ class visual_demo_test extends main_listener_base
 
 		$this->template
 			->expects(self::exactly($in_visual_demo ? $location_indeces : 0))
-			->method('assign_vars');
-
-		$this->template
-			->expects($in_visual_demo ? self::at($location_indeces - 1) : self::never())
 			->method('assign_vars')
-			->with(array(
-				'S_PHPBB_ADS_VISUAL_DEMO'	=> true,
-				'U_DISABLE_VISUAL_DEMO'		=> 'phpbb_ads_visual_demo#' . serialize(array(
-					'action' => 'disable',
-					'hash' => $hash,
-				)),
-			));
+			->willReturnCallback(function ($vars) use (&$assigned_vars)
+			{
+				$assigned_vars = array_merge($assigned_vars, $vars);
+			});
 
 		$dispatcher = new \phpbb\event\dispatcher();
 		$dispatcher->addListener('core.page_footer_after', array($this->get_listener(), 'visual_demo'));
 		$dispatcher->trigger_event('core.page_footer_after');
+
+		if ($in_visual_demo)
+		{
+			self::assertSame(array(
+				'CODE' => array(
+					'visual_demo' => true,
+					'name' => 'AD_ABOVE_HEADER',
+					'desc' => 'AD_ABOVE_HEADER_DESC',
+				),
+				'ID' => 'above_header',
+				'CENTER' => false,
+				'CLICK_URL' => '',
+			), $assigned_vars['AD_ABOVE_HEADER']);
+			self::assertSame(true, $assigned_vars['S_PHPBB_ADS_VISUAL_DEMO']);
+			self::assertSame('phpbb_ads_visual_demo#' . serialize(array(
+				'action' => 'disable',
+				'hash' => $hash,
+			)), $assigned_vars['U_DISABLE_VISUAL_DEMO']);
+		}
 	}
 }

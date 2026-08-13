@@ -19,6 +19,8 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'UCP_PHPBB_ADS_TITLE'	=> 'My advertisements',
+	'UCP_PHPBB_ADS_TITLE'	=> 'My ads',
 	'UCP_PHPBB_ADS_STATS'	=> 'Statistics',
+
+	'NOTIFICATION_TYPE_PHPBB_ADS_AD_DISABLED' => 'Your advertisement is automatically disabled',
 ));

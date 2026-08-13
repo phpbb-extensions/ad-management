@@ -39,6 +39,7 @@ class manager
 	 * Test the ad code for potential problems.
 	 *
 	 * @param	string	$ad_code	Advertisement code
+	 * @return	array	Analysis results
 	 */
 	public function run($ad_code)
 	{
@@ -53,6 +54,8 @@ class manager
 		}
 
 		$this->assign_template_vars($results);
+
+		return $results;
 	}
 
 	/**

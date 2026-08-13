@@ -27,9 +27,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\config\config */
-	protected $config;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -73,11 +70,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->config = new \phpbb\config\config(array(
-			'phpbb_ads_enable_views'	=> 0,
-			'phpbb_ads_enable_clicks'	=> 0,
-		));
-
 		$this->u_action = $phpbb_root_path . 'ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats';
 	}
 
@@ -93,8 +85,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 			$this->helper,
 			$this->user,
 			$this->language,
-			$this->template,
-			$this->config
+			$this->template
 		);
 		$controller->set_page_url($this->u_action);
 
@@ -109,7 +100,7 @@ class ucp_controller_test extends \phpbb_database_test_case
 	public function main_data()
 	{
 		return array(
-			array(1, 1, array(
+			array(array(
 				array(
 					'ad_id'				=> 1,
 					'ad_name'			=> 'First ad',
@@ -120,6 +111,8 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_end_date'		=> 0,
 					'ad_views_limit'	=> 0,
 					'ad_clicks_limit'	=> 0,
+					'ad_views_enabled' => 1,
+					'ad_clicks_enabled' => 1,
 				),
 				array(
 					'ad_id'				=> 2,
@@ -131,6 +124,8 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_end_date'		=> 0,
 					'ad_views_limit'	=> 0,
 					'ad_clicks_limit'	=> 0,
+					'ad_views_enabled' => 1,
+					'ad_clicks_enabled' => 0,
 				),
 				array(
 					'ad_id'				=> 3,
@@ -142,6 +137,8 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_end_date'		=> 0,
 					'ad_views_limit'	=> 0,
 					'ad_clicks_limit'	=> 0,
+					'ad_views_enabled' => 0,
+					'ad_clicks_enabled' => 1,
 				),
 				array(
 					'ad_id'				=> 4,
@@ -153,11 +150,11 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_end_date'		=> 1,
 					'ad_views_limit'	=> 0,
 					'ad_clicks_limit'	=> 0,
+					'ad_views_enabled' => 0,
+					'ad_clicks_enabled' => 0,
 				),
 			)),
-			array(1, 0, array()),
-			array(0, 1, array()),
-			array(0, 0, array()),
+			array(array()),
 		);
 	}
 	/**
@@ -165,11 +162,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider main_data
 	 */
-	public function test_main($enable_views, $enable_clicks, $ads)
+	public function test_main($ads)
 	{
 		$this->user->data['user_id'] = 2;
-		$this->config['phpbb_ads_enable_views'] = $enable_views;
-		$this->config['phpbb_ads_enable_clicks'] = $enable_clicks;
 		$controller = $this->get_controller();
 
 		$this->manager->expects(self::once())
@@ -183,12 +178,9 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->template->expects(self::exactly(count($ads)))
 			->method('assign_block_vars');
 
-		$this->template->expects(self::once())
-			->method('assign_vars')
-			->with(array(
-				'S_VIEWS_ENABLED'	=> $enable_views,
-				'S_CLICKS_ENABLED'	=> $enable_clicks,
-			));
+		$this->manager->expects(count($ads) ? self::once() : self::never())
+			->method('disable_expired_ad')
+			->with($ads[3] ?? null);
 
 		$controller->main();
 	}

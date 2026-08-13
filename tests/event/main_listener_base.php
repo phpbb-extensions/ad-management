@@ -136,7 +136,7 @@ class main_listener_base extends \phpbb_database_test_case
 			->getMock();
 		$this->user = $user;
 		$this->config = new \phpbb\config\config(array('phpbb_ads_adblocker_message' => '0'));
-		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->config, $this->user, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
+		$this->manager = new \phpbb\ads\ad\manager($this->new_dbal(), $this->user, $this->ads_table, $this->ad_locations_table, $this->ad_group_table);
 		$this->location_manager = new \phpbb\ads\location\manager($location_types);
 		$this->controller_helper = $this->getMockBuilder('\phpbb\controller\helper')
 			->disableOriginalConstructor()

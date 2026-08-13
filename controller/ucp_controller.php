@@ -30,9 +30,6 @@ class ucp_controller
 	/** @var \phpbb\template\template */
 	protected $template;
 
-	/** @var \phpbb\config\config */
-	protected $config;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
@@ -44,16 +41,14 @@ class ucp_controller
 	 * @param \phpbb\user							$user		User object
 	 * @param \phpbb\language\language				$language	Language object
 	 * @param \phpbb\template\template				$template	Template object
-	 * @param \phpbb\config\config					$config		Config object
 	 */
-	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\ads\controller\helper $helper, \phpbb\user $user, \phpbb\language\language $language, \phpbb\template\template $template, \phpbb\config\config $config)
+	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\ads\controller\helper $helper, \phpbb\user $user, \phpbb\language\language $language, \phpbb\template\template $template)
 	{
 		$this->manager = $manager;
 		$this->helper = $helper;
 		$this->user = $user;
 		$this->language = $language;
 		$this->template = $template;
-		$this->config = $config;
 	}
 
 	/**
@@ -78,8 +73,8 @@ class ucp_controller
 
 			if ($ad_expired && $ad_enabled)
 			{
+				$this->manager->disable_expired_ad($ad);
 				$ad_enabled = 0;
-				$this->manager->update_ad($ad['ad_id'], array('ad_enabled' => 0));
 			}
 
 			$this->template->assign_block_vars($ad_expired ? 'expired' : 'ads', array(
@@ -90,13 +85,10 @@ class ucp_controller
 				'VIEWS_LIMIT'	=> $ad['ad_views_limit'],
 				'CLICKS'		=> $ad['ad_clicks'],
 				'CLICKS_LIMIT'	=> $ad['ad_clicks_limit'],
+				'S_VIEWS_ENABLED' => (bool) $ad['ad_views_enabled'],
+				'S_CLICKS_ENABLED' => (bool) $ad['ad_clicks_enabled'],
 				'S_ENABLED'		=> $ad_enabled,
 			));
 		}
-
-		$this->template->assign_vars(array(
-			'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
-			'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
-		));
 	}
 }

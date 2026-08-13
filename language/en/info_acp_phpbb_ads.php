@@ -20,7 +20,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_PHPBB_ADS_TITLE'	=> 'Advertisement Management',
-	'ACP_MANAGE_ADS_TITLE'		=> 'Manage advertisements',
+	'ACP_MANAGE_ADS_TITLE'		=> 'Manage ads',
 	'ACP_ADS_SETTINGS_TITLE'	=> 'Settings',
 
 	'ACP_PHPBB_ADS_ADD_LOG'		=> '<strong>Advertisement added</strong><br />» %s',
