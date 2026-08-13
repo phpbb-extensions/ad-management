@@ -92,6 +92,8 @@ class ad_disabled extends \phpbb\notification\type\base
 	 */
 	public function get_reason()
 	{
+		$this->language->add_lang('common', 'phpbb/ads');
+
 		return $this->language->lang('PHPBB_ADS_NOTIFICATION_REASON_' . strtoupper($this->get_data('reason')));
 	}
 

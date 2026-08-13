@@ -107,20 +107,27 @@ class ad_disabled_test extends \phpbb_test_case
 		), $this->notification->find_users_for_notification(array('ad_owner' => 2)));
 	}
 
-	public function test_title_and_reason()
+	public function test_title()
 	{
 		$this->set_data('ad_name', 'Example');
-		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_VIEWS_LIMIT);
 		$this->language->expects(self::once())->method('add_lang')->with('common', 'phpbb/ads');
-		$this->language->expects(self::exactly(2))
+		$this->language->expects(self::once())
 			->method('lang')
-			->withConsecutive(
-				['PHPBB_ADS_NOTIFICATION_DISABLED', 'Example'],
-				['PHPBB_ADS_NOTIFICATION_REASON_VIEWS_LIMIT']
-			)
-			->willReturnOnConsecutiveCalls('Advertisement disabled', 'View limit reached');
+			->with('PHPBB_ADS_NOTIFICATION_DISABLED', 'Example')
+			->willReturn('Advertisement disabled');
 
 		self::assertSame('Advertisement disabled', $this->notification->get_title());
+	}
+
+	public function test_reason()
+	{
+		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_VIEWS_LIMIT);
+		$this->language->expects(self::once())->method('add_lang')->with('common', 'phpbb/ads');
+		$this->language->expects(self::once())
+			->method('lang')
+			->with('PHPBB_ADS_NOTIFICATION_REASON_VIEWS_LIMIT')
+			->willReturn('View limit reached');
+
 		self::assertSame('View limit reached', $this->notification->get_reason());
 	}
 
@@ -155,22 +162,19 @@ class ad_disabled_test extends \phpbb_test_case
 
 	public function test_email_template_variables()
 	{
-		$notification = $this->getMockBuilder('\phpbb\ads\notification\type\ad_disabled')
-			->disableOriginalConstructor()
-			->setMethods(array('get_reason', 'get_url'))
-			->getMock();
-		$this->set_data('ad_name', 'Example &amp; Ad', $notification);
-		$notification->method('get_reason')->willReturn('<em>Click limit reached</em>');
-		$notification->expects(self::once())
-			->method('get_url')
-			->with(\Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL)
-			->willReturn('https://example.com/ucp.php?i=ads&amp;mode=stats');
+		$this->set_data('ad_name', 'Example &amp; Ad');
+		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_CLICKS_LIMIT);
+		$this->language->expects(self::once())->method('add_lang')->with('common', 'phpbb/ads');
+		$this->language->expects(self::once())
+			->method('lang')
+			->with('PHPBB_ADS_NOTIFICATION_REASON_CLICKS_LIMIT')
+			->willReturn('<em>Click limit reached</em>');
 
 		self::assertSame(array(
 			'AD_NAME' => 'Example & Ad',
 			'REASON' => 'Click limit reached',
-			'U_VIEW_ADS' => 'https://example.com/ucp.php?i=ads&mode=stats',
-		), $notification->get_email_template_variables());
+			'U_VIEW_ADS' => 'http://localhost/phpbb/ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats',
+		), $this->notification->get_email_template_variables());
 	}
 
 	public function test_create_insert_array_preserves_ad_data()
