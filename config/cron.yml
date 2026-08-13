@@ -1,0 +1,10 @@
+services:
+    phpbb.ads.cron.task.disable_expired:
+        class: phpbb\ads\cron\disable_expired
+        arguments:
+            - '@config'
+            - '@phpbb.ads.ad.manager'
+        calls:
+            - [set_name, [cron.task.phpbb_ads_disable_expired]]
+        tags:
+            - { name: cron.task }

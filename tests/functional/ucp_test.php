@@ -22,11 +22,19 @@ class ucp_test extends functional_base
 	 */
 	public function test_ucp_module()
 	{
+		$owner = 'ads-ucp-owner';
+		$this->create_user($owner);
+		self::$client->restart();
+		$this->login($owner);
+
 		// Load Advertisement management UCP module and see it is really not accessible
 		$crawler = $this->get_ucp_module(false);
 		$this->assertContainsLang('MODULE_NOT_ACCESS', $crawler->text());
 
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid=$this->sid");
+		self::$client->restart();
+		$this->login();
+		$this->admin_login();
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
 		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
 		$crawler = self::submit($form);
 		$form_data = array(
@@ -39,12 +47,14 @@ class ucp_test extends functional_base
 			'ad_priority'	=> 1,
 			'ad_views_limit'	=> 0,
 			'ad_clicks_limit'	=> 0,
-			'ad_owner'	=> 'admin',
+			'ad_owner'	=> $owner,
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
 		self::submit($form, $form_data);
 
 		// Load Advertisement management UCP module again. This time, it should be visible.
+		self::$client->restart();
+		$this->login($owner);
 		$crawler = $this->get_ucp_module();
 
 		// Assert Advertisement management module appears in sidebar

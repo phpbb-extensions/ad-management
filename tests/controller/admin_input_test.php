@@ -10,6 +10,8 @@
 
 namespace phpbb\ads\controller;
 
+require_once __DIR__ . '/admin_test_helpers.php';
+
 use DateTimeZone;
 use phpbb\ads\banner\banner;
 use phpbb\avatar\helper as avatar_helper;
@@ -28,7 +30,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class admin_input_test extends phpbb_database_test_case
 {
-	public static bool $valid_form = true;
 	protected user $user;
 	protected user_loader $user_loader;
 	protected language $language;
@@ -142,7 +143,7 @@ class admin_input_test extends phpbb_database_test_case
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
 			]),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2019-01-01', '4', '1', '50', '30', 'admin', ['5'], 0, 0], 2, [], strtotime('2018-01-01 12:34:56 UTC'), strtotime('2019-01-01 12:34:56 UTC')),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2019-01-01', '4', '1', '50', '30', 'admin', ['5'], 0, 0, 1, 1], 2, [], strtotime('2018-01-01 12:34:56 UTC'), strtotime('2019-01-01 12:34:56 UTC')),
 		);
 	}
 
@@ -154,13 +155,15 @@ class admin_input_test extends phpbb_database_test_case
 	public function test_get_form_data($valid_form, $data, $ad_owner_expected, $errors, $existing_start_date = 0, $existing_end_date = 0)
 	{
 		[$ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent] = $data;
+		$ad_views_enabled = isset($data[15]) ? $data[15] : 0;
+		$ad_clicks_enabled = isset($data[16]) ? $data[16] : 0;
 
-		self::$valid_form = $valid_form;
+		admin_test_state::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
-		$this->request->expects(self::exactly(15))
+		$this->request->expects(self::exactly(17))
 			->method('variable')
-			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent));
+			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent, $ad_views_enabled, $ad_clicks_enabled));
 
 		$result = $input_controller->get_form_data($existing_start_date, $existing_end_date);
 
@@ -187,6 +190,8 @@ class admin_input_test extends phpbb_database_test_case
 				'ad_groups'		  => $ad_groups,
 				'ad_centering'	  => $ad_centering,
 				'ad_consent'	  => $ad_consent,
+				'ad_views_enabled' => $ad_views_enabled,
+				'ad_clicks_enabled' => $ad_clicks_enabled,
 			), $result);
 		}
 	}
@@ -264,23 +269,4 @@ class admin_input_test extends phpbb_database_test_case
 			self::assertEquals(array(implode('<br>', $file_error)), $input_controller->get_errors());
 		}
 	}
-}
-
-/**
- * Mock check_form_key()
- * Note: use the same namespace as the admin_input
- *
- * @return bool
- */
-function check_form_key(): bool
-{
-	return \phpbb\ads\controller\admin_input_test::$valid_form;
-}
-
-/**
- * Mock add_form_key()
- * Note: use the same namespace as the admin_input
- */
-function add_form_key()
-{
 }

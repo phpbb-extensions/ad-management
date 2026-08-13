@@ -11,6 +11,7 @@
 namespace phpbb\ads\controller;
 
 require_once __DIR__ . '/../../../../../includes/functions_acp.php';
+require_once __DIR__ . '/admin_test_helpers.php';
 
 use phpbb\ads\ad\manager;
 use phpbb\ads\ext;
@@ -231,8 +232,6 @@ class admin_controller_test extends phpbb_database_test_case
 				'U_ACTION'			=> $this->u_action,
 				'AD_BLOCK_MODES'	=> ext::AD_BLOCK_MODES,
 				'AD_BLOCK_CONFIG'	=> $this->config['phpbb_ads_adblocker_message'],
-				'ENABLE_VIEWS'		=> $this->config['phpbb_ads_enable_views'],
-				'ENABLE_CLICKS'		=> $this->config['phpbb_ads_enable_clicks'],
 				'SHOW_AGREEMENT'	=> $this->config['phpbb_ads_show_agreement'],
 			));
 
@@ -259,7 +258,7 @@ class admin_controller_test extends phpbb_database_test_case
 	 */
 	public function test_mode_settings_submit($valid_form, $adblocker_data, $hide_group_data)
 	{
-		\phpbb\ads\controller\admin_input_test::$valid_form = $valid_form;
+		admin_test_state::$valid_form = $valid_form;
 
 		$controller = $this->get_controller();
 
@@ -272,12 +271,10 @@ class admin_controller_test extends phpbb_database_test_case
 		{
 			$variable_expectations = [
 				['adblocker_message', 0, $adblocker_data],
-				['enable_views', 0, 1],
-				['enable_clicks', 0, 1],
-				['show_agreement', 0, 1]
+				['show_agreement', 0, 1],
 			];
 			$this->request
-				->expects(self::exactly(4))
+				->expects(self::exactly(2))
 				->method('variable')
 				->willReturnCallback(function($arg1, $arg2) use (&$variable_expectations) {
 					$expectation = array_shift($variable_expectations);
@@ -288,12 +285,10 @@ class admin_controller_test extends phpbb_database_test_case
 
 			$config_expectations = [
 				['phpbb_ads_adblocker_message', $adblocker_data],
-				['phpbb_ads_enable_views', 1],
-				['phpbb_ads_enable_clicks', 1],
-				['phpbb_ads_show_agreement', 1]
+				['phpbb_ads_show_agreement', 1],
 			];
 			$this->config
-				->expects(self::exactly(4))
+				->expects(self::exactly(2))
 				->method('set')
 				->willReturnCallback(function($arg1, $arg2) use (&$config_expectations) {
 					$expectation = array_shift($config_expectations);
@@ -321,6 +316,7 @@ class admin_controller_test extends phpbb_database_test_case
 		return array(
 			array('add', 'action_add'),
 			array('edit', 'action_edit'),
+			array('analyse', 'action_analyse'),
 			array('enable', 'ad_enable'),
 			array('disable', 'ad_enable'),
 			array('delete', 'action_delete'),
@@ -337,7 +333,7 @@ class admin_controller_test extends phpbb_database_test_case
 	{
 		/** @var MockObject|\phpbb\ads\controller\admin_controller $controller */
 		$controller = $this->getMockBuilder(admin_controller::class)
-			->onlyMethods(array('action_add', 'action_edit', 'ad_enable', 'action_delete', 'list_ads'))
+			->onlyMethods(array('action_add', 'action_edit', 'action_analyse', 'ad_enable', 'action_delete', 'list_ads'))
 			->setConstructorArgs(array(
 				$this->template,
 				$this->language,
@@ -374,12 +370,11 @@ class admin_controller_test extends phpbb_database_test_case
 		$post_expectations = [
 			'preview',
 			'upload_banner',
-			'analyse_ad_code',
 			'submit_add',
 			'submit_edit'
 		];
 		$this->request
-			->expects(self::exactly(5))
+			->expects(self::exactly(4))
 			->method('is_set_post')
 			->willReturnCallback(function($arg) use (&$post_expectations) {
 				$expectation = array_shift($post_expectations);
@@ -404,7 +399,8 @@ class admin_controller_test extends phpbb_database_test_case
 			->with(array(
 				'S_ADD_AD'				=> true,
 				'U_BACK'				=> $this->u_action,
-				'U_ACTION'				=> "$this->u_action&amp;action=add",
+				'U_ACTION'				=> "{$this->u_action}&amp;action=add",
+				'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
 				'DATE_MINIMUM'			=> '2000-12-16',
@@ -554,50 +550,70 @@ class admin_controller_test extends phpbb_database_test_case
 	}
 
 	/**
-	 * Test action_add() method with analyse_ad_code submitted data
+	 * Test analysis uses its dedicated action without advertisement validation.
 	 */
-	public function test_action_add_analyse_ad_code()
+	public function test_action_analyse()
 	{
 		$controller = $this->get_controller();
 
-		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code'];
-		$return_values = [false, false, true];
 		$this->request
-			->expects(self::exactly(3))
-			->method('is_set_post')
-			->willReturnCallback(function($arg) use (&$post_expectations, &$return_values) {
-				$expectation = array_shift($post_expectations);
-				self::assertEquals($expectation, $arg);
-				return array_shift($return_values);
+			->expects(self::exactly(2))
+			->method('variable')
+			->willReturnCallback(function($arg1, $arg2, $arg3 = false) {
+				static $expectations = [
+					['action', '', false, 'analyse'],
+					['ad_code', '', true, '<!-- AD CODE SAMPLE -->'],
+				];
+				$expectation = array_shift($expectations);
+				self::assertSame([$expectation[0], $expectation[1], $expectation[2]], [$arg1, $arg2, $arg3]);
+				return $expectation[3];
 			});
 
-		$data = array(
-			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
-			'ad_locations'	=> array(),
-		);
-
-		$this->input->expects(self::once())
-			->method('get_form_data')
-			->willReturn($data);
-
+		$this->input->expects(self::never())
+			->method('get_form_data');
+		$this->helper->expects(self::never())
+			->method('assign_data');
 		$this->analyser->expects(self::once())
 			->method('run')
-			->with($data['ad_code']);
+			->with('<!-- AD CODE SAMPLE -->')
+			->willReturn(array(
+				array('severity' => 'warning', 'message' => 'AD_SCRIPT_NOT_ASYNC'),
+				array('severity' => 'notice', 'message' => 'AD_MARKETING_CONSENT'),
+			));
 
-		$this->input->expects(self::once())
-			->method('get_errors')
-			->willReturn(array());
+		$this->expectOutputString(json_encode(array(
+			'success' => true,
+			'results' => array(
+				array('severity' => 'warning', 'message' => 'AD_SCRIPT_NOT_ASYNC'),
+				array('severity' => 'notice', 'message' => 'AD_MARKETING_CONSENT'),
+			),
+			'everything_ok' => 'EVERYTHING_OK',
+		)));
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('Exit handler called');
+		$controller->mode_manage();
+	}
 
-		$this->helper->expects(self::once())
-			->method('assign_data')
-			->with($data, array());
+	/**
+	 * Test analysis rejects an invalid form token before running analysers.
+	 */
+	public function test_action_analyse_invalid_form()
+	{
+		admin_test_state::$valid_form = false;
+		$controller = $this->get_controller();
 
 		$this->request->expects(self::once())
 			->method('variable')
 			->with('action', '')
-			->willReturn('add');
+			->willReturn('analyse');
+		$this->analyser->expects(self::never())
+			->method('run');
+		$this->input->expects(self::once())
+			->method('send_ajax_response')
+			->with(false, 'The submitted form was invalid. Try submitting again.');
 
 		$controller->mode_manage();
+		admin_test_state::$valid_form = true;
 	}
 
 	/**
@@ -624,9 +640,9 @@ class admin_controller_test extends phpbb_database_test_case
 	{
 		$controller = $this->get_controller();
 
-		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code', 'submit_add'];
-		$return_values = [false, false, false, true];
-		$this->request->expects(self::exactly(4))
+		$post_expectations = ['preview', 'upload_banner', 'submit_add'];
+		$return_values = [false, false, true];
+		$this->request->expects(self::exactly(3))
 			->method('is_set_post')
 			->willReturnCallback(function($arg) use (&$post_expectations, &$return_values) {
 				$expectation = array_shift($post_expectations);
@@ -723,8 +739,8 @@ class admin_controller_test extends phpbb_database_test_case
 				return array_shift($return_values);
 			});
 
-		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code', 'submit_add', 'submit_edit'];
-		$this->request->expects($ad_id ? self::exactly(5) : self::never())
+		$post_expectations = ['preview', 'upload_banner', 'submit_add', 'submit_edit'];
+		$this->request->expects($ad_id ? self::exactly(4) : self::never())
 			->method('is_set_post')
 			->willReturnCallback(function($arg) use (&$post_expectations) {
 				$expectation = array_shift($post_expectations);
@@ -774,7 +790,8 @@ class admin_controller_test extends phpbb_database_test_case
 					'S_EDIT_AD'				=> true,
 					'EDIT_ID'				=> $ad_id,
 					'U_BACK'				=> $this->u_action,
-					'U_ACTION'				=> "$this->u_action&amp;action=edit&amp;id=" . $ad_id,
+					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=" . $ad_id,
+					'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
 					'DATE_MINIMUM'			=> '',
@@ -848,7 +865,8 @@ class admin_controller_test extends phpbb_database_test_case
 				'S_EDIT_AD'				=> true,
 				'EDIT_ID'				=> 1,
 				'U_BACK'				=> $this->u_action,
-				'U_ACTION'				=> "$this->u_action&amp;action=edit&amp;id=1",
+				'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
+				'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 				'U_FIND_USERNAME'		=> 'u_find_username',
 				'U_ENABLE_VISUAL_DEMO'	=> null,
 				'DATE_MINIMUM'			=> '',
@@ -902,10 +920,10 @@ class admin_controller_test extends phpbb_database_test_case
 				return array_shift($return_values);
 			});
 
-		$post_expectations = ['preview', 'upload_banner', 'analyse_ad_code', 'submit_add', 'submit_edit'];
-		$post_return_values = [false, false, false, false, true];
+		$post_expectations = ['preview', 'upload_banner', 'submit_add', 'submit_edit'];
+		$post_return_values = [false, false, false, true];
 		$this->request
-			->expects(self::exactly(5))
+			->expects(self::exactly(4))
 			->method('is_set_post')
 			->willReturnCallback(function($arg) use (&$post_expectations, &$post_return_values) {
 				$expectation = array_shift($post_expectations);
@@ -955,7 +973,8 @@ class admin_controller_test extends phpbb_database_test_case
 					'S_EDIT_AD'				=> true,
 					'EDIT_ID'				=> 1,
 					'U_BACK'				=> $this->u_action,
-					'U_ACTION'				=> "$this->u_action&amp;action=edit&amp;id=1",
+					'U_ACTION'				=> "{$this->u_action}&amp;action=edit&amp;id=1",
+					'U_ANALYSE_AD_CODE'		=> "{$this->u_action}&amp;action=analyse",
 					'U_FIND_USERNAME'		=> 'u_find_username',
 					'U_ENABLE_VISUAL_DEMO'	=> null,
 					'DATE_MINIMUM'			=> '',
@@ -1241,6 +1260,8 @@ class admin_controller_test extends phpbb_database_test_case
 				'ad_clicks'		=> 0,
 				'ad_views_limit'	=> 0,
 				'ad_clicks_limit'	=> 0,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 1,
 
 			),
 			array(
@@ -1254,6 +1275,8 @@ class admin_controller_test extends phpbb_database_test_case
 				'ad_clicks'		=> 0,
 				'ad_views_limit'	=> 0,
 				'ad_clicks_limit'	=> 0,
+				'ad_views_enabled' => 1,
+				'ad_clicks_enabled' => 1,
 			),
 		);
 
@@ -1273,8 +1296,8 @@ class admin_controller_test extends phpbb_database_test_case
 			});
 
 		$this->manager->expects(self::once())
-			->method('update_ad')
-			->with(2, array('ad_enabled' => 0));
+			->method('disable_expired_ad')
+			->with($rows[1]);
 
 		$this->template->expects(self::atLeastOnce())
 			->method('assign_block_vars');
@@ -1283,8 +1306,6 @@ class admin_controller_test extends phpbb_database_test_case
 			->method('assign_vars')
 			->with(array(
 				'U_ACTION_ADD'		=> $this->u_action . '&amp;action=add',
-				'S_VIEWS_ENABLED'	=> $this->config['phpbb_ads_enable_views'],
-				'S_CLICKS_ENABLED'	=> $this->config['phpbb_ads_enable_clicks'],
 			));
 
 		$this->request->expects(self::once())

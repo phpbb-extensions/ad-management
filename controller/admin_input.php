@@ -106,6 +106,8 @@ class admin_input
 			'ad_groups'			=> $this->request->variable('ad_groups', array(0)),
 			'ad_centering'		=> $this->request->variable('ad_centering', true),
 			'ad_consent'		=> $this->request->variable('ad_consent', 1),
+			'ad_views_enabled'	=> $this->request->variable('ad_views_enabled', 0),
+			'ad_clicks_enabled'	=> $this->request->variable('ad_clicks_enabled', 0),
 		);
 
 		// Validate form key

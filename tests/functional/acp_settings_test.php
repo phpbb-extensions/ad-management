@@ -31,8 +31,6 @@ class acp_settings_test extends functional_base
 		// Submit form
 		$form_data = array(
 			'adblocker_message'	=> 1,
-			'enable_views'		=> 1,
-			'enable_clicks'		=> 1,
 			'show_agreement'	=> 1,
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
@@ -42,10 +40,10 @@ class acp_settings_test extends functional_base
 		// Load Advertisement management ACP page again
 		$crawler = $this->get_settings_page();
 
-		// Confirm Adblocker, views and clicks are enabled, and an admin group is selected
+		// Confirm remaining settings are enabled and tracking settings were removed
 		self::assertEquals('1', $crawler->filter('option[selected]')->attr('value'));
-		self::assertEquals('1', $crawler->filter('input[name="enable_views"][checked]')->attr('value'));
-		self::assertEquals('1', $crawler->filter('input[name="enable_clicks"][checked]')->attr('value'));
+		self::assertCount(0, $crawler->filter('input[name="enable_views"]'));
+		self::assertCount(0, $crawler->filter('input[name="enable_clicks"]'));
 		self::assertEquals('1', $crawler->filter('input[name="show_agreement"][checked]')->attr('value'));
 	}
 

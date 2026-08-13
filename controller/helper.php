@@ -101,6 +101,8 @@ class helper
 			'AD_CONTENT_ONLY'	=> $data['ad_content_only'],
 			'AD_VIEWS_LIMIT'  	=> $data['ad_views_limit'],
 			'AD_CLICKS_LIMIT' 	=> $data['ad_clicks_limit'],
+			'AD_VIEWS_ENABLED'	=> $data['ad_views_enabled'] ?? 0,
+			'AD_CLICKS_ENABLED'	=> $data['ad_clicks_enabled'] ?? 0,
 			'AD_OWNER'        	=> $this->get_username($data['ad_owner']),
 			'AD_CENTERING'      => $data['ad_centering'],
 			'AD_CONSENT'      	=> $data['ad_consent'] ?? 1,
@@ -202,18 +204,18 @@ class helper
 	 */
 	public function is_expired($row)
 	{
-		$latest_timezone_end = strtotime('now -12 hours'); // UTC-12 is the last timezone
+		$latest_timezone_end = time() - ext::EXPIRATION_GRACE_PERIOD;
 		if ((int) $row['ad_end_date'] > 0 && (int) $row['ad_end_date'] < $latest_timezone_end)
 		{
 			return true;
 		}
 
-		if ($row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit'])
+		if (!empty($row['ad_views_enabled']) && $row['ad_views_limit'] && $row['ad_views'] >= $row['ad_views_limit'])
 		{
 			return true;
 		}
 
-		if ($row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit'])
+		if (!empty($row['ad_clicks_enabled']) && $row['ad_clicks_limit'] && $row['ad_clicks'] >= $row['ad_clicks_limit'])
 		{
 			return true;
 		}

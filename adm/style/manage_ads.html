@@ -12,8 +12,13 @@
 	{% if PREVIEW %}
 		<fieldset>
 			<legend>{{ lang('PREVIEW') }}</legend>
-			{% import '@phpbb_ads/phpbb_ads_macro.html' as preview %}
-			{{ preview.renderAds(PREVIEW, 0, AD_CENTERING) }}
+			<p id="phpbb-preview-notice" class="warningbox" role="status" aria-live="polite" style="display: none;">
+				<strong id="phpbb-preview-notice-title"></strong><br>
+				<span id="phpbb-preview-notice-text"></span>
+			</p>
+			<div id="phpbb-preview-output">
+				<div id="phpbb-preview-content"{% if AD_CENTERING %} class="acp-preview-center"{% endif %}>{{ PREVIEW }}</div>
+			</div>
 		</fieldset>
 	{% endif %}
 
@@ -24,28 +29,35 @@
 		</div>
 	{% endif %}
 
+	<form id="acp_ad_code_analyser" method="post" action="{{ U_ANALYSE_AD_CODE }}">
+		{{ S_FORM_TOKEN }}
+	</form>
+
 	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 		<fieldset>
-			<legend>{{ lang('AD_SETTINGS') }}</legend>
+			<legend>{{ lang('AD_DETAILS') }}</legend>
 			<dl>
 				<dt><label for="ad_name">{{ lang('AD_NAME') ~ lang('COLON') }}</label><br><span>{{ lang('AD_NAME_EXPLAIN') }}</span></dt>
 				<dd><input class="text medium" id="ad_name" name="ad_name" value="{{ AD_NAME }}" maxlength="255"></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked{% endif %}> {{ lang('ENABLED') }}</label>
-					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked{% endif %}> {{ lang('DISABLED') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_note">{{ lang('AD_NOTE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_NOTE_EXPLAIN') }}</span></dt>
 				<dd><textarea id="ad_note" name="ad_note" rows="5" cols="60" style="width: 95%;">{{ AD_NOTE }}</textarea></dd>
 			</dl>
 			<dl>
+				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
+				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}"></dd>
+				<dd>[ <a href="{{ U_FIND_USERNAME }}" id="find-username">{{ lang('FIND_USERNAME') }}</a> ]</dd>
+			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{{ lang('AD_CONTENT') }}</legend>
+			<dl>
 				<dt><label for="ad_code">{{ lang('AD_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CODE_EXPLAIN') }}{% if S_ADS_CONSENTMANAGER_AVAILABLE %}{{ lang('AD_CODE_CONSENT_EXPLAIN') }}{% endif %}</span></dt>
 				<dd>
 					<textarea id="ad_code" name="ad_code" rows="20" cols="60" style="width: 95%;">{{ AD_CODE }}</textarea>
-					<button class="button2 phpbb-ads-button" id="analyse_ad_code" name="analyse_ad_code">{{ Icon('font', 'stethoscope', lang('ANALYSE_AD_CODE')) }}</button>
-					<div class="analyser-results">
+					<button class="button2 phpbb-ads-button" type="button" id="analyse_ad_code" form="acp_ad_code_analyser" aria-controls="analyser_results">{{ Icon('font', 'stethoscope', lang('ANALYSE_AD_CODE')) }}</button>
+					<div class="analyser-results" id="analyser_results" role="status" aria-live="polite">
 						{% if loops.analyser_results_notice or loops.analyser_results_warning %}
 							{% if loops.analyser_results_notice %}
 								{% for notice in loops.analyser_results_notice %}
@@ -64,9 +76,6 @@
 					</div>
 				</dd>
 			</dl>
-		</fieldset>
-		<fieldset>
-			<legend>{{ lang('AD_BANNER') }}</legend>
 			<dl>
 				<dt><label for="banner">{{ lang('BANNER') ~ lang('COLON') }}</label><br><span>{{ lang('BANNER_EXPLAIN') }}</span></dt>
 				<dd>
@@ -74,9 +83,26 @@
 					<button class="button2 phpbb-ads-button" id="upload_banner" name="upload_banner">{{ Icon('font', 'upload', lang('BANNER_UPLOAD')) }}</button>
 				</dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_centering">{{ lang('AD_CENTERING') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CENTERING_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_centering" name="ad_centering" value="1"{% if AD_CENTERING %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ad_centering" value="0"{% if not AD_CENTERING %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+			</dl>
 		</fieldset>
+		{% if S_ADS_CONSENTMANAGER_AVAILABLE %}
+			<fieldset>
+				<legend>{{ lang('AD_PRIVACY') }}</legend>
+				<dl>
+					<dt><label for="ad_consent">{{ lang('AD_CONSENT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CONSENT_EXPLAIN') }}</span></dt>
+					<dd><label><input type="radio" class="radio" id="ad_consent" name="ad_consent" value="1"{% if AD_CONSENT is not defined or AD_CONSENT %} checked{% endif %}> {{ lang('YES') }}</label>
+						<label><input type="radio" class="radio" name="ad_consent" value="0"{% if AD_CONSENT is defined and not AD_CONSENT %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+				</dl>
+			</fieldset>
+		{% else %}
+			<input type="hidden" name="ad_consent" value="{{ AD_CONSENT is defined ? AD_CONSENT : 1 }}">
+		{% endif %}
 		<fieldset>
-			<legend>{{ lang('AD_PLACEMENT') }}</legend>
+			<legend>{{ lang('AD_VISIBILITY') }}</legend>
 			<dl>
 				<dt><label for="ad_locations">{{ lang('AD_LOCATIONS') ~ lang('COLON') }}</label><br>
 					<span>{{ lang('AD_LOCATIONS_EXPLAIN') }}<br><br>
@@ -101,51 +127,9 @@
 				</dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
-				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10"></dd>
-			</dl>
-			<dl>
 				<dt><label for="ad_content_only">{{ lang('AD_CONTENT_ONLY') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CONTENT_ONLY_EXPLAIN') }}</span></dt>
 				<dd><label><input type="radio" class="radio" name="ad_content_only" value="1"{% if AD_CONTENT_ONLY %} checked{% endif %}> {{ lang('YES') }}</label>
 					<label><input type="radio" class="radio" id="ad_content_only" name="ad_content_only" value="0"{% if not AD_CONTENT_ONLY %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_centering">{{ lang('AD_CENTERING') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CENTERING_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ad_centering" name="ad_centering" value="1"{% if AD_CENTERING %} checked{% endif %}> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ad_centering" value="0"{% if not AD_CENTERING %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-			</dl>
-		</fieldset>
-		<fieldset>
-			<legend>{{ lang('AD_OPTIONS') }}</legend>
-			{% if S_ADS_CONSENTMANAGER_AVAILABLE %}
-				<dl>
-					<dt><label for="ad_consent">{{ lang('AD_CONSENT') ~ lang('COLON') }}</label><br /><span>{{ lang('AD_CONSENT_EXPLAIN') }}</span></dt>
-					<dd><label><input type="radio" class="radio" id="ad_consent" name="ad_consent" value="1"{% if AD_CONSENT is not defined or AD_CONSENT %} checked{% endif %} /> {{ lang('YES') }}</label>
-						<label><input type="radio" class="radio" name="ad_consent" value="0"{% if AD_CONSENT is defined and not AD_CONSENT %} checked{% endif %} /> {{ lang('NO') }}</label></dd>
-				</dl>
-			{% else %}
-				<input type="hidden" name="ad_consent" value="{{ AD_CONSENT is defined ? AD_CONSENT : 1 }}" />
-			{% endif %}
-			<dl>
-				<dt><label for="ad_owner">{{ lang('AD_OWNER') ~ lang('COLON') }}</label><br><span>{{ lang('AD_OWNER_EXPLAIN') }}</span></dt>
-				<dd><input class="text medium" id="ad_owner" name="ad_owner" value="{{ AD_OWNER }}"></dd>
-				<dd>[ <a href="{{ U_FIND_USERNAME }}" id="find-username">{{ lang('FIND_USERNAME') }}</a> ]</dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text narrow" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" min="0"></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text narrow" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" min="0"></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="phpbb-ads-datepicker" id="ad_start_date" name="ad_start_date" type="date"{% if DATE_MINIMUM %} min="{{ DATE_MINIMUM }}"{% endif %} value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
-				<dd><input class="phpbb-ads-datepicker" id="ad_end_date" name="ad_end_date" type="date"{% if DATE_MINIMUM %} min="{{ DATE_MINIMUM }}"{% endif %} value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_groups">{{ lang('HIDE_GROUPS') ~ lang('COLON') }}</label><br><span>{{ lang('HIDE_GROUPS_EXPLAIN') }}</span></dt>
@@ -155,6 +139,47 @@
 						{% endfor %}
 					</select>
 				</dd>
+			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{{ lang('AD_DELIVERY') }}</legend>
+			<dl>
+				<dt><label for="ad_enabled">{{ lang('AD_ENABLED') ~ lang('COLON') }}</label><br><span>{{ lang('AD_ENABLED_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_enabled" name="ad_enabled" value="1"{% if AD_ENABLED %} checked{% endif %}> {{ lang('ENABLED') }}</label>
+					<label><input type="radio" class="radio" name="ad_enabled" value="0"{% if not AD_ENABLED %} checked{% endif %}> {{ lang('DISABLED') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_priority">{{ lang('AD_PRIORITY') ~ lang('COLON') }}</label><br><span>{{ lang('AD_PRIORITY_EXPLAIN') }}</span></dt>
+				<dd><input type="number" id="ad_priority" name="ad_priority" value="{{ AD_PRIORITY ?: constant('\\phpbb\\ads\\ext::DEFAULT_PRIORITY') }}" min="1" max="10"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_start_date">{{ lang('AD_START_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_START_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="phpbb-ads-datepicker" id="ad_start_date" name="ad_start_date" type="date"{% if DATE_MINIMUM %} min="{{ DATE_MINIMUM }}"{% endif %} value="{{ AD_START_DATE ? AD_START_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_end_date">{{ lang('AD_END_DATE') ~ lang('COLON') }}</label><br><span>{{ lang('AD_END_DATE_EXPLAIN') }}</span></dt>
+				<dd><input class="phpbb-ads-datepicker" id="ad_end_date" name="ad_end_date" type="date"{% if DATE_MINIMUM %} min="{{ DATE_MINIMUM }}"{% endif %} value="{{ AD_END_DATE ? AD_END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}"></dd>
+			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{{ lang('AD_TRACKING_AND_LIMITS') }}</legend>
+			<dl>
+				<dt><label for="ad_views_enabled">{{ lang('ENABLE_VIEWS') ~ lang('COLON') }}</label><br><span>{{ lang('ENABLE_VIEWS_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_views_enabled" name="ad_views_enabled" value="1"{% if AD_VIEWS_ENABLED %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ad_views_enabled" value="0"{% if not AD_VIEWS_ENABLED %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
+				<dd><input class="text narrow" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" min="0"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_clicks_enabled">{{ lang('ENABLE_CLICKS') ~ lang('COLON') }}</label><br><span>{{ lang('ENABLE_CLICKS_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ad_clicks_enabled" name="ad_clicks_enabled" value="1"{% if AD_CLICKS_ENABLED %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ad_clicks_enabled" value="0"{% if not AD_CLICKS_ENABLED %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
+				<dd><input class="text narrow" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" min="0"></dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
@@ -188,8 +213,8 @@
 				<th>{{ lang('AD_PRIORITY') }}</th>
 				<th>{{ lang('AD_START_DATE') }}</th>
 				<th>{{ lang('AD_END_DATE') }}</th>
-				{% if S_VIEWS_ENABLED %}<th>{{ lang('AD_VIEWS') }}</th>{% endif %}
-				{% if S_CLICKS_ENABLED %}<th>{{ lang('AD_CLICKS') }}</th>{% endif %}
+				<th>{{ lang('AD_VIEWS') }}</th>
+				<th>{{ lang('AD_CLICKS') }}</th>
 				<th>{{ lang('STATUS') }}</th>
 				<th>{{ lang('ACTION') }}</th>
 			</tr>
@@ -210,7 +235,7 @@
 			] %}
 				{% if list.loop %}
 					<tr>
-						<td class="row3" colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}"><strong>{{ list.heading }}</strong></td>
+						<td class="row3" colspan="8"><strong>{{ list.heading }}</strong></td>
 					</tr>
 					{% for ad in list.loop %}
 						<tr{% if ad.S_EXPIRED %} title="{{ lang('AD_EXPIRED_EXPLAIN') }}"{% endif %}>
@@ -222,20 +247,20 @@
 									{{ ad.END_DATE ? ad.END_DATE|date(constant('\\phpbb\\ads\\ext::DATE_FORMAT'), 'UTC') }}
 								{% if ad.END_DATE < NOW %}</strong>{% endif %}
 							</td>
-							{% if S_VIEWS_ENABLED %}
-								<td>
+							<td>
+								{% if ad.S_VIEWS_ENABLED %}
 									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
 										{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
 									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
-								</td>
-							{% endif %}
-							{% if S_CLICKS_ENABLED %}
-								<td>
+								{% else %}&mdash;{% endif %}
+							</td>
+							<td>
+								{% if ad.S_CLICKS_ENABLED %}
 									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
 										{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
 									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
-								</td>
-							{% endif %}
+								{% else %}&mdash;{% endif %}
+							</td>
 							<td>
 								{% if list.allow_enable %}
 									<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">
@@ -250,7 +275,7 @@
 					{% endfor %}
 				{% elseif not loops.ads and not loops.expired and loop.last %}
 					<tr>
-						<td colspan="{{ 6 + S_VIEWS_ENABLED + S_CLICKS_ENABLED }}" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
+						<td colspan="8" style="text-align: center;">{{ lang('ACP_ADS_EMPTY') }}</td>
 					</tr>
 				{% endif %}
 			{% endfor %}

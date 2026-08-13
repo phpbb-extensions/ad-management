@@ -62,13 +62,16 @@ class setup_ads_consentmanager_test extends main_listener_base
 			->method('assign_vars')
 			->with(self::callback(function ($vars)
 			{
-				return $vars['AD_ABOVE_HEADER_ID'] === 42
-					&& $vars['AD_ABOVE_HEADER_CENTER'] === false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'type="text/plain"') !== false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'data-consent-category="marketing"') !== false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'src="https://ads.example.com/tag.js"') !== false
-					&& strpos($vars['AD_ABOVE_HEADER'], '<iframe src="https://ads.example.com/frame"></iframe>') !== false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'phpbb-ads-consent-placeholder') === false;
+				$ad = $vars['AD_ABOVE_HEADER'];
+
+				return $ad['ID'] === 42
+					&& $ad['CENTER'] === false
+					&& $ad['CLICK_URL'] === ''
+					&& strpos($ad['CODE'], 'type="text/plain"') !== false
+					&& strpos($ad['CODE'], 'data-consent-category="marketing"') !== false
+					&& strpos($ad['CODE'], 'src="https://ads.example.com/tag.js"') !== false
+					&& strpos($ad['CODE'], '<iframe src="https://ads.example.com/frame"></iframe>') !== false
+					&& strpos($ad['CODE'], 'phpbb-ads-consent-placeholder') === false;
 			}));
 
 		$this->get_listener()->setup_ads();
@@ -124,10 +127,12 @@ class setup_ads_consentmanager_test extends main_listener_base
 			->method('assign_vars')
 			->with(self::callback(function ($vars)
 			{
-				return $vars['AD_ABOVE_HEADER_ID'] === 99
-					&& strpos($vars['AD_ABOVE_HEADER'], 'type="text/plain"') !== false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'data-consent-category="marketing"') !== false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'src="https://ads.example.com/legacy.js"') !== false;
+				$ad = $vars['AD_ABOVE_HEADER'];
+
+				return $ad['ID'] === 99
+					&& strpos($ad['CODE'], 'type="text/plain"') !== false
+					&& strpos($ad['CODE'], 'data-consent-category="marketing"') !== false
+					&& strpos($ad['CODE'], 'src="https://ads.example.com/legacy.js"') !== false;
 			}));
 
 		$this->get_listener()->setup_ads();
@@ -180,9 +185,11 @@ class setup_ads_consentmanager_test extends main_listener_base
 			->method('assign_vars')
 			->with(self::callback(function ($vars)
 			{
-				return strpos($vars['AD_ABOVE_HEADER'], 'type="text/plain"') === false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'data-consent-category="marketing"') === false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'src="https://ads.example.com/tag.js"') !== false;
+				$ad = $vars['AD_ABOVE_HEADER'];
+
+				return strpos($ad['CODE'], 'type="text/plain"') === false
+					&& strpos($ad['CODE'], 'data-consent-category="marketing"') === false
+					&& strpos($ad['CODE'], 'src="https://ads.example.com/tag.js"') !== false;
 			}));
 
 		$this->get_listener()->setup_ads();
@@ -239,10 +246,12 @@ class setup_ads_consentmanager_test extends main_listener_base
 			->method('assign_vars')
 			->with(self::callback(function ($vars)
 			{
-				return $vars['AD_ABOVE_HEADER_ID'] === 78
-					&& strpos($vars['AD_ABOVE_HEADER'], 'type="text/plain"') === false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'data-consent-category="marketing"') === false
-					&& strpos($vars['AD_ABOVE_HEADER'], 'src="https://ads.example.com/tag.js"') !== false;
+				$ad = $vars['AD_ABOVE_HEADER'];
+
+				return $ad['ID'] === 78
+					&& strpos($ad['CODE'], 'type="text/plain"') === false
+					&& strpos($ad['CODE'], 'data-consent-category="marketing"') === false
+					&& strpos($ad['CODE'], 'src="https://ads.example.com/tag.js"') !== false;
 			}));
 
 		$this->get_listener()->setup_ads();

@@ -226,6 +226,29 @@ class prepare_ad_code_test extends ad_base
 		), \phpbb\ads\ad\manager::get_google_consent_aware_script_sources($ad_code));
 	}
 
+	public static function unsupported_google_source_data()
+	{
+		return array(
+			'relative URL' => array('/tag/js/gpt.js'),
+			'unsupported scheme' => array('ftp://securepubads.g.doubleclick.net/tag/js/gpt.js'),
+			'missing path' => array('https://securepubads.g.doubleclick.net'),
+			'malformed URL' => array('http://['),
+		);
+	}
+
+	/**
+	 * Similar-looking sources without valid allowlisted HTTP URLs remain deferred.
+	 *
+	 * @dataProvider unsupported_google_source_data
+	 */
+	public function test_defers_unsupported_google_loader_sources($source)
+	{
+		$script = '<script src="' . $source . '"></script>';
+		$result = $this->get_manager()->prepare_ad_code(htmlspecialchars($script, ENT_COMPAT), true);
+
+		self::assertSame('<script src="' . $source . '" type="text/plain" data-consent-category="marketing"></script>', $result);
+	}
+
 	public function test_non_script_html_is_preserved()
 	{
 		$raw = htmlspecialchars('<div class="ad-slot">Ad</div><iframe src="https://ads.example.com/frame"></iframe>', ENT_COMPAT);

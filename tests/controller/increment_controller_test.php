@@ -26,6 +26,12 @@ class increment_controller_test extends phpbb_database_test_case
 	/** @var MockObject|request */
 	protected MockObject|request $request;
 
+	/** @var \phpbb\cache\driver\driver_interface */
+	protected $cache;
+
+	/** @var \phpbb\user */
+	protected $user;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -50,13 +56,18 @@ class increment_controller_test extends phpbb_database_test_case
 		parent::setUp();
 
 		global $user;
-		$user = new \stdClass();
+		$user = $this->getMockBuilder('\phpbb\user')->disableOriginalConstructor()->getMock();
 		$user->data = array('user_form_salt' => 'test-form-salt');
+		$user->session_id = '';
+		$this->user = $user;
 
 		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$this->request = $this->getMockBuilder(request::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$this->cache = $this->getMockBuilder('\phpbb\cache\driver\dummy')
 			->disableOriginalConstructor()
 			->getMock();
 	}
@@ -70,7 +81,9 @@ class increment_controller_test extends phpbb_database_test_case
 	{
 		return new increment_controller(
 			$this->manager,
-			$this->request
+			$this->request,
+			$this->cache,
+			$this->user
 		);
 	}
 
@@ -104,7 +117,7 @@ class increment_controller_test extends phpbb_database_test_case
 		$this->request->expects(($ad_id && $is_ajax) ? self::once() : self::never())
 			->method('variable')
 			->with('hash', '')
-			->willReturn($valid_hash ? generate_link_hash('phpbb_ads_click') : 'invalid');
+			->willReturn($valid_hash ? generate_link_hash('phpbb_ads_click_' . $ad_id) : 'invalid');
 
 		$this->manager->expects(($ad_id && $is_ajax && $valid_hash) ? self::once() : self::never())
 			->method('increment_ad_clicks')
@@ -120,6 +133,58 @@ class increment_controller_test extends phpbb_database_test_case
 			self::assertEquals(403, $exception->getStatusCode());
 			self::assertEquals('NOT_AUTHORISED', $exception->getMessage());
 		}
+	}
+
+	/**
+	 * Hash generated for another ad cannot increment requested ad.
+	 */
+	public function test_click_hash_is_bound_to_ad_id()
+	{
+		$this->request->method('is_ajax')->willReturn(true);
+		$this->request->method('variable')->with('hash', '')
+			->willReturn(generate_link_hash('phpbb_ads_click_2'));
+		$this->manager->expects(self::never())->method('increment_ad_clicks');
+
+		$this->expectException('\phpbb\exception\http_exception');
+		$this->get_controller()->handle(1, 'clicks');
+	}
+
+	/**
+	 * Server cache suppresses rapid repeated clicks without database work.
+	 */
+	public function test_click_rate_limit()
+	{
+		$this->user->session_id = 'session-id';
+		$this->request->method('is_ajax')->willReturn(true);
+		$this->request->method('variable')->with('hash', '')
+			->willReturn(generate_link_hash('phpbb_ads_click_1'));
+		$this->cache->expects(self::once())->method('get')->willReturn(true);
+		$this->cache->expects(self::never())->method('put');
+		$this->manager->expects(self::never())->method('increment_ad_clicks');
+
+		$response = $this->get_controller()->handle(1, 'clicks');
+
+		self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+	}
+
+	/**
+	 * First click stores cooldown and increments counter.
+	 */
+	public function test_click_rate_limit_starts_cooldown()
+	{
+		$this->user->session_id = 'session-id';
+		$this->request->method('is_ajax')->willReturn(true);
+		$this->request->method('variable')->with('hash', '')
+			->willReturn(generate_link_hash('phpbb_ads_click_1'));
+		$key = '_phpbb_ads_click_' . hash('sha256', 'session-id:1');
+		$this->cache->expects(self::once())->method('get')->with($key)->willReturn(false);
+		$this->cache->expects(self::once())->method('put')
+			->with($key, true, \phpbb\ads\controller\increment_controller::CLICK_COOLDOWN);
+		$this->manager->expects(self::once())->method('increment_ad_clicks')->with(1);
+
+		$response = $this->get_controller()->handle(1, 'clicks');
+
+		self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
 	}
 
 
@@ -171,5 +236,27 @@ class increment_controller_test extends phpbb_database_test_case
 			self::assertEquals(403, $exception->getStatusCode());
 			self::assertEquals('NOT_AUTHORISED', $exception->getMessage());
 		}
+	}
+
+	/**
+	 * @dataProvider invalid_payload_data
+	 */
+	public function test_invalid_payload_is_rejected($data, $mode)
+	{
+		$this->request->expects(self::never())->method('is_ajax');
+		$this->manager->expects(self::never())->method('increment_ads_views');
+		$this->manager->expects(self::never())->method('increment_ad_clicks');
+
+		$this->expectException('\phpbb\exception\http_exception');
+		$this->get_controller()->handle($data, $mode);
+	}
+
+	public static function invalid_payload_data()
+	{
+		return array(
+			array('1-two', 'views'),
+			array(implode('-', array_fill(0, 51, '1')), 'views'),
+			array('1', 'unknown'),
+		);
 	}
 }

@@ -1,23 +1,29 @@
-.phpbb-ads {
+.phpbb-ads,
+#phpbb-preview-content {
 	overflow: hidden;
 	margin: 10px 0;
 }
 
-.phpbb-ads img {
+.phpbb-ads img,
+#phpbb-preview-content img {
 	max-width: 100%;
 	height: auto;
 }
 
 .phpbb-ads iframe,
-.phpbb-ads video {
+.phpbb-ads video,
+#phpbb-preview-content iframe,
+#phpbb-preview-content video {
 	max-width: 100%;
 }
 
-.phpbb-ads-center {
+.phpbb-ads-center,
+.acp-preview-center {
 	text-align: center;
 }
 
-.phpbb-ads-center > :first-child:not(script) {
+.phpbb-ads-center > :first-child:not(script),
+.acp-preview-center > :first-child:not(script) {
 	display: inline-block;
 	max-width: 100%;
 }
