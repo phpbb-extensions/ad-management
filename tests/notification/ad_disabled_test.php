@@ -28,9 +28,17 @@ class ad_disabled_test extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_dispatcher, $phpbb_root_path, $phpEx;
+		global $config, $phpbb_dispatcher, $phpbb_root_path, $phpEx, $user;
 
 		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
+		$config = new \phpbb\config\config(array(
+			'cookie_secure' => false,
+			'force_server_vars' => true,
+			'script_path' => '/phpbb',
+			'server_name' => 'localhost',
+			'server_port' => 80,
+			'server_protocol' => 'http://',
+		));
 
 		$this->db = $this->getMockBuilder('\phpbb\db\driver\driver_interface')->getMock();
 		$this->language = $this->getMockBuilder('\phpbb\language\language')->disableOriginalConstructor()->getMock();
