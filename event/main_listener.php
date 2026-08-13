@@ -139,6 +139,7 @@ class main_listener implements EventSubscriberInterface
 		$user_groups = $this->manager->load_memberships($this->user->data['user_id']);
 		$ads = $this->manager->get_ads($location_ids, $user_groups, $non_content_page);
 		$click_urls = $this->prepare_click_tracking($ads);
+		$view_urls = $this->prepare_view_tracking($ads);
 
 		foreach ($ads as $row)
 		{
@@ -152,11 +153,10 @@ class main_listener implements EventSubscriberInterface
 					'ID' => $ad_id,
 					'CENTER' => (bool) $row['ad_centering'],
 					'CLICK_URL' => $click_urls[$ad_id] ?? '',
+					'VIEW_URL' => $view_urls[$ad_id] ?? '',
 				),
 			));
 		}
-
-		$this->prepare_view_tracking($ads);
 	}
 
 	/**
@@ -227,7 +227,7 @@ class main_listener implements EventSubscriberInterface
 
 		if ($click_urls)
 		{
-			$this->template->assign_var('S_PHPBB_ADS_ENABLE_CLICKS', true);
+			$this->template->assign_var('S_PHPBB_ADS_CLICKS_ENABLED', true);
 		}
 
 		return $click_urls;
@@ -237,29 +237,33 @@ class main_listener implements EventSubscriberInterface
 	 * Prepare views counter template
 	 *
 	 * @param	array	$ads	Ads that will be displayed on current request's page
-	 * @return	void
+	 * @return	array	View URLs indexed by advertisement ID
 	 */
 	protected function prepare_view_tracking(array $ads)
 	{
 		if (!empty($this->user->data['is_bot']))
 		{
-			return;
+			return array();
 		}
 
 		$ad_ids = $this->get_tracking_ad_ids($ads, 'ad_views_enabled');
 		if (!$ad_ids)
 		{
-			return;
+			return array();
 		}
 
-		$ad_id_string = implode('-', $ad_ids);
-		$this->template->assign_vars(array(
-			'S_PHPBB_ADS_INCREMENT_VIEWS'	=> true,
-			'U_PHPBB_ADS_VIEWS'	=> $this->controller_helper->route('phpbb_ads_view', array(
-				'data' => $ad_id_string,
-				'hash' => generate_link_hash('phpbb_ads_views_' . $ad_id_string),
-			), true, ''),
-		));
+		$view_urls = array();
+		foreach ($ad_ids as $ad_id)
+		{
+			$view_urls[$ad_id] = $this->controller_helper->route('phpbb_ads_view', array(
+				'data' => $ad_id,
+				'hash' => generate_link_hash('phpbb_ads_views_' . $ad_id),
+			), true, '');
+		}
+
+		$this->template->assign_var('S_PHPBB_ADS_VIEWS_ENABLED', true);
+
+		return $view_urls;
 	}
 
 	/**

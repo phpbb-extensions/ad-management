@@ -67,12 +67,13 @@ class views_test extends main_listener_base
 		if (!$is_bot)
 		{
 			$this->template
-				->expects(self::exactly(2))
+				->expects(self::once())
 				->method('assign_vars')
-				->withConsecutive(
-					[['AD_' => ['CODE' => null, 'ID' => 1, 'CENTER' => false, 'CLICK_URL' => '']]],
-					[['S_PHPBB_ADS_INCREMENT_VIEWS'	=> true, 'U_PHPBB_ADS_VIEWS'	=> 'app.php/adsview/1']]
-				);
+				->with(['AD_' => ['CODE' => null, 'ID' => 1, 'CENTER' => false, 'CLICK_URL' => '', 'VIEW_URL' => 'app.php/adsview/1']]);
+			$this->template
+				->expects(self::once())
+				->method('assign_var')
+				->with('S_PHPBB_ADS_VIEWS_ENABLED', true);
 		}
 
 		$listener = $this->get_listener();
