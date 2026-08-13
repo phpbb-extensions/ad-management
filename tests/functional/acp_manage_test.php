@@ -288,18 +288,23 @@ class acp_manage_test extends functional_base
 		// Load Advertisement management ACP page
 		$crawler = $this->get_manage_page();
 
-		// Hit Disabled button
+		// Hit Disabled button using AJAX.
 		$enable_link = $crawler->selectLink($this->lang('DISABLED'))->link();
-		$crawler = static::click($enable_link);
-		$this->assertContainsLang('ACP_AD_ENABLE_SUCCESS', $crawler->text());
+		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+		self::$client->request('GET', $enable_link->getUri());
+		$response = json_decode(self::get_content(), true);
 
-		// Load Advertisement management ACP page again
-		$crawler = $this->get_manage_page();
+		self::assertSame($this->lang('ENABLED'), $response['text']);
+		self::assertStringContainsString('action=disable', $response['href']);
 
-		// Hit Enabled button
-		$disable_link = $crawler->selectLink($this->lang('ENABLED'))->link();
-		$crawler = static::click($disable_link);
-		$this->assertContainsLang('ACP_AD_DISABLE_SUCCESS', $crawler->text());
+		// Reuse URL returned to the AJAX callback, without reloading the page.
+		self::assertStringNotContainsString('&amp;', $response['href']);
+		self::$client->request('GET', $response['href']);
+		$response = json_decode(self::get_content(), true);
+		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', '');
+
+		self::assertSame($this->lang('DISABLED'), $response['text']);
+		self::assertStringContainsString('action=enable', $response['href']);
 	}
 
 	/**

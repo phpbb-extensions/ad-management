@@ -405,10 +405,12 @@ class admin_controller
 		// If AJAX was used, show user a result message
 		if ($this->request->is_ajax())
 		{
+			$next_action = $enable ? 'disable' : 'enable';
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
 				'text'  => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
 				'title' => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
+				'href'  => html_entity_decode($this->u_action) . '&action=' . $next_action . '&id=' . $ad_id . '&hash=' . generate_link_hash('phpbb_ads_' . $next_action . '_' . $ad_id),
 			));
 		}
 
