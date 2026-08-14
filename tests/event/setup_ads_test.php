@@ -28,7 +28,7 @@ class setup_ads_test extends main_listener_base
 		$ads = $this->manager->get_ads($location_ids, $user_groups);
 
 		$this->template
-			->expects(self::exactly(count($ads) + 1))
+			->expects(self::exactly(count($ads)))
 			->method('assign_vars');
 
 		$dispatcher = new dispatcher();

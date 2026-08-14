@@ -69,11 +69,11 @@ class views_test extends main_listener_base
 		if (!$is_bot)
 		{
 			$expectations = array(
-				['AD_' => ['CODE' => null, 'ID' => 1, 'CENTER' => false, 'CLICK_URL' => '']],
-				['S_PHPBB_ADS_INCREMENT_VIEWS' => true, 'U_PHPBB_ADS_VIEWS' => 'app.php/adsview/1'],
+				['AD_' => ['CODE' => null, 'ID' => 1, 'CENTER' => false, 'CLICK_URL' => '', 'VIEW_URL' => 'app.php/adsview/1']],
+				['S_PHPBB_ADS_VIEWS_ENABLED' => true, 'U_PHPBB_ADS_VIEWS' => 'app.php/adsview/1'],
 			);
 			$this->template
-				->expects(self::exactly(2))
+				->expects(self::once())
 				->method('assign_vars')
 				->willReturnCallback(function($arg) use (&$expectations) {
 					self::assertEquals(array_shift($expectations), $arg);

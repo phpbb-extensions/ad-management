@@ -1037,6 +1037,8 @@ class admin_controller_test extends phpbb_database_test_case
 			array(0, false, false, 'ACP_AD_DISABLE_ERRORED'),
 			array(1, false, false, 'ACP_AD_DISABLE_SUCCESS'),
 			array(1, true, false, 'ACP_AD_ENABLE_SUCCESS'),
+			array(0, false, true, 'ACP_AD_DISABLE_ERRORED'),
+			array(0, true, true, 'ACP_AD_ENABLE_ERRORED'),
 			array(1, false, true, 'ACP_AD_DISABLE_SUCCESS'),
 			array(1, true, true, 'ACP_AD_ENABLE_SUCCESS'),
 		);
@@ -1057,14 +1059,30 @@ class admin_controller_test extends phpbb_database_test_case
 			->method('update_ad')
 			->willReturn((bool) $ad_id);
 
-		$this->request->expects($ad_id ? self::once() : self::never())
+		$this->request->expects(self::once())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
 		if ($is_ajax)
 		{
-			$this->expectOutputString('{"text":"' . ($enable ? 'Enabled' : 'Disabled') . '","title":"AD_ENABLE_TITLE"}');
-			$this->expectException(\RuntimeException::class);
+			if (!$ad_id)
+			{
+				$this->input->expects(self::once())
+					->method('send_ajax_response')
+					->with(false, $this->language->lang($err_msg));
+			}
+
+			if ($ad_id)
+			{
+				$next_action = $enable ? 'disable' : 'enable';
+				$this->expectOutputString(json_encode(array(
+					'success' => true,
+					'text'    => $enable ? 'Enabled' : 'Disabled',
+					'title'   => 'AD_ENABLE_TITLE',
+					'href'    => html_entity_decode($this->u_action) . '&action=' . $next_action . '&id=' . $ad_id . '&hash=' . generate_link_hash('phpbb_ads_' . $next_action . '_' . $ad_id),
+				)));
+				$this->expectException(\RuntimeException::class);
+			}
 		}
 		else
 		{
