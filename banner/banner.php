@@ -12,6 +12,9 @@ namespace phpbb\ads\banner;
 
 class banner
 {
+	/** @var string Pattern used by phpBB's unique_ext filename mode */
+	public const MANAGED_FILENAME_PATTERN = '/^[a-f0-9]{32}\.(?:gif|jpe?g|png)$/i';
+
 	/** @var \phpbb\files\upload */
 	protected $files_upload;
 
@@ -91,6 +94,77 @@ class banner
 	 */
 	public function remove()
 	{
-		$this->file->remove();
+		if ($this->file)
+		{
+			$this->file->remove();
+		}
+	}
+
+	/**
+	 * Extract Ads-managed banner filenames referenced by ad code.
+	 *
+	 * @param string $ad_code Advertisement code
+	 * @return array Unique banner filenames
+	 */
+	public function extract_filenames($ad_code)
+	{
+		$ad_code = html_entity_decode($ad_code, ENT_QUOTES, 'UTF-8');
+		preg_match_all(
+			'~(?:^|/)images/phpbb_ads/([a-f0-9]{32}\.(?:gif|jpe?g|png))(?![a-z0-9._-])~i',
+			$ad_code,
+			$matches
+		);
+
+		return array_values(array_unique($matches[1]));
+	}
+
+	/**
+	 * Remove candidate banners not referenced by supplied ad code.
+	 *
+	 * Only filenames produced by unique_ext are accepted. Failed removals are
+	 * left in place so banner cleanup cannot prevent an ad from being saved or
+	 * deleted.
+	 *
+	 * @param array $candidates Banner filenames eligible for removal
+	 * @param array $ad_codes Advertisement code that may still reference them
+	 * @return array Successfully removed filenames
+	 */
+	public function remove_unreferenced($candidates, $ad_codes)
+	{
+		$referenced = array();
+		foreach ((array) $ad_codes as $ad_code)
+		{
+			$referenced = array_merge($referenced, $this->extract_filenames($ad_code));
+		}
+		$referenced = array_flip(array_unique($referenced));
+
+		$removed = array();
+		foreach (array_unique((array) $candidates) as $filename)
+		{
+			if (!is_string($filename)
+				|| !preg_match(self::MANAGED_FILENAME_PATTERN, $filename)
+				|| isset($referenced[$filename]))
+			{
+				continue;
+			}
+
+			$path = $this->root_path . 'images/phpbb_ads/' . $filename;
+			if (!is_file($path))
+			{
+				continue;
+			}
+
+			try
+			{
+				$this->filesystem->remove($path);
+				$removed[] = $filename;
+			}
+			catch (\phpbb\filesystem\exception\filesystem_exception $e)
+			{
+				// Leave file in place. Ad lifecycle operation must still succeed.
+			}
+		}
+
+		return $removed;
 	}
 }

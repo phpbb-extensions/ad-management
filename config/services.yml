@@ -69,6 +69,7 @@ services:
             - '@language'
             - '@request'
             - '@phpbb.ads.ad.manager'
+            - '@phpbb.ads.banner.banner'
             - '@config'
             - '@phpbb.ads.admin.input'
             - '@phpbb.ads.helper'

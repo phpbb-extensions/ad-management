@@ -34,6 +34,11 @@
 	</form>
 
 	<form id="acp_admanagement_add" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+		{% if S_ADD_AD %}
+			{% for uploaded_banner in loops.uploaded_banners %}
+				<input type="hidden" name="uploaded_banners[]" value="{{ uploaded_banner.FILENAME }}">
+			{% endfor %}
+		{% endif %}
 		<fieldset>
 			<legend>{{ lang('AD_DETAILS') }}</legend>
 			<dl>
