@@ -78,4 +78,21 @@ class cleanup_test extends banner_base
 
 		self::assertSame(array($orphan), $removed);
 	}
+
+	public function test_failed_removal_is_left_in_place()
+	{
+		$orphan = str_repeat('a', 32) . '.jpg';
+		$path = $this->cleanup_root . 'images/phpbb_ads/' . $orphan;
+		file_put_contents($path, 'orphan');
+
+		$this->filesystem->expects(self::once())
+			->method('remove')
+			->with($path)
+			->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('FILESYSTEM_CANNOT_DELETE_FILES', $path));
+
+		$manager = new \phpbb\ads\banner\banner($this->files_upload, $this->filesystem, $this->cleanup_root);
+
+		self::assertSame(array(), $manager->remove_unreferenced(array($orphan), array()));
+		self::assertFileExists($path);
+	}
 }

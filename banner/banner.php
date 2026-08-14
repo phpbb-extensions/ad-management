@@ -134,16 +134,18 @@ class banner
 		$referenced = array();
 		foreach ((array) $ad_codes as $ad_code)
 		{
-			$referenced = array_merge($referenced, $this->extract_filenames($ad_code));
+			foreach ($this->extract_filenames($ad_code) as $filename)
+			{
+				$referenced[$filename] = true;
+			}
 		}
-		$referenced = array_flip(array_unique($referenced));
 
 		$removed = array();
 		foreach (array_unique((array) $candidates) as $filename)
 		{
 			if (!is_string($filename)
-				|| !preg_match(self::MANAGED_FILENAME_PATTERN, $filename)
-				|| isset($referenced[$filename]))
+				|| isset($referenced[$filename])
+				|| !preg_match(self::MANAGED_FILENAME_PATTERN, $filename))
 			{
 				continue;
 			}
