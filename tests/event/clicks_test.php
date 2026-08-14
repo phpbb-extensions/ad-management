@@ -53,11 +53,12 @@ class clicks_test extends main_listener_base
 				'ID' => 7,
 				'CENTER' => false,
 				'CLICK_URL' => $enabled ? 'app.php/adsclick/7' : '',
+				'VIEW_URL' => '',
 			)));
 
 		$this->template->expects($enabled ? self::once() : self::never())
 			->method('assign_var')
-			->with('S_PHPBB_ADS_ENABLE_CLICKS', true);
+			->with('S_PHPBB_ADS_CLICKS_ENABLED', true);
 
 		$this->get_listener()->setup_ads();
 	}
@@ -118,7 +119,7 @@ class clicks_test extends main_listener_base
 
 		$this->template->expects(self::once())
 			->method('assign_var')
-			->with('S_PHPBB_ADS_ENABLE_CLICKS', true);
+			->with('S_PHPBB_ADS_CLICKS_ENABLED', true);
 		$this->template->expects(self::exactly(2))
 			->method('assign_vars')
 			->withConsecutive(
@@ -127,12 +128,14 @@ class clicks_test extends main_listener_base
 					'ID' => 7,
 					'CENTER' => false,
 					'CLICK_URL' => 'app.php/adsclick/7',
+					'VIEW_URL' => '',
 				))],
 				[array('AD_BELOW_HEADER' => array(
 					'CODE' => null,
 					'ID' => 7,
 					'CENTER' => false,
 					'CLICK_URL' => 'app.php/adsclick/7',
+					'VIEW_URL' => '',
 				))]
 			);
 

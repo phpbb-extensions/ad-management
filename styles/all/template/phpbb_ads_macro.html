@@ -1,7 +1,7 @@
 {% macro renderAd(ad, options = {}) %}
 	{% if ad.CODE %}
 		{% set style = options.style|default('') %}
-		<div class="phpbb-ads{% if ad.CENTER %} phpbb-ads-center{% endif %}"{% if style %} style="{{ style|e('html_attr') }}"{% endif %} data-phpbb-ads-id="{{ ad.ID|e('html_attr') }}"{% if ad.CLICK_URL %} data-phpbb-ads-click-url="{{ ad.CLICK_URL|e('html_attr') }}"{% endif %}>
+		<div class="phpbb-ads{% if ad.CENTER %} phpbb-ads-center{% endif %}"{% if style %} style="{{ style|e('html_attr') }}"{% endif %} data-phpbb-ads-id="{{ ad.ID|e('html_attr') }}"{% if ad.CLICK_URL %} data-phpbb-ads-click-url="{{ ad.CLICK_URL|e('html_attr') }}"{% endif %}{% if ad.VIEW_URL %} data-phpbb-ads-view-url="{{ ad.VIEW_URL|e('html_attr') }}"{% endif %}>
 			{% if ad.CODE is iterable and ad.CODE.visual_demo %}
 				<div class="phpbb-ads-visual-demo" title="{{ ad.CODE.desc|e('html_attr') }}">{{ ad.CODE.name|e }}</div>
 			{% else %}

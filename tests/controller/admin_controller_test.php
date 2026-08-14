@@ -1040,6 +1040,8 @@ class admin_controller_test extends \phpbb_database_test_case
 			array(0, false, false, 'ACP_AD_DISABLE_ERRORED'),
 			array(1, false, false, 'ACP_AD_DISABLE_SUCCESS'),
 			array(1, true, false, 'ACP_AD_ENABLE_SUCCESS'),
+			array(0, false, true, 'ACP_AD_DISABLE_ERRORED'),
+			array(0, true, true, 'ACP_AD_ENABLE_ERRORED'),
 			array(1, false, true, 'ACP_AD_DISABLE_SUCCESS'),
 			array(1, true, true, 'ACP_AD_ENABLE_SUCCESS'),
 		);
@@ -1066,8 +1068,18 @@ class admin_controller_test extends \phpbb_database_test_case
 
 		if ($is_ajax)
 		{
-			// Handle trigger_error() output called from json_response
-			$this->setExpectedTriggerError(E_WARNING);
+			if (!$ad_id)
+			{
+				$this->input->expects(self::once())
+					->method('send_ajax_response')
+					->with(false, $this->language->lang($err_msg));
+			}
+
+			if ($ad_id)
+			{
+				// Handle trigger_error() output called from json_response
+				$this->setExpectedTriggerError(E_WARNING);
+			}
 		}
 		else
 		{

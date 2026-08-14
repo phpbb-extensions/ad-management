@@ -1,7 +1,7 @@
-(function (window, document) {
+(function(window, document) {
 	'use strict';
 
-	var baitClasses = [
+	const baitClasses = [
 		'pub_300x250',
 		'pub_300x250m',
 		'pub_728x90',
@@ -20,7 +20,7 @@
 	];
 
 	function createBait() {
-		var bait = document.createElement('div');
+		const bait = document.createElement('div');
 
 		bait.className = baitClasses.join(' ');
 		bait.setAttribute('aria-hidden', 'true');
@@ -30,8 +30,6 @@
 	}
 
 	function isHidden(element) {
-		var style;
-
 		if (!element) {
 			return true;
 		}
@@ -47,7 +45,7 @@
 		}
 
 		if (window.getComputedStyle) {
-			style = window.getComputedStyle(element);
+			const style = window.getComputedStyle(element);
 
 			if (style && (style.getPropertyValue('display') === 'none' || style.getPropertyValue('visibility') === 'hidden')) {
 				return true;
@@ -58,19 +56,17 @@
 	}
 
 	function detectDomBait() {
-		return new Promise(function (resolve) {
-			var bait;
-
+		return new Promise((resolve) => {
 			if (!document.body) {
 				resolve(false);
 				return;
 			}
 
-			bait = createBait();
+			const bait = createBait();
 			document.body.appendChild(bait);
 
-			window.setTimeout(function () {
-				var blocked = isHidden(bait);
+			window.setTimeout(() => {
+				const blocked = isHidden(bait);
 
 				if (bait.parentNode) {
 					bait.parentNode.removeChild(bait);
@@ -89,23 +85,18 @@
 		return window.fetch(url, {
 			cache: 'no-store',
 			credentials: 'same-origin'
-		}).then(function (response) {
-			return !response.ok;
-		}).catch(function () {
-			return true;
-		});
+		}).then((response) => !response.ok)
+			.catch(() => true);
 	}
 
 	window.phpbbAdsDetectAdblock = {
-		detect: function (options) {
-			options = options || {};
+		detect(options) {
+			const settings = options || {};
 
 			return Promise.all([
 				detectDomBait(),
-				detectBaitRequest(options.baitUrl)
-			]).then(function (results) {
-				return results[0] || results[1];
-			});
+				detectBaitRequest(settings.baitUrl)
+			]).then(([domBlocked, requestBlocked]) => domBlocked || requestBlocked);
 		}
 	};
 })(window, document);
