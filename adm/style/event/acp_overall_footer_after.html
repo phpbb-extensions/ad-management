@@ -6,6 +6,11 @@
 	phpbb.addAjaxCallback('toggle_enable', function(res) {
 		'use strict';
 
+		if (!res.success) {
+			phpbb.alert(res.title, res.text);
+			return;
+		}
+
 		var $this = $(this);
 
 		$this.text(res.text);

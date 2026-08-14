@@ -294,6 +294,7 @@ class acp_manage_test extends functional_base
 		self::$client->request('GET', $enable_link->getUri());
 		$response = json_decode(self::get_content(), true);
 
+		self::assertTrue($response['success']);
 		self::assertSame($this->lang('ENABLED'), $response['text']);
 		self::assertStringContainsString('action=disable', $response['href']);
 
@@ -303,6 +304,7 @@ class acp_manage_test extends functional_base
 		$response = json_decode(self::get_content(), true);
 		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', '');
 
+		self::assertTrue($response['success']);
 		self::assertSame($this->lang('DISABLED'), $response['text']);
 		self::assertStringContainsString('action=enable', $response['href']);
 	}
