@@ -553,6 +553,10 @@ class admin_controller
 				// Only insert new ad locations to DB when ad exists
 				$this->manager->delete_ad_locations($ad_id);
 				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
+				if (!empty($this->data['uploaded_banners']))
+				{
+					$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+				}
 
 				$this->helper->log('EDIT', $this->data['ad_name']);
 

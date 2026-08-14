@@ -956,6 +956,7 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_code'		=> 'Ad Code #1',
 			'ad_locations'	=> array(),
 			'ad_owner'		=> $ad_owner,
+			'uploaded_banners' => array(str_repeat('b', 32) . '.png'),
 		);
 
 		$this->manager->expects(self::once())
@@ -1020,6 +1021,10 @@ class admin_controller_test extends \phpbb_database_test_case
 				$this->manager->expects(self::once())
 					->method('insert_ad_locations')
 					->with(1, array());
+
+				$this->banner->expects(self::once())
+					->method('remove_unreferenced')
+					->with($data['uploaded_banners'], array($data['ad_code']));
 
 				$this->helper->expects(self::once())
 					->method('log')
