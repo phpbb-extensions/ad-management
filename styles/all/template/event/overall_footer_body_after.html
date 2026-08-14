@@ -8,11 +8,11 @@
 
 {% if S_PHPBB_ADS_VISUAL_DEMO %}
 <script>
-	phpbb.addAjaxCallback('phpbb_ads_close_visual_demo_window', function(res) {
+	phpbb.addAjaxCallback('phpbb_ads_close_visual_demo_window', (res) => {
 		if (res.success) {
 			window.close();
 		} else {
-			phpbb.alert('{{ lang('GENERAL_ERROR')|escape("js") }}', '{{ lang('DISABLE_VISUAL_DEMO_ERROR')|escape("js") }}')
+			phpbb.alert('{{ lang('GENERAL_ERROR')|escape("js") }}', '{{ lang('DISABLE_VISUAL_DEMO_ERROR')|escape("js") }}');
 		}
 	});
 </script>
@@ -22,7 +22,7 @@
 <script>
 	phpbbAdsDetectAdblock.detect({
 		baitUrl: '{{ (ROOT_PATH ~ 'ext/phpbb/ads/styles/all/template/js/adsbygoogle.js?assets_version=' ~ T_ASSETS_VERSION)|e('js') }}'
-	}).then(function(detected) {
+	}).then((detected) => {
 		if (detected) {
 			document.getElementById('phpbb-aJHwDeoSqLhW').style.display='block';
 			{% if S_DISPLAY_ADBLOCKER === 2 %}document.getElementById('darkenwrapper').style.display='block';{% endif %}

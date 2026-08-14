@@ -1,9 +1,9 @@
 (function(window, document) {
 	'use strict';
 
-	var clickCooldown = 10000;
-	var tracked = {};
-	var observed = [];
+	const clickCooldown = 10000;
+	const tracked = {};
+	const observed = [];
 
 	function closest(element, predicate) {
 		while (element && element !== document) {
@@ -17,13 +17,13 @@
 	}
 
 	function hasBox(element) {
-		var rect = element.getBoundingClientRect();
+		const rect = element.getBoundingClientRect();
 		return rect.width > 0 && rect.height > 0 && element.getClientRects().length > 0;
 	}
 
 	function isDisplayed(element) {
 		while (element && element.nodeType === 1) {
-			var style = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle;
+			const style = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle;
 			if (style && (style.display === 'none' || style.visibility === 'hidden' ||
 				style.visibility === 'collapse' || parseFloat(style.opacity) === 0)) {
 				return false;
@@ -35,9 +35,8 @@
 	}
 
 	function hasText(element) {
-		var childNodes = element.childNodes;
-		for (var i = 0; i < childNodes.length; i++) {
-			if (childNodes[i].nodeType === 3 && childNodes[i].nodeValue.replace(/\s/g, '')) {
+		for (const node of element.childNodes) {
+			if (node.nodeType === 3 && node.nodeValue.replace(/\s/g, '')) {
 				return true;
 			}
 		}
@@ -53,10 +52,9 @@
 			return true;
 		}
 
-		var elements = ad.querySelectorAll('*');
-		for (var i = 0; i < elements.length; i++) {
-			var element = elements[i];
-			var tag = element.tagName;
+		const elements = ad.querySelectorAll('*');
+		for (const element of elements) {
+			const tag = element.tagName;
 			if (/^(SCRIPT|STYLE|LINK|META|NOSCRIPT|TEMPLATE)$/.test(tag) ||
 				!isDisplayed(element) || !hasBox(element)) {
 				continue;
@@ -73,9 +71,9 @@
 				return true;
 			}
 
-			var style = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle;
-			var background = style ? style.backgroundColor : '';
-			var hasBackground = style && (style.backgroundImage !== 'none' || (background !== 'transparent' &&
+			const style = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle;
+			const background = style ? style.backgroundColor : '';
+			const hasBackground = style && (style.backgroundImage !== 'none' || (background !== 'transparent' &&
 				background !== 'rgba(0, 0, 0, 0)' && !/rgba\([^)]*,\s*0(?:\.0+)?\)$/.test(background)));
 			if (hasText(element) || hasBackground) {
 				return true;
@@ -92,65 +90,59 @@
 				credentials: 'same-origin',
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 				keepalive: true
-			}).catch(function() {});
+			}).catch(() => {});
 			return;
 		}
 
-		var request = new window.XMLHttpRequest();
+		const request = new window.XMLHttpRequest();
 		request.open('POST', url, true);
 		request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 		request.send();
 	}
 
 	function track(ad) {
-		var id = ad.getAttribute('data-phpbb-ads-id');
-		var rect = ad.getBoundingClientRect();
-		var inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
-		if (!id || tracked[id] || !inViewport || !hasVisibleContent(ad)) {
+		const id = ad.getAttribute('data-phpbb-ads-id');
+		const rect = ad.getBoundingClientRect();
+		const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
+		if (!id || tracked.has(id) || !inViewport || !hasVisibleContent(ad)) {
 			return;
 		}
 
-		tracked[id] = true;
+		tracked.add(id);
 		post(ad.getAttribute('data-phpbb-ads-view-url'));
 	}
 
 	function observeAds() {
-		var ads = document.querySelectorAll('[data-phpbb-ads-view-url]');
-		for (var i = 0; i < ads.length; i++) {
-			track(ads[i]);
-			if (observed.indexOf(ads[i]) !== -1) {
+		const ads = document.querySelectorAll('[data-phpbb-ads-view-url]');
+		for (const ad of ads) {
+			track(ad);
+			if (observed.has(ad)) {
 				continue;
 			}
-			observed.push(ads[i]);
+			observed.add(ad);
 			if (window.IntersectionObserver) {
-				observer.observe(ads[i]);
-			} else {
-				track(ads[i]);
+				observer.observe(ad);
 			}
 		}
 	}
 
-	var observer = window.IntersectionObserver ? new window.IntersectionObserver(function(entries) {
-		for (var i = 0; i < entries.length; i++) {
-			if (entries[i].isIntersecting) {
-				track(entries[i].target);
+	const observer = window.IntersectionObserver ? new window.IntersectionObserver((entries) => {
+		for (const entry of entries) {
+			if (entry.isIntersecting) {
+				track(entry.target);
 			}
 		}
 	}) : null;
 
-	document.addEventListener('click', function(event) {
-		var link = closest(event.target, function(element) {
-			return element.tagName === 'A';
-		});
-		var ad = closest(link, function(element) {
-			return element.hasAttribute('data-phpbb-ads-click-url');
-		});
+	document.addEventListener('click', (event) => {
+		const link = closest(event.target, (element) => element.tagName === 'A');
+		const ad = closest(link, (element) => element.hasAttribute('data-phpbb-ads-click-url'));
 		if (!ad) {
 			return;
 		}
 
-		var key = 'phpbb_ads_click_' + ad.getAttribute('data-phpbb-ads-id');
-		var now = Date.now();
+		const key = 'phpbb_ads_click_' + ad.getAttribute('data-phpbb-ads-id');
+		const now = Date.now();
 
 		try {
 			if (now - parseInt(window.sessionStorage.getItem(key), 10) < clickCooldown) {
@@ -164,7 +156,7 @@
 		post(ad.getAttribute('data-phpbb-ads-click-url'));
 	});
 
-	window.addEventListener('load', function() {
+	window.addEventListener('load', () => {
 		observeAds();
 		if (window.MutationObserver) {
 			new window.MutationObserver(observeAds).observe(document.body, {childList: true, subtree: true});

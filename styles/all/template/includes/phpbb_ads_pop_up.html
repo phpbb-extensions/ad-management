@@ -4,10 +4,10 @@
 		'use strict';
 
 		const key = 'phpbb_ads_pop_up';
-		const interval_days = 1;
+		const intervalDays = 1;
 		const lastShown = localStorage.getItem(key);
 
-		if (!lastShown || Date.now() - +lastShown >= interval_days * 86400000) {
+		if (!lastShown || Date.now() - +lastShown >= intervalDays * 86400000) {
 			localStorage.setItem(key, Date.now());
 			window.addEventListener('load', () => {
 				phpbb.alert(
