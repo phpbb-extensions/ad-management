@@ -2,8 +2,8 @@
 	'use strict';
 
 	const clickCooldown = 10000;
-	const tracked = {};
-	const observed = [];
+	const tracked = new Set();
+	const observed = new Set();
 
 	function closest(element, predicate) {
 		while (element && element !== document) {
