@@ -157,13 +157,14 @@ class admin_input_test extends phpbb_database_test_case
 		[$ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent] = $data;
 		$ad_views_enabled = isset($data[15]) ? $data[15] : 0;
 		$ad_clicks_enabled = isset($data[16]) ? $data[16] : 0;
+		$uploaded_banners = isset($data[17]) ? $data[17] : array();
 
 		admin_test_state::$valid_form = $valid_form;
 		$input_controller = $this->get_input_controller();
 
-		$this->request->expects(self::exactly(17))
+		$this->request->expects(self::exactly(18))
 			->method('variable')
-			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent, $ad_views_enabled, $ad_clicks_enabled));
+			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_views_limit, $ad_clicks_limit, $ad_owner, $ad_groups, $ad_centering, $ad_consent, $ad_views_enabled, $ad_clicks_enabled, $uploaded_banners));
 
 		$result = $input_controller->get_form_data($existing_start_date, $existing_end_date);
 
@@ -192,6 +193,7 @@ class admin_input_test extends phpbb_database_test_case
 				'ad_consent'	  => $ad_consent,
 				'ad_views_enabled' => $ad_views_enabled,
 				'ad_clicks_enabled' => $ad_clicks_enabled,
+				'uploaded_banners' => $uploaded_banners,
 			), $result);
 		}
 	}
@@ -260,8 +262,10 @@ class admin_input_test extends phpbb_database_test_case
 			$this->expectException(\RuntimeException::class);
 		}
 
-		$result = $input_controller->banner_upload($ad_code);
+		$uploaded_banners = array();
+		$result = $input_controller->banner_upload($ad_code, $uploaded_banners);
 		self::assertEquals($ad_code_expected, $result);
+		self::assertSame($can_create_directory && $can_move_file ? array('abcdef.jpg') : array(), $uploaded_banners);
 
 		if (count($file_error))
 		{

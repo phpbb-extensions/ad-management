@@ -85,6 +85,12 @@ class helper
 	{
 		$this->assign_locations($data['ad_locations']);
 		$this->assign_groups(($data['ad_id'] ?? 0), ($data['ad_groups'] ?? array()));
+		foreach (array_unique($data['uploaded_banners'] ?? array()) as $filename)
+		{
+			$this->template->assign_block_vars('uploaded_banners', array(
+				'FILENAME' => $filename,
+			));
+		}
 
 		$errors = array_map(array($this->language, 'lang'), $errors);
 		$this->template->assign_vars(array(

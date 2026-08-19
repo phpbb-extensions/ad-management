@@ -46,6 +46,9 @@ class admin_controller_test extends phpbb_database_test_case
 	/** @var MockObject|manager */
 	protected manager|MockObject $manager;
 
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\banner\banner */
+	protected $banner;
+
 	/** @var MockObject|config */
 	protected config|MockObject $config;
 
@@ -114,6 +117,9 @@ class admin_controller_test extends phpbb_database_test_case
 		$this->manager = $this->getMockBuilder(manager::class)
 			->disableOriginalConstructor()
 			->getMock();
+		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
+			->disableOriginalConstructor()
+			->getMock();
 		$this->config = $this->getMockBuilder(config::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -159,6 +165,7 @@ class admin_controller_test extends phpbb_database_test_case
 			$this->language,
 			$this->request,
 			$this->manager,
+			$this->banner,
 			$this->config,
 			$this->input,
 			$this->helper,
@@ -339,6 +346,7 @@ class admin_controller_test extends phpbb_database_test_case
 				$this->language,
 				$this->request,
 				$this->manager,
+				$this->banner,
 				$this->config,
 				$this->input,
 				$this->helper,
@@ -429,6 +437,7 @@ class admin_controller_test extends phpbb_database_test_case
 		$data = array(
 			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
 			'ad_locations'	=> array(),
+			'uploaded_banners' => array(),
 		);
 
 		$this->input->expects(self::once())
@@ -476,6 +485,7 @@ class admin_controller_test extends phpbb_database_test_case
 		$data = array(
 			'ad_code'		=> '<!-- AD CODE SAMPLE -->',
 			'ad_locations'	=> array(),
+			'uploaded_banners' => array(),
 		);
 
 		$banner_ad_code = '<!-- BANNER AD CODE -->';
@@ -486,7 +496,7 @@ class admin_controller_test extends phpbb_database_test_case
 
 		$this->input->expects(self::once())
 			->method('banner_upload')
-			->with($data['ad_code'])
+			->with($data['ad_code'], $data['uploaded_banners'])
 			->willReturn($banner_ad_code);
 
 		$data['ad_code'] = $banner_ad_code;
@@ -655,6 +665,7 @@ class admin_controller_test extends phpbb_database_test_case
 			'ad_code'		=> 'Ad Code #1',
 			'ad_locations'	=> array(),
 			'ad_owner'		=> $ad_owner,
+			'uploaded_banners' => array(str_repeat('a', 32) . '.jpg'),
 		);
 
 		$this->input->expects(self::once())
@@ -690,6 +701,10 @@ class admin_controller_test extends phpbb_database_test_case
 			$this->manager->expects(self::once())
 				->method('insert_ad_locations')
 				->with(1, array());
+
+			$this->banner->expects(self::once())
+				->method('remove_unreferenced')
+				->with($data['uploaded_banners'], array($data['ad_code']));
 
 			$this->helper->expects(self::once())
 				->method('log')
@@ -945,6 +960,7 @@ class admin_controller_test extends phpbb_database_test_case
 			'ad_code'		=> 'Ad Code #1',
 			'ad_locations'	=> array(),
 			'ad_owner'		=> $ad_owner,
+			'uploaded_banners' => array(str_repeat('b', 32) . '.png'),
 		);
 
 		$this->manager->expects(self::once())
@@ -1009,6 +1025,10 @@ class admin_controller_test extends phpbb_database_test_case
 				$this->manager->expects(self::once())
 					->method('insert_ad_locations')
 					->with(1, array());
+
+				$this->banner->expects(self::once())
+					->method('remove_unreferenced')
+					->with($data['uploaded_banners'], array($data['ad_code']));
 
 				$this->helper->expects(self::once())
 					->method('log')
@@ -1196,10 +1216,16 @@ class admin_controller_test extends phpbb_database_test_case
 		}
 		else
 		{
+			$filename = str_repeat('a', 32) . '.jpg';
+			$ad_code = '<img src="/images/phpbb_ads/' . $filename . '">';
 			$this->manager->expects(self::once())
 				->method('get_ad')
 				->with($ad_id)
-				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => ''));
+				->willReturn(array('id' => $ad_id, 'ad_owner' => $ad_owner, 'ad_name' => '', 'ad_code' => $ad_code));
+			$this->banner->expects(self::once())
+				->method('extract_filenames')
+				->with($ad_code)
+				->willReturn(array($filename));
 			$this->manager->expects(self::once())
 				->method('delete_ad_locations')
 				->with($ad_id);
@@ -1210,6 +1236,12 @@ class admin_controller_test extends phpbb_database_test_case
 				->method('delete_ad')
 				->with($ad_id)
 				->willReturn((bool) $ad_id);
+			$this->manager->expects(self::once())
+				->method('get_all_ad_codes')
+				->willReturn(array('another ad'));
+			$this->banner->expects(self::once())
+				->method('remove_unreferenced')
+				->with(array($filename), array('another ad'));
 			$this->manager->expects(($ad_owner ? self::once() : self::never()))
 				->method('get_ads_by_owner')
 				->with($ad_owner)

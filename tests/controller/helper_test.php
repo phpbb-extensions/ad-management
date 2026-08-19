@@ -186,6 +186,7 @@ class helper_test extends phpbb_database_test_case
 					  'ad_centering'	=> false,
 					  'ad_consent'		=> 1,
 					  'ad_locations'	=> [],
+					  'uploaded_banners' => [str_repeat('a', 32) . '.jpg'],
 				  ), '', array('AD_PRIORITY_INVALID'), true, 'AD_PRIORITY_INVALID'),
 			array(array(
 					  'ad_name'			=> 'Ad Name #1',
@@ -270,6 +271,13 @@ class helper_test extends phpbb_database_test_case
 		$this->manager->expects(self::once())
 			->method('load_groups')
 			->willReturn(array());
+
+		$uploaded_banners = $data['uploaded_banners'] ?? array();
+		$this->template->expects(empty($uploaded_banners) ? self::never() : self::once())
+			->method('assign_block_vars')
+			->with('uploaded_banners', array(
+				'FILENAME' => $uploaded_banners[0] ?? '',
+			));
 
 		$this->template->expects(self::once())
 			->method('assign_vars')

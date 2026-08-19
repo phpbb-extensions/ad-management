@@ -150,6 +150,22 @@ class manager
 	}
 
 	/**
+	 * Get code from every advertisement.
+	 *
+	 * @return array List of advertisement code
+	 */
+	public function get_all_ad_codes()
+	{
+		$sql = 'SELECT ad_code
+			FROM ' . $this->ads_table;
+		$result = $this->db->sql_query($sql);
+		$data = array_column($this->db->sql_fetchrowset($result), 'ad_code');
+		$this->db->sql_freeresult($result);
+
+		return $data;
+	}
+
+	/**
 	 * Get all owner's ads
 	 *
 	 * @param    int $user_id Ad owner
