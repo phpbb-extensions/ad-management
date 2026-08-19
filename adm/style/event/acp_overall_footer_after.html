@@ -183,6 +183,11 @@
 							$('#ad_code').val(function(i, text) {
 								return (text.length ? text + "\n\n" : '') + data.text;
 							});
+							$('<input>', {
+								type: 'hidden',
+								name: 'uploaded_banners[]',
+								value: data.filename
+							}).appendTo($form);
 						}
 						else {
 							phpbb.alert(data.title, data.text);

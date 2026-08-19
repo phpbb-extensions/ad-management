@@ -108,6 +108,7 @@ class admin_input
 			'ad_consent'		=> $this->request->variable('ad_consent', 1),
 			'ad_views_enabled'	=> $this->request->variable('ad_views_enabled', 0),
 			'ad_clicks_enabled'	=> $this->request->variable('ad_clicks_enabled', 0),
+			'uploaded_banners'	=> $this->request->variable('uploaded_banners', array('')),
 		);
 
 		// Validate form key
@@ -138,10 +139,11 @@ class admin_input
 	/**
 	 * Upload image and return updated ad code or <img> of new banner when using ajax.
 	 *
-	 * @param	 string	 $ad_code	 Current ad code
+	 * @param string $ad_code Current ad code
+	 * @param array|null $uploaded_banners Banners uploaded while creating this ad
 	 * @return	 string	 \phpbb\json_response when request is ajax or updated ad code otherwise.
 	 */
-	public function banner_upload($ad_code)
+	public function banner_upload($ad_code, &$uploaded_banners = null)
 	{
 		try
 		{
@@ -149,10 +151,15 @@ class admin_input
 			$realname = $this->banner->upload();
 
 			$banner_html = '<img src="' . generate_board_url() . '/images/phpbb_ads/' . $realname . '" />';
+			if (is_array($uploaded_banners))
+			{
+				$uploaded_banners[] = $realname;
+				$uploaded_banners = array_values(array_unique($uploaded_banners));
+			}
 
 			if ($this->request->is_ajax())
 			{
-				$this->send_ajax_response(true, $banner_html);
+				$this->send_ajax_response(true, $banner_html, array('filename' => $realname));
 			}
 
 			$ad_code = ($ad_code ? $ad_code . "\n\n" : '') . $banner_html;
@@ -316,15 +323,16 @@ class admin_input
 	 *
 	 * @param bool $success Is request successful?
 	 * @param string $text Text to return
+	 * @param array $extra Additional response data
 	 */
-	public function send_ajax_response($success, $text)
+	public function send_ajax_response($success, $text, $extra = array())
 	{
 		$json_response = new \phpbb\json_response;
-		$json_response->send(array(
+		$json_response->send(array_merge($extra, array(
 			'success'	=> $success,
 			'title'		=> $this->language->lang('INFORMATION'),
 			'text'		=> $text,
-		));
+		)));
 	}
 
 	/**

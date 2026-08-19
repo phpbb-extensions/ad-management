@@ -35,6 +35,9 @@ class admin_controller
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
 
+	/** @var \phpbb\ads\banner\banner */
+	protected $banner;
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -66,6 +69,7 @@ class admin_controller
 	 * @param \phpbb\language\language          $language          Language object
 	 * @param \phpbb\request\request            $request           Request object
 	 * @param \phpbb\ads\ad\manager             $manager           Advertisement manager object
+	 * @param \phpbb\ads\banner\banner          $banner            Banner manager object
 	 * @param \phpbb\config\config              $config            Config object
 	 * @param \phpbb\ads\controller\admin_input $input             Admin input object
 	 * @param \phpbb\ads\controller\helper      $helper            Helper object
@@ -75,12 +79,13 @@ class admin_controller
 	 * @param string                            $root_path         phpBB root path
 	 * @param string                            $php_ext           PHP extension
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
+	public function __construct(\phpbb\template\template $template, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\ad\manager $manager, \phpbb\ads\banner\banner $banner, \phpbb\config\config $config, \phpbb\ads\controller\admin_input $input, \phpbb\ads\controller\helper $helper, \phpbb\ads\analyser\manager $analyser, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $controller_helper, $root_path, $php_ext)
 	{
 		$this->template = $template;
 		$this->language = $language;
 		$this->request = $request;
 		$this->manager = $manager;
+		$this->banner = $banner;
 		$this->config = $config;
 		$this->input = $input;
 		$this->helper = $helper;
@@ -283,6 +288,7 @@ class admin_controller
 				{
 					$this->error('ACP_AD_DOES_NOT_EXIST');
 				}
+				$banner_filenames = $this->banner->extract_filenames($ad_data['ad_code'] ?? '');
 
 				// Delete the ad before removing its related data
 				$success = $this->manager->delete_ad($ad_id);
@@ -293,6 +299,10 @@ class admin_controller
 
 				$this->manager->delete_ad_locations($ad_id);
 				$this->manager->delete_ad_groups($ad_id);
+				if (!empty($banner_filenames))
+				{
+					$this->banner->remove_unreferenced($banner_filenames, $this->manager->get_all_ad_codes());
+				}
 				$this->toggle_permission($ad_data['ad_owner']);
 				$this->helper->log('DELETE', $ad_data['ad_name']);
 
@@ -462,7 +472,8 @@ class admin_controller
 			$this->error('FORM_INVALID');
 		}
 
-		$this->data['ad_code'] = $this->input->banner_upload($this->data['ad_code']);
+		$this->data['uploaded_banners'] = $this->data['uploaded_banners'] ?? array();
+		$this->data['ad_code'] = $this->input->banner_upload($this->data['ad_code'], $this->data['uploaded_banners']);
 	}
 
 	/**
@@ -509,6 +520,10 @@ class admin_controller
 			$ad_id = $this->manager->insert_ad($this->data);
 			$this->toggle_permission($this->data['ad_owner']);
 			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
+			if (!empty($this->data['uploaded_banners']))
+			{
+				$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+			}
 
 			$this->helper->log('ADD', $this->data['ad_name']);
 
@@ -538,6 +553,10 @@ class admin_controller
 				// Only insert new ad locations to DB when ad exists
 				$this->manager->delete_ad_locations($ad_id);
 				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
+				if (!empty($this->data['uploaded_banners']))
+				{
+					$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+				}
 
 				$this->helper->log('EDIT', $this->data['ad_name']);
 

@@ -23,4 +23,13 @@ class get_all_ads_test extends ad_base
 		$ad_ids = array_column($ads, 'ad_id');
 		self::assertEquals(array(1,2,3,4,5,6,7), $ad_ids);
 	}
+
+	public function test_get_all_ad_codes()
+	{
+		$codes = $this->get_manager()->get_all_ad_codes();
+
+		self::assertCount(7, $codes);
+		self::assertContains('Ad Code #1', $codes);
+		self::assertContains('Ad Code #7', $codes);
+	}
 }
