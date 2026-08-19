@@ -60,7 +60,6 @@ class ad_disabled_test extends \phpbb_test_case
 		);
 
 		$property = new \ReflectionProperty('\phpbb\notification\type\base', 'notification_manager');
-		$property->setAccessible(true);
 		$property->setValue($this->notification, $this->manager);
 	}
 
@@ -203,7 +202,6 @@ class ad_disabled_test extends \phpbb_test_case
 	protected function set_data($key, $value, $notification = null)
 	{
 		$method = new \ReflectionMethod('\phpbb\notification\type\base', 'set_data');
-		$method->setAccessible(true);
 		$method->invoke($notification ?: $this->notification, $key, $value);
 	}
 }
