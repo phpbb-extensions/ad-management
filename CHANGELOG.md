@@ -1,5 +1,29 @@
 # Changelog
 
+### 3.2.0 - 2026-09-02
+
+- Moved view and click tracking controls from global settings to individual advertisements; existing settings are migrated automatically.
+- Improved tracking accuracy:
+  - Views are counted only when an advertisement has visible content and enters the viewport, so blocked, broken, hidden, and off-screen advertisements are not counted.
+  - An advertisement shown in multiple locations on the same page counts as one view.
+  - Repeated views and clicks from the same browser session are ignored for 10 seconds.
+- Removed automatic expiration based on view and click counts because tracking statistics are approximate and easily abused.
+- Advertisements are now automatically disabled after reaching their end date, and assigned users can receive board and email notifications explaining why.
+- Reorganised the ACP advertisement form into clearer sections and improved wording throughout the ACP and UCP.
+- Advertisement code analysis now runs without submitting or reloading the form.
+- Improved ACP advertisement previews and added warnings when a preview is empty or appears to be blocked.
+- Fixed AJAX enable/disable controls so they remain usable after repeated changes and report failures correctly.
+- Added automatic cleanup of unreferenced uploaded banner images without deleting images still used by another advertisement.
+- Improved banner storage errors and prevented directory listings of uploaded banners.
+- Fixed Unicode and emoji storage for advertisement names and notes across supported database systems, and expanded advertisement code storage to support content longer than 4,000 characters.
+- Prevented invalid advertisement location and group assignments, and now remove advertisement assignments when a group is deleted.
+- Fixed automatic advertisement-owner permissions so removing a user's final advertisement does not override permissions granted through groups.
+- Made marketing-consent script deferral fail closed if advertisement code processing fails.
+- Fixed ad blocker mode and message selection for language packs with different plural rules.
+- Removed hard-coded margins from advertisement containers to make custom styling easier.
+- Improved advertisement template data and modernised the extension's JavaScript.
+- Added accessible labels to advertisement analyser results.
+
 ### 3.1.0 - 2026-06-20
 
 - Added support for integration with phpBB's Consent Manager extension.
