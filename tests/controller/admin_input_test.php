@@ -250,7 +250,7 @@ class admin_input_test extends \phpbb_database_test_case
 			->method('create_storage_dir');
 		if (!$can_create_directory)
 		{
-			$create_storage_dir->willThrowException(new \phpbb\exception\runtime_exception('CANNOT_CREATE_DIRECTORY'));
+			$create_storage_dir->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('FILESYSTEM_CANNOT_CREATE_DIRECTORY'));
 		}
 		else
 		{

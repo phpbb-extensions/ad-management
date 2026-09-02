@@ -182,13 +182,14 @@ class admin_input
 		catch (\phpbb\exception\runtime_exception $e)
 		{
 			$this->banner->remove();
+			$error = $e instanceof \phpbb\filesystem\exception\filesystem_exception ? 'CANNOT_CREATE_DIRECTORY' : $e->getMessage();
 
 			if ($this->request->is_ajax())
 			{
-				$this->send_ajax_response(false, $this->language->lang($e->getMessage()));
+				$this->send_ajax_response(false, $this->language->lang($error));
 			}
 
-			$this->errors[] = $this->language->lang($e->getMessage());
+			$this->errors[] = $this->language->lang($error);
 		}
 
 		return $ad_code;
