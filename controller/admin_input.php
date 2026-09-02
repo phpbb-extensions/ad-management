@@ -182,7 +182,7 @@ class admin_input
 		catch (\phpbb\exception\runtime_exception $e)
 		{
 			$this->banner->remove();
-			$error = $e instanceof \phpbb\filesystem\exception\filesystem_exception ? 'CANNOT_CREATE_DIRECTORY' : $e->getMessage();
+			$error = $e instanceof \phpbb\filesystem\exception\filesystem_exception ? 'CANNOT_INITIALIZE_STORAGE' : $e->getMessage();
 
 			if ($this->request->is_ajax())
 			{
