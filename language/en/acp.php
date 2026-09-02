@@ -72,10 +72,8 @@ $lang = array_merge($lang, array(
 	'AD_CENTERING'				=> 'Center this ad automatically',
 	'AD_CENTERING_EXPLAIN'		=> 'Set to Yes to let this extension center the ad automatically. If this produces undesired results, use CSS in the ad code instead.',
 
-	'AD_ENABLE_TITLE'			=> array( // Plural rule doesn't apply here! Just translate the values.
-		0 => 'Click to enable',
-		1 => 'Click to disable',
-	),
+	'AD_ENABLE_TITLE'			=> 'Click to enable',
+	'AD_DISABLE_TITLE'			=> 'Click to disable',
 	'AD_EXPIRED_EXPLAIN'		=> 'This ad has expired and has been disabled.',
 	'ACP_ADS_EMPTY'				=> 'No ads to display. Add one using the button below.',
 	'ACP_ADS_ADD'				=> 'Add new ad',
@@ -127,11 +125,9 @@ $lang = array_merge($lang, array(
 	'ADBLOCKER_LEGEND'				=> 'Ad Blockers',
 	'ADBLOCKER_MESSAGE'				=> 'Ad blocker detected message',
 	'ADBLOCKER_MESSAGE_EXPLAIN'		=> 'This feature attempts to detect ad blockers and can ask or require detected visitors to disable ad blocking on this forum. Detection is not guaranteed: ad blockers, browser privacy features, and filter lists change frequently, so blockers may go undetected or visitors may be incorrectly flagged. The “Require” option restricts forum access only when ad blocking is detected; it cannot guarantee that ads will load.',
-	'ADBLOCKER_MODES'				=> [
-		0 => 'Allow ad blockers',
-		1 => 'Ask visitors to disable ad blockers',
-		2 => 'Require visitors to disable ad blockers',
-	],
+	'ADBLOCKER_ALLOW'				=> 'Allow ad blockers',
+	'ADBLOCKER_ASK'					=> 'Ask visitors to disable ad blockers',
+	'ADBLOCKER_REQUIRE'				=> 'Require visitors to disable ad blockers',
 	'PRIVACY_LEGEND'				=> 'Privacy',
 	'ENABLE_VIEWS'					=> 'Count views',
 	'ENABLE_VIEWS_EXPLAIN'			=> 'Count how many times this ad is viewed. Multiple placements on one page count as one view. For anti-abuse protection, repeated views from the same network address within 10 seconds count as one view.',

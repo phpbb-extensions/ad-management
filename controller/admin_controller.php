@@ -426,7 +426,7 @@ class admin_controller
 			$json_response->send(array(
 				'success' => true,
 				'text'    => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
-				'title'   => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
+				'title'   => $this->language->lang($enable ? 'AD_DISABLE_TITLE' : 'AD_ENABLE_TITLE'),
 				'href'    => html_entity_decode($this->u_action) . '&action=' . $next_action . '&id=' . $ad_id . '&hash=' . generate_link_hash('phpbb_ads_' . $next_action . '_' . $ad_id),
 			));
 		}

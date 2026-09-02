@@ -1,7 +1,7 @@
 {% if S_DISPLAY_ADBLOCKER %}
 	<div id="phpbb-aJHwDeoSqLhW" class="rules" style="display: none;{% if S_DISPLAY_ADBLOCKER === 2 %} position: relative; z-index: 50;{% endif %}">
 		<div class="inner">
-			<strong>{{ lang('ADBLOCKER_TITLE') ~ lang('COLON') }}</strong> {{ lang('ADBLOCKER_MESSAGE', S_DISPLAY_ADBLOCKER) }}
+			<strong>{{ lang('ADBLOCKER_TITLE') ~ lang('COLON') }}</strong> {% if S_DISPLAY_ADBLOCKER === 2 %}{{ lang('ADBLOCKER_REQUIRE_MESSAGE') }}{% else %}{{ lang('ADBLOCKER_ASK_MESSAGE') }}{% endif %}
 		</div>
 	</div>
 {% endif %}

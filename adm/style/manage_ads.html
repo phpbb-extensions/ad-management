@@ -266,7 +266,7 @@
 							</td>
 							<td>
 								{% if list.allow_enable %}
-									<a href="{{ ad.U_ENABLE }}" title="{{ lang('AD_ENABLE_TITLE', ad.S_ENABLED) }}" data-ajax="toggle_enable">
+									<a href="{{ ad.U_ENABLE }}" title="{% if ad.S_ENABLED %}{{ lang('AD_DISABLE_TITLE') }}{% else %}{{ lang('AD_ENABLE_TITLE') }}{% endif %}" data-ajax="toggle_enable">
 										{% if ad.S_ENABLED %}{{ lang('ENABLED') }}{% else %}{{ lang('DISABLED') }}{% endif %}
 									</a>
 								{% else %}

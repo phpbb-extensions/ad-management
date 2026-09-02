@@ -20,10 +20,8 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ADBLOCKER_TITLE'	=> 'Ad blocker detected',
-	'ADBLOCKER_MESSAGE'	=> [
-		1 => 'Our website is made possible by showing ads to visitors. Please consider supporting us by disabling your ad blocker on our website.',
-		2 => 'Our website is made possible by showing ads to visitors. Disable your ad blocker to continue using our website.',
-	],
+	'ADBLOCKER_ASK_MESSAGE'		=> 'Our website is made possible by showing ads to visitors. Please consider supporting us by disabling your ad blocker on our website.',
+	'ADBLOCKER_REQUIRE_MESSAGE'	=> 'Our website is made possible by showing ads to visitors. Disable your ad blocker to continue using our website.',
 	'ADVERTISEMENT'		=> 'Advertisement',
 	'HIDE_AD'			=> 'Hide ad',
 	'PHPBB_ADS_CONSENT_LABEL'		=> 'Advertising',
