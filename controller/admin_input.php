@@ -121,10 +121,10 @@ class admin_input
 			'uploaded_banners'	=> $this->request->variable('uploaded_banners', array('')),
 		);
 
-		// Preserve 4-byte characters on utf8mb3 databases. Normalize before validation so
-		// the ad name length check accounts for the expanded Unicode character references.
-		$data['ad_name'] = utf8_encode_ucr($data['ad_name']);
-		$data['ad_note'] = utf8_encode_ucr($data['ad_note']);
+		// Store names and notes as ASCII character references for portability across DBMS.
+		// Normalize names before validation so the length check covers entity expansion.
+		$data['ad_name'] = utf8_encode_ncr($data['ad_name']);
+		$data['ad_note'] = utf8_encode_ncr($data['ad_note']);
 
 		// Validate form key
 		if (!check_form_key('phpbb_ads'))

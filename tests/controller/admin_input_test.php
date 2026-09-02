@@ -131,6 +131,7 @@ class admin_input_test extends \phpbb_database_test_case
 		return array(
 			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['FORM_INVALID']),
 			array(true, ['Ad Name 😀', 'Ad Note 📝', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, []),
+			array(true, ['Ad Name 日本語 Ελληνικά', 'Ad Note Кириллица 中文', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, []),
 			array(true, [str_repeat('😀', 28), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, []),
 			array(true, ['', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_NAME_REQUIRED']),
 			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_NAME_TOO_LONG']),
@@ -197,8 +198,8 @@ class admin_input_test extends \phpbb_database_test_case
 			$expected_groups = array_values(array_unique(array_intersect((array) $ad_groups, array(1, 2))));
 
 			self::assertEquals(array(
-				'ad_name'         => utf8_encode_ucr($ad_name),
-				'ad_note'         => utf8_encode_ucr($ad_note),
+				'ad_name'         => utf8_encode_ncr($ad_name),
+				'ad_note'         => utf8_encode_ncr($ad_note),
 				'ad_code'         => $ad_code,
 				'ad_enabled'      => $ad_enabled,
 				'ad_locations'    => $expected_locations,

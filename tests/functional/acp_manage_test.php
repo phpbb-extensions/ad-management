@@ -119,7 +119,7 @@ class acp_manage_test extends functional_base
 		// Create ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name 日本語 😀',
-			'ad_note'		=> 'Functional test note 📝',
+			'ad_note'		=> 'Functional test note 日本語 📝',
 			'ad_code'		=> '<!-- SAMPLE AD CODE -->',
 			'ad_enabled'	=> 1,
 			'ad_start_date'	=> '2035-01-01',
@@ -241,7 +241,7 @@ class acp_manage_test extends functional_base
 		// Edit ad
 		$form_data = array(
 			'ad_name'		=> 'Functional test name edited Ελληνικά 🚀',
-			'ad_note'		=> 'Functional test note edited 🧪',
+			'ad_note'		=> 'Functional test note edited Ελληνικά 🧪',
 			'ad_code'		=> '<!-- SAMPLE AD CODE EDITED -->',
 			'ad_enabled'	=> 0,
 			'ad_start_date'	=> '2035-01-02',
