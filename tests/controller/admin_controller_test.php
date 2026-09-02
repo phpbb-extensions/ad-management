@@ -678,9 +678,17 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('insert_ad_locations')
 				->with(1, array());
 
+			$all_ad_codes = array(
+				$data['ad_code'],
+				'<img src="/images/phpbb_ads/' . $data['uploaded_banners'][0] . '">',
+			);
+			$this->manager->expects(self::once())
+				->method('get_all_ad_codes')
+				->willReturn($all_ad_codes);
+
 			$this->banner->expects(self::once())
 				->method('remove_unreferenced')
-				->with($data['uploaded_banners'], array($data['ad_code']));
+				->with($data['uploaded_banners'], $all_ad_codes);
 
 			$this->helper->expects(self::once())
 				->method('log')
@@ -1022,9 +1030,17 @@ class admin_controller_test extends \phpbb_database_test_case
 					->method('insert_ad_locations')
 					->with(1, array());
 
+				$all_ad_codes = array(
+					$data['ad_code'],
+					'<img src="/images/phpbb_ads/' . $data['uploaded_banners'][0] . '">',
+				);
+				$this->manager->expects(self::once())
+					->method('get_all_ad_codes')
+					->willReturn($all_ad_codes);
+
 				$this->banner->expects(self::once())
 					->method('remove_unreferenced')
-					->with($data['uploaded_banners'], array($data['ad_code']));
+					->with($data['uploaded_banners'], $all_ad_codes);
 
 				$this->helper->expects(self::once())
 					->method('log')

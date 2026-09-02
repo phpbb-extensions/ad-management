@@ -522,7 +522,7 @@ class admin_controller
 			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 			if (!empty($this->data['uploaded_banners']))
 			{
-				$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+				$this->banner->remove_unreferenced($this->data['uploaded_banners'], $this->manager->get_all_ad_codes());
 			}
 
 			$this->helper->log('ADD', $this->data['ad_name']);
@@ -555,7 +555,7 @@ class admin_controller
 				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 				if (!empty($this->data['uploaded_banners']))
 				{
-					$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+					$this->banner->remove_unreferenced($this->data['uploaded_banners'], $this->manager->get_all_ad_codes());
 				}
 
 				$this->helper->log('EDIT', $this->data['ad_name']);
