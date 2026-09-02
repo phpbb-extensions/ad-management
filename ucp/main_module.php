@@ -17,7 +17,7 @@ class main_module
 {
 	public $page_title;
 	public $tpl_name;
-	public $u_action;
+	public $u_action; // unused but keep because phpBB module framework populates this property
 
 	/**
 	 * Main UCP module
@@ -30,9 +30,6 @@ class main_module
 
 		/** @var \phpbb\ads\controller\ucp_controller $ucp_controller */
 		$ucp_controller = $phpbb_container->get('phpbb.ads.ucp.controller');
-
-		// Make the $u_action url available in the UCP controller
-		$ucp_controller->set_page_url($this->u_action);
 
 		// Load a template
 		$this->tpl_name = 'ucp_ads_stats';

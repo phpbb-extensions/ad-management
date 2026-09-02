@@ -42,9 +42,6 @@ class visual_demo_test extends \phpbb_test_case
 			->getMock();
 
 		$this->auth = $this->getMockBuilder('\phpbb\auth\auth')->getMock();
-		$this->config = new \phpbb\config\config(array(
-			'cookie_name' => 'test',
-		));
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
 			->disableOriginalConstructor()
 			->getMock();
@@ -64,7 +61,6 @@ class visual_demo_test extends \phpbb_test_case
 	{
 		return new \phpbb\ads\controller\visual_demo_controller(
 			$this->auth,
-			$this->config,
 			$this->request,
 			$this->user,
 			$this->phpbb_root_path,

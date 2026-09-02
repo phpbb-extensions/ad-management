@@ -108,7 +108,6 @@ services:
         class: phpbb\ads\controller\visual_demo_controller
         arguments:
             - '@auth'
-            - '@config'
             - '@request'
             - '@user'
             - '%core.root_path%'

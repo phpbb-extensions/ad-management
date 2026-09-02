@@ -30,9 +30,6 @@ class ucp_controller
 	/** @var \phpbb\template\template */
 	protected $template;
 
-	/** @var string Custom form action */
-	protected $u_action;
-
 	/**
 	 * Constructor
 	 *
@@ -49,14 +46,6 @@ class ucp_controller
 		$this->user = $user;
 		$this->language = $language;
 		$this->template = $template;
-	}
-
-	/**
-	 * @param	string	$u_action	Action URL
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
 	}
 
 	/**
