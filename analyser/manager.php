@@ -15,24 +15,14 @@ class manager
 	/** @var array Ad code analysis tests */
 	protected $tests;
 
-	/** @var \phpbb\template\template */
-	protected $template;
-
-	/** @var \phpbb\language\language */
-	protected $lang;
-
 	/**
 	 * Construct an ad code analysis manager object
 	 *
-	 * @param	array						$tests		Ad code analysis tests passed via the service container
-	 * @param	\phpbb\template\template	$template	Template object
-	 * @param	\phpbb\language\language	$lang		Language object
+	 * @param array $tests Ad code analysis tests passed via the service container
 	 */
-	public function __construct($tests, \phpbb\template\template $template, \phpbb\language\language $lang)
+	public function __construct($tests)
 	{
 		$this->tests = $tests;
-		$this->template = $template;
-		$this->lang = $lang;
 	}
 
 	/**
@@ -53,25 +43,6 @@ class manager
 			}
 		}
 
-		$this->assign_template_vars($results);
-
 		return $results;
-	}
-
-	/**
-	 * Assign analyser results to template variables.
-	 *
-	 * @param	array	$results	Analyser results
-	 */
-	protected function assign_template_vars($results)
-	{
-		foreach ($results as $result)
-		{
-			$this->template->assign_block_vars('analyser_results_' . $result['severity'], array(
-				'MESSAGE'	=> $this->lang->lang($result['message']),
-			));
-		}
-
-		$this->template->assign_var('CODE_ANALYSED', true);
 	}
 }
