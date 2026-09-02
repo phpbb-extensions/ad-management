@@ -616,7 +616,6 @@ class manager
 	public function prepare_ad_code($ad_code, $consent_enabled)
 	{
 		$ad_code = htmlspecialchars_decode($ad_code, ENT_COMPAT);
-		$original_ad_code = $ad_code;
 
 		if (!$consent_enabled || $ad_code === '')
 		{
@@ -638,7 +637,7 @@ class manager
 			return '<script' . $this->inject_consent_attributes($attributes) . '>' . $content . '</script>';
 		}, $ad_code);
 
-		return $ad_code ?? $original_ad_code;
+		return $ad_code ?? '';
 	}
 
 	/**
