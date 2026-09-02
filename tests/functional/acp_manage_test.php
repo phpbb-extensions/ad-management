@@ -137,6 +137,7 @@ class acp_manage_test extends functional_base
 		self::assertStringContainsString($form_data['ad_name'], $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		self::assertStringContainsString('2036-01-01', $crawler->text());
+		$this->assert_ad_note_persisted($form_data['ad_note']);
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
@@ -246,6 +247,7 @@ class acp_manage_test extends functional_base
 		$this->assertContainsLang('DISABLED', $crawler->text());
 		self::assertStringContainsString('2035-01-02', $crawler->text());
 		self::assertStringContainsString('2036-01-02', $crawler->text());
+		$this->assert_ad_note_persisted($form_data['ad_note']);
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
@@ -319,6 +321,18 @@ class acp_manage_test extends functional_base
 	protected function get_manage_page()
 	{
 		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+	}
+
+	protected function assert_ad_note_persisted($expected)
+	{
+		$sql = 'SELECT ad_note
+			FROM phpbb_ads
+			ORDER BY ad_id DESC';
+		$result = $this->db->sql_query_limit($sql, 1);
+		$ad_note = $this->db->sql_fetchfield('ad_note', false, $result);
+		$this->db->sql_freeresult($result);
+
+		self::assertSame($expected, utf8_decode_ncr($ad_note));
 	}
 
 	protected function submit_with_error($crawler, $form_data, $error_lang)
