@@ -118,8 +118,8 @@ class acp_manage_test extends functional_base
 
 		// Create ad
 		$form_data = array(
-			'ad_name'		=> 'Functional test name',
-			'ad_note'		=> 'Functional test note',
+			'ad_name'		=> 'Functional test name 日本語 😀',
+			'ad_note'		=> 'Functional test note 📝',
 			'ad_code'		=> '<!-- SAMPLE AD CODE -->',
 			'ad_enabled'	=> 1,
 			'ad_start_date'	=> '2035-01-01',
@@ -148,7 +148,7 @@ class acp_manage_test extends functional_base
 
 		// Confirm new ad appears in the list, is enabled and end date is displayed correctly
 		$crawler = $this->get_manage_page();
-		self::assertStringContainsString('Functional test name', $crawler->text());
+		self::assertStringContainsString($form_data['ad_name'], $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		self::assertStringContainsString('2036-01-01', $crawler->text());
 
@@ -240,8 +240,8 @@ class acp_manage_test extends functional_base
 
 		// Edit ad
 		$form_data = array(
-			'ad_name'		=> 'Functional test name edited',
-			'ad_note'		=> 'Functional test note',
+			'ad_name'		=> 'Functional test name edited Ελληνικά 🚀',
+			'ad_note'		=> 'Functional test note edited 🧪',
 			'ad_code'		=> '<!-- SAMPLE AD CODE EDITED -->',
 			'ad_enabled'	=> 0,
 			'ad_start_date'	=> '2035-01-02',
@@ -270,7 +270,7 @@ class acp_manage_test extends functional_base
 
 		// Confirm new ad appears in the list, is disabled and stard and end date is present and updated
 		$crawler = $this->get_manage_page();
-		self::assertStringContainsString('Functional test name edited', $crawler->text());
+		self::assertStringContainsString($form_data['ad_name'], $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
 		self::assertStringContainsString('2035-01-02', $crawler->text());
 		self::assertStringContainsString('2036-01-02', $crawler->text());
