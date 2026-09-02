@@ -33,7 +33,6 @@ class main_listener_test extends main_listener_base
 			'core.page_header_after',
 			'core.delete_user_after',
 			'core.delete_group_after',
-			'core.adm_page_header_after',
 			'core.group_add_user_after',
 			'core.group_delete_user_after',
 			'phpbb.consentmanager.collect_registrations',

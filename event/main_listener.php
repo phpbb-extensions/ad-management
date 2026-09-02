@@ -62,7 +62,6 @@ class main_listener implements EventSubscriberInterface
 			'core.page_header_after'		=> 'adblocker',
 			'core.delete_user_after'		=> 'remove_ad_owner',
 			'core.delete_group_after'		=> 'remove_group_assignments',
-			'core.adm_page_header_after'	=> 'disable_xss_protection',
 			'core.group_add_user_after'		=> 'destroy_user_group_cache',
 			'core.group_delete_user_after'	=> 'destroy_user_group_cache',
 			'phpbb.consentmanager.collect_registrations' => 'register_ads',
@@ -288,24 +287,6 @@ class main_listener implements EventSubscriberInterface
 		}
 
 		return array_values($ad_ids);
-	}
-
-	/**
-	 * Disable XSS Protection
-	 * In Chrome browsers, previewing an Ad Code with javascript can
-	 * be blocked, due to a false positive where Chrome thinks the
-	 * javascript is an XSS injection. This will temporarily disable
-	 * XSS protection in chrome while managing ads in the ACP.
-	 *
-	 * @param	\phpbb\event\data	$event	The event object
-	 */
-	public function disable_xss_protection($event)
-	{
-		if (stripos($this->user->browser, 'chrome') !== false &&
-			stripos($this->user->page['page'], 'phpbb-ads') !== false)
-		{
-			$event['http_headers'] = array_merge($event['http_headers'], ['X-XSS-Protection' => '0']);
-		}
 	}
 
 	/**
