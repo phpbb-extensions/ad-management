@@ -352,8 +352,6 @@ class admin_controller
 				'END_DATE'     => $row['ad_end_date'],
 				'VIEWS'        => $row['ad_views'],
 				'CLICKS'       => $row['ad_clicks'],
-				'VIEWS_LIMIT'  => $row['ad_views_limit'],
-				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
 				'S_VIEWS_ENABLED' => (bool) $row['ad_views_enabled'],
 				'S_CLICKS_ENABLED' => (bool) $row['ad_clicks_enabled'],
 				'S_EXPIRED'    => $ad_expired,

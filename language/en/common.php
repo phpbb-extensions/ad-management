@@ -28,8 +28,6 @@ $lang = array_merge($lang, array(
 	'PHPBB_ADS_CONSENT_DESCRIPTION'	=> 'Advertising features that may use cookies or similar technologies to collect data.',
 	'PHPBB_ADS_NOTIFICATION_DISABLED' => 'Advertisement “%s” was disabled',
 	'PHPBB_ADS_NOTIFICATION_REASON_END_DATE' => 'Its expiration date was reached.',
-	'PHPBB_ADS_NOTIFICATION_REASON_VIEWS_LIMIT' => 'Its view limit was reached.',
-	'PHPBB_ADS_NOTIFICATION_REASON_CLICKS_LIMIT' => 'Its click limit was reached.',
 
 	'VISUAL_DEMO'			=> 'Visual demo for ad locations is active',
 	'DISABLE_VISUAL_DEMO'	=> 'Click to disable visual demo',

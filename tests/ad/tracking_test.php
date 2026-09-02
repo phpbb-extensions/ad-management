@@ -57,60 +57,43 @@ class tracking_test extends ad_base
 	}
 
 	/**
-	 * Reaching click limit atomically caps count, disables ad, and notifies owner once.
+	 * Click tracking updates metrics without disabling ads or notifying owners.
 	 */
-	public function test_click_limit_disables_and_notifies()
+	public function test_click_tracking_does_not_disable_or_notify()
 	{
 		$notifications = $this->getMockBuilder('\phpbb\notification\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->expect_disabled_notification($notifications, array(
-				'ad_id' => 1,
-				'ad_name' => 'Primary ad',
-				'ad_owner' => 2,
-				'reason' => \phpbb\ads\ad\manager::DISABLED_CLICKS_LIMIT,
-		));
+		$notifications->expects(self::never())->method('delete_notifications');
+		$notifications->expects(self::never())->method('add_notifications');
 
 		$manager = $this->get_manager_with_notifications($notifications);
-		$manager->update_ad(1, array(
-			'ad_clicks_enabled' => 1,
-			'ad_clicks_limit' => 1,
-		));
-
 		$manager->increment_ad_clicks(1);
 		$manager->increment_ad_clicks(1);
 
 		$ad = $manager->get_ad(1);
-		self::assertEquals(1, $ad['ad_clicks']);
-		self::assertEquals(0, $ad['ad_enabled']);
+		self::assertEquals(2, $ad['ad_clicks']);
+		self::assertEquals(1, $ad['ad_enabled']);
 	}
 
 	/**
-	 * Reaching view limit disables an ad and notifies its owner.
+	 * View tracking updates metrics without disabling ads or notifying owners.
 	 */
-	public function test_view_limit_disables_ad()
+	public function test_view_tracking_does_not_disable_or_notify()
 	{
 		$notifications = $this->getMockBuilder('\phpbb\notification\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->expect_disabled_notification($notifications, array(
-				'ad_id' => 1,
-				'ad_name' => 'Primary ad',
-				'ad_owner' => 2,
-				'reason' => \phpbb\ads\ad\manager::DISABLED_VIEWS_LIMIT,
-		));
+		$notifications->expects(self::never())->method('delete_notifications');
+		$notifications->expects(self::never())->method('add_notifications');
 
 		$manager = $this->get_manager_with_notifications($notifications);
-		$manager->update_ad(1, array(
-			'ad_views_enabled' => 1,
-			'ad_views_limit' => 1,
-		));
-
+		$manager->increment_ad_views(1);
 		$manager->increment_ad_views(1);
 
 		$ad = $manager->get_ad(1);
-		self::assertEquals(1, $ad['ad_views']);
-		self::assertEquals(0, $ad['ad_enabled']);
+		self::assertEquals(2, $ad['ad_views']);
+		self::assertEquals(1, $ad['ad_enabled']);
 	}
 
 	/**

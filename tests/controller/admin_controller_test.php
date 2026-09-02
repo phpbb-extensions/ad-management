@@ -809,8 +809,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_start_date'		=> '1514764800',
 			'ad_end_date'		=> '2051308800',
 			'ad_priority'		=> '5',
-			'ad_views_limit'	=> '0',
-			'ad_clicks_limit'	=> '0',
 			'ad_owner'			=> '2',
 		);
 
@@ -1363,8 +1361,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_priority'	=> 5,
 				'ad_views'		=> 0,
 				'ad_clicks'		=> 0,
-				'ad_views_limit'	=> 0,
-				'ad_clicks_limit'	=> 0,
 				'ad_views_enabled' => 1,
 				'ad_clicks_enabled' => 1,
 
@@ -1378,8 +1374,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_priority'	=> 5,
 				'ad_views'		=> 0,
 				'ad_clicks'		=> 0,
-				'ad_views_limit'	=> 0,
-				'ad_clicks_limit'	=> 0,
 				'ad_views_enabled' => 1,
 				'ad_clicks_enabled' => 1,
 			),

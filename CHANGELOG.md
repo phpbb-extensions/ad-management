@@ -9,7 +9,8 @@
 - Improved handling of oversized advertisement images, iframes, and videos.
 - Replaced the third-party ad blocker detection library with a simple bundled detector (the old detector made calls to an external site, raising privacy and security concerns).
 - Improved visual demo markup generation and fixed markup errors in the ACP advertisement settings forms.
-- Improved abuse protections around ad views and clicks tracking.
+- Reduced duplicate browser-generated view and click events with client-side cooldowns.
+- Removed automatic expiration based on view and click counts. Tracking statistics are approximate and should not control advertisement availability.
 - Editing an ad that has expired dates can be saved now, without having to change the old dates.
 - Fixed potential for orphaned data in the database after deleting ads.
 

@@ -31,8 +31,6 @@ class get_ad_test extends ad_base
 				'ad_priority' => '5',
 				'ad_views'	=> '0',
 				'ad_clicks'	=> '0',
-				'ad_views_limit'	=> '0',
-				'ad_clicks_limit'	=> '0',
 				'ad_owner'	=> '2',
 				'ad_content_only' => '0',
 				'ad_centering' => '1',

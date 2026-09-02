@@ -110,8 +110,6 @@ class admin_input
 			'ad_end_date'     	=> $this->request->variable('ad_end_date', ''),
 			'ad_priority'     	=> $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
 			'ad_content_only'	=> $this->request->variable('ad_content_only', 0),
-			'ad_views_limit'  	=> $this->request->variable('ad_views_limit', 0),
-			'ad_clicks_limit' 	=> $this->request->variable('ad_clicks_limit', 0),
 			'ad_owner'        	=> $this->request->variable('ad_owner', '', true),
 			'ad_groups'			=> $this->request->variable('ad_groups', array(0)),
 			'ad_centering'		=> $this->request->variable('ad_centering', true),
@@ -302,42 +300,6 @@ class admin_input
 		}
 
 		return $ad_priority;
-	}
-
-	/**
-	 * Validate advertisement views limit
-	 *
-	 * Clicks must be a positive integer.
-	 *
-	 * @param int $ad_views_limit Advertisement views limit
-	 * @return int Advertisement views limit
-	 */
-	protected function validate_ad_views_limit($ad_views_limit)
-	{
-		if ($ad_views_limit < 0)
-		{
-			$this->errors[] = 'AD_VIEWS_LIMIT_INVALID';
-		}
-
-		return $ad_views_limit;
-	}
-
-	/**
-	 * Validate advertisement clicks limit
-	 *
-	 * Clicks must be a positive integer.
-	 *
-	 * @param int $ad_clicks_limit Advertisement clicks limit
-	 * @return int Advertisement clicks limit
-	 */
-	protected function validate_ad_clicks_limit($ad_clicks_limit)
-	{
-		if ($ad_clicks_limit < 0)
-		{
-			$this->errors[] = 'AD_CLICKS_LIMIT_INVALID';
-		}
-
-		return $ad_clicks_limit;
 	}
 
 	/**

@@ -19,12 +19,13 @@ class m8_text_storage extends \phpbb\db\migration\migration
 	{
 		return array(
 			'\phpbb\ads\migrations\v10x\m1_initial_schema',
+			'\phpbb\ads\migrations\v10x\m9_views_clicks',
 			'\phpbb\ads\migrations\v20x\m7_per_ad_tracking',
 		);
 	}
 
 	/**
-	 * Use portable Unicode and unbounded text column types.
+	 * Use portable text column types and remove obsolete count limits.
 	 *
 	 * @return array Array of table schema changes
 	 */
@@ -37,17 +38,30 @@ class m8_text_storage extends \phpbb\db\migration\migration
 					'ad_code' => array('MTEXT_UNI', ''),
 				),
 			),
+			'drop_columns' => array(
+				$this->table_prefix . 'ads' => array(
+					'ad_views_limit',
+					'ad_clicks_limit',
+				),
+			),
 		);
 	}
 
 	/**
-	 * Keep the widened columns until the initial schema migration drops the table.
-	 * Narrowing them could fail when existing data no longer fits the old types.
+	 * Restore legacy columns so the released migration which introduced them can
+	 * remove them later in the uninstall chain. Widened text columns stay widened.
 	 *
 	 * @return array Array of table schema changes
 	 */
 	public function revert_schema()
 	{
-		return array();
+		return array(
+			'add_columns' => array(
+				$this->table_prefix . 'ads' => array(
+					'ad_views_limit' => array('UINT', 0),
+					'ad_clicks_limit' => array('UINT', 0),
+				),
+			),
+		);
 	}
 }

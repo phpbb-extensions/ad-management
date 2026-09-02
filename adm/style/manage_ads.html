@@ -149,24 +149,16 @@
 			</dl>
 		</fieldset>
 		<fieldset>
-			<legend>{{ lang('AD_TRACKING_AND_LIMITS') }}</legend>
+			<legend>{{ lang('AD_TRACKING') }}</legend>
 			<dl>
 				<dt><label for="ad_views_enabled">{{ lang('ENABLE_VIEWS') ~ lang('COLON') }}</label><br><span>{{ lang('ENABLE_VIEWS_EXPLAIN') }}</span></dt>
 				<dd><label><input type="radio" class="radio" id="ad_views_enabled" name="ad_views_enabled" value="1"{% if AD_VIEWS_ENABLED %} checked{% endif %}> {{ lang('YES') }}</label>
 					<label><input type="radio" class="radio" name="ad_views_enabled" value="0"{% if not AD_VIEWS_ENABLED %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 			</dl>
 			<dl>
-				<dt><label for="ad_views_limit">{{ lang('AD_VIEWS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_VIEWS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text narrow" type="number" id="ad_views_limit" name="ad_views_limit" value="{{ AD_VIEWS_LIMIT }}" min="0"></dd>
-			</dl>
-			<dl>
 				<dt><label for="ad_clicks_enabled">{{ lang('ENABLE_CLICKS') ~ lang('COLON') }}</label><br><span>{{ lang('ENABLE_CLICKS_EXPLAIN') }}</span></dt>
 				<dd><label><input type="radio" class="radio" id="ad_clicks_enabled" name="ad_clicks_enabled" value="1"{% if AD_CLICKS_ENABLED %} checked{% endif %}> {{ lang('YES') }}</label>
 					<label><input type="radio" class="radio" name="ad_clicks_enabled" value="0"{% if not AD_CLICKS_ENABLED %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-			</dl>
-			<dl>
-				<dt><label for="ad_clicks_limit">{{ lang('AD_CLICKS_LIMIT') ~ lang('COLON') }}</label><br><span>{{ lang('AD_CLICKS_LIMIT_EXPLAIN') }}</span></dt>
-				<dd><input class="text narrow" type="number" id="ad_clicks_limit" name="ad_clicks_limit" value="{{ AD_CLICKS_LIMIT }}" min="0"></dd>
 			</dl>
 		</fieldset>
 		<fieldset class="submit-buttons">
@@ -236,16 +228,12 @@
 							</td>
 							<td>
 								{% if ad.S_VIEWS_ENABLED %}
-									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error">{% endif %}
-										{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
-									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
+									{{ ad.VIEWS }}
 								{% else %}&mdash;{% endif %}
 							</td>
 							<td>
 								{% if ad.S_CLICKS_ENABLED %}
-									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error">{% endif %}
-										{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
-									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
+									{{ ad.CLICKS }}
 								{% else %}&mdash;{% endif %}
 							</td>
 							<td>
