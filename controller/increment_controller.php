@@ -18,8 +18,8 @@ class increment_controller
 	/** @var int Maximum ads accepted in one view batch */
 	public const MAX_VIEW_BATCH = 50;
 
-	/** @var int Click cooldown in seconds */
-	public const CLICK_COOLDOWN = 10;
+	/** @var int Tracking cooldown in seconds */
+	public const TRACKING_COOLDOWN = 10;
 
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
@@ -71,9 +71,16 @@ class increment_controller
 			throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 		}
 
-		if ($mode !== 'clicks' || !$this->is_click_rate_limited($data))
+		$ad_ids = $mode === 'views' ? explode('-', $data) : array($data);
+		$ad_ids = array_values(array_unique(array_map('intval', $ad_ids)));
+		$ad_ids = array_values(array_filter($ad_ids, function ($ad_id) use ($mode)
 		{
-			$this->{$mode}($data);
+			return !$this->is_rate_limited($mode, $ad_id);
+		}));
+
+		if ($ad_ids)
+		{
+			$this->{$mode}($mode === 'views' ? $ad_ids : $ad_ids[0]);
 		}
 
 		return new \Symfony\Component\HttpFoundation\JsonResponse();
@@ -111,25 +118,26 @@ class increment_controller
 	}
 
 	/**
-	 * Suppress rapid repeat clicks for same session and ad.
+	 * Suppress rapid repeat tracking requests for same IP, mode, and ad.
 	 *
-	 * @param int $ad_id Advertisement ID
-	 * @return bool True when click should be suppressed
+	 * @param string $mode Counter mode
+	 * @param int    $ad_id Advertisement ID
+	 * @return bool True when request should be suppressed
 	 */
-	protected function is_click_rate_limited($ad_id)
+	protected function is_rate_limited($mode, $ad_id)
 	{
-		if (empty($this->user->session_id))
+		if (empty($this->user->ip))
 		{
-			return false;
+			return true;
 		}
 
-		$key = '_phpbb_ads_click_' . hash('sha256', $this->user->session_id . ':' . (int) $ad_id);
+		$key = '_phpbb_ads_tracking_' . hash('sha256', $mode . ':' . $this->user->ip . ':' . (int) $ad_id);
 		if ($this->cache->get($key) !== false)
 		{
 			return true;
 		}
 
-		$this->cache->put($key, true, self::CLICK_COOLDOWN);
+		$this->cache->put($key, true, self::TRACKING_COOLDOWN);
 
 		return false;
 	}
@@ -147,10 +155,10 @@ class increment_controller
 	/**
 	 * Increment views for ads.
 	 *
-	 * @param	string	$ad_ids	Advertisement IDs
+	 * @param	array	$ad_ids	Advertisement IDs
 	 */
 	protected function views($ad_ids)
 	{
-		$this->manager->increment_ads_views(explode('-', $ad_ids));
+		$this->manager->increment_ads_views($ad_ids);
 	}
 }
