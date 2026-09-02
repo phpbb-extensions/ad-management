@@ -219,7 +219,6 @@ class increment_controller_test extends \phpbb_database_test_case
 			array('1', false, true),
 			array('1', true, false),
 			array('1', true, true),
-			array('1-2', true, true),
 		);
 	}
 	/**
@@ -227,34 +226,33 @@ class increment_controller_test extends \phpbb_database_test_case
 	 *
 	 * @dataProvider increment_views_data
 	 */
-	public function test_increment_views($ad_ids, $is_ajax, $valid_hash)
+	public function test_increment_views($ad_id, $is_ajax, $valid_hash)
 	{
 		$controller = $this->get_controller();
-		$should_increment = (int) $ad_ids > 0 && $is_ajax && $valid_hash;
-		$ad_count = $should_increment ? count(array_unique(explode('-', $ad_ids))) : 0;
+		$should_increment = (int) $ad_id > 0 && $is_ajax && $valid_hash;
 
-		$this->request->expects(!empty($ad_ids) ? self::once() : self::never())
+		$this->request->expects(!empty($ad_id) ? self::once() : self::never())
 			->method('is_ajax')
 			->willReturn($is_ajax);
 
-		$this->request->expects(($is_ajax && !empty($ad_ids)) ? self::once() : self::never())
+		$this->request->expects(($is_ajax && !empty($ad_id)) ? self::once() : self::never())
 			->method('variable')
 			->with('hash', '')
-			->willReturn($valid_hash ? generate_link_hash('phpbb_ads_views_' . $ad_ids) : 'invalid');
+			->willReturn($valid_hash ? generate_link_hash('phpbb_ads_views_' . $ad_id) : 'invalid');
 
-		$this->cache->expects($ad_count ? self::exactly($ad_count) : self::never())
+		$this->cache->expects($should_increment ? self::once() : self::never())
 			->method('get')
 			->willReturn(false);
-		$this->cache->expects($ad_count ? self::exactly($ad_count) : self::never())
+		$this->cache->expects($should_increment ? self::once() : self::never())
 			->method('put');
 
 		$this->manager->expects($should_increment ? self::once() : self::never())
-			->method('increment_ads_views')
-			->with(explode('-', $ad_ids));
+			->method('increment_ad_views')
+			->with((int) $ad_id);
 
 		try
 		{
-			$response = $controller->handle($ad_ids, 'views');
+			$response = $controller->handle($ad_id, 'views');
 
 			self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
 		}
@@ -266,23 +264,19 @@ class increment_controller_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * View cooldown is applied per advertisement inside a batch.
+	 * Server cache suppresses rapid repeated views without database work.
 	 */
-	public function test_view_rate_limit_filters_batch()
+	public function test_view_rate_limit()
 	{
 		$this->request->method('is_ajax')->willReturn(true);
 		$this->request->method('variable')->with('hash', '')
-			->willReturn(generate_link_hash('phpbb_ads_views_1-2'));
-		$key_one = '_phpbb_ads_tracking_' . hash('sha256', 'views:192.0.2.1:1');
-		$key_two = '_phpbb_ads_tracking_' . hash('sha256', 'views:192.0.2.1:2');
-		$this->cache->expects(self::exactly(2))->method('get')
-			->withConsecutive(array($key_one), array($key_two))
-			->willReturnOnConsecutiveCalls(true, false);
-		$this->cache->expects(self::once())->method('put')
-			->with($key_two, true, \phpbb\ads\controller\increment_controller::TRACKING_COOLDOWN);
-		$this->manager->expects(self::once())->method('increment_ads_views')->with(array(2));
+			->willReturn(generate_link_hash('phpbb_ads_views_1'));
+		$key = '_phpbb_ads_tracking_' . hash('sha256', 'views:192.0.2.1:1');
+		$this->cache->expects(self::once())->method('get')->with($key)->willReturn(true);
+		$this->cache->expects(self::never())->method('put');
+		$this->manager->expects(self::never())->method('increment_ad_views');
 
-		$response = $this->get_controller()->handle('1-2', 'views');
+		$response = $this->get_controller()->handle('1', 'views');
 
 		self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
 	}
@@ -293,7 +287,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	public function test_invalid_payload_is_rejected($data, $mode)
 	{
 		$this->request->expects(self::never())->method('is_ajax');
-		$this->manager->expects(self::never())->method('increment_ads_views');
+		$this->manager->expects(self::never())->method('increment_ad_views');
 		$this->manager->expects(self::never())->method('increment_ad_clicks');
 
 		$this->expectException('\phpbb\exception\http_exception');
@@ -304,7 +298,7 @@ class increment_controller_test extends \phpbb_database_test_case
 	{
 		return array(
 			array('1-two', 'views'),
-			array(implode('-', array_fill(0, 51, '1')), 'views'),
+			array('1-2', 'views'),
 			array('1', 'unknown'),
 		);
 	}

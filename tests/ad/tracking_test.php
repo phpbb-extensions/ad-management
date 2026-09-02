@@ -12,25 +12,26 @@ namespace phpbb\ads\tests\ad;
 
 class tracking_test extends ad_base
 {
-	public function invalid_view_ids_data()
+	public function invalid_view_id_data()
 	{
 		return array(
-			'empty list' => array(array()),
-			'non-positive values' => array(array(0, -1, '0')),
+			'zero' => array(0),
+			'negative' => array(-1),
+			'zero string' => array('0'),
 		);
 	}
 
 	/**
 	 * Invalid IDs cause no view update and leave advertisements unchanged.
 	 *
-	 * @dataProvider invalid_view_ids_data
+	 * @dataProvider invalid_view_id_data
 	 */
-	public function test_invalid_view_ids_do_not_increment($ad_ids)
+	public function test_invalid_view_id_does_not_increment($ad_id)
 	{
 		$manager = $this->get_manager();
 		$query_count = $this->db->sql_num_queries();
 
-		$manager->increment_ads_views($ad_ids);
+		$manager->increment_ad_views($ad_id);
 
 		self::assertSame($query_count, $this->db->sql_num_queries());
 		self::assertEquals(0, $manager->get_ad(1)['ad_views']);
@@ -47,7 +48,7 @@ class tracking_test extends ad_base
 			'ad_clicks_enabled' => 0,
 		));
 
-		$manager->increment_ads_views(array(1));
+		$manager->increment_ad_views(1);
 		$manager->increment_ad_clicks(1);
 
 		$ad = $manager->get_ad(1);
@@ -85,26 +86,6 @@ class tracking_test extends ad_base
 	}
 
 	/**
-	 * Duplicate IDs in a batch count as one view.
-	 */
-	public function test_view_batch_deduplicates_ads()
-	{
-		$manager = $this->get_manager();
-		$manager->update_ad(1, array(
-			'ad_views_enabled' => 1,
-			'ad_views_limit' => 2,
-		));
-
-		$query_count = $this->db->sql_num_queries();
-		$manager->increment_ads_views(array(1, 1, 1));
-		self::assertSame(2, $this->db->sql_num_queries() - $query_count);
-
-		$ad = $manager->get_ad(1);
-		self::assertEquals(1, $ad['ad_views']);
-		self::assertEquals(1, $ad['ad_enabled']);
-	}
-
-	/**
 	 * Reaching view limit disables an ad and notifies its owner.
 	 */
 	public function test_view_limit_disables_ad()
@@ -125,7 +106,7 @@ class tracking_test extends ad_base
 			'ad_views_limit' => 1,
 		));
 
-		$manager->increment_ads_views(array(1));
+		$manager->increment_ad_views(1);
 
 		$ad = $manager->get_ad(1);
 		self::assertEquals(1, $ad['ad_views']);

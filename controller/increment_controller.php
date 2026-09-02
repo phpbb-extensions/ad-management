@@ -15,9 +15,6 @@ namespace phpbb\ads\controller;
 */
 class increment_controller
 {
-	/** @var int Maximum ads accepted in one view batch */
-	public const MAX_VIEW_BATCH = 50;
-
 	/** @var int Tracking cooldown in seconds */
 	public const TRACKING_COOLDOWN = 10;
 
@@ -52,14 +49,14 @@ class increment_controller
 	/**
 	 * Handle request.
 	 *
-	 * @param	mixed	$data	Ad ID or ad IDs
+	 * @param	mixed	$data	Ad ID
 	 * @param	string	$mode	clicks or views
 	 * @return	\Symfony\Component\HttpFoundation\JsonResponse	A Symfony JsonResponse object
 	 * @throws	\phpbb\exception\http_exception
 	 */
 	public function handle($data, $mode)
 	{
-		if (!in_array($mode, array('clicks', 'views'), true) || !$this->is_valid_data($data, $mode))
+		if (!in_array($mode, array('clicks', 'views'), true) || !$this->is_valid_data($data))
 		{
 			throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 		}
@@ -71,16 +68,10 @@ class increment_controller
 			throw new \phpbb\exception\http_exception(403, 'NOT_AUTHORISED');
 		}
 
-		$ad_ids = $mode === 'views' ? explode('-', $data) : array($data);
-		$ad_ids = array_values(array_unique(array_map('intval', $ad_ids)));
-		$ad_ids = array_values(array_filter($ad_ids, function ($ad_id) use ($mode)
+		$ad_id = (int) $data;
+		if (!$this->is_rate_limited($mode, $ad_id))
 		{
-			return !$this->is_rate_limited($mode, $ad_id);
-		}));
-
-		if ($ad_ids)
-		{
-			$this->{$mode}($mode === 'views' ? $ad_ids : $ad_ids[0]);
+			$this->{$mode}($ad_id);
 		}
 
 		return new \Symfony\Component\HttpFoundation\JsonResponse();
@@ -90,31 +81,11 @@ class increment_controller
 	 * Validate route payload before using it.
 	 *
 	 * @param mixed $data Route payload
-	 * @param string $mode Counter mode
 	 * @return bool
 	 */
-	protected function is_valid_data($data, $mode)
+	protected function is_valid_data($data)
 	{
-		if ($mode === 'clicks')
-		{
-			return ctype_digit((string) $data) && (int) $data > 0;
-		}
-
-		$ad_ids = explode('-', (string) $data);
-		if (count($ad_ids) > self::MAX_VIEW_BATCH)
-		{
-			return false;
-		}
-
-		foreach ($ad_ids as $ad_id)
-		{
-			if (!ctype_digit($ad_id) || (int) $ad_id <= 0)
-			{
-				return false;
-			}
-		}
-
-		return !empty($ad_ids);
+		return ctype_digit((string) $data) && (int) $data > 0;
 	}
 
 	/**
@@ -153,12 +124,12 @@ class increment_controller
 	}
 
 	/**
-	 * Increment views for ads.
+	 * Increment views for an ad.
 	 *
-	 * @param	array	$ad_ids	Advertisement IDs
+	 * @param	int	$ad_id	Advertisement ID
 	 */
-	protected function views($ad_ids)
+	protected function views($ad_id)
 	{
-		$this->manager->increment_ads_views($ad_ids);
+		$this->manager->increment_ad_views($ad_id);
 	}
 }

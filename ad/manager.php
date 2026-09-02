@@ -184,18 +184,15 @@ class manager
 	}
 
 	/**
-	 * Increment views for specified ads
+	 * Increment views for a specified ad
 	 *
-	 * Note that views are incremented only by one even when
-	 * an ad is displayed multiple times on the same page.
-	 *
-	 * @param    array $ad_ids IDs of ads to increment views
+	 * @param    int $ad_id ID of an ad to increment views
 	 * @return    void
 	 */
-	public function increment_ads_views($ad_ids)
+	public function increment_ad_views($ad_id)
 	{
-		$ad_ids = $this->normalize_ad_ids($ad_ids);
-		if (empty($ad_ids))
+		$ad_id = (int) $ad_id;
+		if ($ad_id <= 0)
 		{
 			return;
 		}
@@ -203,7 +200,7 @@ class manager
 		$sql_time = $this->get_current_time();
 		$sql = 'UPDATE ' . $this->ads_table . '
 			SET ad_views = ad_views + 1
-			WHERE ' . $this->db->sql_in_set('ad_id', $ad_ids) . '
+			WHERE ad_id = ' . $ad_id . '
 				AND ad_enabled = 1
 				AND ad_views_enabled = 1
 				AND (ad_start_date = 0 OR ad_start_date <= ' . $sql_time . ')
@@ -211,7 +208,7 @@ class manager
 				AND (ad_views_limit = 0 OR ad_views < ad_views_limit)
 				AND (ad_clicks_enabled = 0 OR ad_clicks_limit = 0 OR ad_clicks < ad_clicks_limit)';
 		$this->db->sql_query($sql);
-		$this->disable_expired_ads($ad_ids);
+		$this->disable_expired_ads(array($ad_id));
 	}
 
 	/**
