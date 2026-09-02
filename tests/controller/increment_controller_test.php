@@ -24,6 +24,12 @@ class increment_controller_test extends \phpbb_database_test_case
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\lock\flock */
+	protected $lock;
+
+	/** @var bool */
+	protected $lock_acquired = true;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -63,6 +69,12 @@ class increment_controller_test extends \phpbb_database_test_case
 		$this->cache = $this->getMockBuilder('\phpbb\cache\driver\dummy')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->lock = $this->getMockBuilder('\phpbb\lock\flock')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->lock->method('acquire')->willReturnCallback(function () {
+			return $this->lock_acquired;
+		});
 	}
 
 	/**
@@ -72,12 +84,14 @@ class increment_controller_test extends \phpbb_database_test_case
 	 */
 	public function get_controller()
 	{
-		$controller = new \phpbb\ads\controller\increment_controller(
+		$controller = new testable_increment_controller(
 			$this->manager,
 			$this->request,
 			$this->cache,
-			$this->user
+			$this->user,
+			'cache/'
 		);
+		$controller->set_lock($this->lock);
 
 		return $controller;
 	}
@@ -182,6 +196,24 @@ class increment_controller_test extends \phpbb_database_test_case
 		$this->cache->expects(self::once())->method('put')
 			->with($key, true, \phpbb\ads\controller\increment_controller::TRACKING_COOLDOWN);
 		$this->manager->expects(self::once())->method('increment_ad_clicks')->with(1);
+
+		$response = $this->get_controller()->handle(1, 'clicks');
+
+		self::assertInstanceOf('\Symfony\Component\HttpFoundation\JsonResponse', $response);
+	}
+
+	/**
+	 * Tracking fails closed when atomic cooldown lock is unavailable.
+	 */
+	public function test_rate_limit_when_lock_is_unavailable()
+	{
+		$this->lock_acquired = false;
+		$this->request->method('is_ajax')->willReturn(true);
+		$this->request->method('variable')->with('hash', '')
+			->willReturn(generate_link_hash('phpbb_ads_click_1'));
+		$this->cache->expects(self::never())->method('get');
+		$this->cache->expects(self::never())->method('put');
+		$this->manager->expects(self::never())->method('increment_ad_clicks');
 
 		$response = $this->get_controller()->handle(1, 'clicks');
 
@@ -301,5 +333,21 @@ class increment_controller_test extends \phpbb_database_test_case
 			array('1-2', 'views'),
 			array('1', 'unknown'),
 		);
+	}
+}
+
+class testable_increment_controller extends \phpbb\ads\controller\increment_controller
+{
+	/** @var \phpbb\lock\flock */
+	protected $lock;
+
+	public function set_lock(\phpbb\lock\flock $lock)
+	{
+		$this->lock = $lock;
+	}
+
+	protected function get_tracking_lock($key_hash)
+	{
+		return $this->lock;
 	}
 }

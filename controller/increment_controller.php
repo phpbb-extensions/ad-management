@@ -17,6 +17,8 @@ class increment_controller
 {
 	/** @var int Tracking cooldown in seconds */
 	public const TRACKING_COOLDOWN = 10;
+	/** @var int Number of tracking lock files used to limit contention */
+	public const TRACKING_LOCK_BUCKETS = 64;
 
 	/** @var \phpbb\ads\ad\manager */
 	protected $manager;
@@ -30,20 +32,25 @@ class increment_controller
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var string */
+	protected $cache_path;
+
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\ads\ad\manager    $manager Advertisement manager object
+	 * @param \phpbb\ads\ad\manager                  $manager Advertisement manager object
 	 * @param \phpbb\request\request                 $request Request object
 	 * @param \phpbb\cache\driver\driver_interface  $cache Cache driver
 	 * @param \phpbb\user                            $user User object
+	 * @param string                                   $cache_path Cache directory
 	 */
-	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\request\request $request, \phpbb\cache\driver\driver_interface $cache, \phpbb\user $user)
+	public function __construct(\phpbb\ads\ad\manager $manager, \phpbb\request\request $request, \phpbb\cache\driver\driver_interface $cache, \phpbb\user $user, $cache_path)
 	{
 		$this->manager = $manager;
 		$this->request = $request;
 		$this->cache = $cache;
 		$this->user = $user;
+		$this->cache_path = rtrim($cache_path, '/\\') . '/';
 	}
 
 	/**
@@ -102,15 +109,51 @@ class increment_controller
 			return true;
 		}
 
-		$key = '_phpbb_ads_tracking_' . hash('sha256', $mode . ':' . $this->user->ip . ':' . (int) $ad_id);
-		if ($this->cache->get($key) !== false)
+		$key_hash = hash('sha256', $mode . ':' . $this->user->ip . ':' . (int) $ad_id);
+		$key = '_phpbb_ads_tracking_' . $key_hash;
+		$lock = $this->get_tracking_lock($key_hash);
+		try
+		{
+			$lock_acquired = $lock->acquire();
+		}
+		catch (\phpbb\exception\http_exception $e)
 		{
 			return true;
 		}
 
-		$this->cache->put($key, true, self::TRACKING_COOLDOWN);
+		if (!$lock_acquired)
+		{
+			return true;
+		}
+
+		try
+		{
+			if ($this->cache->get($key) !== false)
+			{
+				return true;
+			}
+
+			$this->cache->put($key, true, self::TRACKING_COOLDOWN);
+		}
+		finally
+		{
+			$lock->release();
+		}
 
 		return false;
+	}
+
+	/**
+	 * Get a striped lock for an atomic cooldown cache check and write.
+	 *
+	 * @param string $key_hash Tracking cache key hash
+	 * @return \phpbb\lock\flock
+	 */
+	protected function get_tracking_lock($key_hash)
+	{
+		$bucket = hexdec(substr($key_hash, 0, 2)) % self::TRACKING_LOCK_BUCKETS;
+
+		return new \phpbb\lock\flock($this->cache_path . 'phpbb_ads_tracking_' . $bucket);
 	}
 
 	/**

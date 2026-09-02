@@ -88,6 +88,7 @@ services:
             - '@request'
             - '@cache.driver'
             - '@user'
+            - '%core.cache_dir%'
 
     phpbb.ads.ucp.controller:
         class: phpbb\ads\controller\ucp_controller
