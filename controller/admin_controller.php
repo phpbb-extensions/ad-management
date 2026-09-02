@@ -602,7 +602,10 @@ class admin_controller
 		{
 			$has_ads = count($this->manager->get_ads_by_owner($user_id)) !== 0;
 
-			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => (int) $has_ads));
+			// ACL_NO removes the user override; ACL_NEVER would suppress group grants.
+			$this->auth_admin->acl_set('user', 0, $user_id, array(
+				'u_phpbb_ads' => $has_ads ? ACL_YES : ACL_NO,
+			));
 		}
 	}
 
