@@ -926,4 +926,17 @@ class manager
 			WHERE ad_id = ' . (int) $ad_id;
 		$this->db->sql_query($sql);
 	}
+
+	/**
+	 * Remove advertisement assignments for a deleted group.
+	 *
+	 * @param int $group_id Group ID
+	 * @return void
+	 */
+	public function delete_group_assignments($group_id)
+	{
+		$sql = 'DELETE FROM ' . $this->ad_group_table . '
+			WHERE group_id = ' . (int) $group_id;
+		$this->db->sql_query($sql);
+	}
 }

@@ -30,6 +30,12 @@ class admin_input_test extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\banner\banner */
 	protected $banner;
 
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
+	protected $manager;
+
+	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\location\manager */
+	protected $location_manager;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -69,6 +75,20 @@ class admin_input_test extends \phpbb_database_test_case
 		$this->banner = $this->getMockBuilder('\phpbb\ads\banner\banner')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->manager->method('load_groups')->willReturn(array(
+			array('group_id' => '1'),
+			array('group_id' => '2'),
+		));
+		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->location_manager->method('get_all_locations')->with(false)->willReturn(array(
+			'above_header' => array(),
+			'above_footer' => array(),
+		));
 
 		// Global objects required by generate_board_url()
 		$config = new \phpbb\config\config(array(
@@ -93,7 +113,9 @@ class admin_input_test extends \phpbb_database_test_case
 			$this->user_loader,
 			$this->language,
 			$this->request,
-			$this->banner
+			$this->banner,
+			$this->manager,
+			$this->location_manager
 		);
 
 		return $input;
@@ -114,6 +136,8 @@ class admin_input_test extends \phpbb_database_test_case
 			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_NAME_TOO_LONG']),
 			array(true, [str_repeat('😀', 29), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_NAME_TOO_LONG']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code with emoji 😀', 0, '', '', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_CODE_ILLEGAL_CHARS']),
+			// Invalid and duplicate location/group IDs are removed.
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, ['above_header', 'invalid', 'above_header'], '', '', 5, 0, 0, 0, '', [2, 999, 2], false, 1], 0, []),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', 'blah', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', 'blah', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_END_DATE_INVALID']),
 			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '2060-02-30', '', 5, 0, 0, 0, '', [], false, 1], 0, ['AD_START_DATE_INVALID']),
@@ -137,7 +161,7 @@ class admin_input_test extends \phpbb_database_test_case
 				'AD_CLICKS_LIMIT_INVALID',
 				'AD_OWNER_INVALID',
 			]),
-			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2019-01-01', '4', '1', '50', '30', 'admin', ['5'], 0, 0, 1, 1], 2, [], strtotime('2018-01-01 12:34:56 UTC'), strtotime('2019-01-01 12:34:56 UTC')),
+			array(true, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', '1', array('above_header', 'above_footer'), '2018-01-01', '2019-01-01', '4', '1', '50', '30', 'admin', ['2'], 0, 0, 1, 1], 2, [], strtotime('2018-01-01 12:34:56 UTC'), strtotime('2019-01-01 12:34:56 UTC')),
 		);
 	}
 
@@ -169,12 +193,15 @@ class admin_input_test extends \phpbb_database_test_case
 		}
 		else
 		{
+			$expected_locations = array_values(array_unique(array_intersect((array) $ad_locations, array('above_header', 'above_footer'))));
+			$expected_groups = array_values(array_unique(array_intersect((array) $ad_groups, array(1, 2))));
+
 			self::assertEquals(array(
 				'ad_name'         => utf8_encode_ucr($ad_name),
 				'ad_note'         => utf8_encode_ucr($ad_note),
 				'ad_code'         => $ad_code,
 				'ad_enabled'      => $ad_enabled,
-				'ad_locations'    => $ad_locations,
+				'ad_locations'    => $expected_locations,
 				'ad_start_date'   => $result['ad_start_date'], // Skipped, because it's different with every call
 				'ad_end_date'     => $result['ad_end_date'], // Skipped, because it's different with every call
 				'ad_priority'     => $ad_priority,
@@ -182,7 +209,7 @@ class admin_input_test extends \phpbb_database_test_case
 				'ad_views_limit'  => $ad_views_limit,
 				'ad_clicks_limit' => $ad_clicks_limit,
 				'ad_owner'        => $ad_owner_expected,
-				'ad_groups'		  => $ad_groups,
+				'ad_groups'		  => $expected_groups,
 				'ad_centering'	  => $ad_centering,
 				'ad_consent'	  => $ad_consent,
 				'ad_views_enabled' => $ad_views_enabled,

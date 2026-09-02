@@ -32,6 +32,12 @@ class admin_input
 	/** @var \phpbb\ads\banner\banner */
 	protected $banner;
 
+	/** @var \phpbb\ads\ad\manager */
+	protected $manager;
+
+	/** @var \phpbb\ads\location\manager */
+	protected $location_manager;
+
 	/** @var array Form validation errors */
 	protected $errors = array();
 
@@ -41,19 +47,23 @@ class admin_input
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\user              $user        User object
-	 * @param \phpbb\user_loader       $user_loader User loader object
-	 * @param \phpbb\language\language $language    Language object
-	 * @param \phpbb\request\request   $request     Request object
-	 * @param \phpbb\ads\banner\banner $banner      Banner upload object
+	 * @param \phpbb\user                 $user             User object
+	 * @param \phpbb\user_loader          $user_loader      User loader object
+	 * @param \phpbb\language\language    $language         Language object
+	 * @param \phpbb\request\request      $request          Request object
+	 * @param \phpbb\ads\banner\banner    $banner           Banner upload object
+	 * @param \phpbb\ads\ad\manager       $manager          Advertisement manager object
+	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
 	{
 		$this->user = $user;
 		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->request = $request;
 		$this->banner = $banner;
+		$this->manager = $manager;
+		$this->location_manager = $location_manager;
 
 		add_form_key('phpbb_ads');
 	}
@@ -206,6 +216,32 @@ class admin_input
 		}
 
 		return $ad_name;
+	}
+
+	/**
+	 * Remove locations that are not offered by the advertisement form.
+	 *
+	 * @param array $ad_locations Advertisement locations
+	 * @return array Valid advertisement locations
+	 */
+	protected function validate_ad_locations($ad_locations)
+	{
+		$valid_locations = array_keys($this->location_manager->get_all_locations(false));
+
+		return array_values(array_unique(array_intersect((array) $ad_locations, $valid_locations)));
+	}
+
+	/**
+	 * Remove groups that are not offered by the advertisement form.
+	 *
+	 * @param array $ad_groups Advertisement groups
+	 * @return array Valid advertisement groups
+	 */
+	protected function validate_ad_groups($ad_groups)
+	{
+		$valid_groups = array_column($this->manager->load_groups(0), 'group_id');
+
+		return array_values(array_unique(array_intersect((array) $ad_groups, $valid_groups)));
 	}
 
 	/**

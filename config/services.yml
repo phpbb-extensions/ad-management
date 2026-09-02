@@ -44,6 +44,8 @@ services:
             - '@language'
             - '@request'
             - '@phpbb.ads.banner.banner'
+            - '@phpbb.ads.ad.manager'
+            - '@phpbb.ads.location.manager'
 
     phpbb.ads.listener:
         class: phpbb\ads\event\main_listener
