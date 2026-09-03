@@ -42,6 +42,8 @@ class visual_demo_test extends phpbb_test_case
 		$phpbb_path_helper = $this->getMockBuilder(path_helper::class)
 			->disableOriginalConstructor()
 			->getMock();
+		$phpbb_path_helper->method('update_web_root_path')
+			->willReturnArgument(0);
 
 		$this->auth = $this->getMockBuilder(auth::class)->getMock();
 		$this->request = $this->getMockBuilder(request::class)

@@ -63,7 +63,7 @@ class notification_test extends functional_base
 		self::assertSame(200, self::$client->getResponse()->getStatusCode(), self::get_content());
 		self::request('POST', $click_url, array(), false);
 		self::assertSame(200, self::$client->getResponse()->getStatusCode(), self::get_content());
-		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', null);
+		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
 
 		$sql = "SELECT ad_enabled, ad_clicks
 			FROM phpbb_ads

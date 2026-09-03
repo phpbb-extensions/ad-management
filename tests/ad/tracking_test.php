@@ -12,7 +12,7 @@ namespace phpbb\ads\tests\ad;
 
 class tracking_test extends ad_base
 {
-	public static function invalid_view_ids_data()
+	public static function invalid_view_id_data(): array
 	{
 		return array(
 			'zero' => array(0),
@@ -119,7 +119,7 @@ class tracking_test extends ad_base
 		self::assertEquals(0, $manager->get_ad(3)['ad_enabled']);
 	}
 
-	public static function expired_ad_id_data()
+	public static function expired_ad_id_data(): array
 	{
 		return array(
 			'invalid ID' => array(0, false),
@@ -164,7 +164,7 @@ class tracking_test extends ad_base
 	 * @param \phpbb\notification\manager $notifications Notification manager
 	 * @return \phpbb\ads\ad\manager
 	 */
-	protected function get_manager_with_notifications(\phpbb\notification\manager $notifications)
+	protected function get_manager_with_notifications(\phpbb\notification\manager $notifications): \phpbb\ads\ad\manager
 	{
 		return new \phpbb\ads\ad\manager(
 			$this->db,
@@ -183,7 +183,7 @@ class tracking_test extends ad_base
 	 * @param array $expected Expected notification payload
 	 * @return void
 	 */
-	protected function expect_disabled_notification(\phpbb\notification\manager $notifications, $expected)
+	protected function expect_disabled_notification(\phpbb\notification\manager $notifications, $expected): void
 	{
 		$notifications->expects(self::once())
 			->method('delete_notifications')

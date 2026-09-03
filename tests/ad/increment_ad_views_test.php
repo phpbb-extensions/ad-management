@@ -17,7 +17,7 @@ class increment_ad_views_test extends ad_base
 	 *
 	 * @return array Array of test data
 	 */
-	public function increment_ad_views_data()
+	public static function increment_ad_views_data(): array
 	{
 		return array(
 			array(1, 1),
@@ -31,7 +31,7 @@ class increment_ad_views_test extends ad_base
 	 *
 	 * @dataProvider increment_ad_views_data
 	 */
-	public function test_increment_ad_views($ad_id, $expected)
+	public function test_increment_ad_views($ad_id, $expected): void
 	{
 		$manager = $this->get_manager();
 

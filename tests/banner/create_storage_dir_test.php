@@ -38,11 +38,17 @@ class create_storage_dir_test extends banner_base
 		$manager = $this->get_manager();
 		$storage_path = $this->root_path . 'images/phpbb_ads';
 		$index_path = $storage_path . '/index.htm';
+		$expected_paths = array($storage_path, $index_path);
+		$return_values = array($dir_exists, $index_exists);
 
 		$this->filesystem->expects(self::exactly(2))
 			->method('exists')
-			->withConsecutive(array($storage_path), array($index_path))
-			->willReturnOnConsecutiveCalls($dir_exists, $index_exists);
+			->willReturnCallback(function ($path) use (&$expected_paths, &$return_values)
+			{
+				self::assertSame(array_shift($expected_paths), $path);
+
+				return array_shift($return_values);
+			});
 
 		if (!$dir_exists)
 		{
@@ -83,10 +89,16 @@ class create_storage_dir_test extends banner_base
 	{
 		$storage_path = $this->root_path . 'images/phpbb_ads';
 		$index_path = $storage_path . '/index.htm';
+		$expected_paths = array($storage_path, $index_path);
+		$return_values = array(true, false);
 		$this->filesystem->expects(self::exactly(2))
 			->method('exists')
-			->withConsecutive(array($storage_path), array($index_path))
-			->willReturnOnConsecutiveCalls(true, false);
+			->willReturnCallback(function ($path) use (&$expected_paths, &$return_values)
+			{
+				self::assertSame(array_shift($expected_paths), $path);
+
+				return array_shift($return_values);
+			});
 		$this->filesystem->expects(self::once())
 			->method('touch')
 			->with($index_path)

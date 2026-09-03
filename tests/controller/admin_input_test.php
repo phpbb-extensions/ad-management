@@ -282,7 +282,7 @@ class admin_input_test extends phpbb_database_test_case
 
 		if ($is_ajax)
 		{
-			$text = !empty($file_error) ? '"CANNOT_CREATE_DIRECTORY"' : '"' . addcslashes(trim(substr($ad_code_expected, strpos($ad_code_expected, '<img'))), "/\"") . '"';
+			$text = !empty($file_error) ? '"' . $file_error[0] . '"' : '"' . addcslashes(trim(substr($ad_code_expected, strpos($ad_code_expected, '<img'))), "/\"") . '"';
 			$filename = empty($file_error) ? '"filename":"abcdef.jpg",' : '';
 			$this->expectOutputString('{' . $filename . '"success":' . (count($file_error) ? 'false' : 'true') . ',"title":"Information","text":' . $text . '}');
 			$this->expectException(\RuntimeException::class);

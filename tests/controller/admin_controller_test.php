@@ -185,7 +185,7 @@ class admin_controller_test extends phpbb_database_test_case
 	 *
 	 * @return array Test data
 	 */
-	public function toggle_permission_data()
+	public static function toggle_permission_data()
 	{
 		return array(
 			'owner has ads' => array(array(array('ad_id' => 1)), ACL_YES),
@@ -1151,7 +1151,7 @@ class admin_controller_test extends phpbb_database_test_case
 				$this->expectOutputString(json_encode(array(
 					'success' => true,
 					'text'    => $enable ? 'Enabled' : 'Disabled',
-					'title'   => 'AD_ENABLE_TITLE',
+					'title'   => $enable ? 'AD_DISABLE_TITLE' : 'AD_ENABLE_TITLE',
 					'href'    => html_entity_decode($this->u_action) . '&action=' . $next_action . '&id=' . $ad_id . '&hash=' . generate_link_hash('phpbb_ads_' . $next_action . '_' . $ad_id),
 				)));
 				$this->expectException(\RuntimeException::class);
