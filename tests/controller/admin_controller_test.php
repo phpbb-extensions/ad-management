@@ -206,7 +206,7 @@ class admin_controller_test extends phpbb_database_test_case
 
 		$auth_admin = $this->getMockBuilder('\auth_admin')
 			->disableOriginalConstructor()
-			->setMethods(array('acl_set'))
+			->onlyMethods(array('acl_set'))
 			->getMock();
 		$auth_admin->expects(self::once())
 			->method('acl_set')
@@ -214,10 +214,8 @@ class admin_controller_test extends phpbb_database_test_case
 
 		$reflection_controller = new \ReflectionObject($controller);
 		$auth_admin_property = $reflection_controller->getProperty('auth_admin');
-		$auth_admin_property->setAccessible(true);
 		$auth_admin_property->setValue($controller, $auth_admin);
 		$toggle_permission = $reflection_controller->getMethod('toggle_permission');
-		$toggle_permission->setAccessible(true);
 		$toggle_permission->invoke($controller, 2);
 	}
 
