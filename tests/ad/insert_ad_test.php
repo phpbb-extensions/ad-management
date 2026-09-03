@@ -31,6 +31,7 @@ class insert_ad_test extends ad_base
 					'ad_priority'	=> 5,
 					'ad_groups'		=> [],
 				),
+				'Insert Ad Test #1',
 			),
 			array(
 				array(
@@ -44,6 +45,21 @@ class insert_ad_test extends ad_base
 					'random_column'	=> 'Random Value',
 					'ad_groups'		=> ['2', '3'],
 				),
+				'Insert Ad Test #2',
+			),
+			array(
+				array(
+					'ad_name'		=> 'Ad 😀 中文 Кириллица',
+					'ad_note'		=> 'Note 📝 日本語 Ελληνικά',
+					'ad_code'		=> '',
+					'ad_enabled'	=> 1,
+					'ad_start_date'	=> 0,
+					'ad_end_date'	=> 0,
+					'ad_priority'	=> 5,
+					'ad_groups'		=> [],
+				),
+				'Ad &#128512; &#20013;&#25991; &#1050;&#1080;&#1088;&#1080;&#1083;&#1083;&#1080;&#1094;&#1072;',
+				'Note &#128221; &#26085;&#26412;&#35486; &#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;',
 			),
 		);
 	}
@@ -53,7 +69,7 @@ class insert_ad_test extends ad_base
 	 *
 	 * @dataProvider insert_ad_data
 	 */
-	public function test_insert_ad($data)
+	public function test_insert_ad($data, $expected_name, $expected_note = '')
 	{
 		$manager = $this->get_manager();
 
@@ -63,6 +79,7 @@ class insert_ad_test extends ad_base
 
 		$new_ad = $manager->get_ad($ad_id);
 
-		self::assertEquals($data['ad_name'], $new_ad['ad_name']);
+		self::assertSame($expected_name, $new_ad['ad_name']);
+		self::assertSame($expected_note, $new_ad['ad_note']);
 	}
 }
