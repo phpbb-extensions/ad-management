@@ -24,7 +24,7 @@ class notification_test extends functional_base
 		self::assertCount(1, $crawler->filter('input[name="phpbb.ads.notification.type.ad_disabled_notification.method.email"]'));
 	}
 
-	public function test_owner_triggering_click_limit_receives_notification()
+	public function test_click_tracking_does_not_disable_or_notify()
 	{
 		$owner = 'ads-notification-owner';
 		$this->create_user($owner);
@@ -44,15 +44,12 @@ class notification_test extends functional_base
 			'ad_priority' => 5,
 			'ad_content_only' => 0,
 			'ad_views_enabled' => 0,
-			'ad_views_limit' => 0,
 			'ad_clicks_enabled' => 1,
-			'ad_clicks_limit' => 1,
 			'ad_owner' => $owner,
 			'ad_groups' => array(),
 			'ad_centering' => 1,
 			'ad_consent' => 0,
 		));
-
 		self::$client->restart();
 		$this->login($owner);
 		$crawler = self::request('GET', 'index.php');
@@ -64,7 +61,9 @@ class notification_test extends functional_base
 		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
 		self::request('POST', $click_url, array(), false);
 		self::assertSame(200, self::$client->getResponse()->getStatusCode(), self::get_content());
-		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', '');
+		self::request('POST', $click_url, array(), false);
+		self::assertSame(200, self::$client->getResponse()->getStatusCode(), self::get_content());
+		self::$client->setServerParameter('HTTP_X_REQUESTED_WITH', null);
 
 		$sql = "SELECT ad_enabled, ad_clicks
 			FROM phpbb_ads
@@ -72,13 +71,11 @@ class notification_test extends functional_base
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
-		self::assertEquals(1, $row['ad_clicks']);
-		self::assertEquals(0, $row['ad_enabled']);
+		self::assertEquals(2, $row['ad_clicks']);
+		self::assertEquals(1, $row['ad_enabled']);
 
 		$crawler = self::request('GET', 'ucp.php?i=ucp_notifications&mode=notification_list');
 		$notification_text = $crawler->filter('#cp-main')->text();
-		$reason = strip_tags($this->lang('PHPBB_ADS_NOTIFICATION_REASON_CLICKS_LIMIT'));
-		self::assertStringContainsString('Click notification test', $notification_text);
-		self::assertSame(1, substr_count($notification_text, $reason));
+		self::assertStringNotContainsString('Click notification test', $notification_text);
 	}
 }

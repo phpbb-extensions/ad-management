@@ -4,13 +4,6 @@
 
 <h1>{{ lang('SETTINGS') }}</h1>
 
-{% if S_ERROR %}
-	<div class="errorbox">
-		<h3>{{ lang('WARNING') }}</h3>
-		<p>{{ ERROR_MSG }}</p>
-	</div>
-{% endif %}
-
 <form id="acp_addmanagement_settings" method="post" action="{{ U_ACTION }}">
 	<fieldset>
 		<legend>{{ lang('ADBLOCKER_LEGEND') }}</legend>
@@ -19,7 +12,7 @@
 			<dd>
 				<select name="adblocker_message" id="adblocker_message">
 					{% for ad_block_mode in AD_BLOCK_MODES %}
-						<option value="{{ ad_block_mode }}"{% if ad_block_mode == AD_BLOCK_CONFIG %} selected="selected"{% endif %}>{{ lang('ADBLOCKER_MODES', ad_block_mode) }}</option>
+						<option value="{{ ad_block_mode }}"{% if ad_block_mode == AD_BLOCK_CONFIG %} selected="selected"{% endif %}>{% if ad_block_mode === 0 %}{{ lang('ADBLOCKER_ALLOW') }}{% elseif ad_block_mode === 1 %}{{ lang('ADBLOCKER_ASK') }}{% else %}{{ lang('ADBLOCKER_REQUIRE') }}{% endif %}</option>
 					{% endfor %}
 				</select>
 			</dd>

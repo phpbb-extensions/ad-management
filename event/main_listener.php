@@ -61,7 +61,7 @@ class main_listener implements EventSubscriberInterface
 			'core.page_footer_after'		=> array(array('setup_ads'), array('visual_demo'), array('append_agreement')),
 			'core.page_header_after'		=> 'adblocker',
 			'core.delete_user_after'		=> 'remove_ad_owner',
-			'core.adm_page_header_after'	=> 'disable_xss_protection',
+			'core.delete_group_after'		=> 'remove_group_assignments',
 			'core.group_add_user_after'		=> 'destroy_user_group_cache',
 			'core.group_delete_user_after'	=> 'destroy_user_group_cache',
 			'phpbb.consentmanager.collect_registrations' => 'register_ads',
@@ -290,24 +290,6 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Disable XSS Protection
-	 * In Chrome browsers, previewing an Ad Code with javascript can
-	 * be blocked, due to a false positive where Chrome thinks the
-	 * javascript is an XSS injection. This will temporarily disable
-	 * XSS protection in chrome while managing ads in the ACP.
-	 *
-	 * @param	\phpbb\event\data	$event	The event object
-	 */
-	public function disable_xss_protection($event)
-	{
-		if (stripos($this->user->browser, 'chrome') !== false &&
-			stripos($this->user->page['page'], 'phpbb-ads') !== false)
-		{
-			$event['http_headers'] = array_merge($event['http_headers'], ['X-XSS-Protection' => '0']);
-		}
-	}
-
-	/**
 	 * Remove ad owner when deleting user(s)
 	 *
 	 * @param	\phpbb\event\data	$event	The event object
@@ -316,6 +298,17 @@ class main_listener implements EventSubscriberInterface
 	public function remove_ad_owner($event)
 	{
 		$this->manager->remove_ad_owner($event['user_ids']);
+	}
+
+	/**
+	 * Remove advertisement assignments for a deleted group.
+	 *
+	 * @param \phpbb\event\data $event Event data object
+	 * @return void
+	 */
+	public function remove_group_assignments($event)
+	{
+		$this->manager->delete_group_assignments($event['group_id']);
 	}
 
 	/**

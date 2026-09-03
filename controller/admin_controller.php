@@ -352,8 +352,6 @@ class admin_controller
 				'END_DATE'     => $row['ad_end_date'],
 				'VIEWS'        => $row['ad_views'],
 				'CLICKS'       => $row['ad_clicks'],
-				'VIEWS_LIMIT'  => $row['ad_views_limit'],
-				'CLICKS_LIMIT' => $row['ad_clicks_limit'],
 				'S_VIEWS_ENABLED' => (bool) $row['ad_views_enabled'],
 				'S_CLICKS_ENABLED' => (bool) $row['ad_clicks_enabled'],
 				'S_EXPIRED'    => $ad_expired,
@@ -423,7 +421,7 @@ class admin_controller
 			$json_response->send([
 				'success' => true,
 				'text'    => $this->language->lang($enable ? 'ENABLED' : 'DISABLED'),
-				'title'   => $this->language->lang('AD_ENABLE_TITLE', (int) $enable),
+				'title'   => $this->language->lang($enable ? 'AD_DISABLE_TITLE' : 'AD_ENABLE_TITLE'),
 				'href'    => html_entity_decode($this->u_action) . '&action=' . $next_action . '&id=' . $ad_id . '&hash=' . generate_link_hash('phpbb_ads_' . $next_action . '_' . $ad_id),
 			]);
 		}
@@ -513,7 +511,7 @@ class admin_controller
 			$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 			if (!empty($this->data['uploaded_banners']))
 			{
-				$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+				$this->banner->remove_unreferenced($this->data['uploaded_banners'], $this->manager->get_all_ad_codes());
 			}
 
 			$this->helper->log('ADD', $this->data['ad_name']);
@@ -546,7 +544,7 @@ class admin_controller
 				$this->manager->insert_ad_locations($ad_id, $this->data['ad_locations']);
 				if (!empty($this->data['uploaded_banners']))
 				{
-					$this->banner->remove_unreferenced($this->data['uploaded_banners'], array($this->data['ad_code']));
+					$this->banner->remove_unreferenced($this->data['uploaded_banners'], $this->manager->get_all_ad_codes());
 				}
 
 				$this->helper->log('EDIT', $this->data['ad_name']);
@@ -593,7 +591,10 @@ class admin_controller
 		{
 			$has_ads = count($this->manager->get_ads_by_owner($user_id)) !== 0;
 
-			$this->auth_admin->acl_set('user', 0, $user_id, array('u_phpbb_ads' => (int) $has_ads));
+			// ACL_NO removes the user override; ACL_NEVER would suppress group grants.
+			$this->auth_admin->acl_set('user', 0, $user_id, array(
+				'u_phpbb_ads' => $has_ads ? ACL_YES : ACL_NO,
+			));
 		}
 	}
 

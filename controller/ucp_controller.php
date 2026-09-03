@@ -30,9 +30,6 @@ class ucp_controller
 	/** @var \phpbb\template\template */
 	protected $template;
 
-	/** @var string Custom form action */
-	protected $u_action;
-
 	/**
 	 * Constructor
 	 *
@@ -49,14 +46,6 @@ class ucp_controller
 		$this->user = $user;
 		$this->language = $language;
 		$this->template = $template;
-	}
-
-	/**
-	 * @param	string	$u_action	Action URL
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
 	}
 
 	/**
@@ -82,9 +71,7 @@ class ucp_controller
 				'START_DATE'	=> $ad['ad_start_date'],
 				'END_DATE'		=> $ad['ad_end_date'],
 				'VIEWS'			=> $ad['ad_views'],
-				'VIEWS_LIMIT'	=> $ad['ad_views_limit'],
 				'CLICKS'		=> $ad['ad_clicks'],
-				'CLICKS_LIMIT'	=> $ad['ad_clicks_limit'],
 				'S_VIEWS_ENABLED' => (bool) $ad['ad_views_enabled'],
 				'S_CLICKS_ENABLED' => (bool) $ad['ad_clicks_enabled'],
 				'S_ENABLED'		=> $ad_enabled,

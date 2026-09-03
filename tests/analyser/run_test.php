@@ -203,30 +203,6 @@ class run_test extends analyser_base
 			->with('HTTPS', false)
 			->willReturn($is_https);
 
-		if (count($expected))
-		{
-			$analyser_results = [];
-			foreach ($expected as $message)
-			{
-				$analyser_results[] = ['analyser_results_' . $message['severity'], [
-					'MESSAGE' => $this->lang->lang($message['lang_key'])]
-				];
-			}
-
-			$this->template->expects(self::exactly(count($expected)))
-				->method('assign_block_vars')
-				->willReturnCallback(function($arg1, $arg2) use (&$analyser_results) {
-					$expectation = array_shift($analyser_results);
-					self::assertEquals($expectation[0], $arg1);
-					self::assertEquals($expectation[1], $arg2);
-				});
-		}
-		else
-		{
-			$this->template->expects(self::never())
-				->method('assign_block_vars');
-		}
-
 		$actual = $manager->run($ad_code);
 		self::assertEquals(array_map(function ($result) {
 			return array(

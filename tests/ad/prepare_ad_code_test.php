@@ -30,6 +30,24 @@ class prepare_ad_code_test extends ad_base
 		self::assertSame('', $this->get_manager()->prepare_ad_code('', true));
 	}
 
+	public function test_fails_closed_when_script_rewrite_fails()
+	{
+		$previous_limit = ini_get('pcre.backtrack_limit');
+		ini_set('pcre.backtrack_limit', '1');
+		$raw = htmlspecialchars('<script>' . str_repeat('a', 1000) . '</script>', ENT_COMPAT);
+
+		try
+		{
+			$result = $this->get_manager()->prepare_ad_code($raw, true);
+		}
+		finally
+		{
+			ini_set('pcre.backtrack_limit', $previous_limit);
+		}
+
+		self::assertSame('', $result);
+	}
+
 	public static function executable_script_type_data()
 	{
 		return [

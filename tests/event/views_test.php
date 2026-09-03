@@ -85,7 +85,7 @@ class views_test extends main_listener_base
 	}
 
 	/**
-	 * Same ad in multiple placements counts once in page batch.
+	 * Same ad in multiple placements receives one tracking URL per page.
 	 */
 	public function test_duplicate_ad_ids_are_deduplicated()
 	{

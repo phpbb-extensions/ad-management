@@ -45,8 +45,6 @@ class ucp_test extends functional_base
 			'ad_start_date'	=> '2030-01-01',
 			'ad_end_date'	=> '2035-01-01',
 			'ad_priority'	=> 1,
-			'ad_views_limit'	=> 0,
-			'ad_clicks_limit'	=> 0,
 			'ad_owner'	=> $owner,
 		);
 		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();

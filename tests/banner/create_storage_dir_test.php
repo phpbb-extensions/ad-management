@@ -22,10 +22,9 @@ class create_storage_dir_test extends banner_base
 	public static function create_storage_dir_data(): array
 	{
 		return array(
-			array(false, false),
-			array(false, true),
-			array(true, false),
-			array(true, true),
+			'create directory and index' => array(false, false),
+			'create index in existing directory' => array(true, false),
+			'directory and index exist' => array(true, true),
 		);
 	}
 
@@ -34,30 +33,68 @@ class create_storage_dir_test extends banner_base
 	 *
 	 * @dataProvider create_storage_dir_data
 	 */
-	public function test_create_storage_dir($dir_exists, $success)
+	public function test_create_storage_dir($dir_exists, $index_exists)
 	{
 		$manager = $this->get_manager();
+		$storage_path = $this->root_path . 'images/phpbb_ads';
+		$index_path = $storage_path . '/index.htm';
 
-		$this->filesystem->expects(self::once())
+		$this->filesystem->expects(self::exactly(2))
 			->method('exists')
-			->with($this->root_path . 'images/phpbb_ads')
-			->willReturn($dir_exists);
+			->withConsecutive(array($storage_path), array($index_path))
+			->willReturnOnConsecutiveCalls($dir_exists, $index_exists);
 
 		if (!$dir_exists)
 		{
-			$mkdir = $this->filesystem->expects(self::once())
+			$this->filesystem->expects(self::once())
 				->method('mkdir')
-				->with($this->root_path . 'images/phpbb_ads');
+				->with($storage_path);
+		}
 
-			if (!$success)
-			{
-				$mkdir->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('CANNOT_CREATE_DIRECTORY'));
-
-				$this->expectException(filesystem_exception::class);
-				$this->expectExceptionMessage('CANNOT_CREATE_DIRECTORY');
-			}
+		if (!$index_exists)
+		{
+			$this->filesystem->expects(self::once())
+				->method('touch')
+				->with($index_path);
 		}
 
 		$manager->create_storage_dir();
+	}
+
+	public function test_create_storage_dir_failure()
+	{
+		$storage_path = $this->root_path . 'images/phpbb_ads';
+		$this->filesystem->expects(self::once())
+			->method('exists')
+			->with($storage_path)
+			->willReturn(false);
+		$this->filesystem->expects(self::once())
+			->method('mkdir')
+			->with($storage_path)
+			->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('FILESYSTEM_CANNOT_CREATE_DIRECTORY'));
+
+		$this->expectException('\phpbb\filesystem\exception\filesystem_exception');
+		$this->expectExceptionMessage('FILESYSTEM_CANNOT_CREATE_DIRECTORY');
+
+		$this->get_manager()->create_storage_dir();
+	}
+
+	public function test_create_index_failure()
+	{
+		$storage_path = $this->root_path . 'images/phpbb_ads';
+		$index_path = $storage_path . '/index.htm';
+		$this->filesystem->expects(self::exactly(2))
+			->method('exists')
+			->withConsecutive(array($storage_path), array($index_path))
+			->willReturnOnConsecutiveCalls(true, false);
+		$this->filesystem->expects(self::once())
+			->method('touch')
+			->with($index_path)
+			->willThrowException(new \phpbb\filesystem\exception\filesystem_exception('FILESYSTEM_CANNOT_TOUCH_FILES'));
+
+		$this->expectException('\phpbb\filesystem\exception\filesystem_exception');
+		$this->expectExceptionMessage('FILESYSTEM_CANNOT_TOUCH_FILES');
+
+		$this->get_manager()->create_storage_dir();
 	}
 }

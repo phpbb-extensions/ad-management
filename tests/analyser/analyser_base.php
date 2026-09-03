@@ -26,12 +26,6 @@ class analyser_base extends phpbb_test_case
 	/** @var MockObject|request */
 	protected MockObject|request $request;
 
-	/** @var MockObject|template */
-	protected template|MockObject $template;
-
-	/** @var language */
-	protected language $lang;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -50,17 +44,9 @@ class analyser_base extends phpbb_test_case
 	{
 		parent::setUp();
 
-		global $phpbb_root_path, $phpEx;
-
-		$lang_loader = new language_file_loader($phpbb_root_path, $phpEx);
-
 		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->template = $this->getMockBuilder(template::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$this->lang = new language($lang_loader);
 		$this->config = new \phpbb\config\config(array(
 			'consentmanager_marketing_enabled' => 0,
 		));
@@ -111,10 +97,6 @@ class analyser_base extends phpbb_test_case
 	 */
 	public function get_manager(): manager
 	{
-		return new manager(
-			$this->tests,
-			$this->template,
-			$this->lang
-		);
+		return new manager($this->tests);
 	}
 }

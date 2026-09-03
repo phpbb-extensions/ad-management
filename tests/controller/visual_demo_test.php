@@ -43,15 +43,7 @@ class visual_demo_test extends phpbb_test_case
 			->disableOriginalConstructor()
 			->getMock();
 
-		$phpbb_path_helper->method('update_web_root_path')
-			->willReturnArgument(0);
-
 		$this->auth = $this->getMockBuilder(auth::class)->getMock();
-
-		$config = $this->config = new config(array(
-			'cookie_name' => 'test',
-		));
-
 		$this->request = $this->getMockBuilder(request::class)
 			->disableOriginalConstructor()
 			->getMock();
@@ -73,7 +65,6 @@ class visual_demo_test extends phpbb_test_case
 	{
 		return new visual_demo_controller(
 			$this->auth,
-			$this->config,
 			$this->request,
 			$this->user,
 			$this->phpbb_root_path,

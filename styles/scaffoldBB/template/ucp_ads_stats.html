@@ -41,16 +41,12 @@
 							</td>
 							<td class="center text-center">
 								{% if ad.S_VIEWS_ENABLED %}
-									{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}<strong class="error text-danger">{% endif %}
-										{{ ad.VIEWS }}{% if ad.VIEWS_LIMIT %} / {{ ad.VIEWS_LIMIT }}{% endif %}
-										{% if ad.VIEWS_LIMIT and ad.VIEWS >= ad.VIEWS_LIMIT %}</strong>{% endif %}
+									{{ ad.VIEWS }}
 								{% else %}&mdash;{% endif %}
 							</td>
 							<td class="center text-center">
 								{% if ad.S_CLICKS_ENABLED %}
-									{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}<strong class="error text-danger">{% endif %}
-										{{ ad.CLICKS }}{% if ad.CLICKS_LIMIT %} / {{ ad.CLICKS_LIMIT }}{% endif %}
-										{% if ad.CLICKS_LIMIT and ad.CLICKS >= ad.CLICKS_LIMIT %}</strong>{% endif %}
+									{{ ad.CLICKS }}
 								{% else %}&mdash;{% endif %}
 							</td>
 							<td class="center text-center">
