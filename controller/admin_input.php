@@ -32,6 +32,12 @@ class admin_input
 	/** @var \phpbb\ads\banner\banner */
 	protected $banner;
 
+	/** @var \phpbb\ads\ad\manager */
+	protected $manager;
+
+	/** @var \phpbb\ads\location\manager */
+	protected $location_manager;
+
 	/** @var array Form validation errors */
 	protected $errors = array();
 
@@ -41,19 +47,23 @@ class admin_input
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\user              $user        User object
-	 * @param \phpbb\user_loader       $user_loader User loader object
-	 * @param \phpbb\language\language $language    Language object
-	 * @param \phpbb\request\request   $request     Request object
-	 * @param \phpbb\ads\banner\banner $banner      Banner upload object
+	 * @param \phpbb\user                 $user             User object
+	 * @param \phpbb\user_loader          $user_loader      User loader object
+	 * @param \phpbb\language\language    $language         Language object
+	 * @param \phpbb\request\request      $request          Request object
+	 * @param \phpbb\ads\banner\banner    $banner           Banner upload object
+	 * @param \phpbb\ads\ad\manager       $manager          Advertisement manager object
+	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
 	{
 		$this->user = $user;
 		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->request = $request;
 		$this->banner = $banner;
+		$this->manager = $manager;
+		$this->location_manager = $location_manager;
 
 		add_form_key('phpbb_ads');
 	}
@@ -100,8 +110,6 @@ class admin_input
 			'ad_end_date'     	=> $this->request->variable('ad_end_date', ''),
 			'ad_priority'     	=> $this->request->variable('ad_priority', ext::DEFAULT_PRIORITY),
 			'ad_content_only'	=> $this->request->variable('ad_content_only', 0),
-			'ad_views_limit'  	=> $this->request->variable('ad_views_limit', 0),
-			'ad_clicks_limit' 	=> $this->request->variable('ad_clicks_limit', 0),
 			'ad_owner'        	=> $this->request->variable('ad_owner', '', true),
 			'ad_groups'			=> $this->request->variable('ad_groups', array(0)),
 			'ad_centering'		=> $this->request->variable('ad_centering', true),
@@ -110,6 +118,11 @@ class admin_input
 			'ad_clicks_enabled'	=> $this->request->variable('ad_clicks_enabled', 0),
 			'uploaded_banners'	=> $this->request->variable('uploaded_banners', array('')),
 		);
+
+		// Store names and notes as ASCII character references for portability across DBMS.
+		// Normalize names before validation so the length check covers entity expansion.
+		$data['ad_name'] = utf8_encode_ncr($data['ad_name']);
+		$data['ad_note'] = utf8_encode_ncr($data['ad_note']);
 
 		// Validate form key
 		if (!check_form_key('phpbb_ads'))
@@ -167,13 +180,14 @@ class admin_input
 		catch (\phpbb\exception\runtime_exception $e)
 		{
 			$this->banner->remove();
+			$error = $e instanceof \phpbb\filesystem\exception\filesystem_exception ? 'CANNOT_INITIALIZE_STORAGE' : $e->getMessage();
 
 			if ($this->request->is_ajax())
 			{
-				$this->send_ajax_response(false, $this->language->lang($e->getMessage()));
+				$this->send_ajax_response(false, $this->language->lang($error));
 			}
 
-			$this->errors[] = $this->language->lang($e->getMessage());
+			$this->errors[] = $this->language->lang($error);
 		}
 
 		return $ad_code;
@@ -201,6 +215,32 @@ class admin_input
 		}
 
 		return $ad_name;
+	}
+
+	/**
+	 * Remove locations that are not offered by the advertisement form.
+	 *
+	 * @param array $ad_locations Advertisement locations
+	 * @return array Valid advertisement locations
+	 */
+	protected function validate_ad_locations($ad_locations)
+	{
+		$valid_locations = array_keys($this->location_manager->get_all_locations(false));
+
+		return array_values(array_unique(array_intersect((array) $ad_locations, $valid_locations)));
+	}
+
+	/**
+	 * Remove groups that are not offered by the advertisement form.
+	 *
+	 * @param array $ad_groups Advertisement groups
+	 * @return array Valid advertisement groups
+	 */
+	protected function validate_ad_groups($ad_groups)
+	{
+		$valid_groups = array_column($this->manager->load_groups(0), 'group_id');
+
+		return array_values(array_unique(array_intersect((array) $ad_groups, $valid_groups)));
 	}
 
 	/**
@@ -260,42 +300,6 @@ class admin_input
 		}
 
 		return $ad_priority;
-	}
-
-	/**
-	 * Validate advertisement views limit
-	 *
-	 * Clicks must be a positive integer.
-	 *
-	 * @param int $ad_views_limit Advertisement views limit
-	 * @return int Advertisement views limit
-	 */
-	protected function validate_ad_views_limit($ad_views_limit)
-	{
-		if ($ad_views_limit < 0)
-		{
-			$this->errors[] = 'AD_VIEWS_LIMIT_INVALID';
-		}
-
-		return $ad_views_limit;
-	}
-
-	/**
-	 * Validate advertisement clicks limit
-	 *
-	 * Clicks must be a positive integer.
-	 *
-	 * @param int $ad_clicks_limit Advertisement clicks limit
-	 * @return int Advertisement clicks limit
-	 */
-	protected function validate_ad_clicks_limit($ad_clicks_limit)
-	{
-		if ($ad_clicks_limit < 0)
-		{
-			$this->errors[] = 'AD_CLICKS_LIMIT_INVALID';
-		}
-
-		return $ad_clicks_limit;
 	}
 
 	/**

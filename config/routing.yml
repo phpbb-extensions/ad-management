@@ -10,7 +10,7 @@ phpbb_ads_view:
     methods: [POST]
     defaults: { _controller: phpbb.ads.increment.controller:handle, mode: views }
     requirements:
-        data: (\d+-)*\d+
+        data: \d+
 
 phpbb_ads_visual_demo:
     path: /phpbbads_visual_demo/{action}

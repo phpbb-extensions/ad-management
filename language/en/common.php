@@ -20,18 +20,14 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ADBLOCKER_TITLE'	=> 'Ad blocker detected',
-	'ADBLOCKER_MESSAGE'	=> [
-		1 => 'Our website is made possible by showing ads to visitors. Please consider supporting us by disabling your ad blocker on our website.',
-		2 => 'Our website is made possible by showing ads to visitors. Disable your ad blocker to continue using our website.',
-	],
+	'ADBLOCKER_ASK_MESSAGE'		=> 'Our website is made possible by showing ads to visitors. Please consider supporting us by disabling your ad blocker on our website.',
+	'ADBLOCKER_REQUIRE_MESSAGE'	=> 'Our website is made possible by showing ads to visitors. Disable your ad blocker to continue using our website.',
 	'ADVERTISEMENT'		=> 'Advertisement',
 	'HIDE_AD'			=> 'Hide ad',
 	'PHPBB_ADS_CONSENT_LABEL'		=> 'Advertising',
 	'PHPBB_ADS_CONSENT_DESCRIPTION'	=> 'Advertising features that may use cookies or similar technologies to collect data.',
 	'PHPBB_ADS_NOTIFICATION_DISABLED' => 'Advertisement “%s” was disabled',
 	'PHPBB_ADS_NOTIFICATION_REASON_END_DATE' => 'Its expiration date was reached.',
-	'PHPBB_ADS_NOTIFICATION_REASON_VIEWS_LIMIT' => 'Its view limit was reached.',
-	'PHPBB_ADS_NOTIFICATION_REASON_CLICKS_LIMIT' => 'Its click limit was reached.',
 
 	'VISUAL_DEMO'			=> 'Visual demo for ad locations is active',
 	'DISABLE_VISUAL_DEMO'	=> 'Click to disable visual demo',

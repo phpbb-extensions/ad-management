@@ -121,14 +121,14 @@ class ad_disabled_test extends \phpbb_test_case
 
 	public function test_reason()
 	{
-		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_VIEWS_LIMIT);
+		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_END_DATE);
 		$this->language->expects(self::once())->method('add_lang')->with('common', 'phpbb/ads');
 		$this->language->expects(self::once())
 			->method('lang')
-			->with('PHPBB_ADS_NOTIFICATION_REASON_VIEWS_LIMIT')
-			->willReturn('View limit reached');
+			->with('PHPBB_ADS_NOTIFICATION_REASON_END_DATE')
+			->willReturn('Expiration date reached');
 
-		self::assertSame('View limit reached', $this->notification->get_reason());
+		self::assertSame('Expiration date reached', $this->notification->get_reason());
 	}
 
 	public function test_reference_and_email_template()
@@ -163,16 +163,16 @@ class ad_disabled_test extends \phpbb_test_case
 	public function test_email_template_variables()
 	{
 		$this->set_data('ad_name', 'Example &amp; Ad');
-		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_CLICKS_LIMIT);
+		$this->set_data('reason', \phpbb\ads\ad\manager::DISABLED_END_DATE);
 		$this->language->expects(self::once())->method('add_lang')->with('common', 'phpbb/ads');
 		$this->language->expects(self::once())
 			->method('lang')
-			->with('PHPBB_ADS_NOTIFICATION_REASON_CLICKS_LIMIT')
-			->willReturn('<em>Click limit reached</em>');
+			->with('PHPBB_ADS_NOTIFICATION_REASON_END_DATE')
+			->willReturn('<em>Expiration date reached</em>');
 
 		self::assertSame(array(
 			'AD_NAME' => 'Example & Ad',
-			'REASON' => 'Click limit reached',
+			'REASON' => 'Expiration date reached',
 			'U_VIEW_ADS' => 'http://localhost/phpbb/ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats',
 		), $this->notification->get_email_template_variables());
 	}

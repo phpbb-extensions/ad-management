@@ -27,9 +27,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\template\template */
 	protected $template;
 
-	/** @var string Custom form action */
-	protected $u_action;
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -70,7 +67,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->u_action = $phpbb_root_path . 'ucp.php?i=-phpbb-ads-ucp-main_module&mode=stats';
 	}
 
 	/**
@@ -80,16 +76,13 @@ class ucp_controller_test extends \phpbb_database_test_case
 	 */
 	public function get_controller()
 	{
-		$controller = new \phpbb\ads\controller\ucp_controller(
+		return new \phpbb\ads\controller\ucp_controller(
 			$this->manager,
 			$this->helper,
 			$this->user,
 			$this->language,
 			$this->template
 		);
-		$controller->set_page_url($this->u_action);
-
-		return $controller;
 	}
 
 	/**
@@ -109,8 +102,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_enabled'		=> 1,
 					'ad_start_date'		=> 0,
 					'ad_end_date'		=> 0,
-					'ad_views_limit'	=> 0,
-					'ad_clicks_limit'	=> 0,
 					'ad_views_enabled' => 1,
 					'ad_clicks_enabled' => 1,
 				),
@@ -122,8 +113,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_enabled'		=> 1,
 					'ad_start_date'		=> 0,
 					'ad_end_date'		=> 0,
-					'ad_views_limit'	=> 0,
-					'ad_clicks_limit'	=> 0,
 					'ad_views_enabled' => 1,
 					'ad_clicks_enabled' => 0,
 				),
@@ -135,8 +124,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_enabled'		=> 1,
 					'ad_start_date'		=> 0,
 					'ad_end_date'		=> 0,
-					'ad_views_limit'	=> 0,
-					'ad_clicks_limit'	=> 0,
 					'ad_views_enabled' => 0,
 					'ad_clicks_enabled' => 1,
 				),
@@ -148,8 +135,6 @@ class ucp_controller_test extends \phpbb_database_test_case
 					'ad_enabled'		=> 1,
 					'ad_start_date'		=> 0,
 					'ad_end_date'		=> 1,
-					'ad_views_limit'	=> 0,
-					'ad_clicks_limit'	=> 0,
 					'ad_views_enabled' => 0,
 					'ad_clicks_enabled' => 0,
 				),

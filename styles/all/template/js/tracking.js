@@ -1,7 +1,7 @@
 (function(window, document) {
 	'use strict';
 
-	const clickCooldown = 10000;
+	const trackingCooldown = 10000;
 	const tracked = new Set();
 	const observed = new Set();
 
@@ -100,6 +100,22 @@
 		request.send();
 	}
 
+	function isRateLimited(mode, id) {
+		const key = 'phpbb_ads_' + mode + '_' + id;
+		const now = Date.now();
+
+		try {
+			if (now - parseInt(window.sessionStorage.getItem(key), 10) < trackingCooldown) {
+				return true;
+			}
+			window.sessionStorage.setItem(key, now.toString());
+		} catch (error) {
+			// Storage may be unavailable; tracking remains best effort.
+		}
+
+		return false;
+	}
+
 	function track(ad) {
 		const id = ad.getAttribute('data-phpbb-ads-id');
 		const rect = ad.getBoundingClientRect();
@@ -109,7 +125,9 @@
 		}
 
 		tracked.add(id);
-		post(ad.getAttribute('data-phpbb-ads-view-url'));
+		if (!isRateLimited('view', id)) {
+			post(ad.getAttribute('data-phpbb-ads-view-url'));
+		}
 	}
 
 	function observeAds() {
@@ -141,16 +159,8 @@
 			return;
 		}
 
-		const key = 'phpbb_ads_click_' + ad.getAttribute('data-phpbb-ads-id');
-		const now = Date.now();
-
-		try {
-			if (now - parseInt(window.sessionStorage.getItem(key), 10) < clickCooldown) {
-				return;
-			}
-			window.sessionStorage.setItem(key, now.toString());
-		} catch (error) {
-			// Storage may be unavailable; server-side cooldown still applies.
+		if (isRateLimited('click', ad.getAttribute('data-phpbb-ads-id'))) {
+			return;
 		}
 
 		post(ad.getAttribute('data-phpbb-ads-click-url'));

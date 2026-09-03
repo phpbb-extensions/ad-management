@@ -98,18 +98,6 @@ class acp_manage_test extends functional_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
-		// Confirm error when submitting too low views limit
-		$form_data = array(
-			'ad_views_limit'	=> -1,
-		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_VIEWS_LIMIT_INVALID'));
-
-		// Confirm error when submitting too low clicks limit
-		$form_data = array(
-			'ad_clicks_limit'	=> -1,
-		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_CLICKS_LIMIT_INVALID'));
-
 		// Confirm error when submitting wrong username for ad owner
 		$form_data = array(
 			'ad_owner'	=> 'non-existent user',
@@ -118,15 +106,13 @@ class acp_manage_test extends functional_base
 
 		// Create ad
 		$form_data = array(
-			'ad_name'		=> 'Functional test name',
-			'ad_note'		=> 'Functional test note',
+			'ad_name'		=> 'Functional test name 日本語 😀',
+			'ad_note'		=> 'Functional test note 日本語 📝',
 			'ad_code'		=> '<!-- SAMPLE AD CODE -->',
 			'ad_enabled'	=> 1,
 			'ad_start_date'	=> '2035-01-01',
 			'ad_end_date'	=> '2036-01-01',
 			'ad_priority'	=> 1,
-			'ad_views_limit'	=> 0,
-			'ad_clicks_limit'	=> 0,
 			'ad_views_enabled' => 1,
 			'ad_clicks_enabled' => 0,
 			'ad_owner'	=> 'admin',
@@ -148,9 +134,10 @@ class acp_manage_test extends functional_base
 
 		// Confirm new ad appears in the list, is enabled and end date is displayed correctly
 		$crawler = $this->get_manage_page();
-		self::assertStringContainsString('Functional test name', $crawler->text());
+		self::assertStringContainsString($form_data['ad_name'], $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		self::assertStringContainsString('2036-01-01', $crawler->text());
+		$this->assert_ad_note_persisted($form_data['ad_note']);
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
@@ -220,18 +207,6 @@ class acp_manage_test extends functional_base
 		);
 		$this->submit_with_error($crawler, $form_data, $this->lang('AD_PRIORITY_INVALID'));
 
-		// Confirm error when submitting too low views limit
-		$form_data = array(
-			'ad_views_limit'	=> -1,
-		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_VIEWS_LIMIT_INVALID'));
-
-		// Confirm error when submitting too low clicks limit
-		$form_data = array(
-			'ad_clicks_limit'	=> -1,
-		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_CLICKS_LIMIT_INVALID'));
-
 		// Confirm error when submitting wrong username for ad owner
 		$form_data = array(
 			'ad_owner'	=> 'non-existent user',
@@ -240,15 +215,13 @@ class acp_manage_test extends functional_base
 
 		// Edit ad
 		$form_data = array(
-			'ad_name'		=> 'Functional test name edited',
-			'ad_note'		=> 'Functional test note',
+			'ad_name'		=> 'Functional test name edited Ελληνικά 🚀',
+			'ad_note'		=> 'Functional test note edited Ελληνικά 🧪',
 			'ad_code'		=> '<!-- SAMPLE AD CODE EDITED -->',
 			'ad_enabled'	=> 0,
 			'ad_start_date'	=> '2035-01-02',
 			'ad_end_date'	=> '2036-01-02',
 			'ad_priority'	=> 2,
-			'ad_views_limit'	=> 0,
-			'ad_clicks_limit'	=> 0,
 			'ad_views_enabled' => 0,
 			'ad_clicks_enabled' => 1,
 			'ad_owner'	=> 'admin',
@@ -270,10 +243,11 @@ class acp_manage_test extends functional_base
 
 		// Confirm new ad appears in the list, is disabled and stard and end date is present and updated
 		$crawler = $this->get_manage_page();
-		self::assertStringContainsString('Functional test name edited', $crawler->text());
+		self::assertStringContainsString($form_data['ad_name'], $crawler->text());
 		$this->assertContainsLang('DISABLED', $crawler->text());
 		self::assertStringContainsString('2035-01-02', $crawler->text());
 		self::assertStringContainsString('2036-01-02', $crawler->text());
+		$this->assert_ad_note_persisted($form_data['ad_note']);
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid={$this->sid}");
@@ -347,6 +321,18 @@ class acp_manage_test extends functional_base
 	protected function get_manage_page()
 	{
 		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+	}
+
+	protected function assert_ad_note_persisted($expected)
+	{
+		$sql = 'SELECT ad_note
+			FROM phpbb_ads
+			ORDER BY ad_id DESC';
+		$result = $this->db->sql_query_limit($sql, 1);
+		$ad_note = $this->db->sql_fetchfield('ad_note', false, $result);
+		$this->db->sql_freeresult($result);
+
+		self::assertSame($expected, utf8_decode_ncr($ad_note));
 	}
 
 	protected function submit_with_error($crawler, $form_data, $error_lang)

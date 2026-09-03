@@ -53,9 +53,16 @@ class banner
 	 */
 	public function create_storage_dir()
 	{
-		if (!$this->filesystem->exists($this->root_path . 'images/phpbb_ads'))
+		$storage_path = $this->root_path . 'images/phpbb_ads';
+		if (!$this->filesystem->exists($storage_path))
 		{
-			$this->filesystem->mkdir($this->root_path . 'images/phpbb_ads');
+			$this->filesystem->mkdir($storage_path);
+		}
+
+		$index_path = $storage_path . '/index.htm';
+		if (!$this->filesystem->exists($index_path))
+		{
+			$this->filesystem->touch($index_path);
 		}
 	}
 

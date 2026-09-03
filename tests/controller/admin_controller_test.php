@@ -166,6 +166,47 @@ class admin_controller_test extends \phpbb_database_test_case
 		return $controller;
 	}
 
+	/**
+	 * Data for test_toggle_permission().
+	 *
+	 * @return array Test data
+	 */
+	public function toggle_permission_data()
+	{
+		return array(
+			'owner has ads' => array(array(array('ad_id' => 1)), ACL_YES),
+			'owner has no ads' => array(array(), ACL_NO),
+		);
+	}
+
+	/**
+	 * @dataProvider toggle_permission_data
+	 */
+	public function test_toggle_permission($ads, $expected_setting)
+	{
+		$controller = $this->get_controller();
+		$this->manager->expects(self::once())
+			->method('get_ads_by_owner')
+			->with(2)
+			->willReturn($ads);
+
+		$auth_admin = $this->getMockBuilder('\auth_admin')
+			->disableOriginalConstructor()
+			->setMethods(array('acl_set'))
+			->getMock();
+		$auth_admin->expects(self::once())
+			->method('acl_set')
+			->with('user', 0, 2, array('u_phpbb_ads' => $expected_setting));
+
+		$reflection_controller = new \ReflectionObject($controller);
+		$auth_admin_property = $reflection_controller->getProperty('auth_admin');
+		$auth_admin_property->setAccessible(true);
+		$auth_admin_property->setValue($controller, $auth_admin);
+		$toggle_permission = $reflection_controller->getMethod('toggle_permission');
+		$toggle_permission->setAccessible(true);
+		$toggle_permission->invoke($controller, 2);
+	}
+
 	public function consent_manager_available_data()
 	{
 		return array(
@@ -678,9 +719,17 @@ class admin_controller_test extends \phpbb_database_test_case
 				->method('insert_ad_locations')
 				->with(1, array());
 
+			$all_ad_codes = array(
+				$data['ad_code'],
+				'<img src="/images/phpbb_ads/' . $data['uploaded_banners'][0] . '">',
+			);
+			$this->manager->expects(self::once())
+				->method('get_all_ad_codes')
+				->willReturn($all_ad_codes);
+
 			$this->banner->expects(self::once())
 				->method('remove_unreferenced')
-				->with($data['uploaded_banners'], array($data['ad_code']));
+				->with($data['uploaded_banners'], $all_ad_codes);
 
 			$this->helper->expects(self::once())
 				->method('log')
@@ -760,8 +809,6 @@ class admin_controller_test extends \phpbb_database_test_case
 			'ad_start_date'		=> '1514764800',
 			'ad_end_date'		=> '2051308800',
 			'ad_priority'		=> '5',
-			'ad_views_limit'	=> '0',
-			'ad_clicks_limit'	=> '0',
 			'ad_owner'			=> '2',
 		);
 
@@ -1022,9 +1069,17 @@ class admin_controller_test extends \phpbb_database_test_case
 					->method('insert_ad_locations')
 					->with(1, array());
 
+				$all_ad_codes = array(
+					$data['ad_code'],
+					'<img src="/images/phpbb_ads/' . $data['uploaded_banners'][0] . '">',
+				);
+				$this->manager->expects(self::once())
+					->method('get_all_ad_codes')
+					->willReturn($all_ad_codes);
+
 				$this->banner->expects(self::once())
 					->method('remove_unreferenced')
-					->with($data['uploaded_banners'], array($data['ad_code']));
+					->with($data['uploaded_banners'], $all_ad_codes);
 
 				$this->helper->expects(self::once())
 					->method('log')
@@ -1306,8 +1361,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_priority'	=> 5,
 				'ad_views'		=> 0,
 				'ad_clicks'		=> 0,
-				'ad_views_limit'	=> 0,
-				'ad_clicks_limit'	=> 0,
 				'ad_views_enabled' => 1,
 				'ad_clicks_enabled' => 1,
 
@@ -1321,8 +1374,6 @@ class admin_controller_test extends \phpbb_database_test_case
 				'ad_priority'	=> 5,
 				'ad_views'		=> 0,
 				'ad_clicks'		=> 0,
-				'ad_views_limit'	=> 0,
-				'ad_clicks_limit'	=> 0,
 				'ad_views_enabled' => 1,
 				'ad_clicks_enabled' => 1,
 			),

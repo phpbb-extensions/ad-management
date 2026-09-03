@@ -18,9 +18,6 @@ class visual_demo_controller
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
-	/** @var \phpbb\config\config */
-	protected $config;
-
 	/** @var \phpbb\request\request */
 	protected $request;
 
@@ -37,16 +34,14 @@ class visual_demo_controller
 	 * Constructor
 	 *
 	 * @param \phpbb\auth\auth       $auth
-	 * @param \phpbb\config\config   $config
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\user            $user
 	 * @param string                 $root_path
 	 * @param string                 $php_ext
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
-		$this->config = $config;
 		$this->request = $request;
 		$this->user = $user;
 		$this->root_path = $root_path;
