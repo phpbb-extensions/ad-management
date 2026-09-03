@@ -139,7 +139,10 @@ class acp_manage_test extends functional_base
 		self::assertStringContainsString($form_data['ad_name'], $crawler->text());
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		self::assertStringContainsString('2036-01-01', $crawler->text());
-		$this->assert_ad_note_persisted($form_data['ad_note']);
+		$this->assert_ad_text_persisted(
+			'Functional test name &#26085;&#26412;&#35486; &#128512;',
+			'Functional test note &#26085;&#26412;&#35486; &#128221;'
+		);
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");
@@ -249,7 +252,10 @@ class acp_manage_test extends functional_base
 		$this->assertContainsLang('DISABLED', $crawler->text());
 		self::assertStringContainsString('2035-01-02', $crawler->text());
 		self::assertStringContainsString('2036-01-02', $crawler->text());
-		$this->assert_ad_note_persisted($form_data['ad_note']);
+		$this->assert_ad_text_persisted(
+			'Functional test name edited &#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940; &#128640;',
+			'Functional test note edited &#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940; &#129514;'
+		);
 
 		// Confirm the log entry has been added correctly
 		$crawler = self::request('GET', "adm/index.php?i=acp_logs&mode=admin&sid=$this->sid");
@@ -325,16 +331,17 @@ class acp_manage_test extends functional_base
 		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid=$this->sid");
 	}
 
-	protected function assert_ad_note_persisted($expected)
+	protected function assert_ad_text_persisted($expected_name, $expected_note)
 	{
-		$sql = 'SELECT ad_note
+		$sql = 'SELECT ad_name, ad_note
 			FROM phpbb_ads
 			ORDER BY ad_id DESC';
 		$result = $this->db->sql_query_limit($sql, 1);
-		$ad_note = $this->db->sql_fetchfield('ad_note', false, $result);
+		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		self::assertSame($expected, utf8_decode_ncr($ad_note));
+		self::assertSame($expected_name, $row['ad_name']);
+		self::assertSame($expected_note, $row['ad_note']);
 	}
 
 	protected function submit_with_error($crawler, $form_data, $error_lang): void

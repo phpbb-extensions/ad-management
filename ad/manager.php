@@ -762,7 +762,7 @@ class manager
 	 */
 	protected function intersect_ad_data($data)
 	{
-		return array_intersect_key($data, [
+		$data = array_intersect_key($data, [
 			'ad_name'			=> '',
 			'ad_note'			=> '',
 			'ad_code'			=> '',
@@ -777,6 +777,16 @@ class manager
 			'ad_centering'		=> '',
 			'ad_consent'		=> '',
 		]);
+
+		foreach (array('ad_name', 'ad_note') as $column)
+		{
+			if (isset($data[$column]))
+			{
+				$data[$column] = utf8_encode_ncr($data[$column]);
+			}
+		}
+
+		return $data;
 	}
 
 	/**
