@@ -119,6 +119,21 @@ class tracking_test extends ad_base
 		self::assertEquals(0, $manager->get_ad(3)['ad_enabled']);
 	}
 
+	/**
+	 * Expiration sweep disables multiple ads with one update query.
+	 */
+	public function test_expiration_sweep_uses_single_update()
+	{
+		$manager = $this->get_manager();
+		$manager->update_ad(1, array('ad_end_date' => 1));
+
+		$query_count = $this->db->sql_num_queries();
+		self::assertEquals(2, $manager->disable_expired_ads());
+		self::assertEquals(1, $this->db->sql_num_queries() - $query_count);
+		self::assertEquals(0, $manager->get_ad(1)['ad_enabled']);
+		self::assertEquals(0, $manager->get_ad(3)['ad_enabled']);
+	}
+
 	public function expired_ad_id_data()
 	{
 		return array(

@@ -231,6 +231,8 @@ class manager
 	 */
 	public function disable_expired_ad($ad)
 	{
+		$expiration_time = $this->get_expiration_time();
+
 		if (!is_array($ad))
 		{
 			$ad_id = (int) $ad;
@@ -239,11 +241,10 @@ class manager
 				return false;
 			}
 
-			$expired_ads = $this->get_expired_ads(array($ad_id));
-			$ad = reset($expired_ads);
+			$ad = $this->get_ad($ad_id);
 		}
 
-		if (empty($ad['ad_enabled']) || empty($ad['ad_end_date']) || $ad['ad_end_date'] >= $this->get_expiration_time())
+		if (empty($ad['ad_enabled']) || empty($ad['ad_end_date']) || $ad['ad_end_date'] >= $expiration_time)
 		{
 			return false;
 		}
@@ -253,7 +254,7 @@ class manager
 			WHERE ad_id = ' . (int) $ad['ad_id'] . '
 				AND ad_enabled = 1
 				AND ad_end_date > 0
-				AND ad_end_date < ' . $this->get_expiration_time();
+				AND ad_end_date < ' . $expiration_time;
 		$this->db->sql_query($sql);
 
 		if (!$this->db->sql_affectedrows())
@@ -261,21 +262,7 @@ class manager
 			return false;
 		}
 
-		if (!empty($ad['ad_owner']) && $this->notification_manager)
-		{
-			$this->notification_manager->delete_notifications(
-				\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED,
-				(int) $ad['ad_id'],
-				false,
-				(int) $ad['ad_owner']
-			);
-			$this->notification_manager->add_notifications(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED, array(
-				'ad_id' => (int) $ad['ad_id'],
-				'ad_name' => $ad['ad_name'],
-				'ad_owner' => (int) $ad['ad_owner'],
-				'reason' => self::DISABLED_END_DATE,
-			));
-		}
+		$this->notify_ad_disabled($ad);
 
 		return true;
 	}
@@ -283,17 +270,37 @@ class manager
 	/**
 	 * Disable every currently expired enabled ad.
 	 *
-	 * @param array $ad_ids Optional advertisement IDs to restrict the sweep
 	 * @return int Number of ads disabled
 	 */
-	public function disable_expired_ads($ad_ids = array())
+	public function disable_expired_ads()
 	{
-		$disabled = 0;
-		foreach ($this->get_expired_ads($ad_ids) as $ad)
+		$expiration_time = $this->get_expiration_time();
+		$expired_ads = array();
+		if ($this->notification_manager)
 		{
-			if ($this->disable_expired_ad($ad))
+			$sql = 'SELECT ad_id, ad_name, ad_owner
+				FROM ' . $this->ads_table . '
+				WHERE ad_enabled = 1
+					AND ad_end_date > 0
+					AND ad_end_date < ' . $expiration_time;
+			$result = $this->db->sql_query($sql);
+			$expired_ads = $this->db->sql_fetchrowset($result);
+			$this->db->sql_freeresult($result);
+		}
+
+		$sql = 'UPDATE ' . $this->ads_table . '
+			SET ad_enabled = 0
+			WHERE ad_enabled = 1
+				AND ad_end_date > 0
+				AND ad_end_date < ' . $expiration_time;
+		$this->db->sql_query($sql);
+		$disabled = $this->db->sql_affectedrows();
+
+		if ($disabled)
+		{
+			foreach ($expired_ads as $ad)
 			{
-				$disabled++;
+				$this->notify_ad_disabled($ad);
 			}
 		}
 
@@ -301,47 +308,30 @@ class manager
 	}
 
 	/**
-	 * Get enabled advertisements which reached their end date.
+	 * Notify an advertisement owner that their ad was disabled.
 	 *
-	 * @param array $ad_ids Optional advertisement IDs to restrict the query
-	 * @return array Expired advertisement data
+	 * @param array $ad Advertisement data
+	 * @return void
 	 */
-	protected function get_expired_ads($ad_ids = array())
+	protected function notify_ad_disabled($ad)
 	{
-		$restrict_ids = !empty($ad_ids);
-		$ad_ids = $this->normalize_ad_ids($ad_ids);
-		if ($restrict_ids && empty($ad_ids))
+		if (empty($ad['ad_owner']) || !$this->notification_manager)
 		{
-			return array();
+			return;
 		}
 
-		$sql_where_ids = !empty($ad_ids) ? '
-				AND ' . $this->db->sql_in_set('ad_id', $ad_ids) : '';
-		$expiration_time = $this->get_expiration_time();
-		$sql = 'SELECT ad_id, ad_name, ad_enabled, ad_end_date, ad_owner
-			FROM ' . $this->ads_table . '
-			WHERE ad_enabled = 1
-				AND ad_end_date > 0
-				AND ad_end_date < ' . $expiration_time . $sql_where_ids;
-		$result = $this->db->sql_query($sql);
-		$ads = $this->db->sql_fetchrowset($result);
-		$this->db->sql_freeresult($result);
-
-		return $ads;
-	}
-
-	/**
-	 * Normalize advertisement IDs.
-	 *
-	 * @param array $ad_ids Advertisement IDs
-	 * @return array Unique positive integer IDs
-	 */
-	protected function normalize_ad_ids($ad_ids)
-	{
-		return array_values(array_unique(array_filter(array_map('intval', $ad_ids), static function($ad_id)
-		{
-			return $ad_id > 0;
-		})));
+		$this->notification_manager->delete_notifications(
+			\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED,
+			(int) $ad['ad_id'],
+			false,
+			(int) $ad['ad_owner']
+		);
+		$this->notification_manager->add_notifications(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED, array(
+			'ad_id' => (int) $ad['ad_id'],
+			'ad_name' => $ad['ad_name'],
+			'ad_owner' => (int) $ad['ad_owner'],
+			'reason' => self::DISABLED_END_DATE,
+		));
 	}
 
 	/**
