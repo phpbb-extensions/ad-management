@@ -101,10 +101,19 @@ class tracking_test extends ad_base
 	 */
 	public function test_expiration_sweep_disables_and_notifies()
 	{
+		$notification_type_id = 42;
+		$sql = 'INSERT INTO phpbb_notification_emails ' . $this->db->sql_build_array('INSERT', array(
+			'notification_type_id' => $notification_type_id,
+			'item_id' => 3,
+			'item_parent_id' => 0,
+			'user_id' => 3,
+		));
+		$this->db->sql_query($sql);
+
 		$notifications = $this->getMockBuilder('\phpbb\notification\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->expect_disabled_notification($notifications, array(
+		$this->expect_disabled_notification($notifications, $notification_type_id, array(
 				'ad_id' => 3,
 				'ad_name' => 'Expired ad',
 				'ad_owner' => 3,
@@ -115,8 +124,17 @@ class tracking_test extends ad_base
 
 		$query_count = $this->db->sql_num_queries();
 		self::assertEquals(1, $manager->disable_expired_ads());
-		self::assertEquals(2, $this->db->sql_num_queries() - $query_count);
+		self::assertEquals(3, $this->db->sql_num_queries() - $query_count);
 		self::assertEquals(0, $manager->get_ad(3)['ad_enabled']);
+
+		$sql = 'SELECT COUNT(*) AS notification_count
+			FROM phpbb_notification_emails
+			WHERE notification_type_id = ' . $notification_type_id . '
+				AND item_id = 3
+				AND user_id = 3';
+		$result = $this->db->sql_query($sql);
+		self::assertEquals(0, $this->db->sql_fetchfield('notification_count'));
+		$this->db->sql_freeresult($result);
 	}
 
 	/**
@@ -187,7 +205,8 @@ class tracking_test extends ad_base
 			$this->ads_table,
 			$this->ad_locations_table,
 			$this->ad_group_table,
-			$notifications
+			$notifications,
+			'phpbb_notification_emails'
 		);
 	}
 
@@ -195,11 +214,16 @@ class tracking_test extends ad_base
 	 * Expect replacement of previous notification before sending a new one.
 	 *
 	 * @param \phpbb\notification\manager $notifications Notification manager mock
+	 * @param int $notification_type_id Notification type ID
 	 * @param array $expected Expected notification payload
 	 * @return void
 	 */
-	protected function expect_disabled_notification(\phpbb\notification\manager $notifications, $expected)
+	protected function expect_disabled_notification(\phpbb\notification\manager $notifications, $notification_type_id, $expected)
 	{
+		$notifications->expects(self::once())
+			->method('get_notification_type_id')
+			->with(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED)
+			->willReturn($notification_type_id);
 		$notifications->expects(self::once())
 			->method('delete_notifications')
 			->with(

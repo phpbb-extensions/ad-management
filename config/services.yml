@@ -14,6 +14,7 @@ services:
             - '%phpbb.ads.tables.ad_locations%'
             - '%phpbb.ads.tables.ad_group%'
             - '@notification_manager'
+            - '%tables.notification_emails%'
 
     phpbb.ads.banner.banner:
         class: phpbb\ads\banner\banner
