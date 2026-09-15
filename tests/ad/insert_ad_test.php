@@ -58,8 +58,8 @@ class insert_ad_test extends ad_base
 					'ad_priority'	=> 5,
 					'ad_groups'		=> [],
 				),
-				'Ad &#128512; 中文 Кириллица',
-				'Note &#128221; 日本語 Ελληνικά',
+				'Ad 😀 中文 Кириллица',
+				'Note 📝 日本語 Ελληνικά',
 			),
 		);
 	}
@@ -72,6 +72,7 @@ class insert_ad_test extends ad_base
 	public function test_insert_ad($data, $expected_name, $expected_note = '')
 	{
 		$manager = $this->get_manager();
+		$encode = strpos($this->db->get_sql_layer(), 'mssql') === 0 ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
 
 		$ad_id = $manager->insert_ad($data);
 
@@ -79,7 +80,7 @@ class insert_ad_test extends ad_base
 
 		$new_ad = $manager->get_ad($ad_id);
 
-		self::assertSame($expected_name, $new_ad['ad_name']);
-		self::assertSame($expected_note, $new_ad['ad_note']);
+		self::assertSame($encode($expected_name), $new_ad['ad_name']);
+		self::assertSame($encode($expected_note), $new_ad['ad_note']);
 	}
 }

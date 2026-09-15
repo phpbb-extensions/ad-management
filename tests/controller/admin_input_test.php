@@ -136,8 +136,8 @@ class admin_input_test extends \phpbb_database_test_case
 			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, ['FORM_INVALID']),
 			array(true, ['Ad Name 😀', 'Ad Note 📝', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
 			array(true, ['Ad Name 日本語 Ελληνικά', 'Ad Note Кириллица 中文', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
-			array(true, [str_repeat('Ж', 255), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
-			array(true, [str_repeat('中', 255), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
+			array(true, [str_repeat('Ж', 255), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, array('default' => [], 'mssql' => ['AD_NAME_TOO_LONG'])),
+			array(true, [str_repeat('中', 255), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, array('default' => [], 'mssql' => ['AD_NAME_TOO_LONG'])),
 			array(true, [str_repeat('😀', 28), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
 			array(true, ['', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, ['AD_NAME_REQUIRED']),
 			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, ['AD_NAME_TOO_LONG']),
@@ -188,6 +188,11 @@ class admin_input_test extends \phpbb_database_test_case
 			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_owner, $ad_groups, $ad_centering, $ad_consent, $ad_views_enabled, $ad_clicks_enabled, $uploaded_banners));
 
 		$result = $input_controller->get_form_data($existing_start_date, $existing_end_date);
+		$is_mssql = strpos($this->db->get_sql_layer(), 'mssql') === 0;
+		if (isset($errors['default'], $errors['mssql']))
+		{
+			$errors = $errors[$is_mssql ? 'mssql' : 'default'];
+		}
 
 		if (!empty($errors))
 		{
@@ -196,12 +201,14 @@ class admin_input_test extends \phpbb_database_test_case
 		}
 		else
 		{
+			self::assertSame(array(), $input_controller->get_errors());
 			$expected_locations = array_values(array_unique(array_intersect((array) $ad_locations, array('above_header', 'above_footer'))));
 			$expected_groups = array_values(array_unique(array_intersect((array) $ad_groups, array(1, 2))));
+			$encode = $is_mssql ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
 
 			self::assertEquals(array(
-				'ad_name'         => utf8_encode_ucr($ad_name),
-				'ad_note'         => utf8_encode_ucr($ad_note),
+				'ad_name'         => $encode($ad_name),
+				'ad_note'         => $encode($ad_note),
 				'ad_code'         => $ad_code,
 				'ad_enabled'      => $ad_enabled,
 				'ad_locations'    => $expected_locations,

@@ -15,8 +15,28 @@ namespace phpbb\ads\tests\functional;
  */
 class notification_test extends functional_base
 {
-	public function test_notification_option()
+	public function test_notification_option_hidden_without_ads_permission()
 	{
+		$member = 'ads-notification-no-option';
+		$this->create_user($member);
+		self::$client->restart();
+		$this->login($member);
+
+		$crawler = self::request('GET', 'ucp.php?i=ucp_notifications&mode=notification_options');
+
+		$this->assertNotContainsLang('NOTIFICATION_TYPE_PHPBB_ADS_AD_DISABLED', $crawler->filter('#cp-main')->text());
+		self::assertCount(0, $crawler->filter('input[name="phpbb.ads.notification.type.ad_disabled_notification.method.board"]'));
+		self::assertCount(0, $crawler->filter('input[name="phpbb.ads.notification.type.ad_disabled_notification.method.email"]'));
+	}
+
+	public function test_notification_option_present_for_ad_owner()
+	{
+		$owner = 'ads-notification-option-owner';
+		$this->create_user($owner);
+		$this->create_assigned_ad($owner, 'Notification option test');
+		self::$client->restart();
+		$this->login($owner);
+
 		$crawler = self::request('GET', 'ucp.php?i=ucp_notifications&mode=notification_options');
 
 		$this->assertContainsLang('NOTIFICATION_TYPE_PHPBB_ADS_AD_DISABLED', $crawler->filter('#cp-main')->text());
@@ -29,27 +49,7 @@ class notification_test extends functional_base
 		$owner = 'ads-notification-owner';
 		$this->create_user($owner);
 		$this->disable_all_ads();
-		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
-		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
-		$crawler = self::submit($form);
-		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
-		self::submit($form, array(
-			'ad_name' => 'Click notification test',
-			'ad_note' => '',
-			'ad_code' => '<a href="https://example.com">Advertisement</a>',
-			'ad_enabled' => 1,
-			'ad_locations' => array('above_header'),
-			'ad_start_date' => '',
-			'ad_end_date' => '',
-			'ad_priority' => 5,
-			'ad_content_only' => 0,
-			'ad_views_enabled' => 0,
-			'ad_clicks_enabled' => 1,
-			'ad_owner' => $owner,
-			'ad_groups' => array(),
-			'ad_centering' => 1,
-			'ad_consent' => 0,
-		));
+		$this->create_assigned_ad($owner, 'Click notification test', '<a href="https://example.com">Advertisement</a>', true);
 		self::$client->restart();
 		$this->login($owner);
 		$crawler = self::request('GET', 'index.php');
@@ -77,5 +77,33 @@ class notification_test extends functional_base
 		$crawler = self::request('GET', 'ucp.php?i=ucp_notifications&mode=notification_list');
 		$notification_text = $crawler->filter('#cp-main')->text();
 		self::assertStringNotContainsString('Click notification test', $notification_text);
+	}
+
+	protected function create_assigned_ad($owner, $name, $ad_code = '', $clicks_enabled = false)
+	{
+		$crawler = self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid={$this->sid}");
+		$form = $crawler->selectButton($this->lang('ACP_ADS_ADD'))->form();
+		$crawler = self::submit($form);
+		$form = $crawler->selectButton($this->lang('SUBMIT'))->form();
+		$crawler = self::submit($form, array(
+			'ad_name' => $name,
+			'ad_note' => '',
+			'ad_code' => $ad_code,
+			'ad_enabled' => 1,
+			'ad_locations' => array('above_header'),
+			'ad_start_date' => '',
+			'ad_end_date' => '',
+			'ad_priority' => 5,
+			'ad_content_only' => 0,
+			'ad_views_enabled' => 0,
+			'ad_clicks_enabled' => (int) $clicks_enabled,
+			'ad_owner' => $owner,
+			'ad_groups' => array(),
+			'ad_centering' => 1,
+			'ad_consent' => 0,
+		));
+
+		self::assertGreaterThan(0, $crawler->filter('.successbox')->count());
+		$this->assertContainsLang('ACP_AD_ADD_SUCCESS', $crawler->text());
 	}
 }
