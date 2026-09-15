@@ -36,7 +36,7 @@ class ad_disabled extends \phpbb\notification\type\base
 	 */
 	public function is_available()
 	{
-		return true;
+		return $this->auth->acl_get('u_phpbb_ads');
 	}
 
 	/**
