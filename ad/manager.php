@@ -46,9 +46,6 @@ class manager
 	/** @var string */
 	protected $ad_group_table;
 
-	/** @var string */
-	protected $notification_emails_table;
-
 	/**
 	 * Constructor
 	 *
@@ -58,9 +55,8 @@ class manager
 	 * @param    string                            $ad_locations_table Ad locations table
 	 * @param    string                            $ad_group_table 	   Ad group table
 	 * @param    \phpbb\notification\manager|null $notification_manager Notification manager
-	 * @param    string                            $notification_emails_table Notification emails table
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $ads_table, $ad_locations_table, $ad_group_table, \phpbb\notification\manager $notification_manager = null, $notification_emails_table = '')
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $ads_table, $ad_locations_table, $ad_group_table, \phpbb\notification\manager $notification_manager = null)
 	{
 		$this->db = $db;
 		$this->user = $user;
@@ -68,7 +64,6 @@ class manager
 		$this->ads_table = $ads_table;
 		$this->ad_locations_table = $ad_locations_table;
 		$this->ad_group_table = $ad_group_table;
-		$this->notification_emails_table = $notification_emails_table;
 	}
 
 	/**
@@ -325,19 +320,20 @@ class manager
 			return;
 		}
 
-		$notification_type_id = $this->notification_manager->get_notification_type_id(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED);
-
 		$this->notification_manager->delete_notifications(
 			\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED,
 			(int) $ad['ad_id'],
 			false,
 			(int) $ad['ad_owner']
 		);
-		$sql = 'DELETE FROM ' . $this->notification_emails_table . '
-			WHERE notification_type_id = ' . (int) $notification_type_id . '
-				AND item_id = ' . (int) $ad['ad_id'] . '
-				AND user_id = ' . (int) $ad['ad_owner'];
-		$this->db->sql_query($sql);
+
+		$notification_type_id = $this->notification_manager->get_notification_type_id(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED);
+		$email_method = $this->notification_manager->get_method_class('notification.method.email');
+		$email_method->mark_notifications(
+			$notification_type_id,
+			(int) $ad['ad_id'],
+			(int) $ad['ad_owner']
+		);
 
 		$this->notification_manager->add_notifications(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED, array(
 			'ad_id' => (int) $ad['ad_id'],
