@@ -215,7 +215,7 @@ class admin_input
 			$this->errors[] = 'AD_NAME_REQUIRED';
 		}
 
-		if (truncate_string($ad_name, ext::MAX_NAME_LENGTH) !== $ad_name)
+		if (utf8_strlen($ad_name) > ext::MAX_NAME_LENGTH)
 		{
 			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG');
 		}
