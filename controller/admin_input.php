@@ -29,6 +29,9 @@ class admin_input
 	/** @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
 	/** @var \phpbb\ads\banner\banner */
 	protected $banner;
 
@@ -51,16 +54,18 @@ class admin_input
 	 * @param \phpbb\user_loader          $user_loader      User loader object
 	 * @param \phpbb\language\language    $language         Language object
 	 * @param \phpbb\request\request      $request          Request object
+	 * @param \phpbb\db\driver\driver_interface $db        DB driver interface
 	 * @param \phpbb\ads\banner\banner    $banner           Banner upload object
 	 * @param \phpbb\ads\ad\manager       $manager          Advertisement manager object
 	 * @param \phpbb\ads\location\manager $location_manager Template location manager object
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\ads\banner\banner $banner, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
+	public function __construct(\phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\request\request $request, \phpbb\db\driver\driver_interface $db, \phpbb\ads\banner\banner $banner, \phpbb\ads\ad\manager $manager, \phpbb\ads\location\manager $location_manager)
 	{
 		$this->user = $user;
 		$this->user_loader = $user_loader;
 		$this->language = $language;
 		$this->request = $request;
+		$this->db = $db;
 		$this->banner = $banner;
 		$this->manager = $manager;
 		$this->location_manager = $location_manager;
@@ -119,10 +124,11 @@ class admin_input
 			'uploaded_banners'	=> $this->request->variable('uploaded_banners', array('')),
 		);
 
-		// Store names and notes as ASCII character references for portability across DBMS.
+		// MSSQL requires ASCII character references. Other DBMS can store BMP characters directly.
 		// Normalize names before validation so the length check covers entity expansion.
-		$data['ad_name'] = utf8_encode_ncr($data['ad_name']);
-		$data['ad_note'] = utf8_encode_ncr($data['ad_note']);
+		$encode = strpos($this->db->get_sql_layer(), 'mssql') === 0 ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
+		$data['ad_name'] = $encode($data['ad_name']);
+		$data['ad_note'] = $encode($data['ad_note']);
 
 		// Validate form key
 		if (!check_form_key('phpbb_ads'))
@@ -197,7 +203,7 @@ class admin_input
 	 * Validate advertisement name
 	 *
 	 * Ad name is required and must not be empty. Ad name must
-	 * also be less than 255 characters.
+	 * also fit within the database storage limit.
 	 *
 	 * @param string $ad_name Advertisement name
 	 * @return string Advertisement name
@@ -211,7 +217,7 @@ class admin_input
 
 		if (truncate_string($ad_name, ext::MAX_NAME_LENGTH) !== $ad_name)
 		{
-			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG', ext::MAX_NAME_LENGTH);
+			$this->errors[] = $this->language->lang('AD_NAME_TOO_LONG');
 		}
 
 		return $ad_name;

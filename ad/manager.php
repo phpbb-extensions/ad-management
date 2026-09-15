@@ -768,11 +768,12 @@ class manager
 			'ad_consent'		=> '',
 		]);
 
+		$encode = strpos($this->db->get_sql_layer(), 'mssql') === 0 ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
 		foreach (array('ad_name', 'ad_note') as $column)
 		{
 			if (isset($data[$column]))
 			{
-				$data[$column] = utf8_encode_ncr($data[$column]);
+				$data[$column] = $encode($data[$column]);
 			}
 		}
 

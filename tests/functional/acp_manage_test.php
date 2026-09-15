@@ -65,7 +65,7 @@ class acp_manage_test extends functional_base
 		$form_data = array(
 			'ad_name'		=> str_repeat('a', 256),
 		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG'));
 
 		// Confirm error when submitting old start date
 		$form_data = array(
@@ -177,7 +177,7 @@ class acp_manage_test extends functional_base
 		$form_data = array(
 			'ad_name'		=> str_repeat('a', 256),
 		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG'));
 
 		// Confirm error when submitting old start date
 		$form_data = array(

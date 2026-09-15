@@ -76,7 +76,7 @@ $lang = array_merge($lang, array(
 	'ACP_ADS_EDIT'				=> 'Edit ad',
 
 	'AD_NAME_REQUIRED'			=> 'Name is required.',
-	'AD_NAME_TOO_LONG'			=> 'Name length is limited to %d characters.',
+	'AD_NAME_TOO_LONG'			=> 'Name is too long.',
 	'AD_CODE_ILLEGAL_CHARS'		=> 'Ad code contains the following unsupported characters: %s',
 	'AD_START_DATE_INVALID'		=> 'The start date is invalid or is before today.',
 	'AD_END_DATE_INVALID'		=> 'The end date is invalid or is before today.',
