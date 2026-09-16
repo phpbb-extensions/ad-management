@@ -24,6 +24,9 @@ class ad_disabled_test extends \phpbb_test_case
 	/** @var \phpbb\db\driver\driver_interface|\PHPUnit\Framework\MockObject\MockObject */
 	protected $db;
 
+	/** @var \phpbb\auth\auth|\PHPUnit\Framework\MockObject\MockObject */
+	protected $auth;
+
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -43,13 +46,13 @@ class ad_disabled_test extends \phpbb_test_case
 		$this->db = $this->getMockBuilder('\phpbb\db\driver\driver_interface')->getMock();
 		$this->language = $this->getMockBuilder('\phpbb\language\language')->disableOriginalConstructor()->getMock();
 		$user = $this->getMockBuilder('\phpbb\user')->disableOriginalConstructor()->getMock();
-		$auth = $this->getMockBuilder('\phpbb\auth\auth')->getMock();
+		$this->auth = $this->getMockBuilder('\phpbb\auth\auth')->getMock();
 		$this->manager = $this->getMockBuilder('\phpbb\notification\manager')->disableOriginalConstructor()->getMock();
 		$this->notification = new \phpbb\ads\notification\type\ad_disabled(
 			$this->db,
 			$this->language,
 			$user,
-			$auth,
+			$this->auth,
 			$phpbb_root_path,
 			$phpEx,
 			'phpbb_user_notifications'
@@ -65,8 +68,18 @@ class ad_disabled_test extends \phpbb_test_case
 		self::assertSame(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED, $this->notification->get_type());
 		self::assertSame(42, $this->notification::get_item_id(array('ad_id' => 42)));
 		self::assertSame(0, $this->notification::get_item_parent_id(array('ad_id' => 42)));
-		self::assertTrue($this->notification->is_available());
 		self::assertSame('NOTIFICATION_TYPE_PHPBB_ADS_AD_DISABLED', $this->notification::$notification_option['lang']);
+	}
+
+	public function test_is_available_requires_ads_permission()
+	{
+		$this->auth->expects(self::exactly(2))
+			->method('acl_get')
+			->with('u_phpbb_ads')
+			->willReturnOnConsecutiveCalls(false, true);
+
+		self::assertFalse($this->notification->is_available());
+		self::assertTrue($this->notification->is_available());
 	}
 
 	public function test_owner_receives_default_methods()

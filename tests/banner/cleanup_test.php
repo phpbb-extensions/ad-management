@@ -46,15 +46,17 @@ class cleanup_test extends banner_base
 	{
 		$first = str_repeat('a', 32) . '.jpg';
 		$second = str_repeat('b', 32) . '.png';
+		$third = str_repeat('c', 32) . '.gif';
 		$code = '<img src="https://example.com/forum/images/phpbb_ads/' . $first . '">'
 			. '<img src=&quot;/images/phpbb_ads/' . $second . '?v=1&quot;>'
+			. '<img src="images/phpbb_ads/' . $third . '">'
 			. '<img src="/images/phpbb_ads/not-managed.jpg">'
-			. '<img src="/other/' . str_repeat('c', 32) . '.gif">'
+			. '<img src="/other/' . $third . '">'
 			. '<img src="/images/phpbb_ads/' . $first . '">';
 
 		$manager = new \phpbb\ads\banner\banner($this->files_upload, $this->filesystem, $this->cleanup_root);
 
-		self::assertSame(array($first, $second), $manager->extract_filenames($code));
+		self::assertSame(array($first, $second, $third), $manager->extract_filenames($code));
 	}
 
 	public function test_remove_only_unreferenced_managed_files()
@@ -73,7 +75,7 @@ class cleanup_test extends banner_base
 		$manager = new \phpbb\ads\banner\banner($this->files_upload, $this->filesystem, $this->cleanup_root);
 		$removed = $manager->remove_unreferenced(
 			array($referenced, $orphan, '../../config.php', str_repeat('c', 32) . '.gif'),
-			array('<img src="/images/phpbb_ads/' . $referenced . '">')
+			array('<img src="images/phpbb_ads/' . $referenced . '">')
 		);
 
 		self::assertSame(array($orphan), $removed);
