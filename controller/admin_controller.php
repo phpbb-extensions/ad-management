@@ -306,11 +306,18 @@ class admin_controller
 				$this->toggle_permission($ad_data['ad_owner']);
 				$this->helper->log('DELETE', $ad_data['ad_name']);
 
-				// Only notify user if AJAX was not used
-				if (!$this->request->is_ajax())
+				if ($this->request->is_ajax())
 				{
-					$this->success('ACP_AD_DELETE_SUCCESS');
+					$json_response = new \phpbb\json_response;
+					$json_response->send(array(
+						'MESSAGE_TITLE' => $this->language->lang('INFORMATION'),
+						'MESSAGE_TEXT' => $this->language->lang('ACP_AD_DELETE_SUCCESS'),
+						'SUCCESS' => true,
+					));
+					return;
 				}
+
+				$this->success('ACP_AD_DELETE_SUCCESS');
 			}
 			else
 			{

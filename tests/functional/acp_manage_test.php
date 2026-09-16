@@ -67,7 +67,7 @@ class acp_manage_test extends functional_base
 		$form_data = array(
 			'ad_name'		=> str_repeat('a', 256),
 		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG'));
 
 		// Confirm error when submitting old start date
 		$form_data = array(
@@ -140,8 +140,8 @@ class acp_manage_test extends functional_base
 		$this->assertContainsLang('ENABLED', $crawler->text());
 		self::assertStringContainsString('2036-01-01', $crawler->text());
 		$this->assert_ad_text_persisted(
-			'Functional test name &#26085;&#26412;&#35486; &#128512;',
-			'Functional test note &#26085;&#26412;&#35486; &#128221;'
+			$form_data['ad_name'],
+			$form_data['ad_note']
 		);
 
 		// Confirm the log entry has been added correctly
@@ -179,7 +179,7 @@ class acp_manage_test extends functional_base
 		$form_data = array(
 			'ad_name'		=> str_repeat('a', 256),
 		);
-		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG', 255));
+		$this->submit_with_error($crawler, $form_data, $this->lang('AD_NAME_TOO_LONG'));
 
 		// Confirm error when submitting old start date
 		$form_data = array(
@@ -253,8 +253,8 @@ class acp_manage_test extends functional_base
 		self::assertStringContainsString('2035-01-02', $crawler->text());
 		self::assertStringContainsString('2036-01-02', $crawler->text());
 		$this->assert_ad_text_persisted(
-			'Functional test name edited &#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940; &#128640;',
-			'Functional test note edited &#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940; &#129514;'
+			$form_data['ad_name'],
+			$form_data['ad_note']
 		);
 
 		// Confirm the log entry has been added correctly
@@ -331,8 +331,9 @@ class acp_manage_test extends functional_base
 		return self::request('GET', "adm/index.php?i=-phpbb-ads-acp-main_module&mode=manage&sid=$this->sid");
 	}
 
-	protected function assert_ad_text_persisted($expected_name, $expected_note)
+	protected function assert_ad_text_persisted($ad_name, $ad_note)
 	{
+		$encode = strpos($this->db->get_sql_layer(), 'mssql') === 0 ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
 		$sql = 'SELECT ad_name, ad_note
 			FROM phpbb_ads
 			ORDER BY ad_id DESC';
@@ -340,8 +341,8 @@ class acp_manage_test extends functional_base
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		self::assertSame($expected_name, $row['ad_name']);
-		self::assertSame($expected_note, $row['ad_note']);
+		self::assertSame($encode($ad_name), $row['ad_name']);
+		self::assertSame($encode($ad_note), $row['ad_note']);
 	}
 
 	protected function submit_with_error($crawler, $form_data, $error_lang): void

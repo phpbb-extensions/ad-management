@@ -326,6 +326,15 @@ class manager
 			false,
 			(int) $ad['ad_owner']
 		);
+
+		$notification_type_id = $this->notification_manager->get_notification_type_id(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED);
+		$email_method = $this->notification_manager->get_method_class('notification.method.email');
+		$email_method->mark_notifications(
+			$notification_type_id,
+			(int) $ad['ad_id'],
+			(int) $ad['ad_owner']
+		);
+
 		$this->notification_manager->add_notifications(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED, array(
 			'ad_id' => (int) $ad['ad_id'],
 			'ad_name' => $ad['ad_name'],
@@ -768,11 +777,12 @@ class manager
 			'ad_consent'		=> '',
 		]);
 
+		$encode = strpos($this->db->get_sql_layer(), 'mssql') === 0 ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
 		foreach (array('ad_name', 'ad_note') as $column)
 		{
 			if (isset($data[$column]))
 			{
-				$data[$column] = utf8_encode_ncr($data[$column]);
+				$data[$column] = $encode($data[$column]);
 			}
 		}
 

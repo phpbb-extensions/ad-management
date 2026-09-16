@@ -1208,10 +1208,11 @@ class admin_controller_test extends phpbb_database_test_case
 	public static function action_delete_data(): array
 	{
 		return array(
-			array(999, 2, true, true),
-			array(1, 0, false, false),
-			array(1, 0, false, true),
-			array(1, 2, false, true),
+			array(999, 2, true, true, false),
+			array(1, 0, false, false, false),
+			array(1, 0, false, true, false),
+			array(1, 2, false, true, false),
+			array(1, 2, false, true, true),
 		);
 	}
 
@@ -1220,7 +1221,7 @@ class admin_controller_test extends phpbb_database_test_case
 	 *
 	 * @dataProvider action_delete_data
 	 */
-	public function test_action_delete($ad_id, $ad_owner, $error, $confirm)
+	public function test_action_delete($ad_id, $ad_owner, $error, $confirm, $is_ajax)
 	{
 		self::$confirm = $confirm;
 
@@ -1269,6 +1270,10 @@ class admin_controller_test extends phpbb_database_test_case
 		}
 		else
 		{
+			$this->request->expects(self::once())
+				->method('is_ajax')
+				->willReturn($is_ajax);
+
 			$filename = str_repeat('a', 32) . '.jpg';
 			$ad_code = '<img src="/images/phpbb_ads/' . $filename . '">';
 			$this->manager->expects(self::once())
@@ -1303,7 +1308,15 @@ class admin_controller_test extends phpbb_database_test_case
 				->method('log')
 				->with('DELETE', '');
 
-			$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
+			if ($is_ajax)
+			{
+				// Handle trigger_error() output called from json_response
+				$this->setExpectedTriggerError(E_WARNING);
+			}
+			else
+			{
+				$this->setExpectedTriggerError(E_USER_NOTICE, 'ACP_AD_DELETE_SUCCESS');
+			}
 		}
 
 		$this->reflection($controller);

@@ -19,10 +19,10 @@ class clicks_test extends main_listener_base
 	 *
 	 * @dataProvider data_clicks
 	 */
-	public function test_clicks($enabled)
+	public function test_clicks($enabled, $is_bot)
 	{
 		$this->user->data['user_id'] = 10;
-		$this->user->data['is_bot'] = false;
+		$this->user->data['is_bot'] = $is_bot;
 		$this->user->page['page_name'] = 'viewtopic';
 		$this->user->page['page_dir'] = '';
 
@@ -40,7 +40,8 @@ class clicks_test extends main_listener_base
 			'ad_clicks_enabled' => $enabled,
 		)));
 
-		$this->controller_helper->expects($enabled ? self::once() : self::never())
+		$tracking_enabled = $enabled && !$is_bot;
+		$this->controller_helper->expects($tracking_enabled ? self::once() : self::never())
 			->method('route')
 			->with('phpbb_ads_click', array(
 				'data' => 7,
@@ -54,11 +55,11 @@ class clicks_test extends main_listener_base
 				'CODE' => null,
 				'ID' => 7,
 				'CENTER' => false,
-				'CLICK_URL' => $enabled ? 'app.php/adsclick/7' : '',
+				'CLICK_URL' => $tracking_enabled ? 'app.php/adsclick/7' : '',
 				'VIEW_URL' => '',
 			)));
 
-		$this->template->expects($enabled ? self::once() : self::never())
+		$this->template->expects($tracking_enabled ? self::once() : self::never())
 			->method('assign_var')
 			->with('S_PHPBB_ADS_CLICKS_ENABLED', true);
 
@@ -71,8 +72,9 @@ class clicks_test extends main_listener_base
 	public static function data_clicks(): array
 	{
 		return array(
-			array(false),
-			array(true),
+			'counter disabled' => array(false, false),
+			'member' => array(true, false),
+			'bot' => array(true, true),
 		);
 	}
 

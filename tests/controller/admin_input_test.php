@@ -14,9 +14,12 @@ require_once __DIR__ . '/admin_test_helpers.php';
 
 use DateTimeZone;
 use phpbb\ads\banner\banner;
+use phpbb\ads\ad\manager as ad_manager;
+use phpbb\ads\location\manager as location_manager;
 use phpbb\avatar\helper as avatar_helper;
 use phpbb\config\config;
 use phpbb\datetime;
+use phpbb\db\driver\driver_interface;
 use phpbb\exception\runtime_exception;
 use phpbb\language\language;
 use phpbb\language\language_file_loader;
@@ -30,17 +33,18 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class admin_input_test extends phpbb_database_test_case
 {
+	protected driver_interface $db;
 	protected user $user;
 	protected user_loader $user_loader;
 	protected language $language;
 	protected MockObject|request $request;
 	protected banner|MockObject $banner;
+	protected ad_manager|MockObject $manager;
+	protected location_manager|MockObject $location_manager;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\ad\manager */
-	protected $manager;
+	/** @var bool A return value for check_form_key() */
+	public static $valid_form = true;
 
-	/** @var \PHPUnit\Framework\MockObject\MockObject|\phpbb\ads\location\manager */
-	protected $location_manager;
 
 	/**
 	 * {@inheritDoc}
@@ -70,7 +74,7 @@ class admin_input_test extends phpbb_database_test_case
 		$phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 
 		// Global variables
-		$db = $this->new_dbal();
+		$this->db = $db = $this->new_dbal();
 
 		// Load/Mock classes required by the controller class
 		$this->language = new language(new language_file_loader($phpbb_root_path, $phpEx));
@@ -86,14 +90,14 @@ class admin_input_test extends phpbb_database_test_case
 		$this->banner = $this->getMockBuilder(banner::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->manager = $this->getMockBuilder('\phpbb\ads\ad\manager')
+		$this->manager = $this->getMockBuilder(ad_manager::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$this->manager->method('load_groups')->willReturn(array(
 			array('group_id' => '1'),
 			array('group_id' => '2'),
 		));
-		$this->location_manager = $this->getMockBuilder('\phpbb\ads\location\manager')
+		$this->location_manager = $this->getMockBuilder(location_manager::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$this->location_manager->method('get_all_locations')->with(false)->willReturn(array(
@@ -117,13 +121,14 @@ class admin_input_test extends phpbb_database_test_case
 	 *
 	 * @return	\phpbb\ads\controller\admin_input	Admin input controller
 	 */
-	public function get_input_controller(): admin_input
+	public function get_input_controller($db = null): admin_input
 	{
 		return new \phpbb\ads\controller\admin_input(
 			$this->user,
 			$this->user_loader,
 			$this->language,
 			$this->request,
+			$db ?: $this->db,
 			$this->banner,
 			$this->manager,
 			$this->location_manager
@@ -141,6 +146,8 @@ class admin_input_test extends phpbb_database_test_case
 			array(false, ['Ad Name #1', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, ['FORM_INVALID']),
 			array(true, ['Ad Name 😀', 'Ad Note 📝', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
 			array(true, ['Ad Name 日本語 Ελληνικά', 'Ad Note Кириллица 中文', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
+			array(true, [str_repeat('Ж', 255), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, array('default' => [], 'mssql' => ['AD_NAME_TOO_LONG'])),
+			array(true, [str_repeat('中', 255), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, array('default' => [], 'mssql' => ['AD_NAME_TOO_LONG'])),
 			array(true, [str_repeat('😀', 28), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, []),
 			array(true, ['', 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, ['AD_NAME_REQUIRED']),
 			array(true, [str_repeat('a', 256), 'Ad Note #1', 'Ad Code #1', 0, '', '', '', 5, 0, '', [], false, 1], 0, ['AD_NAME_TOO_LONG']),
@@ -191,6 +198,11 @@ class admin_input_test extends phpbb_database_test_case
 			->will(self::onConsecutiveCalls($ad_name, $ad_note, $ad_code, $ad_enabled, $ad_locations, $ad_start_date, $ad_end_date, $ad_priority, $ad_content_only, $ad_owner, $ad_groups, $ad_centering, $ad_consent, $ad_views_enabled, $ad_clicks_enabled, $uploaded_banners));
 
 		$result = $input_controller->get_form_data($existing_start_date, $existing_end_date);
+		$is_mssql = strpos($this->db->get_sql_layer(), 'mssql') === 0;
+		if (isset($errors['default'], $errors['mssql']))
+		{
+			$errors = $errors[$is_mssql ? 'mssql' : 'default'];
+		}
 
 		if (!empty($errors))
 		{
@@ -199,12 +211,14 @@ class admin_input_test extends phpbb_database_test_case
 		}
 		else
 		{
+			self::assertSame(array(), $input_controller->get_errors());
 			$expected_locations = array_values(array_unique(array_intersect((array) $ad_locations, array('above_header', 'above_footer'))));
 			$expected_groups = array_values(array_unique(array_intersect((array) $ad_groups, array(1, 2))));
+			$encode = $is_mssql ? 'utf8_encode_ncr' : 'utf8_encode_ucr';
 
 			self::assertEquals(array(
-				'ad_name'         => utf8_encode_ncr($ad_name),
-				'ad_note'         => utf8_encode_ncr($ad_note),
+				'ad_name'         => $encode($ad_name),
+				'ad_note'         => $encode($ad_note),
 				'ad_code'         => $ad_code,
 				'ad_enabled'      => $ad_enabled,
 				'ad_locations'    => $expected_locations,
@@ -221,6 +235,28 @@ class admin_input_test extends phpbb_database_test_case
 				'uploaded_banners' => $uploaded_banners,
 			), $result);
 		}
+	}
+
+	/**
+	 * MSSQL uses NCR encoding for all non-ASCII characters.
+	 */
+	public function test_get_form_data_uses_ncr_on_mssql()
+	{
+		$db = $this->createMock('\phpbb\db\driver\driver_interface');
+		$db->method('get_sql_layer')->willReturn('mssqlnative');
+
+		$ad_name = str_repeat('Ж', 37);
+		$this->request->expects(self::exactly(16))
+			->method('variable')
+			->will(self::onConsecutiveCalls($ad_name, 'Заметка', '', 0, '', '', '', 5, 0, '', [], false, 1, 0, 0, []));
+
+		self::$valid_form = true;
+		$input_controller = $this->get_input_controller($db);
+		$result = $input_controller->get_form_data();
+
+		self::assertSame(utf8_encode_ncr($ad_name), $result['ad_name']);
+		self::assertSame(utf8_encode_ncr('Заметка'), $result['ad_note']);
+		self::assertSame(array('AD_NAME_TOO_LONG'), $input_controller->get_errors());
 	}
 
 	/**

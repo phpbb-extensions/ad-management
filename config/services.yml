@@ -43,6 +43,7 @@ services:
             - '@user_loader'
             - '@language'
             - '@request'
+            - '@dbal.conn'
             - '@phpbb.ads.banner.banner'
             - '@phpbb.ads.ad.manager'
             - '@phpbb.ads.location.manager'

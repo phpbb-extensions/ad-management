@@ -117,7 +117,7 @@ class banner
 	{
 		$ad_code = html_entity_decode($ad_code, ENT_QUOTES, 'UTF-8');
 		preg_match_all(
-			'~(?:^|/)images/phpbb_ads/([a-f0-9]{32}\.(?:gif|jpe?g|png))(?![a-z0-9._-])~i',
+			'~(?<![a-z0-9._-])images/phpbb_ads/([a-f0-9]{32}\.(?:gif|jpe?g|png))(?![a-z0-9._-])~i',
 			$ad_code,
 			$matches
 		);

@@ -101,10 +101,11 @@ class tracking_test extends ad_base
 	 */
 	public function test_expiration_sweep_disables_and_notifies()
 	{
+		$notification_type_id = 42;
 		$notifications = $this->getMockBuilder('\phpbb\notification\manager')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->expect_disabled_notification($notifications, array(
+		$this->expect_disabled_notification($notifications, $notification_type_id, array(
 				'ad_id' => 3,
 				'ad_name' => 'Expired ad',
 				'ad_owner' => 3,
@@ -195,11 +196,25 @@ class tracking_test extends ad_base
 	 * Expect replacement of previous notification before sending a new one.
 	 *
 	 * @param \phpbb\notification\manager $notifications Notification manager mock
+	 * @param int $notification_type_id Notification type ID
 	 * @param array $expected Expected notification payload
 	 * @return void
 	 */
-	protected function expect_disabled_notification(\phpbb\notification\manager $notifications, $expected): void
+	protected function expect_disabled_notification(\phpbb\notification\manager $notifications, $notification_type_id, $expected): void
 	{
+		$email_method = $this->createMock('\phpbb\notification\method\method_interface');
+		$email_method->expects(self::once())
+			->method('mark_notifications')
+			->with($notification_type_id, $expected['ad_id'], $expected['ad_owner']);
+
+		$notifications->expects(self::once())
+			->method('get_notification_type_id')
+			->with(\phpbb\ads\ext::NOTIFICATION_TYPE_DISABLED)
+			->willReturn($notification_type_id);
+		$notifications->expects(self::once())
+			->method('get_method_class')
+			->with('notification.method.email')
+			->willReturn($email_method);
 		$notifications->expects(self::once())
 			->method('delete_notifications')
 			->with(

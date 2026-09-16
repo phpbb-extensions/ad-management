@@ -215,6 +215,11 @@ class main_listener implements EventSubscriberInterface
 	 */
 	protected function prepare_click_tracking(array $ads)
 	{
+		if (!empty($this->user->data['is_bot']))
+		{
+			return array();
+		}
+
 		$click_urls = array();
 
 		foreach ($this->get_tracking_ad_ids($ads, 'ad_clicks_enabled') as $ad_id)
