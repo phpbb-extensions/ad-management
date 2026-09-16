@@ -1310,8 +1310,13 @@ class admin_controller_test extends phpbb_database_test_case
 
 			if ($is_ajax)
 			{
-				// Handle trigger_error() output called from json_response
-				$this->setExpectedTriggerError(E_WARNING);
+				$this->expectOutputString(json_encode(array(
+					'MESSAGE_TITLE' => $this->language->lang('INFORMATION'),
+					'MESSAGE_TEXT' => $this->language->lang('ACP_AD_DELETE_SUCCESS'),
+					'SUCCESS' => true,
+				)));
+				$this->expectException(\RuntimeException::class);
+				$this->expectExceptionMessage('Exit handler called');
 			}
 			else
 			{
