@@ -66,8 +66,21 @@ class ucp_test extends functional_base
 
 	public function test_ucp_agreement()
 	{
+		$this->add_lang_ext('phpbb/ads', 'ucp');
+		$this->db->sql_query("UPDATE " . CONFIG_TABLE . "
+			SET config_value = '1'
+			WHERE config_name = 'phpbb_ads_show_agreement'");
+		$this->purge_cache();
+
 		$crawler = self::request('GET', 'ucp.php?mode=privacy');
-		$this->assertStringContainsString($this->lang('PHPBB_ADS_PRIVACY_POLICY', 'yourdomain.com'), $crawler->filter('.agreement')->html());
+		$agreement = $crawler->filter('.agreement');
+
+		$this->assertCount(1, $agreement->filter('h3'));
+		$this->assertContainsLang('PHPBB_ADS_PRIVACY_POLICY_TITLE', $agreement->filter('h3')->text());
+		$this->assertStringContainsString(
+			trim($this->lang('PHPBB_ADS_PRIVACY_POLICY_TEXT', 'yourdomain.com')),
+			$agreement->html()
+		);
 	}
 
 	protected function get_ucp_module($assert_response_html = true): Crawler
