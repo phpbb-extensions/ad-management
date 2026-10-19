@@ -346,7 +346,7 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Append additional agreement details to the privacy agreement.
+	 * Append advertising disclosure to privacy agreement.
 	 *
 	 * @return void
 	 */
@@ -362,7 +362,10 @@ class main_listener implements EventSubscriberInterface
 
 		$this->language->add_lang('ucp', 'phpbb/ads');
 
-		$this->template->append_var('AGREEMENT_TEXT', $this->language->lang('PHPBB_ADS_PRIVACY_POLICY', $this->config['sitename']));
+		$this->template->set_filenames([
+			'phpbb_ads_privacy_policy' => '@phpbb_ads/privacy_policy.html',
+		]);
+		$this->template->append_var('AGREEMENT_TEXT', $this->template->assign_display('phpbb_ads_privacy_policy'));
 	}
 
 	/**
