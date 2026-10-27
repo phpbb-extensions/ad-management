@@ -40,6 +40,7 @@ class visual_demo_test extends \phpbb_test_case
 		$phpbb_path_helper = $this->getMockBuilder('\phpbb\path_helper')
 			->disableOriginalConstructor()
 			->getMock();
+		$phpbb_path_helper->method('update_web_root_path')->willReturn('https://example.com/');
 
 		$this->auth = $this->getMockBuilder('\phpbb\auth\auth')->getMock();
 		$this->request = $this->getMockBuilder('\phpbb\request\request')
@@ -48,8 +49,10 @@ class visual_demo_test extends \phpbb_test_case
 		$user = $this->user = $this->getMockBuilder('\phpbb\user')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->user->method('is_setup')->willReturn(true);
 		$this->user->data['session_page'] = '';
 		$this->user->data['user_form_salt'] = 'test-salt';
+		$this->user->page['page_dir'] = '';
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->phpEx = $phpEx;
 	}
@@ -133,11 +136,7 @@ class visual_demo_test extends \phpbb_test_case
 		// If non-ajax redirect is encountered, in testing it will trigger error
 		if (!$is_ajax)
 		{
-			// Throws E_WARNING in PHP 8.0+ and E_USER_WARNING in earlier versions
-			$exceptionName = PHP_VERSION_ID < 80000 ? \PHPUnit\Framework\Error\Error::class : \PHPUnit\Framework\Error\Warning::class;
-			$errno = PHP_VERSION_ID < 80000 ? E_USER_WARNING : E_WARNING;
-			$this->expectException($exceptionName);
-			$this->expectExceptionCode($errno);
+			$this->setExpectedTriggerError(E_USER_WARNING, 'INSECURE_REDIRECT');
 		}
 
 		$controller = $this->get_controller();
