@@ -54,11 +54,8 @@ class visual_demo_test extends phpbb_test_case
 		$user = $this->user = $this->getMockBuilder(user::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$user = $this->user = $this->getMockBuilder('\phpbb\user')
-			->disableOriginalConstructor()
-			->getMock();
 		$this->user->method('is_setup')->willReturn(true);
-		$this->user->data['session_page'] = '';
+		$this->user->data['session_page'] = 'index.php';
 		$this->user->data['user_form_salt'] = 'test-salt';
 		$this->user->page['page_dir'] = '';
 		$this->phpbb_root_path = $phpbb_root_path;
@@ -140,12 +137,6 @@ class visual_demo_test extends phpbb_test_case
 		$this->user->expects(self::once())
 			->method('set_cookie')
 			->with('phpbb_ads_visual_demo', $this->anything(), $cookie_time);
-
-		// If non-ajax redirect is encountered, in testing it will trigger error
-		if (!$is_ajax)
-		{
-			$this->setExpectedTriggerError(E_USER_WARNING, 'INSECURE_REDIRECT');
-		}
 
 		$controller = $this->get_controller();
 		$response = $controller->handle($action);
